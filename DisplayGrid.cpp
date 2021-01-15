@@ -75,7 +75,9 @@ void DisplayGrid::clearHighlight(bool refresh) {// This function clears all tile
 }
 
 void DisplayGrid::drawKnot() {
-	for (int i = 0; i < h; i++) \
-		for (int j = 0; j < w; j++) \
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
 			tiles[i][j]->SetLabelText(knot->get(i, j));
+		}
+	}
 }
