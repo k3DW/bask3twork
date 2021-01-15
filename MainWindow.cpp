@@ -109,6 +109,9 @@ void MainWindow::initGenerateRegion() {
 	initGenerateButton(Rot2Sym, "2-way Rotational");
 	initGenerateButton(Rot4Sym, "4-way Rotational");
 	enableGenerateButtons(false);
+
+	initButton(waveCollapse, "Wave Collapse NoSym");
+	generateRegionSizer->Add(waveCollapseButton);
 }
 void MainWindow::initExportRegion() {
 	exportRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Export");
@@ -193,7 +196,6 @@ void MainWindow::selectResetFunction(wxCommandEvent& evt) {
 	evt.Skip();
 }
 
-#define hasSymmetryType(SymType) (id == SymType && knot->generate##SymType##(selectNums))
 void MainWindow::enableGenerateButtons(bool enable) {
 	if (enable) {
 		bool hasVertSym = knot->checkVertSym(selectNums);
@@ -210,6 +212,7 @@ void MainWindow::enableGenerateButtons(bool enable) {
 		generateVertHoriSymButton->Disable();
 	}
 }
+#define hasSymmetryType(SymType) (id == SymType && knot->generate##SymType##(selectNums))
 void MainWindow::generateKnot(wxCommandEvent& evt) {
 	int id = evt.GetId();
 	if (
@@ -224,6 +227,15 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	}
 	else
 		wxMessageBox("The specified knot was not able to be generated in " + MAX_ATTEMPTS_STR + " attempts.", "Error: Knot failed");
+	evt.Skip();
+}
+
+void MainWindow::waveCollapseFunction(wxCommandEvent& evt) {
+	knot->waveCollapseNoSym(selectNums);
+
+	disp->drawKnot();
+	this->showExportBox();
+
 	evt.Skip();
 }
 

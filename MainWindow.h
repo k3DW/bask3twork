@@ -55,6 +55,7 @@ private:
 		declareGenerateButton(Rot2Sym);
 		declareGenerateButton(Rot4Sym);
 		// ...
+		declareButton(waveCollapse);
 
 	void initExportRegion();
 	void showExportBox();

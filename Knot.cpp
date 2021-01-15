@@ -19,7 +19,19 @@ Knot::Knot(int h, int w, wxStatusBar* statusBar) {
 	this->h = h;
 	this->w = w;
 	this->statusBar = statusBar;
-	this->glyphIndices = std::vector< std::vector<int> >(h, std::vector<int>(w, 0)); // Set all indices to 0, which is the glyph index of the space "\x20"
+	this->glyphIndices = std::vector<std::vector<int>>(h, std::vector<int>(w, 0)); // Set all indices to 0, which is the glyph index of the space "\x20"
+
+	//this->test = std::vector<std::vector<int>>(h, std::vector<int>(w, 0));
+	//this->knotGlyphs = std::vector<std::vector<Glyph>>(h, std::vector<Glyph>(w, allGlyphs[0]));
+	//std::vector<std::vector<Glyph>> test(h, std::vector<Glyph>(w, allGlyphs[0]));
+
+	/*
+	for (int i = 0; i < h; i++) {
+		knotGlyphs.push_back(std::vector<Glyph>());
+		for (int j = 0; j < w; j++) {
+			knotGlyphs[i].push_back(Glyph(allGlyphs[0]));
+		}
+	}//*/
 }
 Knot::~Knot() {
 	glyphIndices.resize(0);
@@ -358,3 +370,165 @@ inline void Knot::set_intersection_inplace(std::vector<int>& first, const std::v
 }
 
 #pragma warning( pop )
+
+/*
+
+Steps of WFC algorithm
+
+SETUP:
+	S-0) Allocate the knotGlyphs vector, which will be a class member in the future
+	S-1) Start with
+		S-1a) Vector for all superpositions
+		S-1b) Vector for all remaining glyphs left to be determined
+	S-2) Eliminate possibilities from the superpositions due to external boundary conditions
+	S-3) Eliminate possibilities from the superpositions due to the internal boundary conditions
+
+Loop until all glyphs are determined (toBeDetermined.size() == 0):
+	L-1) 
+	L-2) 
+
+ENDING:
+	E-1) Write data to the knot
+
+*/
+
+inline bool Knot::inSelection(const int selectNums[4], int i, int j) {
+	return (i >= selectNums[0] - 1) && (i <= selectNums[2] - 1) && (j >= selectNums[1] - 1) && (j <= selectNums[3] - 1);
+}
+inline bool Knot::onBoundary(int i, int j) {
+	return (i == 0) || (i == h - 1) || (j == 0) || (j == w - 1);
+}
+
+bool Knot::waveCollapseNoSym(const int selectNums[4]) {
+	const int* n = selectNums;
+
+	/* A general pattern to optimize later:
+
+		ConnectionType requirement = (something);
+		for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+			if (superpositions[i][j].glyphList[k].(side) != requirement) {
+				superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+			}
+		}
+
+	*/
+
+	/* STEP S-0: ALLOCATE THE knotGlyphs VECTOR. THIS WILL BE MOVED INTO THE CTOR LATER, WITH THE GLYPHS ZERO-INITIALIZED. */
+	std::vector<std::vector<Glyph>> knotGlyphs;
+	for (int i = 0; i < h; i++) {
+		knotGlyphs.push_back(std::vector<Glyph>());
+		for (int j = 0; j < w; j++) {
+			knotGlyphs[i].push_back(allGlyphs[glyphIndices[i][j]]);
+		}
+	}
+
+	/* STEP S-1: STARTING VECTORS */
+	std::vector<std::vector<GlyphSuperPos>> superpositions; // The 2D vector of all superpositions
+	std::vector< std::pair<int, int> > toBeDetermined;		// The 2D vector of all locations that need to be determined
+
+	/* STEP S-2: EXTERNAL BOUNDARIES */
+	for (int i = 0; i < h; i++) {
+		superpositions.push_back(std::vector<GlyphSuperPos>());
+		for (int j = 0; j < w; j++) {
+
+			// Check if this tile is in the selection
+			if (inSelection(n, i, j)) {
+				toBeDetermined.push_back(std::make_pair(i, j));
+				superpositions[i].push_back(allGlyphSuperPos);
+				if (i == 0) {
+					ConnectionType requirement = EMPTY;
+					for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+						if (superpositions[i][j].glyphList[k].up != requirement) {
+							superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+						}
+					}
+				}
+				else if (i == h - 1) {
+					ConnectionType requirement = EMPTY;
+					for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+						if (superpositions[i][j].glyphList[k].down != requirement) {
+							superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+						}
+					}
+				}
+
+				if (j == 0) {
+					ConnectionType requirement = EMPTY;
+					for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+						if (superpositions[i][j].glyphList[k].left != requirement) {
+							superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+						}
+					}
+				}
+				else if (j == w - 1) {
+					ConnectionType requirement = EMPTY;
+					for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+						if (superpositions[i][j].glyphList[k].right != requirement) {
+							superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+						}
+					}
+				}
+			}
+			else {
+				superpositions[i].push_back(GlyphSuperPos(knotGlyphs[i][j]));
+			}
+
+		}
+	}//*/
+
+	/* STEP S-3: INTERNAL BOUNDARIES */
+	if (n[0] - 1 != 0) { // The up selection boundary
+		for (int i = n[0] - 1, j = n[1] - 1; j <= n[3] - 1; j++) {
+			ConnectionType requirement = static_cast<Glyph>(superpositions[i - 1][j]).down;
+			for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+				if (superpositions[i][j].glyphList[k].up != requirement) {
+					superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+				}
+			}
+		}
+	}
+	if (n[2] - 1 != h - 1) { // The down selection boundary
+		for (int i = n[2] - 1, j = n[1] - 1; j <= n[3] - 1; j++) {
+			ConnectionType requirement = static_cast<Glyph>(superpositions[i + 1][j]).up;
+			for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+				if (superpositions[i][j].glyphList[k].down != requirement) {
+					superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+				}
+			}
+		}
+	}
+	if (n[1] - 1 != 0) { // The left selection boundary
+		for (int j = n[1] - 1, i = n[0] - 1; i <= n[2] - 1; i++) {
+			ConnectionType requirement = static_cast<Glyph>(superpositions[i][j - 1]).right;
+			for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+				if (superpositions[i][j].glyphList[k].left != requirement) {
+					superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+				}
+			}
+		}
+	}
+	if (n[3] - 1 != w - 1) { // The right selection boundary
+		for (int j = n[3] - 1, i = n[0] - 1; i <= n[2] - 1; i++) {
+			ConnectionType requirement = static_cast<Glyph>(superpositions[i][j + 1]).left;
+			for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+				if (superpositions[i][j].glyphList[k].right != requirement) {
+					superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+				}
+			}
+		}
+	}
+
+
+	
+
+
+	/* STEP E-1: SET THE KNOT IN PLACE */
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			glyphIndices[i][j] = superpositions[i][j].glyphList[0].index;
+		}
+	}//*/
+
+	return true;
+}
+

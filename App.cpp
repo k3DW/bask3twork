@@ -1,18 +1,26 @@
-/* TODO for version 0.2 */
+/* TODO for version 0.3 */
 /*
-	~~1) Make vert+hori symmetric knots
-		~~1a) Button
-		~~1b) Generate knot
-		~~1c) Check symmetry
-	2) Make 2-way rotationally symmetric knots
-		~~2a) Button
-		2b) Generate knot
-		2c) Check symmetry
-	3) Make 4-way rotationally symmetric knots (square only)
+	
+	1) Implement Wave Function Collapse algorithm for no symmetry
+		~~1a) Setup steps
+		~~1b) Ending steps
+		1c) Looping steps
+		1d) Optimizations
+	2) Integrate the WFC algorithm as the make generation alg
+		2a) Turn the Setup and Ending steps to be more integrated into the `Knot` object,
+			i.e use `glyphs` instead of `glyphIndices` as a class member
+		2b) Convert the regular generate buttons to the WFC algorithm
+		2c) Remove the "Wave Collapse No Sym" button
+	
+	3) Make 2-way rotationally symmetric knots
 		~~3a) Button
 		3b) Generate knot
 		3c) Check symmetry
-	~~4) Slightly streamline Knot::generateXXXSym() logic
+	4) Make 4-way rotationally symmetric knots (square only)
+		~~4a) Button
+		4b) Generate knot
+		4c) Check symmetry
+
 */
 
 /* TODO for later versions */
@@ -42,7 +50,7 @@
 #include "MainWindow.h"
 
 #define MAJOR_VERSION 0
-#define MINOR_VERSION 2
+#define MINOR_VERSION 3
 #define PATCH_VERSION 0
 
 const wxString version = VERSION(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);

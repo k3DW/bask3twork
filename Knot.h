@@ -22,6 +22,11 @@ public:
 	bool checkVertSym(const int selectNums[4]);
 	bool checkHoriSym(const int selectNums[4]);
 
+	bool waveCollapseNoSym(const int selectNums[4]);
+
+	inline bool inSelection(const int selectNums[4], int i, int j);
+	inline bool onBoundary(int i, int j);
+
 private:
 	int h, w;
 	std::vector< std::vector<int> > glyphIndices;

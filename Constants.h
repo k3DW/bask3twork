@@ -168,13 +168,16 @@ struct Glyph {
 		connectToMirrorDown(down_ == mirrorXTypes[down_]),
 		connectToMirrorLeft(left_ == mirrorYTypes[left_]),
 		connectToMirrorRight(right_ == mirrorYTypes[right_]) {}
+	Glyph(const Glyph& input) :
+		chr(input.chr), index(input.index), rotated(input.rotated), mirroredX(input.mirroredX), mirroredY(input.mirroredY), flags(input.flags) {}
 };
 
-struct GlyphPossibilities {
+struct GlyphSuperPos {
 	std::vector<Glyph> glyphList;
 	std::array< std::array<unsigned int, NUM_SIDES>, NUM_TYPES> connectionCount{};
+	bool determined = false;
 
-	GlyphPossibilities(const std::vector<Glyph>& glyphList_) : glyphList(glyphList_) {
+	GlyphSuperPos(const std::vector<Glyph>& glyphList_) : glyphList(glyphList_) {
 		for (const Glyph& glyph : glyphList) {
 			connectionCount[glyph.up][0]++;
 			connectionCount[glyph.down][1]++;
@@ -182,8 +185,21 @@ struct GlyphPossibilities {
 			connectionCount[glyph.right][3]++;
 		}
 	}
-	GlyphPossibilities(const GlyphPossibilities& input) :
+	GlyphSuperPos(const GlyphSuperPos& input) :
 		glyphList(input.glyphList), connectionCount(input.connectionCount) {}
+	
+	GlyphSuperPos(const Glyph& glyph) {
+		glyphList.push_back(glyph);
+		determined = true;
+		connectionCount[glyph.up][0]++;
+		connectionCount[glyph.down][1]++;
+		connectionCount[glyph.left][2]++;
+		connectionCount[glyph.right][3]++;
+	}
+
+	operator Glyph() {
+		return glyphList[0];
+	}
 };
 
 const std::vector<Glyph> allGlyphs {
@@ -379,5 +395,5 @@ const std::vector<Glyph> allGlyphs {
 	{ 189, 188, 181, 189, wxString::FromUTF8("\xE2\x80\xB9"), EMPTY, EMPTY, DIAG_BOTH, EMPTY }
 };
 
-const GlyphPossibilities allGlyphPossibilities{ allGlyphs };
+const GlyphSuperPos allGlyphSuperPos{ allGlyphs };
 
