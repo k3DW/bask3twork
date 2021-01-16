@@ -384,8 +384,10 @@ SETUP:
 	S-3) Eliminate possibilities from the superpositions due to the internal boundary conditions
 
 Loop until all glyphs are determined (toBeDetermined.size() == 0):
-	L-1) 
-	L-2) 
+	L-1) Select a random tile location from `toBeDetermined`, then use its `GlyphSuperPos`
+		L-1a) Select a random `Glyph` from this specific `GlyphSuperPos`
+		L-1b) Set this specific `GlyphSuperPos` as `GlyphSuperPos(glyph)`, so that it is now determined
+	L-2) Recursively narrow down the rest of the Glyphs
 
 ENDING:
 	E-1) Write data to the knot
@@ -411,12 +413,20 @@ bool Knot::waveCollapseNoSym(const int selectNums[4]) {
 			}
 		}
 
+	FIRST CHANGE: ADD THE .remove() FUNCTION TO THE GlyphSuperPos STRUCT
+		ConnectionType requirement = (something);
+		for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+			if (superpositions[i][j].glyphList[k].(side) != requirement) {
+				superpositions[i][j].remove(k--);
+			}
+		}
+
 	*/
 
 	/* STEP S-0: ALLOCATE THE knotGlyphs VECTOR. THIS WILL BE MOVED INTO THE CTOR LATER, WITH THE GLYPHS ZERO-INITIALIZED. */
 	std::vector<std::vector<Glyph>> knotGlyphs;
 	for (int i = 0; i < h; i++) {
-		knotGlyphs.push_back(std::vector<Glyph>());
+		knotGlyphs.emplace_back();
 		for (int j = 0; j < w; j++) {
 			knotGlyphs[i].push_back(allGlyphs[glyphIndices[i][j]]);
 		}
@@ -428,18 +438,18 @@ bool Knot::waveCollapseNoSym(const int selectNums[4]) {
 
 	/* STEP S-2: EXTERNAL BOUNDARIES */
 	for (int i = 0; i < h; i++) {
-		superpositions.push_back(std::vector<GlyphSuperPos>());
+		superpositions.emplace_back();
 		for (int j = 0; j < w; j++) {
 
 			// Check if this tile is in the selection
 			if (inSelection(n, i, j)) {
-				toBeDetermined.push_back(std::make_pair(i, j));
+				toBeDetermined.emplace_back(i, j);
 				superpositions[i].push_back(allGlyphSuperPos);
 				if (i == 0) {
 					ConnectionType requirement = EMPTY;
 					for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
 						if (superpositions[i][j].glyphList[k].up != requirement) {
-							superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+							superpositions[i][j].remove(k--);
 						}
 					}
 				}
@@ -447,7 +457,7 @@ bool Knot::waveCollapseNoSym(const int selectNums[4]) {
 					ConnectionType requirement = EMPTY;
 					for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
 						if (superpositions[i][j].glyphList[k].down != requirement) {
-							superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+							superpositions[i][j].remove(k--);
 						}
 					}
 				}
@@ -456,7 +466,7 @@ bool Knot::waveCollapseNoSym(const int selectNums[4]) {
 					ConnectionType requirement = EMPTY;
 					for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
 						if (superpositions[i][j].glyphList[k].left != requirement) {
-							superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+							superpositions[i][j].remove(k--);
 						}
 					}
 				}
@@ -464,13 +474,13 @@ bool Knot::waveCollapseNoSym(const int selectNums[4]) {
 					ConnectionType requirement = EMPTY;
 					for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
 						if (superpositions[i][j].glyphList[k].right != requirement) {
-							superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+							superpositions[i][j].remove(k--);
 						}
 					}
 				}
 			}
 			else {
-				superpositions[i].push_back(GlyphSuperPos(knotGlyphs[i][j]));
+				superpositions[i].emplace_back(knotGlyphs[i][j]);
 			}
 
 		}
@@ -482,7 +492,7 @@ bool Knot::waveCollapseNoSym(const int selectNums[4]) {
 			ConnectionType requirement = static_cast<Glyph>(superpositions[i - 1][j]).down;
 			for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
 				if (superpositions[i][j].glyphList[k].up != requirement) {
-					superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+					superpositions[i][j].remove(k--);
 				}
 			}
 		}
@@ -492,7 +502,7 @@ bool Knot::waveCollapseNoSym(const int selectNums[4]) {
 			ConnectionType requirement = static_cast<Glyph>(superpositions[i + 1][j]).up;
 			for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
 				if (superpositions[i][j].glyphList[k].down != requirement) {
-					superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+					superpositions[i][j].remove(k--);
 				}
 			}
 		}
@@ -502,7 +512,7 @@ bool Knot::waveCollapseNoSym(const int selectNums[4]) {
 			ConnectionType requirement = static_cast<Glyph>(superpositions[i][j - 1]).right;
 			for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
 				if (superpositions[i][j].glyphList[k].left != requirement) {
-					superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+					superpositions[i][j].remove(k--);
 				}
 			}
 		}
@@ -512,7 +522,7 @@ bool Knot::waveCollapseNoSym(const int selectNums[4]) {
 			ConnectionType requirement = static_cast<Glyph>(superpositions[i][j + 1]).left;
 			for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
 				if (superpositions[i][j].glyphList[k].right != requirement) {
-					superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
+					superpositions[i][j].remove(k--);
 				}
 			}
 		}

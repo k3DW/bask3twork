@@ -25,6 +25,7 @@
 
 /* TODO for later versions */
 /*
+	-> Change WFC algorithm to select tiles by entropy instead of random
 	-> "Copy to clipboard" button with the export box
 	-> Knots wrapping around the borders
 	-> More of the symmetries

@@ -157,8 +157,8 @@ struct Glyph {
 		unsigned int flags;
 	};
 
-	Glyph(unsigned int index_, unsigned int rotated_, unsigned int mirroredX_, unsigned int mirroredY_,
-	wxString chr_, ConnectionType up_, ConnectionType down_, ConnectionType left_, ConnectionType right_) :
+	Glyph(unsigned int index_, unsigned int rotated_, unsigned int mirroredX_, unsigned int mirroredY_, wxString chr_,
+	ConnectionType up_, ConnectionType down_, ConnectionType left_, ConnectionType right_) :
 		up(up_), down(down_), left(left_), right(right_), chr(chr_),
 		index(index_), rotated(rotated_), mirroredX(mirroredX_), mirroredY(mirroredY_),
 		sameAfterRotate(index_ == rotated_),
@@ -195,6 +195,10 @@ struct GlyphSuperPos {
 		connectionCount[glyph.down][1]++;
 		connectionCount[glyph.left][2]++;
 		connectionCount[glyph.right][3]++;
+	}
+
+	void remove(int index) {
+		glyphList.erase(glyphList.begin() + index);
 	}
 
 	operator Glyph() {
