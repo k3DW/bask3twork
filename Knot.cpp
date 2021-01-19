@@ -15,10 +15,8 @@ void init() {
 	}
 }//*/
 
-Knot::Knot(int h, int w, wxStatusBar* statusBar) {
-	this->h = h;
-	this->w = w;
-	this->statusBar = statusBar;
+Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar) {
+	
 	this->glyphIndices = std::vector<std::vector<int>>(h, std::vector<int>(w, 0)); // Set all indices to 0, which is the glyph index of the space "\x20"
 
 	//this->test = std::vector<std::vector<int>>(h, std::vector<int>(w, 0));
@@ -40,147 +38,135 @@ wxString Knot::get(int i, int j) {
 	return glyphs[glyphIndices[i][j]];
 }
 
-bool Knot::generateNoSym(const int selectNums[4]) {
+bool Knot::generateNoSym(ijSignature) {
 	const wxString oldStatus = statusBar->GetStatusText();
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
 	bool success = false;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS && !success; attempts++) {
+		//*
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating no symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
-		if (tryGeneratingNoSym(selectNums, allGlyphIndices))
+		if (tryGeneratingNoSym(iMin, jMin, iMax, jMax, allGlyphIndices)) {
 			success = true;
+			//wxMessageBox(intWX(attempts));
+		}
 		else
-			glyphIndices = previousGlyphIndices;
+			glyphIndices = previousGlyphIndices;//*/
 	}
 
 	statusBar->SetStatusText(oldStatus);
 	return success;
 }
-bool Knot::generateVertSym(const int selectNums[4]) {
+bool Knot::generateVertSym(ijSignature) {
 	const wxString oldStatus = statusBar->GetStatusText();
-	const int* n = selectNums;
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
-	const bool isEvenNumberOfColumns = (n[3] - n[1] + 1) % 2 == 0;
-	const std::vector<int> middleColumnStartingGlyphList = isEvenNumberOfColumns ? connectToReflectY : sameAfterReflectY;
+	const std::vector<int> middleColumnStartingGlyphList = isEvenSegments(jMin, jMax) ? connectToReflectY : sameAfterReflectY;
 
-	const int jMid = (n[3] + n[1] - 2) / 2; // the index of the middle column
-	const int selectNumsLeftHalf[4] = { n[0], n[1], n[2], jMid };
-	const int selectNumsMiddleColumn[4] = { n[0], jMid + 1, n[2], jMid + 1 };
+	const int jMid = (jMin + jMax) / 2; // the index of the middle column
 
 	bool success = false;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS && !success; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating vertical symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
-		if (tryGeneratingNoSym(selectNumsLeftHalf, allGlyphIndices, bRIGHT) &&
-			tryGeneratingNoSym(selectNumsMiddleColumn, middleColumnStartingGlyphList, bRIGHT))
+		if (tryGeneratingNoSym(iMin, jMin, iMax, jMid - 1, allGlyphIndices, bRIGHT) &&			// Generating left half
+			tryGeneratingNoSym(iMin, jMid, iMax, jMid, middleColumnStartingGlyphList, bRIGHT))	// Generating middle column
 			success = true;
 		else
 			glyphIndices = previousGlyphIndices;
 	}
 
 	if (success) // success, therefore mirror the glyphs that need mirroring
-		for (int i = n[0] - 1; i <= n[2] - 1; i++)
-			for (int jIncr = n[1] - 1, jDecr = n[3] - 1; jIncr < jDecr; jIncr++, jDecr--)
+		for (int i = iMin; i <= iMax; i++)
+			for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
 				glyphIndices[i][jDecr] = reflectYGlyphs[glyphIndices[i][jIncr]];
 	statusBar->SetStatusText(oldStatus);
 	return success;
 }
-bool Knot::generateHoriSym(const int selectNums[4]) {
+bool Knot::generateHoriSym(ijSignature) {
 	const wxString oldStatus = statusBar->GetStatusText();
-	const int* n = selectNums;
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
-	const bool isEvenNumberOfRows = (n[2] - n[0] + 1) % 2 == 0;
-	const std::vector<int> middleRowStartingGlyphList = isEvenNumberOfRows ? connectToReflectX : sameAfterReflectX;
+	const std::vector<int> middleRowStartingGlyphList = isEvenSegments(iMin, iMax) ? connectToReflectX : sameAfterReflectX;
 
-	const int iMid = (n[2] + n[0] - 2) / 2; // the index of the middle row
-	const int selectNumsTopHalf[4] = { n[0], n[1], iMid, n[3] };
-	const int selectNumsMiddleRow[4] = { iMid + 1, n[1], iMid + 1, n[3] };
+	const int iMid = (iMin + iMax) / 2; // the index of the middle row
 
 	bool success = false;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS && !success; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating horizontal symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
-		if (tryGeneratingNoSym(selectNumsTopHalf, allGlyphIndices, bBOTTOM) &&
-			tryGeneratingNoSym(selectNumsMiddleRow, middleRowStartingGlyphList, bBOTTOM))
+		if (tryGeneratingNoSym(iMin, jMin, iMid - 1, jMax, allGlyphIndices, bBOTTOM) &&			// Generating upper half
+			tryGeneratingNoSym(iMid, jMin, iMid, jMax, middleRowStartingGlyphList, bBOTTOM))	// Generating middle row
 			success = true;
 		else
 			glyphIndices = previousGlyphIndices;
 	}
 
 	if (success) // success, therefore mirror the glyphs that need mirroring
-		for (int iIncr = n[0] - 1, iDecr = n[2] - 1; iIncr < iDecr; iIncr++, iDecr--)
-			for (int j = n[1] - 1; j <= n[3] - 1; j++)
+		for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)
+			for (int j = jMin; j <= jMax; j++)
 				glyphIndices[iDecr][j] = reflectXGlyphs[glyphIndices[iIncr][j]];
 	statusBar->SetStatusText(oldStatus);
 	return success;
 }
-bool Knot::generateVertHoriSym(const int selectNums[4]) {
+bool Knot::generateVertHoriSym(ijSignature) {
 	const wxString oldStatus = statusBar->GetStatusText();
-	const int* n = selectNums;
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
-	const bool isEvenNumberOfColumns = (n[3] - n[1] + 1) % 2 == 0;
-	const std::vector<int> middleColumnStartingGlyphList = isEvenNumberOfColumns ? connectToReflectY : sameAfterReflectY;
-	const bool isEvenNumberOfRows = (n[2] - n[0] + 1) % 2 == 0;
-	const std::vector<int> middleRowStartingGlyphList = isEvenNumberOfRows ? connectToReflectX : sameAfterReflectX;
+	const std::vector<int> middleColumnStartingGlyphList = isEvenSegments(jMin, jMax) ? connectToReflectY : sameAfterReflectY;
+	const std::vector<int> middleRowStartingGlyphList = isEvenSegments(iMin, iMax) ? connectToReflectX : sameAfterReflectX;
 	const std::vector<int> middleSquareStartingGlyphList = set_intersection(middleColumnStartingGlyphList, middleRowStartingGlyphList);
 
-	const int jMid = (n[3] + n[1] - 2) / 2; // the index of the middle column
-	const int iMid = (n[2] + n[0] - 2) / 2; // the index of the middle row
-	const int selectNumsMiddleColumn[4] = { n[0], jMid + 1, iMid, jMid + 1 };
-	const int selectNumsMiddleRow[4] = { iMid + 1, n[1], iMid + 1, jMid };
-	const int selectNumsMiddleSquare[4] = { iMid + 1, jMid + 1, iMid + 1, jMid + 1 };
-	const int selectNumsUpperLeftQuarter[4] = { n[0], n[1], iMid, jMid };
+	const int jMid = (jMin + jMax) / 2; // the index of the middle column
+	const int iMid = (iMin + iMax) / 2; // the index of the middle row
 
 	bool success = false;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS && !success; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating vertical + horizontal symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
-		if (tryGeneratingNoSym(selectNumsUpperLeftQuarter, allGlyphIndices, bRIGHT | bBOTTOM)			&&
-			tryGeneratingNoSym(selectNumsMiddleColumn, middleColumnStartingGlyphList, bRIGHT | bBOTTOM)	&&
-			tryGeneratingNoSym(selectNumsMiddleRow, middleRowStartingGlyphList, bRIGHT | bBOTTOM)		&&
-			tryGeneratingNoSym(selectNumsMiddleSquare, middleSquareStartingGlyphList, bRIGHT | bBOTTOM))
+		if (tryGeneratingNoSym(iMin, jMin, iMid - 1, jMid - 1, allGlyphIndices, bRIGHT | bBOTTOM)				&&	// Generating upper left quarter
+			tryGeneratingNoSym(iMin, jMid, iMid - 1, jMid, middleColumnStartingGlyphList, bRIGHT | bBOTTOM)		&&	// Generating middle column
+			tryGeneratingNoSym(iMid, jMin, iMid, jMid - 1, middleRowStartingGlyphList, bRIGHT | bBOTTOM)		&&	// Generating middle row
+			tryGeneratingNoSym(iMid, jMid, iMid, jMid, middleSquareStartingGlyphList, bRIGHT | bBOTTOM))			// Generating middle piece
 			success = true;
 		else
 			glyphIndices = previousGlyphIndices;
 	}
 
 	if (success) { // success, therefore mirror the glyphs that need mirroring
-		for (int i = n[0] - 1; i <= iMid; i++)
-			for (int jIncr = n[1] - 1, jDecr = n[3] - 1; jIncr < jDecr; jIncr++, jDecr--)
+		for (int i = iMin; i <= iMid; i++)
+			for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
 				glyphIndices[i][jDecr] = reflectYGlyphs[glyphIndices[i][jIncr]];
-		for (int iIncr = n[0] - 1, iDecr = n[2] - 1; iIncr < iDecr; iIncr++, iDecr--)
-			for (int j = n[1] - 1; j <= n[3] - 1; j++)
+		for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)
+			for (int j = jMin; j <= jMax; j++)
 				glyphIndices[iDecr][j] = reflectXGlyphs[glyphIndices[iIncr][j]];
 	}
 	statusBar->SetStatusText(oldStatus);
 	return success;
 }
-bool Knot::generateRot2Sym(const int selectNums[4]) {
+bool Knot::generateRot2Sym(ijSignature) {
 	const wxString oldStatus = statusBar->GetStatusText();
-	const int* n = selectNums;
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
-	const bool isEvenNumberOfColumns = (n[3] - n[1] + 1) % 2 == 0;
+	const bool isEvenNumberOfColumns = isEvenSegments(jMin, jMax);
 
-	const int jMid = (n[3] + n[1] - 2) / 2; // the index of the middle column
-	const int iMid = (n[2] + n[0] - 2) / 2; // the index of the middle row
-	const int selectNumsLeftHalf[4] = { n[0], n[1], n[2], jMid };
-	const int selectNumsMiddle[4] = { n[0], jMid + 1, iMid, jMid + 1 + isEvenNumberOfColumns };
+	const int jMid = (jMin + jMax) / 2; // the index of the middle column
+	const int iMid = (iMin + iMax) / 2; // the index of the middle row
 
 	bool success = false;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS && !success; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating 2-way rotational symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
-		if (tryGeneratingNoSym(selectNumsLeftHalf, allGlyphIndices, bRIGHT)) { // Generating the left half
-			for (int iIncr = n[0] - 1, iDecr = n[2] - 1; iIncr <= n[2] - 1; iIncr++, iDecr--)
-				for (int jIncr = n[1] - 1, jDecr = n[3] - 1; jIncr < jMid; jIncr++, jDecr--)
-					glyphIndices[iDecr][jDecr] = rotateGlyphs[rotateGlyphs[glyphIndices[iIncr][jIncr]]]; // Rotate-mirroring the left half
-			if (tryGeneratingNoSym(selectNumsMiddle, allGlyphIndices, bBOTTOM)) { // Generating the top section of the missing chunk
-				for (int iIncr = n[0] - 1, iDecr = n[2] - 1; iIncr < iMid; iIncr++, iDecr--)
+		if (tryGeneratingNoSym(iMin, jMin, iMax, jMid - 1, allGlyphIndices, bRIGHT)) { // Generating the left half
+
+			for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--)							// }	
+				for (int jIncr = jMin, jDecr = jMax; jIncr < jMid; jIncr++, jDecr--)						// } Rotate-mirroring the left half
+					glyphIndices[iDecr][jDecr] = rotateGlyphs[rotateGlyphs[glyphIndices[iIncr][jIncr]]];	// }
+
+			if (tryGeneratingNoSym(iMin, jMid, iMid - 1, jMid + isEvenNumberOfColumns, allGlyphIndices, bBOTTOM)) {	// Generating the top section of the missing chunk
+
+				for (int iIncr = iMin, iDecr = iMax; iIncr < iMid; iIncr++, iDecr--)
 					for (int jIncr = jMid, jDecr = jMid + isEvenNumberOfColumns; jIncr <= jMid + isEvenNumberOfColumns; jIncr++, jDecr--)
 						glyphIndices[iDecr][jDecr] = rotateGlyphs[rotateGlyphs[glyphIndices[iIncr][jIncr]]]; // Rotate-mirroring the generated top section
 
@@ -284,15 +270,14 @@ bool Knot::checkHoriSym(const int selectNums[4]) {
 	return true;
 }
 
-bool** Knot::createAssignedPtr(const int selectNums[4], bool diagonal) {
+bool** Knot::createAssignedPtr(ijSignature, bool diagonal) {
 	// This function gives the array of booleans that shows which glyph spots have been assigned already
-	const int* n = selectNums;
 	bool** assigned = new bool* [h];
 	for (int i = 0; i < h; i++) {
 		assigned[i] = new bool[w];
 		for (int j = 0; j < w; j++) {
-			bool withinSelection = (i >= n[0] - 1) && (i <= n[2] - 1) && (j >= n[1] - 1) && (j <= n[3] - 1);
-			bool belowDiagonal = (i - n[0] > j - n[1]);
+			bool withinSelection = (i >= iMin) && (i <= iMax) && (j >= jMin) && (j <= jMax);
+			bool belowDiagonal = (i - iMin > j - jMin);
 			assigned[i][j] = !withinSelection || (diagonal && belowDiagonal);
 		}
 	}
@@ -304,25 +289,24 @@ void Knot::deleteAssignedPtr(bool** assigned) {
 	delete[] assigned;
 }
 
-bool Knot::tryGeneratingNoSym(const int selectNums[4], const std::vector<int>& startingGlyphList, int ignoreSide) {
+bool Knot::tryGeneratingNoSym(ijSignature, const std::vector<int>& startingGlyphList, int ignoreSide) {
 	/*	This function generates a knot with no symmetry, lining up with the borders of the selection (unless ignoreSide tells it to be ignored)
 	 *	The function changes `glyphIndices`, which may need to be reversed in the outer function that calls it.
 	 */
-	const int* n = selectNums;
-	bool** assigned = createAssignedPtr(selectNums);
+	bool** assigned = createAssignedPtr(iMin, jMin, iMax, jMax);
 
 	bool success = true;
-	for (int i = n[0] - 1; i <= n[2] - 1 && success; i++) {
-		for (int j = n[1] - 1; j <= n[3] - 1 && success; j++) {
+	for (int i = iMin; i <= iMax && success; i++) {
+		for (int j = jMin; j <= jMax && success; j++) {
 			// Sorted vector of the indices of all the glyphs that can fit into this cell. Gets narrowed down for each side's requirements.
 			std::vector<int> glyphList = startingGlyphList;
 
 			/*	Ignore a side iff: (1) bSIDE & ignoreSide == true AND (2) it is on a border
 				Otherwise check the side	*/
-			if (!((bTOP & ignoreSide)    && (i == n[0] - 1)))		checkSide(glyphList, assigned, i, j, TOP);
-			if (!((bBOTTOM & ignoreSide) && (i == n[2] - 1)))		checkSide(glyphList, assigned, i, j, BOTTOM);
-			if (!((bLEFT & ignoreSide)   && (j == n[1] - 1)))		checkSide(glyphList, assigned, i, j, LEFT);
-			if (!((bRIGHT & ignoreSide)  && (j == n[3] - 1)))		checkSide(glyphList, assigned, i, j, RIGHT);
+			if (!((bTOP & ignoreSide)    && (i == iMin)))		checkSide(glyphList, assigned, i, j, TOP);
+			if (!((bBOTTOM & ignoreSide) && (i == iMax)))		checkSide(glyphList, assigned, i, j, BOTTOM);
+			if (!((bLEFT & ignoreSide)   && (j == jMin)))		checkSide(glyphList, assigned, i, j, LEFT);
+			if (!((bRIGHT & ignoreSide)  && (j == jMax)))		checkSide(glyphList, assigned, i, j, RIGHT);
 
 			// After all 4 sides are considered, if there are no possible glyphs remaining then this is an unsuccessful attempt.
 			if (glyphList.size() == 0) {
@@ -368,6 +352,9 @@ inline void Knot::set_intersection_inplace(std::vector<int>& first, const std::v
 	std::set_intersection(first.begin(), first.end(), second.begin(), second.end(), std::back_inserter(output));
 	first = output;
 }
+inline bool Knot::isEvenSegments(const int min, const int max) {
+	return (max - min + 1) % 2 == 0;
+}
 
 #pragma warning( pop )
 
@@ -384,10 +371,10 @@ SETUP:
 	S-3) Eliminate possibilities from the superpositions due to the internal boundary conditions
 
 Loop until all glyphs are determined (toBeDetermined.size() == 0):
-	L-1) Select a random tile location from `toBeDetermined`, then use its `GlyphSuperPos`
-		L-1a) Select a random `Glyph` from this specific `GlyphSuperPos`
-		L-1b) Set this specific `GlyphSuperPos` as `GlyphSuperPos(glyph)`, so that it is now determined
-	L-2) Recursively narrow down the rest of the Glyphs
+	L-1) Select a random location from `toBeDetermined`, then collapse its `GlyphSuperPos`
+	L-2) Remove conflicting options from the other superpositions
+		L-2a) Remove from immediate neighbouring superpositions
+		L-2b) Recursively check if any of the neighbouring superpositions preclude connections from its own neighbours
 
 ENDING:
 	E-1) Write data to the knot
@@ -401,29 +388,23 @@ inline bool Knot::onBoundary(int i, int j) {
 	return (i == 0) || (i == h - 1) || (j == 0) || (j == w - 1);
 }
 
-bool Knot::waveCollapseNoSym(const int selectNums[4]) {
+/* WFC algorithm*/
+/* bool Knot::waveCollapseNoSym(const int selectNums[4]) {
 	const int* n = selectNums;
 
 	/* A general pattern to optimize later:
 
 		ConnectionType requirement = (something);
-		for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
-			if (superpositions[i][j].glyphList[k].(side) != requirement) {
-				superpositions[i][j].glyphList.erase(superpositions[i][j].glyphList.begin() + (k--));
-			}
-		}
-
-	FIRST CHANGE: ADD THE .remove() FUNCTION TO THE GlyphSuperPos STRUCT
-		ConnectionType requirement = (something);
-		for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+		for (unsigned int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
 			if (superpositions[i][j].glyphList[k].(side) != requirement) {
 				superpositions[i][j].remove(k--);
 			}
 		}
+		if (superpositions[i][j].glyphList.empty()) return false;
 
-	*/
+	* /
 
-	/* STEP S-0: ALLOCATE THE knotGlyphs VECTOR. THIS WILL BE MOVED INTO THE CTOR LATER, WITH THE GLYPHS ZERO-INITIALIZED. */
+	/* STEP S-0: ALLOCATE THE knotGlyphs VECTOR. THIS WILL BE MOVED INTO THE CTOR LATER, WITH THE GLYPHS ZERO-INITIALIZED. * /
 	std::vector<std::vector<Glyph>> knotGlyphs;
 	for (int i = 0; i < h; i++) {
 		knotGlyphs.emplace_back();
@@ -432,113 +413,192 @@ bool Knot::waveCollapseNoSym(const int selectNums[4]) {
 		}
 	}
 
-	/* STEP S-1: STARTING VECTORS */
-	std::vector<std::vector<GlyphSuperPos>> superpositions; // The 2D vector of all superpositions
-	std::vector< std::pair<int, int> > toBeDetermined;		// The 2D vector of all locations that need to be determined
+	bool success = false;
+	for (int attempts = 1; attempts <= MAX_ATTEMPTS && !success; attempts++) {
 
-	/* STEP S-2: EXTERNAL BOUNDARIES */
-	for (int i = 0; i < h; i++) {
-		superpositions.emplace_back();
-		for (int j = 0; j < w; j++) {
+		/* STEP S-1: STARTING VECTORS * /
+		std::vector<std::vector<GlyphSuperPos>> superpositions; // The 2D vector of all superpositions
+		std::vector< std::pair<int, int> > toBeDetermined;		// The 2D vector of all locations that need to be determined
+		
+		/* STEP S-2: EXTERNAL BOUNDARIES * /
+		for (int i = 0; i < h; i++) {
+			superpositions.emplace_back();
+			for (int j = 0; j < w; j++) {
 
-			// Check if this tile is in the selection
-			if (inSelection(n, i, j)) {
-				toBeDetermined.emplace_back(i, j);
-				superpositions[i].push_back(allGlyphSuperPos);
-				if (i == 0) {
-					ConnectionType requirement = EMPTY;
-					for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
-						if (superpositions[i][j].glyphList[k].up != requirement) {
-							superpositions[i][j].remove(k--);
+				// Check if this tile is in the selection
+				if (inSelection(n, i, j)) {
+					toBeDetermined.emplace_back(i, j);
+					superpositions[i].push_back(allGlyphSuperPos);
+					if (i == 0) {
+						ConnectionType requirement = EMPTY;
+						for (unsigned int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+							if (superpositions[i][j].glyphList[k].up != requirement) {
+								superpositions[i][j].remove(k--);
+							}
 						}
+						if (superpositions[i][j].glyphList.empty()) return success;
+					}
+					else if (i == h - 1) {
+						ConnectionType requirement = EMPTY;
+						for (unsigned int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+							if (superpositions[i][j].glyphList[k].down != requirement) {
+								superpositions[i][j].remove(k--);
+							}
+						}
+						if (superpositions[i][j].glyphList.empty()) return success;
+					}
+
+					if (j == 0) {
+						ConnectionType requirement = EMPTY;
+						for (unsigned int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+							if (superpositions[i][j].glyphList[k].left != requirement) {
+								superpositions[i][j].remove(k--);
+							}
+						}
+						if (superpositions[i][j].glyphList.empty()) return success;
+					}
+					else if (j == w - 1) {
+						ConnectionType requirement = EMPTY;
+						for (unsigned int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+							if (superpositions[i][j].glyphList[k].right != requirement) {
+								superpositions[i][j].remove(k--);
+							}
+						}
+						if (superpositions[i][j].glyphList.empty()) return success;
 					}
 				}
-				else if (i == h - 1) {
-					ConnectionType requirement = EMPTY;
-					for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
-						if (superpositions[i][j].glyphList[k].down != requirement) {
-							superpositions[i][j].remove(k--);
-						}
+				else {
+					superpositions[i].emplace_back(knotGlyphs[i][j]);
+				}
+
+			}
+		}//* /
+
+		/* STEP S-3: INTERNAL BOUNDARIES * /
+		if (n[0] - 1 != 0) { // The up selection boundary
+			for (int i = n[0] - 1, j = n[1] - 1; j <= n[3] - 1; j++) {
+				ConnectionType requirement = static_cast<Glyph>(superpositions[i - 1][j]).down;
+				for (unsigned int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+					if (superpositions[i][j].glyphList[k].up != requirement) {
+						superpositions[i][j].remove(k--);
 					}
 				}
-
-				if (j == 0) {
-					ConnectionType requirement = EMPTY;
-					for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
-						if (superpositions[i][j].glyphList[k].left != requirement) {
-							superpositions[i][j].remove(k--);
-						}
+				if (superpositions[i][j].glyphList.empty()) return success;
+			}
+		}
+		if (n[2] - 1 != h - 1) { // The down selection boundary
+			for (int i = n[2] - 1, j = n[1] - 1; j <= n[3] - 1; j++) {
+				ConnectionType requirement = static_cast<Glyph>(superpositions[i + 1][j]).up;
+				for (unsigned int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+					if (superpositions[i][j].glyphList[k].down != requirement) {
+						superpositions[i][j].remove(k--);
 					}
 				}
-				else if (j == w - 1) {
-					ConnectionType requirement = EMPTY;
-					for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
-						if (superpositions[i][j].glyphList[k].right != requirement) {
-							superpositions[i][j].remove(k--);
-						}
+				if (superpositions[i][j].glyphList.empty()) return success;
+			}
+		}
+		if (n[1] - 1 != 0) { // The left selection boundary
+			for (int j = n[1] - 1, i = n[0] - 1; i <= n[2] - 1; i++) {
+				ConnectionType requirement = static_cast<Glyph>(superpositions[i][j - 1]).right;
+				for (unsigned int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+					if (superpositions[i][j].glyphList[k].left != requirement) {
+						superpositions[i][j].remove(k--);
 					}
 				}
+				if (superpositions[i][j].glyphList.empty()) return success;
 			}
-			else {
-				superpositions[i].emplace_back(knotGlyphs[i][j]);
-			}
-
 		}
-	}//*/
+		if (n[3] - 1 != w - 1) { // The right selection boundary
+			for (int j = n[3] - 1, i = n[0] - 1; i <= n[2] - 1; i++) {
+				ConnectionType requirement = static_cast<Glyph>(superpositions[i][j + 1]).left;
+				for (unsigned int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
+					if (superpositions[i][j].glyphList[k].right != requirement) {
+						superpositions[i][j].remove(k--);
+					}
+				}
+				if (superpositions[i][j].glyphList.empty()) return success;
+			}
+		}
 
-	/* STEP S-3: INTERNAL BOUNDARIES */
-	if (n[0] - 1 != 0) { // The up selection boundary
-		for (int i = n[0] - 1, j = n[1] - 1; j <= n[3] - 1; j++) {
-			ConnectionType requirement = static_cast<Glyph>(superpositions[i - 1][j]).down;
-			for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
-				if (superpositions[i][j].glyphList[k].up != requirement) {
-					superpositions[i][j].remove(k--);
+		/* LOOPING STEPS * /
+		while (toBeDetermined.size() != 0) {
+
+			/* STEP L-1: SELECT A RANDOM TILE * /
+
+			const auto& [i, j] = pop_random(toBeDetermined);	// Grab a random location, store as (i,j)
+			Glyph glyph = superpositions[i][j].collapse();		// Collapse this location
+
+			/* STEP L-2: REMOVE CONFLICTING OPTIONS * /
+
+			/* The up side * / {
+				if (i != n[0] - 1) { // if this location is not on the up selection boundary
+					ConnectionType requirement = static_cast<Glyph>(superpositions[i][j]).up;
+					for (unsigned int k = 0; k < superpositions[i - 1][j].glyphList.size(); k++) {
+						if (superpositions[i - 1][j].glyphList[k].down != requirement) {
+							superpositions[i - 1][j].remove(k--);
+						}
+					}
+					if (superpositions[i - 1][j].glyphList.empty()) return success;
+				}
+			}
+			/* The down side * / {
+				if (i != n[2] - 1) { // if this location is not on the down selection boundary
+					ConnectionType requirement = static_cast<Glyph>(superpositions[i][j]).down;
+					for (unsigned int k = 0; k < superpositions[i + 1][j].glyphList.size(); k++) {
+						if (superpositions[i + 1][j].glyphList[k].up != requirement) {
+							superpositions[i + 1][j].remove(k--);
+						}
+					}
+					if (superpositions[i + 1][j].glyphList.empty()) return success;
+				}
+			}
+			/* The left side * / {
+				if (j != n[1] - 1) { // if this location is not on the left selection boundary
+					ConnectionType requirement = static_cast<Glyph>(superpositions[i][j]).left;
+					for (unsigned int k = 0; k < superpositions[i][j - 1].glyphList.size(); k++) {
+						if (superpositions[i][j - 1].glyphList[k].right != requirement) {
+							superpositions[i][j - 1].remove(k--);
+						}
+					}
+					if (superpositions[i][j - 1].glyphList.empty()) return success;
+				}
+			}
+			/* The right side * / {
+				if (j != n[3] - 1) { // if this location is not on the right selection boundary
+					ConnectionType requirement = static_cast<Glyph>(superpositions[i][j]).right;
+					for (unsigned int k = 0; k < superpositions[i][j + 1].glyphList.size(); k++) {
+						if (superpositions[i][j + 1].glyphList[k].left != requirement) {
+							superpositions[i][j + 1].remove(k--);
+						}
+					}
+					if (superpositions[i][j + 1].glyphList.empty()) return success;
+				}
+			}
+
+
+			//ConnectionCountArray oldConnectionCount{ superpositions[i][j].connectionCount };
+
+
+			//ConnectionCountArray newConnectionCount{ superpositions[i][j].connectionCount };
+
+
+
+		}//* /
+		/*  * /
+
+		/* STEP E-1: SET THE KNOT IN PLACE * /
+		success = true;
+		if (success) {
+			for (int i = 0; i < h; i++) {
+				for (int j = 0; j < w; j++) {
+					glyphIndices[i][j] = superpositions[i][j].glyphList[0].index;
 				}
 			}
 		}
-	}
-	if (n[2] - 1 != h - 1) { // The down selection boundary
-		for (int i = n[2] - 1, j = n[1] - 1; j <= n[3] - 1; j++) {
-			ConnectionType requirement = static_cast<Glyph>(superpositions[i + 1][j]).up;
-			for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
-				if (superpositions[i][j].glyphList[k].down != requirement) {
-					superpositions[i][j].remove(k--);
-				}
-			}
-		}
-	}
-	if (n[1] - 1 != 0) { // The left selection boundary
-		for (int j = n[1] - 1, i = n[0] - 1; i <= n[2] - 1; i++) {
-			ConnectionType requirement = static_cast<Glyph>(superpositions[i][j - 1]).right;
-			for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
-				if (superpositions[i][j].glyphList[k].left != requirement) {
-					superpositions[i][j].remove(k--);
-				}
-			}
-		}
-	}
-	if (n[3] - 1 != w - 1) { // The right selection boundary
-		for (int j = n[3] - 1, i = n[0] - 1; i <= n[2] - 1; i++) {
-			ConnectionType requirement = static_cast<Glyph>(superpositions[i][j + 1]).left;
-			for (int k = 0; k < superpositions[i][j].glyphList.size(); k++) {
-				if (superpositions[i][j].glyphList[k].right != requirement) {
-					superpositions[i][j].remove(k--);
-				}
-			}
-		}
+
+//ending:
+
 	}
 
-
-	
-
-
-	/* STEP E-1: SET THE KNOT IN PLACE */
-	for (int i = 0; i < h; i++) {
-		for (int j = 0; j < w; j++) {
-			glyphIndices[i][j] = superpositions[i][j].glyphList[0].index;
-		}
-	}//*/
-
-	return true;
-}
-
+	return success;
+}//*/

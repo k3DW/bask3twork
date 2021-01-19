@@ -13,7 +13,7 @@ public:
 	void leftClick(wxMouseEvent& evt);
 	void rightClick(wxMouseEvent& evt);
 
-	void highlightSelection(int selectNums[4]);
+	void highlightSelection(ijSignature);
 	void clearHighlight(bool refresh = true);
 
 	void drawKnot();

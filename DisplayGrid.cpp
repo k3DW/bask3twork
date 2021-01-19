@@ -1,13 +1,8 @@
 #include "DisplayGrid.h"
 #include "MainWindow.h"
 
-DisplayGrid::DisplayGrid(wxWindow* parent, Knot* knot) : wxPanel(parent) {
+DisplayGrid::DisplayGrid(wxWindow* parent, Knot* knot) : wxPanel(parent), parent(parent), knot(knot), h(knot->h), w(knot->w) {
 	this->Hide();
-
-	this->parent = parent;
-	this->h = knot->getH;
-	this->w = knot->getW;
-	this->knot = knot;
 
 	sizer = new wxGridBagSizer(-1, 0);
 	this->SetSizer(sizer);
@@ -54,11 +49,10 @@ void DisplayGrid::rightClick(wxMouseEvent& evt) {
 	evt.Skip();
 }
 
-void DisplayGrid::highlightSelection(int selectNums[4]) { // This function highlights the selected area.
+void DisplayGrid::highlightSelection(ijSignature) { // This function highlights the selected area.
 	clearHighlight(false);
-	int* n = selectNums;
-	for (int i = n[0] - 1; i <= n[2] - 1; i++)
-		for (int j = n[1] - 1; j <= n[3] - 1; j++)
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
 			tiles[i][j]->highlight(true);
 	anythingHighlighted = true;
 	Refresh();

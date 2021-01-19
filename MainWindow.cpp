@@ -172,15 +172,14 @@ void MainWindow::changeSelectCoord(int x1, int y1, int x2, int y2) {
 	updateSelectCoord();
 }
 void MainWindow::fixSelectCoord() { // This function "fixes" the selection coordinates, such that the left coordinate is to the upper-left of the right coordinate.
-	int* n = selectNums;
-	if (n[0] > n[2]) std::swap(n[0], n[2]);
-	if (n[1] > n[3]) std::swap(n[1], n[3]);
+	if (selectNums[0] > selectNums[2]) std::swap(selectNums[0], selectNums[2]);
+	if (selectNums[1] > selectNums[3]) std::swap(selectNums[1], selectNums[3]);
 	updateSelectCoord();
 }
 void MainWindow::selectToggleFunction(wxCommandEvent& evt) {
 	if (selectToggleButton->GetLabelText() == wxString("Show")) {
 		fixSelectCoord();
-		disp->highlightSelection(selectNums);
+		disp->highlightSelection(selectNums[0] - 1, selectNums[1] - 1, selectNums[2] - 1, selectNums[3] - 1);
 		selectToggleButton->SetLabelText("Hide");
 		enableGenerateButtons(true);
 	}
@@ -212,7 +211,7 @@ void MainWindow::enableGenerateButtons(bool enable) {
 		generateVertHoriSymButton->Disable();
 	}
 }
-#define hasSymmetryType(SymType) (id == SymType && knot->generate##SymType##(selectNums))
+#define hasSymmetryType(SymType) (id == SymType && knot->generate##SymType##(selectNums[0] - 1, selectNums[1] - 1, selectNums[2] - 1, selectNums[3] - 1))
 void MainWindow::generateKnot(wxCommandEvent& evt) {
 	int id = evt.GetId();
 	if (
@@ -231,10 +230,27 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 }
 
 void MainWindow::waveCollapseFunction(wxCommandEvent& evt) {
+
+	const wxString oldStatus = this->GetStatusBar()->GetStatusText();
+
+	/*
 	knot->waveCollapseNoSym(selectNums);
+	/* /
+	bool success = false;
+	for (int attempts = 1; attempts <= MAX_ATTEMPTS && !success; attempts++) {
+		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
+			this->GetStatusBar()->SetStatusText("Generating no sym WFC... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
+		if (knot->waveCollapseNoSym(selectNums)) {
+			success = true;
+			wxMessageBox(intWX(attempts));
+		}
+	}//* /
+
+	this->GetStatusBar()->SetStatusText(oldStatus);
 
 	disp->drawKnot();
 	this->showExportBox();
+	//*/
 
 	evt.Skip();
 }
@@ -246,13 +262,25 @@ void MainWindow::regenExportBox() {
 	exportBox->SetFont(exportFont);
 	exportRegionSizer->Prepend(exportBox, 0, wxALIGN_CENTER | wxDOWN | wxUP, GAP_3);
 }
-void MainWindow::showExportBox() {
+/* need to fix */ void MainWindow::showExportBox() {
+
+	//wxString test = glyphs[186];
+	//wxMessageBox(test + " " + test + " " + test);
+
+	//wxMessageBox(glyphs[1] + glyphs[1] + test + glyphs[1] + glyphs[1]);
+
 	wxString toExport;
+	bool display = false;
 	for (int i = 0; i < h; i++) {
-		for (int j = 0; j < w; j++)
-			toExport << knot->get(i, j);
+		for (int j = 0; j < w; j++) {
+			if (knot->get(i, j) == glyphs[186])					// fix this later?
+				toExport << wxString::FromUTF8("\xE2\x80\xA1");
+			else
+				toExport << knot->get(i, j);
+		}
 		if (i < h - 1)
 			toExport << "\r\n";
 	}
 	exportBox->SetLabel(toExport);
+	//if(display) wxMessageBox(toExport);
 }
