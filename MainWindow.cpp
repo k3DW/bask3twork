@@ -210,6 +210,8 @@ void MainWindow::enableGenerateButtons(bool enable) {
 #define hasSymmetryType(SymType) (id == SymType && knot->generate##SymType##(iMin, jMin, iMax, jMax))
 void MainWindow::generateKnot(wxCommandEvent& evt) {
 	int id = evt.GetId();
+	const wxString oldStatus = GetStatusBar()->GetStatusText();
+
 	if (
 		hasSymmetryType(NoSym)			||
 		hasSymmetryType(VertSym)		||
@@ -222,6 +224,8 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	}
 	else
 		wxMessageBox("The specified knot was not able to be generated in " + MAX_ATTEMPTS_STR + " attempts.", "Error: Knot failed");
+
+	GetStatusBar()->SetStatusText(oldStatus);
 	evt.Skip();
 }
 

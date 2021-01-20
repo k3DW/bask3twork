@@ -25,7 +25,7 @@ void DisplayGrid::initAxisLabels() {
 		sizer->Add(new Tile(this, wxID_ANY, i, 240, axisFont), wxGBPosition(i, 0), wxDefaultSpan, wxALIGN_CENTER);
 }
 void DisplayGrid::initTiles() {
-	tiles = std::vector< std::vector<Tile*> >(h, std::vector<Tile*>(w, nullptr));
+	tiles = std::vector<std::vector<Tile*>>(h, std::vector<Tile*>(w, nullptr));
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
 			int id = (i * w) + j;

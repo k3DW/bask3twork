@@ -50,51 +50,6 @@ struct Glyph {
 	}
 };
 
-struct GlyphSuperPos {
-	std::vector<Glyph> glyphList;
-	std::array< std::array<unsigned int, NUM_SIDES>, NUM_TYPES> connectionCount{};
-	bool determined = false;
-	bool inUse = false;
-
-	//unsigned int i; // location in the i direction
-	//unsigned int j; // location in the j direction
-
-	GlyphSuperPos(const std::vector<Glyph>& glyphList_) : glyphList(glyphList_) {
-		for (const Glyph& glyph : glyphList) {
-			connectionCount[glyph.up][0]++;
-			connectionCount[glyph.down][1]++;
-			connectionCount[glyph.left][2]++;
-			connectionCount[glyph.right][3]++;
-		}
-	}
-	GlyphSuperPos(const GlyphSuperPos& input) :
-		glyphList(input.glyphList), connectionCount(input.connectionCount) {}
-
-	GlyphSuperPos(const Glyph& glyph) {
-		glyphList.push_back(glyph);
-		determined = true;
-		connectionCount[glyph.up][0]++;
-		connectionCount[glyph.down][1]++;
-		connectionCount[glyph.left][2]++;
-		connectionCount[glyph.right][3]++;
-	}
-
-	void remove(int index) {
-		glyphList.erase(glyphList.begin() + index);
-	}
-
-	Glyph collapse() {
-		/* Choose a random Glyph from the options, and set that as the only Glyph. */
-		Glyph glyph = glyphList[rand() % glyphList.size()]; // Grab a random Glyph
-		*this = { glyph };									// Reset the GlyphSuperPosition so it is determined
-		return glyph;										// Return the Glyph;
-	}
-
-	operator Glyph() const {
-		return glyphList[0];
-	}
-};
-
 const std::vector<Glyph> allGlyphs{
 	{ 0, 0, 0, 0, wxString::FromUTF8("\x20"), EMPTY, EMPTY, EMPTY, EMPTY },
 	{ 1, 94, 1, 1, wxString::FromUTF8("\x21"), EMPTY, EMPTY, ORTHO_BOTH, ORTHO_BOTH },
@@ -287,7 +242,57 @@ const std::vector<Glyph> allGlyphs{
 	{ 188, 181, 188, 182, wxString::FromUTF8("\xE2\x80\xB0"), DIAG_BOTH, EMPTY, EMPTY, EMPTY },
 	{ 189, 188, 181, 189, wxString::FromUTF8("\xE2\x80\xB9"), EMPTY, EMPTY, DIAG_BOTH, EMPTY }
 };
-const GlyphSuperPos allGlyphSuperPos{ allGlyphs };
+
+/*
+struct GlyphSuperPos {
+	std::vector<Glyph> glyphList;
+	std::array< std::array<unsigned int, NUM_SIDES>, NUM_TYPES> connectionCount{};
+	bool determined = false;
+	bool inUse = false;
+
+	//unsigned int i; // location in the i direction
+	//unsigned int j; // location in the j direction
+
+	GlyphSuperPos(const std::vector<Glyph>& glyphList_) : glyphList(glyphList_) {
+		for (const Glyph& glyph : glyphList) {
+			connectionCount[glyph.up][0]++;
+			connectionCount[glyph.down][1]++;
+			connectionCount[glyph.left][2]++;
+			connectionCount[glyph.right][3]++;
+		}
+	}
+	GlyphSuperPos(const GlyphSuperPos& input) :
+		glyphList(input.glyphList), connectionCount(input.connectionCount) {}
+
+	GlyphSuperPos(const Glyph& glyph) {
+		glyphList.push_back(glyph);
+		determined = true;
+		connectionCount[glyph.up][0]++;
+		connectionCount[glyph.down][1]++;
+		connectionCount[glyph.left][2]++;
+		connectionCount[glyph.right][3]++;
+	}
+
+	void remove(int index) {
+		glyphList.erase(glyphList.begin() + index);
+	}
+
+	Glyph collapse() {
+		/* Choose a random Glyph from the options, and set that as the only Glyph. * /
+		Glyph glyph = glyphList[rand() % glyphList.size()]; // Grab a random Glyph
+		*this = { glyph };									// Reset the GlyphSuperPosition so it is determined
+		return glyph;										// Return the Glyph;
+	}
+
+	operator Glyph() const {
+		return glyphList[0];
+	}
+};
+//*/
+
+
+
+//const GlyphSuperPos allGlyphSuperPos{ allGlyphs };
 
 
 

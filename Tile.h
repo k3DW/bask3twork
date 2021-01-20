@@ -5,8 +5,7 @@
 class Tile : public wxStaticText {
 
 public:
-	Tile(wxWindow* parent, wxWindowID id, const wxString& label, int grey, wxFont tileFont) : wxStaticText(parent, id, label) {
-		baseColour = wxColour(grey, grey, grey);
+	Tile(wxWindow* parent, wxWindowID id, const wxString& label, int grey, wxFont tileFont) : wxStaticText(parent, id, label), baseColour(grey, grey, grey) {
 		this->SetBackgroundColour(baseColour);
 		this->SetFont(tileFont);
 	}

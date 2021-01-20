@@ -39,7 +39,6 @@ wxString Knot::get(int i, int j) {
 }
 
 bool Knot::generateNoSym(ijSignature) {
-	const wxString oldStatus = statusBar->GetStatusText();
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
 	bool success = false;
@@ -55,11 +54,9 @@ bool Knot::generateNoSym(ijSignature) {
 			glyphIndices = previousGlyphIndices;//*/
 	}
 
-	statusBar->SetStatusText(oldStatus);
 	return success;
 }
 bool Knot::generateVertSym(ijSignature) {
-	const wxString oldStatus = statusBar->GetStatusText();
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
 	const std::vector<int> middleColumnStartingGlyphList = isEvenSegments(jMin, jMax) ? connectToReflectY : sameAfterReflectY;
@@ -81,11 +78,9 @@ bool Knot::generateVertSym(ijSignature) {
 		for (int i = iMin; i <= iMax; i++)
 			for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
 				glyphIndices[i][jDecr] = reflectYGlyphs[glyphIndices[i][jIncr]];
-	statusBar->SetStatusText(oldStatus);
 	return success;
 }
 bool Knot::generateHoriSym(ijSignature) {
-	const wxString oldStatus = statusBar->GetStatusText();
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
 	const std::vector<int> middleRowStartingGlyphList = isEvenSegments(iMin, iMax) ? connectToReflectX : sameAfterReflectX;
@@ -107,11 +102,9 @@ bool Knot::generateHoriSym(ijSignature) {
 		for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)
 			for (int j = jMin; j <= jMax; j++)
 				glyphIndices[iDecr][j] = reflectXGlyphs[glyphIndices[iIncr][j]];
-	statusBar->SetStatusText(oldStatus);
 	return success;
 }
 bool Knot::generateVertHoriSym(ijSignature) {
-	const wxString oldStatus = statusBar->GetStatusText();
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
 	const std::vector<int> middleColumnStartingGlyphList = isEvenSegments(jMin, jMax) ? connectToReflectY : sameAfterReflectY;
@@ -142,11 +135,9 @@ bool Knot::generateVertHoriSym(ijSignature) {
 			for (int j = jMin; j <= jMax; j++)
 				glyphIndices[iDecr][j] = reflectXGlyphs[glyphIndices[iIncr][j]];
 	}
-	statusBar->SetStatusText(oldStatus);
 	return success;
 }
 bool Knot::generateRot2Sym(ijSignature) {
-	const wxString oldStatus = statusBar->GetStatusText();
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
 	const bool isEvenNumberOfColumns = isEvenSegments(jMin, jMax);
@@ -181,7 +172,6 @@ bool Knot::generateRot2Sym(ijSignature) {
 
 	if (!success)
 		glyphIndices = previousGlyphIndices;
-	statusBar->SetStatusText(oldStatus);
 	return success;
 }
 
