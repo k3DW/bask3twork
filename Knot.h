@@ -25,13 +25,13 @@ public:
 	declareGenerateFunction(Rot2Sym);
 	declareGenerateFunction(Rot4Sym);
 
-	bool checkVertSym(const int selectNums[4]);
-	bool checkHoriSym(const int selectNums[4]);
+	bool checkVertSym(ijSignature);
+	bool checkHoriSym(ijSignature);
 
-	bool waveCollapseNoSym(const int selectNums[4]);
+	//bool waveCollapseNoSym(const int selectNums[4]);
 
-	inline bool inSelection(const int selectNums[4], int i, int j);
-	inline bool onBoundary(int i, int j);
+	//inline bool inSelection(const int selectNums[4], int i, int j);
+	//inline bool onBoundary(int i, int j);
 
 private:
 	std::vector< std::vector<int> > glyphIndices;

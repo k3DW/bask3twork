@@ -185,41 +185,37 @@ bool Knot::generateRot2Sym(ijSignature) {
 	return success;
 }
 
-bool Knot::checkVertSym(const int selectNums[4]) {
-	const int* n = selectNums;
-	int iTop = n[0] - 1, iBottom = n[2] - 1;
-	int jLeft = n[1] - 1, jRight = n[3] - 1;
-
+bool Knot::checkVertSym(ijSignature) {
 	// Which of the sides of this selection are on the border of the knot
-	bool TOPisBorder	= !(iTop - 1 >= 0);
-	bool BOTTOMisBorder = !(iBottom + 1 < h);
-	bool LEFTisBorder	= !(jLeft - 1 >= 0);
-	bool RIGHTisBorder	= !(jRight + 1 < w);
+	const bool TOPisBorder		= !(iMin - 1 >= 0);
+	const bool BOTTOMisBorder	= !(iMax + 1 < h);
+	const bool LEFTisBorder		= !(jMin - 1 >= 0);
+	const bool RIGHTisBorder	= !(jMax + 1 < w);
 
 	ConnectionType leftConnection, rightConnection;
 
 	// This `for` loop checks the left and right edges of the selection, from top to bottom.
-	for (int i = iTop; i <= iBottom; i++) {
+	for (int i = iMin; i <= iMax; i++) {
 		// If the left or right side is on the border, then it requires `ConnectionType EMPTY`, otherwise it requires the external ConnectionType
-		leftConnection  =  LEFTisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[i][jLeft - 1]][RIGHT];
-		rightConnection = RIGHTisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[i][jRight + 1]][LEFT];
+		leftConnection  =  LEFTisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[i][jMin - 1]][RIGHT];
+		rightConnection = RIGHTisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[i][jMax + 1]][LEFT];
 		// If the left connection and the right connection are not equivalent, then this selection does not have vertical symmetry
 		if (leftConnection != reflectYTypes[rightConnection])
 			return false;
 	}
 
 	// This `for` loop checks the top and bottom edges of the selection (in that order, for each column), working outside-in
-	for (int jIncr = jLeft, jDecr = jRight; jIncr < jDecr; jIncr++, jDecr--) {
+	for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--) {
 		// If the top side is on the border, then they both require `ConnectionType EMPTY`, otherwise they require the external ConnectionType
-		leftConnection  = TOPisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iTop - 1][jIncr]][BOTTOM];
-		rightConnection = TOPisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iTop - 1][jDecr]][BOTTOM];
+		leftConnection  = TOPisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iMin - 1][jIncr]][BOTTOM];
+		rightConnection = TOPisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iMin - 1][jDecr]][BOTTOM];
 		// If the left connection and the right connection are not equivalent, then this selection does not have vertical symmetry
 		if (leftConnection != reflectYTypes[rightConnection])
 			return false;
 
 		// If the bottom side is on the border, then they both require `ConnectionType EMPTY`, otherwise they require the external ConnectionType
-		leftConnection  = BOTTOMisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iBottom + 1][jIncr]][TOP];
-		rightConnection = BOTTOMisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iBottom + 1][jDecr]][TOP];
+		leftConnection  = BOTTOMisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iMax + 1][jIncr]][TOP];
+		rightConnection = BOTTOMisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iMax + 1][jDecr]][TOP];
 		// If the left connection and the right connection are not equivalent, then this selection does not have vertical symmetry
 		if (leftConnection != reflectYTypes[rightConnection])
 			return false;
@@ -227,41 +223,37 @@ bool Knot::checkVertSym(const int selectNums[4]) {
 
 	return true;
 }
-bool Knot::checkHoriSym(const int selectNums[4]) {
-	const int* n = selectNums;
-	int iTop = n[0] - 1, iBottom = n[2] - 1;
-	int jLeft = n[1] - 1, jRight = n[3] - 1;
-
+bool Knot::checkHoriSym(ijSignature) {
 	// Which of the sides of this selection are on the border of the knot
-	bool TOPisBorder = !(iTop - 1 >= 0);
-	bool BOTTOMisBorder = !(iBottom + 1 < h);
-	bool LEFTisBorder = !(jLeft - 1 >= 0);
-	bool RIGHTisBorder = !(jRight + 1 < w);
+	const bool TOPisBorder = !(iMin - 1 >= 0);
+	const bool BOTTOMisBorder = !(iMax + 1 < h);
+	const bool LEFTisBorder = !(jMin - 1 >= 0);
+	const bool RIGHTisBorder = !(jMax + 1 < w);
 
 	ConnectionType topConnection, bottomConnection;
 
 	// This `for` loop checks the top and bottom edges of the selection, from left to right.
-	for (int j = jLeft; j <= jRight; j++) {
+	for (int j = jMin; j <= jMax; j++) {
 		// If the top or bottom side is on the border, then it requires `ConnectionType EMPTY`, otherwise it requires the external ConnectionType
-		topConnection    =    TOPisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iTop - 1][j]][BOTTOM];
-		bottomConnection = BOTTOMisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iBottom + 1][j]][TOP];
+		topConnection    =    TOPisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iMin - 1][j]][BOTTOM];
+		bottomConnection = BOTTOMisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iMax + 1][j]][TOP];
 		// If the top connection and the bottom connection are not equivalent, then this selection does not have horizontal symmetry
 		if (topConnection != reflectXTypes[bottomConnection])
 			return false;
 	}
 
 	// This `for` loop checks the left and right edges of the selection (in that order, for each row), working outside-in
-	for (int iIncr = iTop, iDecr = iBottom; iIncr < iDecr; iIncr++, iDecr--) {
+	for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--) {
 		// If the left side is on the border, then they both require `ConnectionType EMPTY`, otherwise they require the external ConnectionType
-		topConnection    = LEFTisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iIncr][jLeft - 1]][RIGHT];
-		bottomConnection = LEFTisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iDecr][jLeft - 1]][RIGHT];
+		topConnection    = LEFTisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iIncr][jMin - 1]][RIGHT];
+		bottomConnection = LEFTisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iDecr][jMin - 1]][RIGHT];
 		// If the top connection and the bottom connection are not equivalent, then this selection does not have horizontal symmetry
 		if (topConnection != reflectXTypes[bottomConnection])
 			return false;
 
 		// If the right side is on the border, then they both require `ConnectionType EMPTY`, otherwise they require the external ConnectionType
-		topConnection    = RIGHTisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iIncr][jRight + 1]][LEFT];
-		bottomConnection = RIGHTisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iDecr][jRight + 1]][LEFT];
+		topConnection    = RIGHTisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iIncr][jMax + 1]][LEFT];
+		bottomConnection = RIGHTisBorder ? EMPTY : connectionForGlyphOnSide[glyphIndices[iDecr][jMax + 1]][LEFT];
 		// If the top connection and the bottom connection are not equivalent, then this selection does not have horizontal symmetry
 		if (topConnection != reflectXTypes[bottomConnection])
 			return false;
@@ -358,6 +350,7 @@ inline bool Knot::isEvenSegments(const int min, const int max) {
 
 #pragma warning( pop )
 
+/* WFC method outline */
 /*
 
 Steps of WFC algorithm
@@ -381,12 +374,13 @@ ENDING:
 
 */
 
+/*
 inline bool Knot::inSelection(const int selectNums[4], int i, int j) {
 	return (i >= selectNums[0] - 1) && (i <= selectNums[2] - 1) && (j >= selectNums[1] - 1) && (j <= selectNums[3] - 1);
 }
 inline bool Knot::onBoundary(int i, int j) {
 	return (i == 0) || (i == h - 1) || (j == 0) || (j == w - 1);
-}
+}//*/
 
 /* WFC algorithm*/
 /* bool Knot::waveCollapseNoSym(const int selectNums[4]) {
