@@ -13,6 +13,7 @@ public:
 	void updateSelectCoord();
 	void changeSelectCoord(int x1, int y1, int x2, int y2);
 	void fixSelectCoord();
+	inline void resetSelectCoord();
 
 	void enableGenerateButtons(bool enable = true);
 
@@ -20,7 +21,7 @@ public:
 
 private:
 	int h, w;
-	int selectNums[4]; // The "selection numbers", which are the numbers displayed in selectCoord
+	int iMin, jMin, iMax, jMax; // The "selection numbers", i.e. the current grid selection
 	wxFont textFont;
 
 	void initSizerLayout();
@@ -40,10 +41,10 @@ private:
 
 	void initSelectRegion();
 	wxStaticBoxSizer* selectRegionSizer;
-		wxStaticText* selectCoord;		// The "selection coordinates", which denote the top-left and bottom-right corners of the selection area
+		wxStaticText* selectCoord;		// The display of "selection coordinates", i.e. top-left to bottom-right
 		wxBoxSizer* selectButtonSizer;	// The selection buttons
-			declareButton(selectToggle);	// This button is a show/hide button, which shows and hides the selection
-			declareButton(selectReset);	// This button resets the selection coordinates
+			declareButton(selectToggle);	// This button is a show/hide button, which highlights the selection
+			declareButton(selectReset);		// This button resets the selection coordinates
 
 	void initGenerateRegion();
 	void generateKnot(wxCommandEvent& evt);

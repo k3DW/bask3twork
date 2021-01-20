@@ -1,8 +1,6 @@
 #include "MainWindow.h"
 
-MainWindow::MainWindow(int h, int w, wxString title) : wxFrame(nullptr, wxID_ANY, title) {
-	this->h = h; this->w = w;
-	selectNums[0] = 1; selectNums[1] = 1; selectNums[2] = h; selectNums[3] = w;
+MainWindow::MainWindow(int h, int w, wxString title) : wxFrame(nullptr, wxID_ANY, title), h(h), w(w), iMin(0), jMin(0), iMax(h - 1), jMax(w - 1) {
 	textFont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 	
 	this->CreateStatusBar();
@@ -12,10 +10,6 @@ MainWindow::MainWindow(int h, int w, wxString title) : wxFrame(nullptr, wxID_ANY
 	wxSize windowSize = this->GetBestSize();
 	this->SetMinSize(windowSize);
 	this->SetSize(windowSize);
-
-	//wxString temp;
-	//temp << MAX_SIZE.GetHeight() << "," << MAX_SIZE.GetWidth();
-	//wxMessageBox(temp);
 }
 MainWindow::~MainWindow() {
 	this->Hide();
@@ -98,7 +92,7 @@ void MainWindow::initSelectRegion() {
 	selectRegionSizer->Add(selectCoord, 0, wxALIGN_CENTER | wxDOWN, GAP_3);
 	selectRegionSizer->Add(selectButtonSizer, 0, wxEXPAND);
 
-	this->changeSelectCoord(1, 1, h, w);
+	this->resetSelectCoord();
 }
 void MainWindow::initGenerateRegion() {
 	generateRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Generate");
@@ -142,7 +136,7 @@ void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
 	this->SetMinSize(wxDefaultSize);
 
 	// Reseting selectCoord and exportBox
-	this->changeSelectCoord(1, 1, h, w);
+	this->resetSelectCoord();
 	this->regenExportBox();
 	Layout();
 
@@ -156,30 +150,32 @@ void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
 }
 
 void MainWindow::updateSelectCoord() {
-	int* n = selectNums;
-	selectCoord->SetLabelText("(" + intWX(n[0]) + "," + intWX(n[1]) + ") to (" + intWX(n[2]) + "," << intWX(n[3]) + ")");
+	selectCoord->SetLabelText("(" + intWX(iMin + 1) + "," + intWX(jMin + 1) + ") to (" + intWX(iMax + 1) + "," << intWX(jMax + 1) + ")");
 	selectRegionSizer->Layout();
 	disp->clearHighlight();
 	selectToggleButton->SetLabelText("Show");
 	enableGenerateButtons(false);
 }
-void MainWindow::changeSelectCoord(int x1, int y1, int x2, int y2) {
-	int* n = selectNums;
-	if (x1) n[0] = x1;
-	if (y1) n[1] = y1;
-	if (x2) n[2] = x2;
-	if (y2) n[3] = y2;
+void MainWindow::changeSelectCoord(int iMin_, int jMin_, int iMax_, int jMax_) {
+	if (iMin_ > -1) iMin = iMin_;
+	if (jMin_ > -1) jMin = jMin_;
+	if (iMax_ > -1) iMax = iMax_;
+	if (jMax_ > -1) jMax = jMax_;
+
 	updateSelectCoord();
 }
 void MainWindow::fixSelectCoord() { // This function "fixes" the selection coordinates, such that the left coordinate is to the upper-left of the right coordinate.
-	if (selectNums[0] > selectNums[2]) std::swap(selectNums[0], selectNums[2]);
-	if (selectNums[1] > selectNums[3]) std::swap(selectNums[1], selectNums[3]);
+	if (iMin > iMax) std::swap(iMin, iMax);
+	if (jMin > jMax) std::swap(jMin, jMax);
 	updateSelectCoord();
+}
+inline void MainWindow::resetSelectCoord() {
+	changeSelectCoord(0, 0, h - 1, w - 1);
 }
 void MainWindow::selectToggleFunction(wxCommandEvent& evt) {
 	if (selectToggleButton->GetLabelText() == wxString("Show")) {
 		fixSelectCoord();
-		disp->highlightSelection(selectNums[0] - 1, selectNums[1] - 1, selectNums[2] - 1, selectNums[3] - 1);
+		disp->highlightSelection(iMin, jMin, iMax, jMax);
 		selectToggleButton->SetLabelText("Hide");
 		enableGenerateButtons(true);
 	}
@@ -191,14 +187,14 @@ void MainWindow::selectToggleFunction(wxCommandEvent& evt) {
 	evt.Skip();
 }
 void MainWindow::selectResetFunction(wxCommandEvent& evt) {
-	changeSelectCoord(1, 1, h, w);
+	resetSelectCoord();
 	evt.Skip();
 }
 
 void MainWindow::enableGenerateButtons(bool enable) {
 	if (enable) {
-		bool hasVertSym = knot->checkVertSym(selectNums[0] - 1, selectNums[1] - 1, selectNums[2] - 1, selectNums[3] - 1);
-		bool hasHoriSym = knot->checkHoriSym(selectNums[0] - 1, selectNums[1] - 1, selectNums[2] - 1, selectNums[3] - 1);
+		bool hasVertSym = knot->checkVertSym(iMin, jMin, iMax, jMax);
+		bool hasHoriSym = knot->checkHoriSym(iMin, jMin, iMax, jMax);
 		generateNoSymButton->Enable();
 		generateVertSymButton->Enable(hasVertSym);
 		generateHoriSymButton->Enable(hasHoriSym);
@@ -211,7 +207,7 @@ void MainWindow::enableGenerateButtons(bool enable) {
 		generateVertHoriSymButton->Disable();
 	}
 }
-#define hasSymmetryType(SymType) (id == SymType && knot->generate##SymType##(selectNums[0] - 1, selectNums[1] - 1, selectNums[2] - 1, selectNums[3] - 1))
+#define hasSymmetryType(SymType) (id == SymType && knot->generate##SymType##(iMin, jMin, iMax, jMax))
 void MainWindow::generateKnot(wxCommandEvent& evt) {
 	int id = evt.GetId();
 	if (
