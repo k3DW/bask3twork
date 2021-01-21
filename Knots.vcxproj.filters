@@ -27,7 +27,7 @@
     <ClCompile Include="Constants.h">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="Knot.cpp">
+    <ClCompile Include="KnotOld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,13 +38,13 @@
     <ClInclude Include="DisplayGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Knot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Tile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Glyph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KnotOld.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

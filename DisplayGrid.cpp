@@ -1,7 +1,7 @@
 #include "DisplayGrid.h"
 #include "MainWindow.h"
 
-DisplayGrid::DisplayGrid(wxWindow* parent, Knot* knot) : wxPanel(parent), parent(parent), knot(knot), h(knot->h), w(knot->w) {
+DisplayGrid::DisplayGrid(wxWindow* parent, KnotOld* knot) : wxPanel(parent), parent(parent), knot(knot), h(knot->h), w(knot->w) {
 	this->Hide();
 
 	sizer = new wxGridBagSizer(-1, 0);

@@ -1,4 +1,4 @@
-#include "Knot.h"
+#include "KnotOld.h"
 
 // Disabling warning C26812, which suggests to change `enum` to `enum class`. I want to keep Side and ConnectionType as `enum`.
 #pragma warning( push )
@@ -15,7 +15,7 @@ void init() {
 	}
 }//*/
 
-Knot::Knot(int h_, int w_, wxStatusBar* statusBar_) : h(h_), w(w_), statusBar(statusBar_) {
+KnotOld::KnotOld(int h_, int w_, wxStatusBar* statusBar_) : h(h_), w(w_), statusBar(statusBar_) {
 
 	this->glyphIndices = std::vector<std::vector<int>>(h, std::vector<int>(w, 0));
 
@@ -37,11 +37,11 @@ Knot::Knot(int h_, int w_, wxStatusBar* statusBar_) : h(h_), w(w_), statusBar(st
 		}
 	}//*/
 //}
-wxString Knot::get(int i, int j) {
+wxString KnotOld::get(int i, int j) {
 	return glyphs[glyphIndices[i][j]];
 }
 
-bool Knot::generateNoSym(ijSignature) {
+bool KnotOld::generateNoSym(ijSignature) {
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
 	bool success = false;
@@ -59,7 +59,7 @@ bool Knot::generateNoSym(ijSignature) {
 
 	return success;
 }
-bool Knot::generateVertSym(ijSignature) {
+bool KnotOld::generateVertSym(ijSignature) {
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
 	const std::vector<int> middleColumnStartingGlyphList = isEvenSegments(jMin, jMax) ? connectToReflectY : sameAfterReflectY;
@@ -83,7 +83,7 @@ bool Knot::generateVertSym(ijSignature) {
 				glyphIndices[i][jDecr] = reflectYGlyphs[glyphIndices[i][jIncr]];
 	return success;
 }
-bool Knot::generateHoriSym(ijSignature) {
+bool KnotOld::generateHoriSym(ijSignature) {
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
 	const std::vector<int> middleRowStartingGlyphList = isEvenSegments(iMin, iMax) ? connectToReflectX : sameAfterReflectX;
@@ -107,7 +107,7 @@ bool Knot::generateHoriSym(ijSignature) {
 				glyphIndices[iDecr][j] = reflectXGlyphs[glyphIndices[iIncr][j]];
 	return success;
 }
-bool Knot::generateVertHoriSym(ijSignature) {
+bool KnotOld::generateVertHoriSym(ijSignature) {
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
 	const std::vector<int> middleColumnStartingGlyphList = isEvenSegments(jMin, jMax) ? connectToReflectY : sameAfterReflectY;
@@ -140,7 +140,7 @@ bool Knot::generateVertHoriSym(ijSignature) {
 	}
 	return success;
 }
-bool Knot::generateRot2Sym(ijSignature) {
+bool KnotOld::generateRot2Sym(ijSignature) {
 	const std::vector< std::vector<int> > previousGlyphIndices(glyphIndices);
 
 	const bool isEvenNumberOfColumns = isEvenSegments(jMin, jMax);
@@ -178,7 +178,7 @@ bool Knot::generateRot2Sym(ijSignature) {
 	return success;
 }
 
-bool Knot::checkVertSym(ijSignature) {
+bool KnotOld::checkVertSym(ijSignature) {
 	// Which of the sides of this selection are on the border of the knot
 	const bool TOPisBorder		= !(iMin - 1 >= 0);
 	const bool BOTTOMisBorder	= !(iMax + 1 < h);
@@ -216,7 +216,7 @@ bool Knot::checkVertSym(ijSignature) {
 
 	return true;
 }
-bool Knot::checkHoriSym(ijSignature) {
+bool KnotOld::checkHoriSym(ijSignature) {
 	// Which of the sides of this selection are on the border of the knot
 	const bool TOPisBorder = !(iMin - 1 >= 0);
 	const bool BOTTOMisBorder = !(iMax + 1 < h);
@@ -255,7 +255,7 @@ bool Knot::checkHoriSym(ijSignature) {
 	return true;
 }
 
-bool** Knot::createAssignedPtr(ijSignature, bool diagonal) {
+bool** KnotOld::createAssignedPtr(ijSignature, bool diagonal) {
 	// This function gives the array of booleans that shows which glyph spots have been assigned already
 	bool** assigned = new bool* [h];
 	for (int i = 0; i < h; i++) {
@@ -268,7 +268,7 @@ bool** Knot::createAssignedPtr(ijSignature, bool diagonal) {
 	}
 	return assigned;
 }
-void Knot::deleteAssignedPtr(bool** assigned) {
+void KnotOld::deleteAssignedPtr(bool** assigned) {
 	for (int i = 0; i < h; i++)
 		delete[] assigned[i];
 	delete[] assigned;
@@ -289,7 +289,7 @@ std::vector<const Glyph*> possibleGlyphs(const int flags) {
 	return glyphList;
 }
 
-bool Knot::tryGeneratingNoSym(ijSignature, const std::vector<int>& startingGlyphList, int ignoreSide) {
+bool KnotOld::tryGeneratingNoSym(ijSignature, const std::vector<int>& startingGlyphList, int ignoreSide) {
 	/*	This function generates a knot with no symmetry, lining up with the borders of the selection (unless ignoreSide tells it to be ignored)
 	 *	The function changes `glyphIndices`, which may need to be reversed in the outer function that calls it.
 	 */
@@ -322,7 +322,7 @@ bool Knot::tryGeneratingNoSym(ijSignature, const std::vector<int>& startingGlyph
 	deleteAssignedPtr(assigned);
 	return success;
 }
-void Knot::checkSide(std::vector<int>& glyphList, bool** assigned, int i, int j, Side side) {
+void KnotOld::checkSide(std::vector<int>& glyphList, bool** assigned, int i, int j, Side side) {
 	bool notGridBorder = true; // If this side of this square is not part of the outer border
 	int newI = i, newJ = j;
 	switch (side) {
@@ -339,20 +339,20 @@ void Knot::checkSide(std::vector<int>& glyphList, bool** assigned, int i, int j,
 	else					// Else this square is in an outer border, facing outward on `Side side`
 		filterGlyphList(glyphList, EMPTY, side);	// Assume it requires ConnectionType EMPTY by default
 }
-inline void Knot::filterGlyphList(std::vector<int>& glyphList, ConnectionType type, Side side) {
+inline void KnotOld::filterGlyphList(std::vector<int>& glyphList, ConnectionType type, Side side) {
 	set_intersection_inplace(glyphList, glyphsWithTypeOnSide[type][side]);
 }
-inline std::vector<int> Knot::set_intersection(const std::vector<int>& first, const std::vector<int>& second) {
+inline std::vector<int> KnotOld::set_intersection(const std::vector<int>& first, const std::vector<int>& second) {
 	std::vector<int> output;
 	std::set_intersection(first.begin(), first.end(), second.begin(), second.end(), std::back_inserter(output));
 	return output;
 }
-inline void Knot::set_intersection_inplace(std::vector<int>& first, const std::vector<int>& second) {
+inline void KnotOld::set_intersection_inplace(std::vector<int>& first, const std::vector<int>& second) {
 	std::vector<int> output;
 	std::set_intersection(first.begin(), first.end(), second.begin(), second.end(), std::back_inserter(output));
 	first = output;
 }
-inline bool Knot::isEvenSegments(const int min, const int max) {
+inline bool KnotOld::isEvenSegments(const int min, const int max) {
 	return (max - min + 1) % 2 == 0;
 }
 

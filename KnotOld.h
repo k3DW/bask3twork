@@ -9,10 +9,10 @@
 const Glyph testGlyph{ 0, 0, 0, 0, wxString::FromUTF8("\x20"), Connection::EMPTY, Connection::EMPTY, Connection::EMPTY, Connection::EMPTY };
 const std::vector<std::vector<const Glyph*>> testVecVecGlyph{ std::vector<std::vector<const Glyph*>>(10, std::vector<const Glyph*>(10, &testGlyph)) };
 
-class Knot {
+class KnotOld {
 
 public:
-	Knot(int h_, int w_, wxStatusBar* statusBar_);
+	KnotOld(int h_, int w_, wxStatusBar* statusBar_);
 	const int h;
 	const int w;
 

@@ -2,7 +2,7 @@
 #include "wx/wx.h"
 #include "Constants.h"
 #include "DisplayGrid.h"
-#include "Knot.h"
+#include "KnotOld.h"
 
 class MainWindow : public wxFrame {
 
@@ -27,7 +27,7 @@ private:
 	void initSizerLayout();
 	void initDispSizer();
 	DisplayGrid* disp;
-	Knot* knot;
+	KnotOld* knot;
 	wxBoxSizer* mainSizer;
 	wxBoxSizer* dispSizer;
 	wxBoxSizer* buttonSizer;

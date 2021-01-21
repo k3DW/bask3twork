@@ -2,12 +2,12 @@
 #include "wx/wx.h"
 #include "Constants.h"
 #include "Tile.h"
-#include "Knot.h"
+#include "KnotOld.h"
 
 class DisplayGrid : public wxPanel {
 
 public:
-	DisplayGrid(wxWindow* parent, Knot* knot);
+	DisplayGrid(wxWindow* parent, KnotOld* knot);
 	~DisplayGrid();
 
 	void leftClick(wxMouseEvent& evt);
@@ -21,7 +21,7 @@ public:
 private:
 	wxWindow* parent;
 	int h, w;
-	Knot* knot;
+	KnotOld* knot;
 	wxFont axisFont, tileFont;
 	wxStatusBar* statusBar;
 

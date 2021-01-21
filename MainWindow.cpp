@@ -48,7 +48,7 @@ void MainWindow::initDispSizer() {
 		delete knot;
 		disp->Destroy();
 	}
-	knot = new Knot(h, w, this->GetStatusBar());
+	knot = new KnotOld(h, w, this->GetStatusBar());
 	disp = new DisplayGrid(this, knot);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
 }
