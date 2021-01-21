@@ -6,14 +6,15 @@
 
 #define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
 
+const Glyph testGlyph{ 0, 0, 0, 0, wxString::FromUTF8("\x20"), Connection::EMPTY, Connection::EMPTY, Connection::EMPTY, Connection::EMPTY };
+const std::vector<std::vector<const Glyph*>> testVecVecGlyph{ std::vector<std::vector<const Glyph*>>(10, std::vector<const Glyph*>(10, &testGlyph)) };
+
 class Knot {
 
 public:
+	Knot(int h_, int w_, wxStatusBar* statusBar_);
 	const int h;
 	const int w;
-	Knot() = default;
-	Knot(int h, int w, wxStatusBar* statusBar);
-	~Knot();
 
 	wxString get(int i, int j);
 
@@ -36,6 +37,10 @@ public:
 private:
 	std::vector< std::vector<int> > glyphIndices;
 	wxStatusBar* statusBar;
+
+	//int test;
+
+	//std::vector<std::vector<const Glyph*>> knotGlyphs;
 
 	bool** createAssignedPtr(ijSignature, bool diagonal = false);
 	void deleteAssignedPtr(bool** assigned);

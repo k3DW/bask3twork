@@ -15,9 +15,15 @@ void init() {
 	}
 }//*/
 
-Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar) {
-	
-	this->glyphIndices = std::vector<std::vector<int>>(h, std::vector<int>(w, 0)); // Set all indices to 0, which is the glyph index of the space "\x20"
+Knot::Knot(int h_, int w_, wxStatusBar* statusBar_) : h(h_), w(w_), statusBar(statusBar_) {
+
+	this->glyphIndices = std::vector<std::vector<int>>(h, std::vector<int>(w, 0));
+
+	//test = 0;
+
+}
+
+	//knotGlyphs = std::vector<std::vector<const Glyph*>>(1, std::vector<const Glyph*>(1, &testGlyph)); // Start by setting all glyphs to space "\x20"
 
 	//this->test = std::vector<std::vector<int>>(h, std::vector<int>(w, 0));
 	//this->knotGlyphs = std::vector<std::vector<Glyph>>(h, std::vector<Glyph>(w, allGlyphs[0]));
@@ -30,10 +36,7 @@ Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusB
 			knotGlyphs[i].push_back(Glyph(allGlyphs[0]));
 		}
 	}//*/
-}
-Knot::~Knot() {
-	glyphIndices.resize(0);
-}
+//}
 wxString Knot::get(int i, int j) {
 	return glyphs[glyphIndices[i][j]];
 }
