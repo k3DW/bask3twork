@@ -1,8 +1,9 @@
 #pragma once
 #include "Constants.h"
+//#include <array>
 
 struct GlyphFlag {
-	enum {
+	enum : unsigned int {
 		UP		= 0b1111 <<  0,	
 		DOWN	= 0b1111 <<  4,
 		LEFT	= 0b1111 <<  8,
@@ -22,7 +23,7 @@ struct GlyphFlag {
 };
 
 struct Connection {
-	enum Type{
+	enum Type : unsigned int {
 		DO_NOT_CARE = 0,
 		EMPTY		= 1, 
 		DIAG_BOTH	   ,
@@ -34,11 +35,11 @@ struct Connection {
 		ORTHO_LEFT	   ,
 		ORTHO_RIGHT	   
 	};
-};
 
-//const Connection::Type  rotateTypes[]{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_FRONT, Connection::DIAG_BACK, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT, Connection::ORTHO_UP, Connection::ORTHO_DOWN };
-const Connection::Type mirrorXTypes[]{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_DOWN, Connection::ORTHO_UP, Connection::ORTHO_LEFT, Connection::ORTHO_RIGHT };
-const Connection::Type mirrorYTypes[]{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_UP, Connection::ORTHO_DOWN, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT };
+	static constexpr Type  rotateTypes[] = { DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_FRONT, DIAG_BACK, ORTHO_RIGHT, ORTHO_LEFT, ORTHO_UP, ORTHO_DOWN };
+	static constexpr Type mirrorXTypes[] = { DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_BACK, DIAG_FRONT, ORTHO_DOWN, ORTHO_UP, ORTHO_LEFT, ORTHO_RIGHT };
+	static constexpr Type mirrorYTypes[] = { DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_BACK, DIAG_FRONT, ORTHO_UP, ORTHO_DOWN, ORTHO_RIGHT, ORTHO_LEFT };
+};
 
 struct Glyph {
 	wxString chr;
@@ -72,10 +73,10 @@ struct Glyph {
 		sameAfterRotate(index_ == rotated_),
 		sameAfterMirrorY(index_ == mirroredY_),
 		sameAfterMirrorX(index_ == mirroredX_),
-		connectToMirrorUp(up_ == mirrorXTypes[up_]),
-		connectToMirrorDown(down_ == mirrorXTypes[down_]),
-		connectToMirrorLeft(left_ == mirrorYTypes[left_]),
-		connectToMirrorRight(right_ == mirrorYTypes[right_]) {}
+		connectToMirrorUp(up_ == Connection::mirrorXTypes[up_]),
+		connectToMirrorDown(down_ == Connection::mirrorXTypes[down_]),
+		connectToMirrorLeft(left_ == Connection::mirrorYTypes[left_]),
+		connectToMirrorRight(right_ == Connection::mirrorYTypes[right_]) {}
 	Glyph(const Glyph& input) :
 		chr(input.chr), index(input.index), rotated(input.rotated), mirroredX(input.mirroredX), mirroredY(input.mirroredY), flags(input.flags) {}
 	Glyph& operator=(const Glyph& input) {
@@ -89,6 +90,7 @@ struct Glyph {
 };
 
 // maybe switch this to an std::array later
+//const std::array<Glyph, 190> allGlyphs { { // This is generated in Excel
 const std::vector<Glyph> allGlyphs { // This is generated in Excel
 	{ 0, 0, 0, 0, wxString::FromUTF8("\x20"), Connection::EMPTY, Connection::EMPTY, Connection::EMPTY, Connection::EMPTY },
 	{ 1, 94, 1, 1, wxString::FromUTF8("\x21"), Connection::EMPTY, Connection::EMPTY, Connection::ORTHO_BOTH, Connection::ORTHO_BOTH },
@@ -280,6 +282,7 @@ const std::vector<Glyph> allGlyphs { // This is generated in Excel
 	{ 187, 186, 184, 186, wxString::FromUTF8("\xE2\x80\xA6"), Connection::EMPTY, Connection::DIAG_BOTH, Connection::DIAG_BOTH, Connection::EMPTY },
 	{ 188, 181, 188, 182, wxString::FromUTF8("\xE2\x80\xB0"), Connection::DIAG_BOTH, Connection::EMPTY, Connection::EMPTY, Connection::EMPTY },
 	{ 189, 188, 181, 189, wxString::FromUTF8("\xE2\x80\xB9"), Connection::EMPTY, Connection::EMPTY, Connection::DIAG_BOTH, Connection::EMPTY }
+//} 
 };
 
 /*
