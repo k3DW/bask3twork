@@ -271,6 +271,21 @@ void Knot::deleteAssignedPtr(bool** assigned) {
 	delete[] assigned;
 }
 
+std::vector<const Glyph*> possibleGlyphs(const int flags) {
+	unsigned int mask =   ((flags & GlyphFlag::UP)		? GlyphFlag::UP		: 0)	// If the UP side is used, add 0x000F to the mask
+						| ((flags & GlyphFlag::DOWN)	? GlyphFlag::DOWN	: 0)	// If the DOWN side is used, add 0x00F0 to the mask
+						| ((flags & GlyphFlag::LEFT)	? GlyphFlag::LEFT	: 0)	// etc, for LEFT
+						| ((flags & GlyphFlag::RIGHT)	? GlyphFlag::RIGHT	: 0)	// etc, for RIGHT
+						|  (flags & GlyphFlag::COND_MASK); // All the other flags are only 1 bit long, so this is acceptable
+	
+	std::vector<const Glyph*> glyphList;
+	unsigned int toCheck = flags & mask;
+	for (const Glyph& glyph : allGlyphs)
+		if ((glyph.flags & mask) == toCheck)
+			glyphList.push_back(&glyph);
+	return glyphList;
+}
+
 bool Knot::tryGeneratingNoSym(ijSignature, const std::vector<int>& startingGlyphList, int ignoreSide) {
 	/*	This function generates a knot with no symmetry, lining up with the borders of the selection (unless ignoreSide tells it to be ignored)
 	 *	The function changes `glyphIndices`, which may need to be reversed in the outer function that calls it.

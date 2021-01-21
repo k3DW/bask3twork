@@ -40,6 +40,8 @@ private:
 	bool** createAssignedPtr(ijSignature, bool diagonal = false);
 	void deleteAssignedPtr(bool** assigned);
 
+	std::vector<Glyph*> possibleGlyphs(const int flags);
+
 	bool tryGeneratingNoSym(ijSignature, const std::vector<int>& startingGlyphList, int ignoreSide = 0);
 	void checkSide(std::vector<int>& glyphList, bool** assigned, int i, int j, Side side);
 	inline void filterGlyphList(std::vector<int>& glyphList, ConnectionType type, Side side);

@@ -1,6 +1,5 @@
 #pragma once
 #include "wx/wx.h"
-#include <array>
 
 #define intWX(x) wxString::Format(wxT("%i"),x)
 #define VERSION(MAJOR, MINOR, PATCH) intWX(MAJOR) + "." + intWX(MINOR) + (PATCH == 0 ? wxString("") : wxString(".") + intWX(PATCH))
@@ -53,8 +52,6 @@ extern wxString tempString;
 	const wxColour HL_COLOUR(150, 200, 255);
 #endif /* End definitions for `Tile` class */
 
-enum ConnectionType { EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_FRONT, DIAG_BACK, ORTHO_UP, ORTHO_DOWN, ORTHO_LEFT, ORTHO_RIGHT };
-
 /* Begin definitions for `Knot` class */ #if true
 	#define MAX_ATTEMPTS 10000
 	#define ATTEMPTS_DISPLAY_INCREMENT 100
@@ -67,6 +64,7 @@ enum ConnectionType { EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_FRONT, DIAG_BACK, ORTHO
 		bLEFT	= 1 << LEFT,
 		bRIGHT	= 1 << RIGHT
 	};
+	enum ConnectionType { EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_FRONT, DIAG_BACK, ORTHO_UP, ORTHO_DOWN, ORTHO_LEFT, ORTHO_RIGHT };
 
 	#define NUM_SIDES 4
 	#define NUM_TYPES 9
@@ -86,9 +84,9 @@ enum ConnectionType { EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_FRONT, DIAG_BACK, ORTHO
 		0, 1, 2, 3, 50, 52, 53, 7, 47, 48, 41, 93, 75, 29, 76, 27, 80, 17, 18, 19, 82, 84, 89, 85, 73, 79, 31, 15, 43, 13, 44, 26, 32, 33, 34, 37, 36, 35, 38, 39, 40, 10, 45, 28, 30, 42, 46, 8, 9, 58, 4, 51, 5, 6, 54, 56, 55, 62, 49, 59, 60, 61, 57, 91, 64, 65, 66, 69, 68, 67, 70, 71, 72, 24, 77, 12, 14, 74, 78, 25, 16, 90, 20, 83, 21, 23, 86, 88, 87, 22, 81, 63, 92, 11, 94, 95, 96, 98, 97, 102, 101, 100, 99, 105, 104, 103, 106, 108, 107, 110, 109, 113, 112, 111, 114, 116, 115, 118, 117, 119, 120, 122, 121, 123, 124, 126, 125, 128, 127, 130, 129, 132, 131, 133, 134, 137, 138, 135, 136, 141, 142, 139, 140, 144, 143, 146, 145, 149, 148, 147, 150, 153, 152, 151, 154, 155, 159, 158, 157, 156, 161, 160, 162, 163, 166, 167, 164, 165, 170, 171, 168, 169, 178, 177, 176, 179, 174, 173, 172, 175, 180, 181, 188, 183, 185, 184, 187, 186, 182, 189
 	};
 
-	/*const ConnectionType   rotateTypes[NUM_TYPES] = { // Each ConnectionType's map after a 90deg CW rotation
+	const ConnectionType   rotateTypes[NUM_TYPES] = { // Each ConnectionType's map after a 90deg CW rotation
 		EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_FRONT, DIAG_BACK, ORTHO_RIGHT, ORTHO_LEFT, ORTHO_UP, ORTHO_DOWN
-	};//*/
+	};
 	const ConnectionType reflectYTypes[NUM_TYPES] = { // Each ConnectionType's map after a left-right reflection
 		EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_BACK, DIAG_FRONT, ORTHO_UP, ORTHO_DOWN, ORTHO_RIGHT, ORTHO_LEFT
 	};
@@ -125,16 +123,10 @@ enum ConnectionType { EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_FRONT, DIAG_BACK, ORTHO
 	};
 #endif /* End definitions for `Knot` class */
 
-#define NUM_SIDES 4
-#define NUM_TYPES 9
-const ConnectionType  rotateTypes[]{ EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_FRONT, DIAG_BACK, ORTHO_RIGHT, ORTHO_LEFT, ORTHO_UP, ORTHO_DOWN };
-const ConnectionType mirrorXTypes[]{ EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_BACK, DIAG_FRONT, ORTHO_DOWN, ORTHO_UP, ORTHO_LEFT, ORTHO_RIGHT };
-const ConnectionType mirrorYTypes[]{ EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_BACK, DIAG_FRONT, ORTHO_UP, ORTHO_DOWN, ORTHO_RIGHT, ORTHO_LEFT };
-
 template<typename T>
 T pop_random(std::vector<T>& vec) {
 	int index = rand() % vec.size();	// Grab a random index
-	T output = vec[index];				// Store the value at that index
+	T output(vec[index]);				// Store the value at that index
 	vec.erase(vec.begin() + index);		// Remove the value from the vector
 	return output;						// Return the value
 }

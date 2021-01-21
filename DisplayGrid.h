@@ -25,7 +25,7 @@ private:
 	wxFont axisFont, tileFont;
 	wxStatusBar* statusBar;
 
-	std::vector< std::vector<Tile*> > tiles;
+	std::vector<std::vector<Tile*>> tiles;
 	wxGridBagSizer* sizer;
 	void initAxisLabels();
 	void initTiles();
