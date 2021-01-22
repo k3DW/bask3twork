@@ -1,4 +1,6 @@
-#pragma once
+#ifndef KNOTS_TILE
+#define KNOTS_TILE
+
 #include "Constants.h"
 
 class Tile : public wxStaticText {
@@ -20,3 +22,5 @@ public:
 private:
 	wxColour baseColour;
 };
+
+#endif // KNOTS_TILE

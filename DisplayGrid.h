@@ -1,12 +1,12 @@
 #pragma once
 #include "Constants.h"
 #include "Tile.h"
-#include "KnotOld.h"
+#include "Knot.h"
 
 class DisplayGrid : public wxPanel {
 
 public:
-	DisplayGrid(wxWindow* parent, KnotOld* knot);
+	DisplayGrid(wxWindow* parent, Knot* knot);
 	~DisplayGrid();
 
 	void leftClick(wxMouseEvent& evt);
@@ -15,12 +15,13 @@ public:
 	void highlightSelection(ijSignature);
 	void clearHighlight(bool refresh = true);
 
+	wxString get(const int i, const int j);
 	void drawKnot();
 
 private:
 	wxWindow* parent;
-	int h, w;
-	KnotOld* knot;
+	const int h, w;
+	Knot* knot;
 	wxFont axisFont, tileFont;
 	wxStatusBar* statusBar;
 

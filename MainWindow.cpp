@@ -39,7 +39,7 @@ void MainWindow::initSizerLayout() {
 	this->SetSizer(mainSizer);
 }
 void MainWindow::initDispSizer() {
-	if (!knot) {
+	if (!knot) { 
 		dispSizer = new wxBoxSizer(wxVERTICAL);
 		dispSizer->AddStretchSpacer();
 		dispSizer->AddStretchSpacer();
@@ -48,7 +48,7 @@ void MainWindow::initDispSizer() {
 		delete knot;
 		disp->Destroy();
 	}
-	knot = new KnotOld(h, w, this->GetStatusBar());
+	knot = new Knot(h, w, this->GetStatusBar());
 	disp = new DisplayGrid(this, knot);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
 }
@@ -103,9 +103,6 @@ void MainWindow::initGenerateRegion() {
 	initGenerateButton(Rot2Sym, "2-way Rotational");
 	initGenerateButton(Rot4Sym, "4-way Rotational");
 	enableGenerateButtons(false);
-
-	initButton(waveCollapse, "Wave Collapse NoSym");
-	generateRegionSizer->Add(waveCollapseButton);
 }
 void MainWindow::initExportRegion() {
 	exportRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Export");
@@ -169,7 +166,7 @@ void MainWindow::fixSelectCoord() { // This function "fixes" the selection coord
 	if (jMin > jMax) std::swap(jMin, jMax);
 	updateSelectCoord();
 }
-inline void MainWindow::resetSelectCoord() {
+void MainWindow::resetSelectCoord() {
 	changeSelectCoord(0, 0, h - 1, w - 1);
 }
 void MainWindow::selectToggleFunction(wxCommandEvent& evt) {
@@ -193,12 +190,12 @@ void MainWindow::selectResetFunction(wxCommandEvent& evt) {
 
 void MainWindow::enableGenerateButtons(bool enable) {
 	if (enable) {
-		bool hasVertSym = knot->checkVertSym(iMin, jMin, iMax, jMax);
-		bool hasHoriSym = knot->checkHoriSym(iMin, jMin, iMax, jMax);
+		//bool hasVertSym = knot->checkVertSym(iMin, jMin, iMax, jMax);
+		//bool hasHoriSym = knot->checkHoriSym(iMin, jMin, iMax, jMax);
 		generateNoSymButton->Enable();
-		generateVertSymButton->Enable(hasVertSym);
-		generateHoriSymButton->Enable(hasHoriSym);
-		generateVertHoriSymButton->Enable(hasVertSym && hasHoriSym);
+		generateVertSymButton->Enable();// hasVertSym);
+		generateHoriSymButton->Enable();// hasHoriSym);
+		generateVertHoriSymButton->Enable();// hasVertSym&& hasHoriSym);
 	}
 	else {
 		generateNoSymButton->Disable();
@@ -207,18 +204,20 @@ void MainWindow::enableGenerateButtons(bool enable) {
 		generateVertHoriSymButton->Disable();
 	}
 }
-#define hasSymmetryType(SymType) (id == SymType && knot->generate##SymType##(iMin, jMin, iMax, jMax))
 void MainWindow::generateKnot(wxCommandEvent& evt) {
 	int id = evt.GetId();
 	const wxString oldStatus = GetStatusBar()->GetStatusText();
 
-	if (
+	/*if (
 		hasSymmetryType(NoSym)			||
 		hasSymmetryType(VertSym)		||
 		hasSymmetryType(HoriSym)		||
 		hasSymmetryType(VertHoriSym)	||
 		hasSymmetryType(Rot2Sym)
-	){
+	)*/
+	if(
+		(id == NoSym && knot->generateNoSym(iMin, jMin, iMax, jMax))
+	) {
 		disp->drawKnot();
 		this->showExportBox();
 	}
@@ -226,32 +225,6 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 		wxMessageBox("The specified knot was not able to be generated in " + MAX_ATTEMPTS_STR + " attempts.", "Error: Knot failed");
 
 	GetStatusBar()->SetStatusText(oldStatus);
-	evt.Skip();
-}
-
-void MainWindow::waveCollapseFunction(wxCommandEvent& evt) {
-
-	const wxString oldStatus = this->GetStatusBar()->GetStatusText();
-
-	/*
-	knot->waveCollapseNoSym(selectNums);
-	/* /
-	bool success = false;
-	for (int attempts = 1; attempts <= MAX_ATTEMPTS && !success; attempts++) {
-		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			this->GetStatusBar()->SetStatusText("Generating no sym WFC... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
-		if (knot->waveCollapseNoSym(selectNums)) {
-			success = true;
-			wxMessageBox(intWX(attempts));
-		}
-	}//* /
-
-	this->GetStatusBar()->SetStatusText(oldStatus);
-
-	disp->drawKnot();
-	this->showExportBox();
-	//*/
-
 	evt.Skip();
 }
 
@@ -273,10 +246,11 @@ void MainWindow::regenExportBox() {
 	bool display = false;
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
-			if (knot->get(i, j) == glyphs[186])					// fix this later?
-				toExport << wxString::FromUTF8("\xE2\x80\xA1");
-			else
-				toExport << knot->get(i, j);
+			//if (knot->get(i, j) == glyphs[186])					// fix this later?
+			//	toExport << wxString::FromUTF8("\xE2\x80\xA1");
+			//else
+			//	toExport << knot->get(i, j);
+			toExport << knot->get(i, j);
 		}
 		if (i < h - 1)
 			toExport << "\r\n";

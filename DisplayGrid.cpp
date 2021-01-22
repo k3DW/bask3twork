@@ -1,7 +1,7 @@
 #include "DisplayGrid.h"
 #include "MainWindow.h"
 
-DisplayGrid::DisplayGrid(wxWindow* parent, KnotOld* knot) : wxPanel(parent), parent(parent), knot(knot), h(knot->h), w(knot->w) {
+DisplayGrid::DisplayGrid(wxWindow* parent, Knot* knot) : wxPanel(parent), parent(parent), knot(knot), h(knot->h), w(knot->w) {
 	this->Hide();
 
 	sizer = new wxGridBagSizer(-1, 0);
@@ -72,6 +72,7 @@ void DisplayGrid::drawKnot() {
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
 			tiles[i][j]->SetLabelText(knot->get(i, j));
+			//tiles[i][j]->SetLabel(wxString::FromUTF8("\x73"));
 		}
 	}
 }

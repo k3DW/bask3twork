@@ -1,9 +1,7 @@
-#pragma once
-#include "Constants.h"
+#if 0//ndef KNOTS_KNOTOLD
+#define KNOTS_KNOTOLD
 
-#ifndef ijSignature
-#define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
-#endif // !ijSignature
+#include "Constants.h"
 
 class KnotOld {
 
@@ -50,3 +48,5 @@ private:
 	inline void static set_intersection_inplace(std::vector<int>& first, const std::vector<int>& second);
 	inline bool static isEvenSegments(const int min, const int max);
 };
+
+#endif // KNOTS_KNOTOLD
