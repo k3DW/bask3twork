@@ -274,6 +274,7 @@ void KnotOld::deleteAssignedPtr(bool** assigned) {
 	delete[] assigned;
 }
 
+/*
 std::vector<const Glyph*> possibleGlyphs(const int flags) {
 	unsigned int mask =   ((flags & GlyphFlag::UP)		? GlyphFlag::UP		: 0)	// If the UP side is used, add 0x000F to the mask
 						| ((flags & GlyphFlag::DOWN)	? GlyphFlag::DOWN	: 0)	// If the DOWN side is used, add 0x00F0 to the mask
@@ -288,6 +289,7 @@ std::vector<const Glyph*> possibleGlyphs(const int flags) {
 			glyphList.push_back(&glyph);
 	return glyphList;
 }
+//*/
 
 bool KnotOld::tryGeneratingNoSym(ijSignature, const std::vector<int>& startingGlyphList, int ignoreSide) {
 	/*	This function generates a knot with no symmetry, lining up with the borders of the selection (unless ignoreSide tells it to be ignored)
@@ -322,7 +324,7 @@ bool KnotOld::tryGeneratingNoSym(ijSignature, const std::vector<int>& startingGl
 	deleteAssignedPtr(assigned);
 	return success;
 }
-void KnotOld::checkSide(std::vector<int>& glyphList, bool** assigned, int i, int j, Side side) {
+void KnotOld::checkSide(std::vector<int>& glyphList, bool** assigned, int i, int j, SideOLD side) {
 	bool notGridBorder = true; // If this side of this square is not part of the outer border
 	int newI = i, newJ = j;
 	switch (side) {
@@ -339,7 +341,7 @@ void KnotOld::checkSide(std::vector<int>& glyphList, bool** assigned, int i, int
 	else					// Else this square is in an outer border, facing outward on `Side side`
 		filterGlyphList(glyphList, EMPTY, side);	// Assume it requires ConnectionType EMPTY by default
 }
-inline void KnotOld::filterGlyphList(std::vector<int>& glyphList, ConnectionType type, Side side) {
+inline void KnotOld::filterGlyphList(std::vector<int>& glyphList, ConnectionType type, SideOLD side) {
 	set_intersection_inplace(glyphList, glyphsWithTypeOnSide[type][side]);
 }
 inline std::vector<int> KnotOld::set_intersection(const std::vector<int>& first, const std::vector<int>& second) {

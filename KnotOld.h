@@ -1,13 +1,10 @@
 #pragma once
 #include "wx/wx.h"
 #include "Constants.h"
-#include "Glyph.h"
-#include <vector>
 
+#ifndef ijSignature
 #define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
-
-const Glyph testGlyph{ 0, 0, 0, 0, wxString::FromUTF8("\x20"), Connection::EMPTY, Connection::EMPTY, Connection::EMPTY, Connection::EMPTY };
-const std::vector<std::vector<const Glyph*>> testVecVecGlyph{ std::vector<std::vector<const Glyph*>>(10, std::vector<const Glyph*>(10, &testGlyph)) };
+#endif // !ijSignature
 
 class KnotOld {
 
@@ -36,7 +33,7 @@ public:
 
 private:
 	std::vector< std::vector<int> > glyphIndices;
-	wxStatusBar* statusBar;
+	wxStatusBar* const statusBar;
 
 	//int test;
 
@@ -45,11 +42,11 @@ private:
 	bool** createAssignedPtr(ijSignature, bool diagonal = false);
 	void deleteAssignedPtr(bool** assigned);
 
-	std::vector<Glyph*> possibleGlyphs(const int flags);
+	//std::vector<Glyph*> possibleGlyphs(const int flags);
 
 	bool tryGeneratingNoSym(ijSignature, const std::vector<int>& startingGlyphList, int ignoreSide = 0);
-	void checkSide(std::vector<int>& glyphList, bool** assigned, int i, int j, Side side);
-	inline void filterGlyphList(std::vector<int>& glyphList, ConnectionType type, Side side);
+	void checkSide(std::vector<int>& glyphList, bool** assigned, int i, int j, SideOLD side);
+	inline void filterGlyphList(std::vector<int>& glyphList, ConnectionType type, SideOLD side);
 	inline std::vector<int> static set_intersection(const std::vector<int>& first, const std::vector<int>& second);
 	inline void static set_intersection_inplace(std::vector<int>& first, const std::vector<int>& second);
 	inline bool static isEvenSegments(const int min, const int max);

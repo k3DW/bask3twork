@@ -30,6 +30,9 @@
     <ClCompile Include="KnotOld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Knot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainWindow.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KnotOld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Knot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

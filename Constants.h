@@ -57,7 +57,7 @@ extern wxString tempString;
 	#define ATTEMPTS_DISPLAY_INCREMENT 100
 	const wxString MAX_ATTEMPTS_STR = intWX(MAX_ATTEMPTS);
 
-	enum Side { TOP, BOTTOM, LEFT, RIGHT };
+	enum SideOLD { TOP, BOTTOM, LEFT, RIGHT };
 	enum SideBitfield {
 		bTOP	= 1 << TOP,
 		bBOTTOM	= 1 << BOTTOM,
@@ -129,4 +129,9 @@ T pop_random(std::vector<T>& vec) {
 	T output(vec[index]);				// Store the value at that index
 	vec.erase(vec.begin() + index);		// Remove the value from the vector
 	return output;						// Return the value
+}
+
+template<typename T>
+inline T pick_random(const std::vector<T>& vec) {
+	return vec[rand() % vec.size()];
 }
