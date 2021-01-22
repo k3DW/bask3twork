@@ -153,7 +153,7 @@ void MainWindow::updateSelectCoord() {
 	selectToggleButton->SetLabelText("Show");
 	enableGenerateButtons(false);
 }
-void MainWindow::changeSelectCoord(int iMin_, int jMin_, int iMax_, int jMax_) {
+void MainWindow::changeSelectCoord(const int iMin_, const int jMin_, const int iMax_, const int jMax_) {
 	if (iMin_ > -1) iMin = iMin_;
 	if (jMin_ > -1) jMin = jMin_;
 	if (iMax_ > -1) iMax = iMax_;

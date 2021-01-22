@@ -11,7 +11,7 @@ public:
 	~MainWindow();
 
 	void updateSelectCoord();
-	void changeSelectCoord(int x1, int y1, int x2, int y2);
+	void changeSelectCoord(const int iMin_, const int jMin_, const int iMax_, const int jMax_);
 	void fixSelectCoord();
 	void resetSelectCoord();
 
