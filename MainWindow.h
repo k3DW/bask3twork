@@ -1,7 +1,8 @@
 #pragma once
 #include "Constants.h"
 #include "DisplayGrid.h"
-#include "KnotOld.h"
+#include "Glyph.h"
+#include "Knot.h"
 
 class MainWindow : public wxFrame {
 
@@ -12,7 +13,7 @@ public:
 	void updateSelectCoord();
 	void changeSelectCoord(int x1, int y1, int x2, int y2);
 	void fixSelectCoord();
-	inline void resetSelectCoord();
+	void resetSelectCoord();
 
 	void enableGenerateButtons(bool enable = true);
 
@@ -26,7 +27,7 @@ private:
 	void initSizerLayout();
 	void initDispSizer();
 	DisplayGrid* disp;
-	KnotOld* knot;
+	Knot* knot;
 	wxBoxSizer* mainSizer;
 	wxBoxSizer* dispSizer;
 	wxBoxSizer* buttonSizer;
@@ -55,7 +56,6 @@ private:
 		declareGenerateButton(Rot2Sym);
 		declareGenerateButton(Rot4Sym);
 		// ...
-		declareButton(waveCollapse);
 
 	void initExportRegion();
 	void showExportBox();

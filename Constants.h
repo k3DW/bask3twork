@@ -2,6 +2,7 @@
 #include "wx/wx.h"
 #include <array>
 #include <optional>
+#include <vector>
 
 #define intWX(x) wxString::Format(wxT("%i"),x)
 #define VERSION(MAJOR, MINOR, PATCH) intWX(MAJOR) + "." + intWX(MINOR) + (PATCH == 0 ? wxString("") : wxString(".") + intWX(PATCH))
@@ -53,6 +54,8 @@ extern wxString tempString;
 	const wxColour BACKGROUND_COLOUR(240, 240, 240);
 	const wxColour HL_COLOUR(150, 200, 255);
 #endif /* End definitions for `Tile` class */
+
+#define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
 
 /* Begin definitions for `Knot` class */ #if true
 	#define MAX_ATTEMPTS 10000
@@ -134,6 +137,6 @@ T pop_random(std::vector<T>& vec) {
 }
 
 template<typename T>
-inline T pick_random(const std::vector<T>& vec) {
+T pick_random(const std::vector<T>& vec) {
 	return vec[rand() % vec.size()];
 }
