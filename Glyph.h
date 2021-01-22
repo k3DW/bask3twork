@@ -1,6 +1,5 @@
 #pragma once
 #include "Constants.h"
-#include <array>
 
 struct GlyphFlag {
 	enum : unsigned int {

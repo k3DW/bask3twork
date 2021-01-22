@@ -1,5 +1,7 @@
 #pragma once
 #include "wx/wx.h"
+#include <array>
+#include <optional>
 
 #define intWX(x) wxString::Format(wxT("%i"),x)
 #define VERSION(MAJOR, MINOR, PATCH) intWX(MAJOR) + "." + intWX(MINOR) + (PATCH == 0 ? wxString("") : wxString(".") + intWX(PATCH))

@@ -38,7 +38,6 @@
 */
 
 #pragma once
-#include "wx/wx.h"
 #include "MainWindow.h"
 
 #define MAJOR_VERSION 0

@@ -1,8 +1,6 @@
 #pragma once
-#include "wx/wx.h"
 #include "Constants.h"
 #include "Glyph.h"
-#include <optional>
 
 #ifndef ijSignature
 #define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
