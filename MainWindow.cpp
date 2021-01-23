@@ -211,7 +211,8 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	if(	(id == NoSym		&& knot->generateNoSym(iMin, jMin, iMax, jMax))			||
 		(id == HoriSym		&& knot->generateHoriSym(iMin, jMin, iMax, jMax))		||
 		(id == VertSym		&& knot->generateVertSym(iMin, jMin, iMax, jMax))		||
-		(id == HoriVertSym	&& knot->generateHoriVertSym(iMin, jMin, iMax, jMax))	){
+		(id == HoriVertSym	&& knot->generateHoriVertSym(iMin, jMin, iMax, jMax))	||
+		(id == Rot2Sym		&& knot->generateRot2Sym(iMin, jMin, iMax, jMax))		){
 
 		disp->drawKnot();
 		this->showExportBox();

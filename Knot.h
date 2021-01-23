@@ -14,12 +14,15 @@ public:
 	bool generateHoriSym(ijSignature);
 	bool generateVertSym(ijSignature);
 	bool generateHoriVertSym(ijSignature);
+	bool generateRot2Sym(ijSignature);
 
 private:
 	GlyphVec2 glyphs;
 
 	void mirrorUpToDown(GlyphVec2& glyphGrid, ijSignature) const;
 	void mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const;
+	void rotate180UpToDown(GlyphVec2& glyphGrid, ijSignature) const;
+	void rotate180LeftToRight(GlyphVec2& glyphGrid, ijSignature) const;
 
 	void tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const int ignoreSides = 0, const int boolFlags = 0) const;
 	static inline bool inSelection(ijSignature, const int i, const int j);

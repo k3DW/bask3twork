@@ -37,8 +37,9 @@ bool Knot::generateHoriSym(ijSignature) {
 		tryGenerating(newGlyphs, iMid, jMin, iMid, jMax, Side::DOWN, rowFlag);
 		if (!newGlyphs) continue;
 
+		mirrorUpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
+
 		glyphs = *newGlyphs;
-		mirrorUpToDown(glyphs, iMin, jMin, iMax, jMax);
 		return true;
 	}
 	return false;
@@ -58,8 +59,9 @@ bool Knot::generateVertSym(ijSignature) {
 		tryGenerating(newGlyphs, iMin, jMid, iMax, jMid, Side::RIGHT, colFlag);
 		if (!newGlyphs) continue;
 		
+		mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
+
 		glyphs = *newGlyphs;
-		mirrorLeftToRight(glyphs, iMin, jMin, iMax, jMax);
 		return true;
 	}
 	return false;
@@ -71,7 +73,7 @@ bool Knot::generateHoriVertSym(ijSignature) {
 	const unsigned int colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText("Generating vertical symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
+			statusBar->SetStatusText("Generating vertical and horizontal symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
@@ -87,9 +89,34 @@ bool Knot::generateHoriVertSym(ijSignature) {
 		tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, rowFlag | colFlag);
 		if (!newGlyphs) continue;
 		
+		mirrorUpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
+		mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
+
 		glyphs = *newGlyphs;
-		mirrorUpToDown(glyphs, iMin, jMin, iMax, jMax);
-		mirrorLeftToRight(glyphs, iMin, jMin, iMax, jMax);
+		return true;
+	}
+	return false;
+}
+bool Knot::generateRot2Sym(ijSignature) {
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
+	const unsigned int rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
+	const unsigned int colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
+		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
+			statusBar->SetStatusText("Generating 2-way rotational symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
+
+		std::optional<GlyphVec2> newGlyphs = glyphs;
+
+		tryGenerating(newGlyphs, iMin, jMin, iMax, jMid - 1, Side::RIGHT);
+		if (!newGlyphs) continue;
+		rotate180LeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
+		
+		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid + (int)isEvenSegments(jMin, jMax), Side::DOWN);
+		if (!newGlyphs) continue;
+		rotate180UpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
+
+		glyphs = *newGlyphs;
 		return true;
 	}
 	return false;
@@ -104,6 +131,16 @@ void Knot::mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int i = iMin; i <= iMax; i++)
 		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
 			glyphGrid[i][jDecr] = &AllGlyphs[glyphGrid[i][jIncr]->mirroredY];
+}
+void Knot::rotate180UpToDown(GlyphVec2& glyphGrid, ijSignature) const {
+	for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)
+		for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--)
+			glyphGrid[iDecr][jDecr] = &AllGlyphs[(&AllGlyphs[glyphGrid[iIncr][jIncr]->rotated])->rotated];
+}
+void Knot::rotate180LeftToRight(GlyphVec2& glyphGrid, ijSignature) const {
+	for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--)
+		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
+			glyphGrid[iDecr][jDecr] = &AllGlyphs[(&AllGlyphs[glyphGrid[iIncr][jIncr]->rotated])->rotated];
 }
 
 void Knot::tryGenerating(std::optional<GlyphVec2>& inputGlyphs, ijSignature, const int ignoreSides, const int boolFlags) const {
