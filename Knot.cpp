@@ -25,7 +25,7 @@ bool Knot::generateNoSym(ijSignature) {
 }
 bool Knot::generateHoriSym(ijSignature) {
 	const int iMid = (iMin + iMax) / 2;
-	const bool isEvenRows = isEvenSegments(iMin, iMax);
+	const unsigned int rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating horizontal symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
@@ -36,7 +36,7 @@ bool Knot::generateHoriSym(ijSignature) {
 		if (!newGlyphs)
 			continue;
 
-		tryGenerating(newGlyphs, iMid, jMin, iMid, jMax, Side::DOWN, isEvenRows ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX);
+		tryGenerating(newGlyphs, iMid, jMin, iMid, jMax, Side::DOWN, rowFlag);
 		if (!newGlyphs)
 			continue;
 
@@ -48,7 +48,7 @@ bool Knot::generateHoriSym(ijSignature) {
 }
 bool Knot::generateVertSym(ijSignature) {
 	const int jMid = (jMin + jMax) / 2;
-	const bool isEvenCols = isEvenSegments(jMin, jMax);
+	const unsigned int colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating vertical symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
@@ -59,7 +59,7 @@ bool Knot::generateVertSym(ijSignature) {
 		if (!newGlyphs)
 			continue;
 		
-		tryGenerating(newGlyphs, iMin, jMid, iMax, jMid, Side::RIGHT, isEvenCols ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY);
+		tryGenerating(newGlyphs, iMin, jMid, iMax, jMid, Side::RIGHT, colFlag);
 		if (!newGlyphs)
 			continue;
 		
@@ -72,8 +72,8 @@ bool Knot::generateVertSym(ijSignature) {
 bool Knot::generateHoriVertSym(ijSignature) {
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
-	const bool isEvenRows = isEvenSegments(iMin, iMax);
-	const bool isEvenCols = isEvenSegments(jMin, jMax);
+	const unsigned int rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
+	const unsigned int colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating vertical symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
@@ -84,15 +84,15 @@ bool Knot::generateHoriVertSym(ijSignature) {
 		if (!newGlyphs)
 			continue;
 
-		tryGenerating(newGlyphs, iMid, jMin, iMid, jMid - 1, Side::DOWN | Side::RIGHT, isEvenRows ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX);
+		tryGenerating(newGlyphs, iMid, jMin, iMid, jMid - 1, Side::DOWN | Side::RIGHT, rowFlag);
 		if (!newGlyphs)
 			continue;
 
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, isEvenCols ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY);
+		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, colFlag);
 		if (!newGlyphs)
 			continue;
 
-		tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, (isEvenRows ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX) | (isEvenCols ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY));
+		tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, rowFlag | colFlag);
 		if (!newGlyphs)
 			continue;
 		

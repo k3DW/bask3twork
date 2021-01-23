@@ -260,26 +260,14 @@ void MainWindow::regenExportBox() {
 	exportBox->SetFont(exportFont);
 	exportRegionSizer->Prepend(exportBox, 0, wxALIGN_CENTER | wxDOWN | wxUP, GAP_3);
 }
-/* need to fix */ void MainWindow::showExportBox() {
-
-	//wxString test = glyphs[186];
-	//wxMessageBox(test + " " + test + " " + test);
-
-	//wxMessageBox(glyphs[1] + glyphs[1] + test + glyphs[1] + glyphs[1]);
-
+void MainWindow::showExportBox() {
 	wxString toExport;
 	bool display = false;
 	for (int i = 0; i < h; i++) {
-		for (int j = 0; j < w; j++) {
-			//if (knot->get(i, j) == glyphs[186])					// fix this later?
-			//	toExport << wxString::FromUTF8("\xE2\x80\xA1");
-			//else
-			//	toExport << knot->get(i, j);
+		for (int j = 0; j < w; j++)
 			toExport << knot->get(i, j);
-		}
 		if (i < h - 1)
 			toExport << "\r\n";
 	}
 	exportBox->SetLabel(toExport);
-	//if(display) wxMessageBox(toExport);
 }
