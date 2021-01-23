@@ -15,7 +15,6 @@ public:
 	void highlightSelection(ijSignature);
 	void clearHighlight(bool refresh = true);
 
-	wxString get(const int i, const int j);
 	void drawKnot();
 
 private:

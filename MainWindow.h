@@ -50,9 +50,9 @@ private:
 	void generateKnot(wxCommandEvent& evt);
 	wxStaticBoxSizer* generateRegionSizer;
 		declareGenerateButton(NoSym);
-		declareGenerateButton(VertSym);
 		declareGenerateButton(HoriSym);
-		declareGenerateButton(VertHoriSym);
+		declareGenerateButton(VertSym);
+		declareGenerateButton(HoriVertSym);
 		declareGenerateButton(Rot2Sym);
 		declareGenerateButton(Rot4Sym);
 		// ...

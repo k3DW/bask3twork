@@ -13,9 +13,9 @@ const wxSize MAX_SIZE(SCREEN_X, SCREEN_Y);
 
 enum SymmetryType {
 	NoSym,			// No symmetry
-	VertSym,		// Mirror symmetry across the vertical axis
 	HoriSym,		// Mirror symmetry across the horizontal axis
-	VertHoriSym,	// Mirror symmetry across both the vertical and horizontal axes
+	VertSym,		// Mirror symmetry across the vertical axis
+	HoriVertSym,	// Mirror symmetry across both the horizontal and vertical axes
 	Rot2Sym,		// 2-way rotational symmetry
 	Rot4Sym			// 4-way rotational symmetry
 };
@@ -59,7 +59,7 @@ extern wxString tempString;
 
 /* Begin definitions for `Knot` class */ #if true
 	#define MAX_ATTEMPTS 10000
-	#define ATTEMPTS_DISPLAY_INCREMENT 100
+	#define ATTEMPTS_DISPLAY_INCREMENT 200
 	const wxString MAX_ATTEMPTS_STR = intWX(MAX_ATTEMPTS);
 
 	enum SideOLD { TOP, BOTTOM, LEFT, RIGHT };

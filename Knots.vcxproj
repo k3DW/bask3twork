@@ -23,7 +23,6 @@
     <ClCompile Include="Constants.h" />
     <ClCompile Include="DisplayGrid.cpp" />
     <ClCompile Include="Knot.cpp" />
-    <ClCompile Include="KnotOld.cpp" />
     <ClCompile Include="MainWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -31,7 +30,6 @@
     <ClInclude Include="Glyph.h" />
     <ClInclude Include="Knot.h" />
     <ClInclude Include="Tile.h" />
-    <ClInclude Include="KnotOld.h" />
     <ClInclude Include="MainWindow.h" />
   </ItemGroup>
   <ItemGroup>

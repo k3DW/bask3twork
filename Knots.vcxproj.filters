@@ -27,9 +27,6 @@
     <ClCompile Include="Constants.h">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="KnotOld.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Knot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,9 +42,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Glyph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="KnotOld.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Knot.h">

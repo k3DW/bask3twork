@@ -3,6 +3,28 @@
 MainWindow::MainWindow(int h, int w, wxString title) : wxFrame(nullptr, wxID_ANY, title), h(h), w(w), iMin(0), jMin(0), iMax(h - 1), jMax(w - 1) {
 	textFont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 	
+	/*
+	wxMessageBox(
+		intWX(AllGlyphs[0].connectToMirrorRight) +
+		intWX(AllGlyphs[0].connectToMirrorLeft) +
+		intWX(AllGlyphs[0].connectToMirrorDown) +
+		intWX(AllGlyphs[0].connectToMirrorUp) +
+		intWX(AllGlyphs[0].sameAfterMirrorY) +
+		intWX(AllGlyphs[0].sameAfterMirrorX) +
+		intWX(AllGlyphs[0].sameAfterRotate) + " " +
+		intWX(AllGlyphs[0].right) + " " +
+		intWX(AllGlyphs[0].left) + " " +
+		intWX(AllGlyphs[0].down) + " " +
+		intWX(AllGlyphs[0].up)
+
+		+ "\r\n" + intWX(AllGlyphs[0].flags)
+	);
+	wxMessageBox(
+		intWX(sizeof(unsigned int))
+		+ "\r\n" +
+		intWX(sizeof(test))
+	);//*/
+
 	this->CreateStatusBar();
 	this->SetBackgroundColour(BACKGROUND_COLOUR);
 	this->initSizerLayout();
@@ -97,9 +119,9 @@ void MainWindow::initSelectRegion() {
 void MainWindow::initGenerateRegion() {
 	generateRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Generate");
 	initGenerateButton(NoSym, "No Symmetry");
-	initGenerateButton(VertSym, "Vertical Reflection");
 	initGenerateButton(HoriSym, "Horizontal Reflection");
-	initGenerateButton(VertHoriSym, "Vertical + Horizontal");
+	initGenerateButton(VertSym, "Vertical Reflection");
+	initGenerateButton(HoriVertSym, "Vertical + Horizontal");
 	initGenerateButton(Rot2Sym, "2-way Rotational");
 	initGenerateButton(Rot4Sym, "4-way Rotational");
 	enableGenerateButtons(false);
@@ -193,15 +215,15 @@ void MainWindow::enableGenerateButtons(bool enable) {
 		//bool hasVertSym = knot->checkVertSym(iMin, jMin, iMax, jMax);
 		//bool hasHoriSym = knot->checkHoriSym(iMin, jMin, iMax, jMax);
 		generateNoSymButton->Enable();
-		generateVertSymButton->Enable();// hasVertSym);
 		generateHoriSymButton->Enable();// hasHoriSym);
-		generateVertHoriSymButton->Enable();// hasVertSym&& hasHoriSym);
+		generateVertSymButton->Enable();// hasVertSym);
+		generateHoriVertSymButton->Enable();// hasVertSym&& hasHoriSym);
 	}
 	else {
 		generateNoSymButton->Disable();
-		generateVertSymButton->Disable();
 		generateHoriSymButton->Disable();
-		generateVertHoriSymButton->Disable();
+		generateVertSymButton->Disable();
+		generateHoriVertSymButton->Disable();
 	}
 }
 void MainWindow::generateKnot(wxCommandEvent& evt) {
@@ -212,11 +234,14 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 		hasSymmetryType(NoSym)			||
 		hasSymmetryType(VertSym)		||
 		hasSymmetryType(HoriSym)		||
-		hasSymmetryType(VertHoriSym)	||
+		hasSymmetryType(HoriVertSym)	||
 		hasSymmetryType(Rot2Sym)
 	)*/
 	if(
-		(id == NoSym && knot->generateNoSym(iMin, jMin, iMax, jMax))
+		(id == NoSym		&& knot->generateNoSym(iMin, jMin, iMax, jMax))			||
+		(id == HoriSym		&& knot->generateHoriSym(iMin, jMin, iMax, jMax))		||
+		(id == VertSym		&& knot->generateVertSym(iMin, jMin, iMax, jMax))		||
+		(id == HoriVertSym	&& knot->generateHoriVertSym(iMin, jMin, iMax, jMax))
 	) {
 		disp->drawKnot();
 		this->showExportBox();
