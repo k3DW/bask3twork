@@ -208,12 +208,11 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	int id = evt.GetId();
 	const wxString oldStatus = GetStatusBar()->GetStatusText();
 
-	if(
-		(id == NoSym		&& knot->generateNoSym(iMin, jMin, iMax, jMax))			||
+	if(	(id == NoSym		&& knot->generateNoSym(iMin, jMin, iMax, jMax))			||
 		(id == HoriSym		&& knot->generateHoriSym(iMin, jMin, iMax, jMax))		||
 		(id == VertSym		&& knot->generateVertSym(iMin, jMin, iMax, jMax))		||
-		(id == HoriVertSym	&& knot->generateHoriVertSym(iMin, jMin, iMax, jMax))
-	) {
+		(id == HoriVertSym	&& knot->generateHoriVertSym(iMin, jMin, iMax, jMax))	){
+
 		disp->drawKnot();
 		this->showExportBox();
 	}

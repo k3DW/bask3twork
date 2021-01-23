@@ -1,6 +1,4 @@
-#ifndef KNOTS_TILE
-#define KNOTS_TILE
-
+#pragma once
 #include "Constants.h"
 
 class Tile : public wxStaticText {
@@ -15,12 +13,10 @@ public:
 	Tile(wxWindow* parent, wxWindowID id, int grey, wxFont tileFont) :
 		Tile(parent, id, "", grey, tileFont) {}
 	
-	void highlight(bool enable = true) {
+	inline void highlight(bool enable = true) {
 		this->SetBackgroundColour(enable ? HL_COLOUR : baseColour);
 	}
 
 private:
-	wxColour baseColour;
+	const wxColour baseColour;
 };
-
-#endif // KNOTS_TILE

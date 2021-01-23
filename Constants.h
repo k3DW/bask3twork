@@ -4,13 +4,18 @@
 #include <optional>
 #include <vector>
 
+// Converts integer to wxString
 #define intWX(x) wxString::Format(wxT("%i"),x)
+
+// Converts a MAJOR, MINOR, and PATCH version number into a total version number as a wxString
 #define VERSION(MAJOR, MINOR, PATCH) intWX(MAJOR) + "." + intWX(MINOR) + (PATCH == 0 ? wxString("") : wxString(".") + intWX(PATCH))
 
-const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
-const int SCREEN_Y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
-const wxSize MAX_SIZE(SCREEN_X, SCREEN_Y);
+const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	// The screen size in the x direction
+const int SCREEN_Y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);	// The screen size in the y direction
+const wxSize MAX_SIZE(SCREEN_X, SCREEN_Y);							// The maximum size of the app window
 
+
+// All the types of symmetry types to be generated in this program
 enum SymmetryType {
 	NoSym,			// No symmetry
 	HoriSym,		// Mirror symmetry across the horizontal axis
@@ -20,6 +25,7 @@ enum SymmetryType {
 	Rot4Sym			// 4-way rotational symmetry
 };
 
+// This section is a quicker way of outputting wxMessageBox popups for debugging
 extern wxString tempString;
 #define msg(x) \
 	tempString = ""; \

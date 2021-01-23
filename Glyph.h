@@ -53,10 +53,10 @@ struct Side {
 struct Glyph {
 	wxString chr;
 
-	unsigned int index : 16;
-	unsigned int rotated : 16;
-	unsigned int mirroredX : 16;
-	unsigned int mirroredY : 16;
+	unsigned int index;
+	unsigned int rotated;
+	unsigned int mirroredX;
+	unsigned int mirroredY;
 
 	union {
 		struct {

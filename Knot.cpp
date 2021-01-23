@@ -15,8 +15,7 @@ bool Knot::generateNoSym(ijSignature) {
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 			
 		tryGenerating(newGlyphs, iMin, jMin, iMax, jMax);
-		if (!newGlyphs)
-			continue;
+		if (!newGlyphs) continue;
 		
 		glyphs = *newGlyphs;
 		return true;
@@ -33,15 +32,13 @@ bool Knot::generateHoriSym(ijSignature) {
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
 		tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMax, Side::DOWN);
-		if (!newGlyphs)
-			continue;
+		if (!newGlyphs) continue;
 
 		tryGenerating(newGlyphs, iMid, jMin, iMid, jMax, Side::DOWN, rowFlag);
-		if (!newGlyphs)
-			continue;
+		if (!newGlyphs) continue;
 
 		glyphs = *newGlyphs;
-		mirrorX(iMin, jMin, iMax, jMax);
+		mirrorUpToDown(glyphs, iMin, jMin, iMax, jMax);
 		return true;
 	}
 	return false;
@@ -56,15 +53,13 @@ bool Knot::generateVertSym(ijSignature) {
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 		
 		tryGenerating(newGlyphs, iMin, jMin, iMax, jMid - 1, Side::RIGHT);
-		if (!newGlyphs)
-			continue;
+		if (!newGlyphs) continue;
 		
 		tryGenerating(newGlyphs, iMin, jMid, iMax, jMid, Side::RIGHT, colFlag);
-		if (!newGlyphs)
-			continue;
+		if (!newGlyphs) continue;
 		
 		glyphs = *newGlyphs;
-		mirrorY(iMin, jMin, iMax, jMax);
+		mirrorLeftToRight(glyphs, iMin, jMin, iMax, jMax);
 		return true;
 	}
 	return false;
@@ -81,38 +76,34 @@ bool Knot::generateHoriVertSym(ijSignature) {
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
 		tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, Side::DOWN | Side::RIGHT);
-		if (!newGlyphs)
-			continue;
+		if (!newGlyphs) continue;
 
 		tryGenerating(newGlyphs, iMid, jMin, iMid, jMid - 1, Side::DOWN | Side::RIGHT, rowFlag);
-		if (!newGlyphs)
-			continue;
+		if (!newGlyphs) continue;
 
 		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, colFlag);
-		if (!newGlyphs)
-			continue;
+		if (!newGlyphs) continue;
 
 		tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, rowFlag | colFlag);
-		if (!newGlyphs)
-			continue;
+		if (!newGlyphs) continue;
 		
 		glyphs = *newGlyphs;
-		mirrorX(iMin, jMin, iMax, jMax);
-		mirrorY(iMin, jMin, iMax, jMax);
+		mirrorUpToDown(glyphs, iMin, jMin, iMax, jMax);
+		mirrorLeftToRight(glyphs, iMin, jMin, iMax, jMax);
 		return true;
 	}
 	return false;
 }
 
-void Knot::mirrorX(ijSignature) {
+void Knot::mirrorUpToDown(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)
 		for (int j = jMin; j <= jMax; j++)
-			glyphs[iDecr][j] = &AllGlyphs[glyphs[iIncr][j]->mirroredX];
+			glyphGrid[iDecr][j] = &AllGlyphs[glyphGrid[iIncr][j]->mirroredX];
 }
-void Knot::mirrorY(ijSignature) {
+void Knot::mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int i = iMin; i <= iMax; i++)
 		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
-			glyphs[i][jDecr] = &AllGlyphs[glyphs[i][jIncr]->mirroredY];
+			glyphGrid[i][jDecr] = &AllGlyphs[glyphGrid[i][jIncr]->mirroredY];
 }
 
 void Knot::tryGenerating(std::optional<GlyphVec2>& inputGlyphs, ijSignature, const int ignoreSides, const int boolFlags) const {

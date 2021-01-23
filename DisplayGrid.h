@@ -18,11 +18,10 @@ public:
 	void drawKnot();
 
 private:
-	wxWindow* parent;
+	wxWindow* const parent;
 	const int h, w;
-	Knot* knot;
+	Knot* const knot;
 	wxFont axisFont, tileFont;
-	wxStatusBar* statusBar;
 
 	std::vector<std::vector<Tile*>> tiles;
 	wxGridBagSizer* sizer;
