@@ -2,28 +2,6 @@
 
 MainWindow::MainWindow(int h, int w, wxString title) : wxFrame(nullptr, wxID_ANY, title), h(h), w(w), iMin(0), jMin(0), iMax(h - 1), jMax(w - 1) {
 	textFont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-	
-	/*
-	wxMessageBox(
-		intWX(AllGlyphs[0].connectToMirrorRight) +
-		intWX(AllGlyphs[0].connectToMirrorLeft) +
-		intWX(AllGlyphs[0].connectToMirrorDown) +
-		intWX(AllGlyphs[0].connectToMirrorUp) +
-		intWX(AllGlyphs[0].sameAfterMirrorY) +
-		intWX(AllGlyphs[0].sameAfterMirrorX) +
-		intWX(AllGlyphs[0].sameAfterRotate) + " " +
-		intWX(AllGlyphs[0].right) + " " +
-		intWX(AllGlyphs[0].left) + " " +
-		intWX(AllGlyphs[0].down) + " " +
-		intWX(AllGlyphs[0].up)
-
-		+ "\r\n" + intWX(AllGlyphs[0].flags)
-	);
-	wxMessageBox(
-		intWX(sizeof(unsigned int))
-		+ "\r\n" +
-		intWX(sizeof(test))
-	);//*/
 
 	this->CreateStatusBar();
 	this->SetBackgroundColour(BACKGROUND_COLOUR);
@@ -121,7 +99,7 @@ void MainWindow::initGenerateRegion() {
 	initGenerateButton(NoSym, "No Symmetry");
 	initGenerateButton(HoriSym, "Horizontal Reflection");
 	initGenerateButton(VertSym, "Vertical Reflection");
-	initGenerateButton(HoriVertSym, "Vertical + Horizontal");
+	initGenerateButton(HoriVertSym, "Horizontal + Vertical");
 	initGenerateButton(Rot2Sym, "2-way Rotational");
 	initGenerateButton(Rot4Sym, "4-way Rotational");
 	enableGenerateButtons(false);
@@ -217,7 +195,7 @@ void MainWindow::enableGenerateButtons(bool enable) {
 		generateNoSymButton->Enable();
 		generateHoriSymButton->Enable();// hasHoriSym);
 		generateVertSymButton->Enable();// hasVertSym);
-		generateHoriVertSymButton->Enable();// hasVertSym&& hasHoriSym);
+		generateHoriVertSymButton->Enable();// hasVertSym && hasHoriSym);
 	}
 	else {
 		generateNoSymButton->Disable();
@@ -230,13 +208,6 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	int id = evt.GetId();
 	const wxString oldStatus = GetStatusBar()->GetStatusText();
 
-	/*if (
-		hasSymmetryType(NoSym)			||
-		hasSymmetryType(VertSym)		||
-		hasSymmetryType(HoriSym)		||
-		hasSymmetryType(HoriVertSym)	||
-		hasSymmetryType(Rot2Sym)
-	)*/
 	if(
 		(id == NoSym		&& knot->generateNoSym(iMin, jMin, iMax, jMax))			||
 		(id == HoriSym		&& knot->generateHoriSym(iMin, jMin, iMax, jMax))		||
