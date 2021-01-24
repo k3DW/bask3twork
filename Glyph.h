@@ -13,11 +13,20 @@ struct GlyphFlag {
 		SA_ROT2 = 0b0001 << 17, // Same after rotation of 180 degrees
 		SA_MIRX = 0b0001 << 18,	// Same after mirror X
 		SA_MIRY = 0b0001 << 19,	// Same after mirror Y
-		CT_MIRU = 0b0001 << 20, // Can connect to itself on the up side after a relevant mirror
-		CT_MIRD = 0b0001 << 21, // Can connect to itself on the down side after a relevant mirror
-		CT_MIRL = 0b0001 << 22, // Can connect to itself on the left side after a relevant mirror
-		CT_MIRR = 0b0001 << 23, // Can connect to itself on the right side after a relevant mirror
-		COND_MASK = SA_ROT4 + SA_ROT2 + SA_MIRX + SA_MIRY + CT_MIRU + CT_MIRD + CT_MIRL + CT_MIRR,
+		CT_ROT4U = 0b0001 << 20, // Can connect to itself on the up side after a 90 degree rotation
+		CT_ROT4D = 0b0001 << 21, // Can connect to itself on the down side after a 90 degree rotation
+		CT_ROT4R = 0b0001 << 22, // Can connect to itself on the left side after a 90 degree rotation
+		CT_ROT4L = 0b0001 << 23, // Can connect to itself on the right side after a 90 degree rotation
+		CT_ROT2U = 0b0001 << 24, // Can connect to itself on the up side after a 180 degree rotation
+		CT_ROT2D = 0b0001 << 25, // Can connect to itself on the down side after a 180 degree rotation
+		CT_ROT2L = 0b0001 << 26, // Can connect to itself on the left side after a 180 degree rotation
+		CT_ROT2R = 0b0001 << 27, // Can connect to itself on the right side after a 180 degree rotation
+		CT_MIRU = 0b0001 << 28, // Can connect to itself on the up side after a relevant mirror
+		CT_MIRD = 0b0001 << 29, // Can connect to itself on the down side after a relevant mirror
+		CT_MIRL = 0b0001 << 30, // Can connect to itself on the left side after a relevant mirror
+		CT_MIRR = 0b0001 << 31, // Can connect to itself on the right side after a relevant mirror
+		COND_MASK = SA_ROT4 + SA_ROT2 + SA_MIRX + SA_MIRY + CT_ROT4U + CT_ROT4D + CT_ROT4L + CT_ROT4R + 
+					CT_ROT2U + CT_ROT2D + CT_ROT2L + CT_ROT2R + CT_MIRU + CT_MIRD + CT_MIRL + CT_MIRR,
 		
 		FULL_MASK = SIDE_MASK + COND_MASK
 	};
@@ -71,6 +80,14 @@ struct Glyph {
 			unsigned int sameAfterRotate2 : 1;
 			unsigned int sameAfterMirrorX : 1;
 			unsigned int sameAfterMirrorY : 1;
+			unsigned int connectToRotate4Up : 1;
+			unsigned int connectToRotate4Down : 1;
+			unsigned int connectToRotate4Left : 1;
+			unsigned int connectToRotate4Right : 1;
+			unsigned int connectToRotate2Up : 1;
+			unsigned int connectToRotate2Down : 1;
+			unsigned int connectToRotate2Left : 1;
+			unsigned int connectToRotate2Right : 1;
 			unsigned int connectToMirrorUp : 1;
 			unsigned int connectToMirrorDown : 1;
 			unsigned int connectToMirrorLeft : 1;
@@ -86,10 +103,18 @@ struct Glyph {
 		up(up), down(down), left(left), right(right),
 		sameAfterRotate4(sameAfterRotate4), sameAfterRotate2(sameAfterRotate2),
 		sameAfterMirrorX(sameAfterMirrorX), sameAfterMirrorY(sameAfterMirrorY),
-		connectToMirrorUp(up == Connection::mirrorXTypes[up]),
-		connectToMirrorDown(down == Connection::mirrorXTypes[down]),
-		connectToMirrorLeft(left == Connection::mirrorYTypes[left]),
-		connectToMirrorRight(right == Connection::mirrorYTypes[right]) {}
+		connectToRotate4Up		(up		== Connection::rotate4Types[up]),
+		connectToRotate4Down	(down	== Connection::rotate4Types[down]),
+		connectToRotate4Left	(left	== Connection::rotate4Types[left]),
+		connectToRotate4Right	(right	== Connection::rotate4Types[right]),
+		connectToRotate2Up		(up		== Connection::rotate2Types[up]),
+		connectToRotate2Down	(down	== Connection::rotate2Types[down]),
+		connectToRotate2Left	(left	== Connection::rotate2Types[left]),
+		connectToRotate2Right	(right	== Connection::rotate2Types[right]),
+		connectToMirrorUp		(up		== Connection::mirrorXTypes[up]),
+		connectToMirrorDown		(down	== Connection::mirrorXTypes[down]),
+		connectToMirrorLeft		(left	== Connection::mirrorYTypes[left]),
+		connectToMirrorRight	(right	== Connection::mirrorYTypes[right]) {}
 
 	static constexpr int TOTAL = 190;
 };

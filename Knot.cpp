@@ -100,8 +100,10 @@ bool Knot::generateHoriVertSym(ijSignature) {
 bool Knot::generateRot2Sym(ijSignature) {
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
-	const unsigned int rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
-	const unsigned int colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+	const bool isEvenRows = isEvenSegments(iMin, iMax);
+	const bool isEvenCols = isEvenSegments(jMin, jMax);
+	const unsigned int rowFlag = isEvenRows ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
+	const unsigned int colFlag = isEvenCols ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating 2-way rotational symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
@@ -112,9 +114,32 @@ bool Knot::generateRot2Sym(ijSignature) {
 		if (!newGlyphs) continue;
 		rotate180LeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
 		
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid + (int)isEvenSegments(jMin, jMax), Side::DOWN);
+		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid + (int)isEvenCols, Side::DOWN);
 		if (!newGlyphs) continue;
-		rotate180UpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
+		rotate180UpToDown(*newGlyphs, iMin, jMid, iMax, jMid + (int)isEvenCols);
+
+		if (!isEvenRows && !isEvenCols) {
+			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::NONE, GlyphFlag::SA_ROT2);
+			if (!newGlyphs) continue;
+		}
+		else if (isEvenRows && !isEvenCols) {
+			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN, GlyphFlag::CT_ROT2D);
+			if (!newGlyphs) continue;
+			rotate180UpToDown(*newGlyphs, iMid, jMid, iMid + 1, jMid);
+		}
+		else if (!isEvenRows && isEvenCols) {
+			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::RIGHT, GlyphFlag::CT_ROT2R);
+			if (!newGlyphs) continue;
+			rotate180LeftToRight(*newGlyphs, iMid, jMid, iMid, jMid + 1);
+		}
+		else if (isEvenRows && isEvenCols) {
+			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT);
+			if (!newGlyphs) continue;
+			rotate180UpToDown(*newGlyphs, iMid, jMid, iMid + 1, jMid + 1);
+			tryGenerating(newGlyphs, iMid + 1, jMid, iMid + 1, jMid);
+			if (!newGlyphs) continue;
+			rotate180LeftToRight(*newGlyphs, iMid, jMid, iMid + 1, jMid + 1);
+		}
 
 		glyphs = *newGlyphs;
 		return true;
@@ -143,11 +168,11 @@ void Knot::rotate180LeftToRight(GlyphVec2& glyphGrid, ijSignature) const {
 			glyphGrid[iDecr][jDecr] = glyphGrid[iIncr][jIncr]->rotated2;
 }
 
-void Knot::tryGenerating(std::optional<GlyphVec2>& inputGlyphs, ijSignature, const int ignoreSides, const int boolFlags) const {
+void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const int ignoreSides, const int boolFlags) const {
 	/*	This function generates a knot with no symmetry, lining up with the borders of the selection (unless ignoreSide tells it to be ignored)
 	 *	The function changes `glyphIndices`, which may need to be reversed in the outer function that calls it.
 	 */
-	GlyphVec2 newGlyphs = *inputGlyphs;
+	GlyphVec2 newGlyphs = *glyphGrid;
 
 	// Make the `const Glyph*` pointers into `nullptr` if they're in the selection
 	for (int i = iMin; i <= iMax; i++)
@@ -178,13 +203,13 @@ void Knot::tryGenerating(std::optional<GlyphVec2>& inputGlyphs, ijSignature, con
 				boolFlags
 			);
 			if (possibilities.size() == 0) {	// If there are no possible glyphs that can go here, return false
-				inputGlyphs = std::nullopt;
+				glyphGrid = std::nullopt;
 				return;
 			}
 			newGlyphs[i][j] = pick_random(possibilities);
 		}
 	}
-	inputGlyphs = newGlyphs;
+	glyphGrid = newGlyphs;
 }
 inline bool Knot::inSelection(ijSignature, const int i, const int j) {
 	return (i >= iMin) && (i <= iMax) && (j >= jMin) && (j <= jMax);
