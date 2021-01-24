@@ -125,22 +125,22 @@ bool Knot::generateRot2Sym(ijSignature) {
 void Knot::mirrorUpToDown(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)
 		for (int j = jMin; j <= jMax; j++)
-			glyphGrid[iDecr][j] = &AllGlyphs[glyphGrid[iIncr][j]->mirroredX];
+			glyphGrid[iDecr][j] = glyphGrid[iIncr][j]->mirroredX;
 }
 void Knot::mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int i = iMin; i <= iMax; i++)
 		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
-			glyphGrid[i][jDecr] = &AllGlyphs[glyphGrid[i][jIncr]->mirroredY];
+			glyphGrid[i][jDecr] = glyphGrid[i][jIncr]->mirroredY;
 }
 void Knot::rotate180UpToDown(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)
 		for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--)
-			glyphGrid[iDecr][jDecr] = &AllGlyphs[(&AllGlyphs[glyphGrid[iIncr][jIncr]->rotated])->rotated];
+			glyphGrid[iDecr][jDecr] = glyphGrid[iIncr][jIncr]->rotated2;
 }
 void Knot::rotate180LeftToRight(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--)
 		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
-			glyphGrid[iDecr][jDecr] = &AllGlyphs[(&AllGlyphs[glyphGrid[iIncr][jIncr]->rotated])->rotated];
+			glyphGrid[iDecr][jDecr] = glyphGrid[iIncr][jIncr]->rotated2;
 }
 
 void Knot::tryGenerating(std::optional<GlyphVec2>& inputGlyphs, ijSignature, const int ignoreSides, const int boolFlags) const {

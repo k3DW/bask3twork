@@ -15,6 +15,11 @@
 		~~4a) Button
 		4b) Generate knot
 		4c) Check symmetry
+	5) Change indices in `Glyph` objects from `unsigned int` to `const Glyph* const`
+		~~5a) Update `Glyph` constructors
+		~~5b) Update Excel
+		~~5c) Update `std::array<Glyph, Glyph::TOTAL> AllGlyphs`
+		~~5d) Update all calls to the old index variables
 
 */
 
