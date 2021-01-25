@@ -190,12 +190,12 @@ void MainWindow::selectResetFunction(wxCommandEvent& evt) {
 
 void MainWindow::enableGenerateButtons(bool enable) {
 	if (enable) {
-		//bool hasVertSym = knot->checkVertSym(iMin, jMin, iMax, jMax);
-		//bool hasHoriSym = knot->checkHoriSym(iMin, jMin, iMax, jMax);
+		bool hasHoriSym = knot->checkHoriSym(iMin, jMin, iMax, jMax);
+		bool hasVertSym = knot->checkVertSym(iMin, jMin, iMax, jMax);
 		generateNoSymButton->Enable();
-		generateHoriSymButton->Enable();// hasHoriSym);
-		generateVertSymButton->Enable();// hasVertSym);
-		generateHoriVertSymButton->Enable();// hasVertSym && hasHoriSym);
+		generateHoriSymButton->Enable(hasHoriSym);
+		generateVertSymButton->Enable(hasVertSym);
+		generateHoriVertSymButton->Enable(hasVertSym && hasHoriSym);
 	}
 	else {
 		generateNoSymButton->Disable();

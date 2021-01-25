@@ -3,10 +3,10 @@
 	
 	~~1) Redo the Knot data structures
 		(Breaking this down into subtasks would have been difficult, but it runs a lot faster now!)
-	2) Redo the horizontal and vertical symmetry checking in `Knot` class
-		2a) Do horizontal
-		2b) Do vertical
-		2c) Implement in `MainWindow::enableGenerateButtons()`
+	~~2) Redo the horizontal and vertical symmetry checking in `Knot` class
+		~~2a) Do horizontal
+		~~2b) Do vertical
+		~~2c) Implement in `MainWindow::enableGenerateButtons()`
 	~~3) Make 2-way rotationally symmetric knots
 		~~3a) Button
 		~~3b) Generate knot

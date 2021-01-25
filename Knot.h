@@ -16,6 +16,9 @@ public:
 	bool generateHoriVertSym(ijSignature);
 	bool generateRot2Sym(ijSignature);
 
+	bool checkHoriSym(ijSignature) const;
+	bool checkVertSym(ijSignature) const;
+
 private:
 	GlyphVec2 glyphs;
 
