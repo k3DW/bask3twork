@@ -152,24 +152,24 @@ bool Knot::checkHoriSym(ijSignature) const {
 
 	// Checking the left and right sides
 	if (!(jMin == 0 && jMax == w - 1))
-	for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--) { // for each row
-		// Left side
-		upConnection	= jMin == 0 ? Connection::EMPTY : glyphs[iIncr][jMin - 1]->right;
-		downConnection	= jMin == 0 ? Connection::EMPTY : glyphs[iDecr][jMin - 1]->right;
-		if (upConnection != Connection::mirrorXTypes[downConnection]) return false;
-		// Right side
-		upConnection	= jMax == w - 1 ? Connection::EMPTY : glyphs[iIncr][jMax + 1]->left;
-		downConnection	= jMax == w - 1 ? Connection::EMPTY : glyphs[iDecr][jMax + 1]->left;
-		if (upConnection != Connection::mirrorXTypes[downConnection]) return false;
-	}
+		for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--) { // for each row
+			// Left side
+			upConnection	= jMin == 0 ? Connection::EMPTY : glyphs[iIncr][jMin - 1]->right;
+			downConnection	= jMin == 0 ? Connection::EMPTY : glyphs[iDecr][jMin - 1]->right;
+			if (upConnection != Connection::mirrorXTypes[downConnection]) return false;
+			// Right side
+			upConnection	= jMax == w - 1 ? Connection::EMPTY : glyphs[iIncr][jMax + 1]->left;
+			downConnection	= jMax == w - 1 ? Connection::EMPTY : glyphs[iDecr][jMax + 1]->left;
+			if (upConnection != Connection::mirrorXTypes[downConnection]) return false;
+		}
 
 	// Checking the up and down sides
 	if (!(iMin == 0 && iMax == h - 1))
-	for (int j = jMin; j <= jMax; j++) { // for each column
-		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][j]->down;
-		downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][j]->up;
-		if (upConnection != Connection::mirrorXTypes[downConnection]) return false;
-	}
+		for (int j = jMin; j <= jMax; j++) { // for each column
+			upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][j]->down;
+			downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][j]->up;
+			if (upConnection != Connection::mirrorXTypes[downConnection]) return false;
+		}
 
 	return true;
 }
@@ -178,24 +178,45 @@ bool Knot::checkVertSym(ijSignature) const {
 
 	// Checking the up and down sides
 	if (!(iMin == 0 && iMax == h - 1))
-	for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--) { // for each column
-		// Up side
-		leftConnection	= iMin == 0 ? Connection::EMPTY : glyphs[iMin - 1][jIncr]->down;
-		rightConnection	= iMin == 0 ? Connection::EMPTY : glyphs[iMin - 1][jDecr]->down;
-		if (leftConnection != Connection::mirrorYTypes[rightConnection]) return false;
-		// Down side
-		leftConnection	= iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jIncr]->up;
-		rightConnection = iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jDecr]->up;
-		if (leftConnection != Connection::mirrorYTypes[rightConnection]) return false;
-	}
+		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--) { // for each column
+			// Up side
+			leftConnection	= iMin == 0 ? Connection::EMPTY : glyphs[iMin - 1][jIncr]->down;
+			rightConnection	= iMin == 0 ? Connection::EMPTY : glyphs[iMin - 1][jDecr]->down;
+			if (leftConnection != Connection::mirrorYTypes[rightConnection]) return false;
+			// Down side
+			leftConnection	= iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jIncr]->up;
+			rightConnection = iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jDecr]->up;
+			if (leftConnection != Connection::mirrorYTypes[rightConnection]) return false;
+		}
 
 	// Checking the left and right sides
 	if (!(jMin == 0 && jMax == w - 1))
-	for (int i = iMin; i <= iMax; i++) { // for each row
-		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[i][jMin - 1]->right;
-		rightConnection = jMax == w - 1	? Connection::EMPTY : glyphs[i][jMax + 1]->left;
-		if (leftConnection != Connection::mirrorYTypes[rightConnection]) return false;
-	}
+		for (int i = iMin; i <= iMax; i++) { // for each row
+			leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[i][jMin - 1]->right;
+			rightConnection = jMax == w - 1	? Connection::EMPTY : glyphs[i][jMax + 1]->left;
+			if (leftConnection != Connection::mirrorYTypes[rightConnection]) return false;
+		}
+
+	return true;
+}
+bool Knot::checkRot2Sym(ijSignature) const {
+	Connection::Type upConnection, downConnection;
+	// Checking the up and down sides
+	if (!(iMin == 0 && iMax == h - 1))
+		for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--) { // for each column
+			upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jIncr]->down;
+			downConnection	= iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jDecr]->up;
+			if (upConnection != Connection::rotate2Types[downConnection]) return false;
+		}
+
+	Connection::Type leftConnection, rightConnection;
+	// Checking the left and right sides
+	if (!(jMin == 0 && jMax == w - 1))
+		for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--) { // for each row
+			leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iIncr][jMin - 1]->right;
+			rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iDecr][jMax + 1]->left;
+			if (leftConnection != Connection::rotate2Types[rightConnection]) return false;
+		}
 
 	return true;
 }

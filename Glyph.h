@@ -24,7 +24,7 @@ struct GlyphFlag {
 		CT_MIRU = 0b0001 << 28, // Can connect to itself on the up side after a relevant mirror
 		CT_MIRD = 0b0001 << 29, // Can connect to itself on the down side after a relevant mirror
 		CT_MIRL = 0b0001 << 30, // Can connect to itself on the left side after a relevant mirror
-		CT_MIRR = 0b0001 << 31, // Can connect to itself on the right side after a relevant mirror
+		CT_MIRR = static_cast<unsigned int>(0b0001 << 31), // Can connect to itself on the right side after a relevant mirror
 		COND_MASK = SA_ROT4 + SA_ROT2 + SA_MIRX + SA_MIRY + CT_ROT4U + CT_ROT4D + CT_ROT4L + CT_ROT4R + 
 					CT_ROT2U + CT_ROT2D + CT_ROT2L + CT_ROT2R + CT_MIRU + CT_MIRD + CT_MIRL + CT_MIRR,
 		

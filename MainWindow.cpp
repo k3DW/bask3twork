@@ -192,16 +192,19 @@ void MainWindow::enableGenerateButtons(bool enable) {
 	if (enable) {
 		bool hasHoriSym = knot->checkHoriSym(iMin, jMin, iMax, jMax);
 		bool hasVertSym = knot->checkVertSym(iMin, jMin, iMax, jMax);
+		bool hasRot2Sym = knot->checkRot2Sym(iMin, jMin, iMax, jMax);
 		generateNoSymButton->Enable();
 		generateHoriSymButton->Enable(hasHoriSym);
 		generateVertSymButton->Enable(hasVertSym);
 		generateHoriVertSymButton->Enable(hasVertSym && hasHoriSym);
+		generateRot2SymButton->Enable(hasRot2Sym);
 	}
 	else {
 		generateNoSymButton->Disable();
 		generateHoriSymButton->Disable();
 		generateVertSymButton->Disable();
 		generateHoriVertSymButton->Disable();
+		generateRot2SymButton->Disable();
 	}
 }
 void MainWindow::generateKnot(wxCommandEvent& evt) {
