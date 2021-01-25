@@ -9,22 +9,22 @@ struct GlyphFlag {
 		RIGHT	= 0b1111 << 12,
 		SIDE_MASK = UP + DOWN + LEFT + RIGHT,
 
-		SA_ROT4	= 0b0001 << 16,	// Same after rotation of 90 degrees
-		SA_ROT2 = 0b0001 << 17, // Same after rotation of 180 degrees
-		SA_MIRX = 0b0001 << 18,	// Same after mirror X
-		SA_MIRY = 0b0001 << 19,	// Same after mirror Y
-		CT_ROT4U = 0b0001 << 20, // Can connect to itself on the up side after a 90 degree rotation
-		CT_ROT4D = 0b0001 << 21, // Can connect to itself on the down side after a 90 degree rotation
-		CT_ROT4R = 0b0001 << 22, // Can connect to itself on the left side after a 90 degree rotation
-		CT_ROT4L = 0b0001 << 23, // Can connect to itself on the right side after a 90 degree rotation
-		CT_ROT2U = 0b0001 << 24, // Can connect to itself on the up side after a 180 degree rotation
-		CT_ROT2D = 0b0001 << 25, // Can connect to itself on the down side after a 180 degree rotation
-		CT_ROT2L = 0b0001 << 26, // Can connect to itself on the left side after a 180 degree rotation
-		CT_ROT2R = 0b0001 << 27, // Can connect to itself on the right side after a 180 degree rotation
-		CT_MIRU = 0b0001 << 28, // Can connect to itself on the up side after a relevant mirror
-		CT_MIRD = 0b0001 << 29, // Can connect to itself on the down side after a relevant mirror
-		CT_MIRL = 0b0001 << 30, // Can connect to itself on the left side after a relevant mirror
-		CT_MIRR = static_cast<unsigned int>(0b0001 << 31), // Can connect to itself on the right side after a relevant mirror
+		SA_ROT4	 = 1 << 16,	// Same after rotation of 90 degrees
+		SA_ROT2  = 1 << 17, // Same after rotation of 180 degrees
+		SA_MIRX  = 1 << 18,	// Same after mirror X
+		SA_MIRY  = 1 << 19,	// Same after mirror Y
+		CT_ROT4U = 1 << 20, // Can connect to itself on the up side after a 90 degree rotation
+		CT_ROT4D = 1 << 21, // Can connect to itself on the down side after a 90 degree rotation
+		CT_ROT4L = 1 << 22, // Can connect to itself on the left side after a 90 degree rotation
+		CT_ROT4R = 1 << 23, // Can connect to itself on the right side after a 90 degree rotation
+		CT_ROT2U = 1 << 24, // Can connect to itself on the up side after a 180 degree rotation
+		CT_ROT2D = 1 << 25, // Can connect to itself on the down side after a 180 degree rotation
+		CT_ROT2L = 1 << 26, // Can connect to itself on the left side after a 180 degree rotation
+		CT_ROT2R = 1 << 27, // Can connect to itself on the right side after a 180 degree rotation
+		CT_MIRU  = 1 << 28, // Can connect to itself on the up side after a relevant mirror
+		CT_MIRD  = 1 << 29, // Can connect to itself on the down side after a relevant mirror
+		CT_MIRL  = 1 << 30, // Can connect to itself on the left side after a relevant mirror
+		CT_MIRR  = static_cast<unsigned int>(1 << 31), // Can connect to itself on the right side after a relevant mirror
 		COND_MASK = SA_ROT4 + SA_ROT2 + SA_MIRX + SA_MIRY + CT_ROT4U + CT_ROT4D + CT_ROT4L + CT_ROT4R + 
 					CT_ROT2U + CT_ROT2D + CT_ROT2L + CT_ROT2R + CT_MIRU + CT_MIRD + CT_MIRL + CT_MIRR,
 		
@@ -97,16 +97,16 @@ struct Glyph {
 	};
 
 	Glyph(wxString chr, const Glyph* rotated4, const Glyph* rotated2, const Glyph* mirroredX, const Glyph* mirroredY,
-	Connection::Type up, Connection::Type down, Connection::Type left, Connection::Type right,
+	const Connection::Type up, const Connection::Type down, const Connection::Type left, const Connection::Type right,
 	unsigned int sameAfterRotate4, unsigned int sameAfterRotate2, unsigned int sameAfterMirrorX, unsigned int sameAfterMirrorY) :
 		chr(chr), rotated4(rotated4), rotated2(rotated2), mirroredX(mirroredX), mirroredY(mirroredY),
 		up(up), down(down), left(left), right(right),
 		sameAfterRotate4(sameAfterRotate4), sameAfterRotate2(sameAfterRotate2),
 		sameAfterMirrorX(sameAfterMirrorX), sameAfterMirrorY(sameAfterMirrorY),
-		connectToRotate4Up		(up		== Connection::rotate4Types[up]),
-		connectToRotate4Down	(down	== Connection::rotate4Types[down]),
-		connectToRotate4Left	(left	== Connection::rotate4Types[left]),
-		connectToRotate4Right	(right	== Connection::rotate4Types[right]),
+		connectToRotate4Up		(up		== Connection::rotate4Types[right]),
+		connectToRotate4Down	(down	== Connection::rotate4Types[left]),
+		connectToRotate4Left	(left	== Connection::rotate4Types[up]),
+		connectToRotate4Right	(right	== Connection::rotate4Types[down]),
 		connectToRotate2Up		(up		== Connection::rotate2Types[up]),
 		connectToRotate2Down	(down	== Connection::rotate2Types[down]),
 		connectToRotate2Left	(left	== Connection::rotate2Types[left]),

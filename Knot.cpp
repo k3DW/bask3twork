@@ -114,9 +114,9 @@ bool Knot::generateRot2Sym(ijSignature) {
 		if (!newGlyphs) continue;
 		rotate180LeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
 		
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid + (int)isEvenCols, Side::DOWN);
+		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid + static_cast<int>(isEvenCols), Side::DOWN);
 		if (!newGlyphs) continue;
-		rotate180UpToDown(*newGlyphs, iMin, jMid, iMax, jMid + (int)isEvenCols);
+		rotate180UpToDown(*newGlyphs, iMin, jMid, iMax, jMid + static_cast<int>(isEvenCols));
 
 		if (!isEvenRows && !isEvenCols) {
 			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::NONE, GlyphFlag::SA_ROT2);
@@ -139,6 +139,39 @@ bool Knot::generateRot2Sym(ijSignature) {
 			tryGenerating(newGlyphs, iMid + 1, jMid, iMid + 1, jMid);
 			if (!newGlyphs) continue;
 			rotate180LeftToRight(*newGlyphs, iMid, jMid, iMid + 1, jMid + 1);
+		}
+
+		glyphs = *newGlyphs;
+		return true;
+	}
+	return false;
+}
+bool Knot::generateRot4Sym(ijSignature) {
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
+	const bool isEven = isEvenSegments(iMin, iMax);
+	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
+		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
+			statusBar->SetStatusText("Generating 2-way rotational symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
+
+		std::optional<GlyphVec2> newGlyphs = glyphs;
+
+		tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, Side::DOWN | Side::RIGHT);
+		if (!newGlyphs) continue;
+		rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
+		
+		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid + static_cast<int>(isEven), Side::DOWN);
+		if (!newGlyphs) continue;
+		rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
+
+		if (isEven) {
+			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, GlyphFlag::CT_ROT4R);
+			if (!newGlyphs) continue;
+			rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
+		}
+		else {
+			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::NONE, GlyphFlag::SA_ROT4);
+			if (!newGlyphs) continue;
 		}
 
 		glyphs = *newGlyphs;
@@ -260,6 +293,28 @@ void Knot::rotate180LeftToRight(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--)
 		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
 			glyphGrid[iDecr][jDecr] = glyphGrid[iIncr][jIncr]->rotated2;
+}
+void Knot::rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const {
+	if (iMax - iMin != jMax - jMin) return; // The selection must be square for this to work
+
+	// This function uses the up-half of the middle column(s)
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
+	const bool isEven = isEvenSegments(iMin, iMax);
+
+	for (int iOffset = 0; iOffset <= iMid - iMin - static_cast<int>(isEven); iOffset++)
+		for (int jOffset = 0; jOffset <= jMid - jMin - static_cast<int>(isEven); jOffset++) {
+			glyphGrid[iMin + jOffset][jMax - iOffset] = glyphGrid[iMin + iOffset][jMin + jOffset]->rotated4;
+			glyphGrid[iMax - iOffset][jMax - jOffset] = glyphGrid[iMin + iOffset][jMin + jOffset]->rotated2; // Same as ->rotated4->rotated4
+			glyphGrid[iMax - jOffset][jMin + iOffset] = glyphGrid[iMin + iOffset][jMin + jOffset]->rotated2->rotated4; // Same as ->rotated4->rotated4->rotated4
+		}
+
+	for (int iOffset = 0; iOffset <= iMid - iMin; iOffset++)
+		for (int jOffset = 0; jOffset <= static_cast<int>(isEven); jOffset++) {
+			glyphGrid[iMid + jOffset][jMax - iOffset] = glyphGrid[iMin + iOffset][jMid + jOffset]->rotated4;
+			glyphGrid[iMax - iOffset][jMid + static_cast<int>(isEven) - jOffset] = glyphGrid[iMin + iOffset][jMid + jOffset]->rotated2; // Same as ->rotated4->rotated4
+			glyphGrid[iMid + static_cast<int>(isEven) - jOffset][jMin + iOffset] = glyphGrid[iMin + iOffset][jMid + jOffset]->rotated2->rotated4; // Same as ->rotated4->rotated4->rotated4
+		}
 }
 
 void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const int ignoreSides, const int boolFlags) const {

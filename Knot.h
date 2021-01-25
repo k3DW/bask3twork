@@ -15,6 +15,7 @@ public:
 	bool generateVertSym(ijSignature);
 	bool generateHoriVertSym(ijSignature);
 	bool generateRot2Sym(ijSignature);
+	bool generateRot4Sym(ijSignature);
 
 	bool checkHoriSym(ijSignature) const;
 	bool checkVertSym(ijSignature) const;
@@ -27,6 +28,7 @@ private:
 	void mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const;
 	void rotate180UpToDown(GlyphVec2& glyphGrid, ijSignature) const;
 	void rotate180LeftToRight(GlyphVec2& glyphGrid, ijSignature) const;
+	void rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const;
 
 	void tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const int ignoreSides = 0, const int boolFlags = 0) const;
 	static inline bool inSelection(ijSignature, const int i, const int j);
