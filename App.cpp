@@ -10,7 +10,7 @@
 	~~3) Make 2-way rotationally symmetric knots
 		~~3a) Button
 		~~3b) Generate knot
-		3c) Check symmetry
+		~~3c) Check symmetry
 	4) Make 4-way rotationally symmetric knots (square only)
 		~~4a) Button
 		4b) Generate knot
