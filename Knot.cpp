@@ -273,6 +273,22 @@ bool Knot::checkRot2Sym(ijSignature) const {
 
 	return true;
 }
+bool Knot::checkRot4Sym(ijSignature) const {
+	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
+
+	Connection::Type upConnection, downConnection, leftConnection, rightConnection;
+	for (int offset = 0; offset <= iMax - iMin; offset++) {
+		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jMin + offset]->down;
+		downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][jMax - offset]->up;
+		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iMax - offset][jMin - 1]->right;
+		rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iMin + offset][jMax + 1]->left;
+		if (upConnection != Connection::rotate4Types[leftConnection] ||
+			upConnection != Connection::rotate2Types[downConnection] ||
+			upConnection != Connection::rotate2Types[Connection::rotate4Types[rightConnection]]) return false;
+	}
+
+	return true;
+}
 
 void Knot::mirrorUpToDown(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)

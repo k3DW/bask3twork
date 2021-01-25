@@ -63,7 +63,7 @@ extern wxString tempString;
 
 /* Begin definitions for `Knot` class */ #if true
 	#define MAX_ATTEMPTS 10000
-	#define ATTEMPTS_DISPLAY_INCREMENT 200
+	#define ATTEMPTS_DISPLAY_INCREMENT 500
 	const wxString MAX_ATTEMPTS_STR = intWX(MAX_ATTEMPTS);
 	#define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
 #endif /* End definitions for `Knot` class */
