@@ -1,39 +1,21 @@
 #pragma once
 #include "Constants.h"
 
-struct GlyphFlag {
-	enum : unsigned int {
-		UP		= 0b1111 <<  0,	
-		DOWN	= 0b1111 <<  4,
-		LEFT	= 0b1111 <<  8,
-		RIGHT	= 0b1111 << 12,
-		SIDE_MASK = UP + DOWN + LEFT + RIGHT,
-
-		SA_ROT4	 = 1 << 16,	// Same after rotation of 90 degrees
-		SA_ROT2  = 1 << 17, // Same after rotation of 180 degrees
-		SA_MIRX  = 1 << 18,	// Same after mirror X
-		SA_MIRY  = 1 << 19,	// Same after mirror Y
-		CT_ROT4U = 1 << 20, // Can connect to itself on the up side after a 90 degree rotation
-		CT_ROT4D = 1 << 21, // Can connect to itself on the down side after a 90 degree rotation
-		CT_ROT4L = 1 << 22, // Can connect to itself on the left side after a 90 degree rotation
-		CT_ROT4R = 1 << 23, // Can connect to itself on the right side after a 90 degree rotation
-		CT_ROT2U = 1 << 24, // Can connect to itself on the up side after a 180 degree rotation
-		CT_ROT2D = 1 << 25, // Can connect to itself on the down side after a 180 degree rotation
-		CT_ROT2L = 1 << 26, // Can connect to itself on the left side after a 180 degree rotation
-		CT_ROT2R = 1 << 27, // Can connect to itself on the right side after a 180 degree rotation
-		CT_MIRU  = 1 << 28, // Can connect to itself on the up side after a relevant mirror
-		CT_MIRD  = 1 << 29, // Can connect to itself on the down side after a relevant mirror
-		CT_MIRL  = 1 << 30, // Can connect to itself on the left side after a relevant mirror
-		CT_MIRR  = static_cast<unsigned int>(1 << 31), // Can connect to itself on the right side after a relevant mirror
-		COND_MASK = SA_ROT4 + SA_ROT2 + SA_MIRX + SA_MIRY + CT_ROT4U + CT_ROT4D + CT_ROT4L + CT_ROT4R + 
-					CT_ROT2U + CT_ROT2D + CT_ROT2L + CT_ROT2R + CT_MIRU + CT_MIRD + CT_MIRL + CT_MIRR,
-		
-		FULL_MASK = SIDE_MASK + COND_MASK
-	};
+enum class Side : unsigned int {
+	NONE	= 0,
+	UP		= 1,
+	DOWN	= 2,
+	LEFT	= 4,
+	RIGHT	= 8
 };
+constexpr inline Side operator|(Side side1, Side side2) {
+	return static_cast<Side>(static_cast<unsigned int>(side1) | static_cast<unsigned int>(side2));
+}
+constexpr inline Side operator&(Side side1, Side side2) {
+	return static_cast<Side>(static_cast<unsigned int>(side1) & static_cast<unsigned int>(side2));
+}
 
-struct Connection {
-	enum Type : unsigned int {
+enum Connection : unsigned int {
 		DO_NOT_CARE = 0,
 		EMPTY		= 1, 
 		DIAG_BOTH	= 2,
@@ -43,24 +25,50 @@ struct Connection {
 		ORTHO_UP	= 6,
 		ORTHO_DOWN	= 7,
 		ORTHO_LEFT	= 8,
-		ORTHO_RIGHT = 9,
-	};
-
-	static constexpr Type rotate4Types[] = { DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_FRONT, DIAG_BACK, ORTHO_RIGHT, ORTHO_LEFT, ORTHO_UP, ORTHO_DOWN };
-	static constexpr Type rotate2Types[] = { DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_FRONT, DIAG_BACK, ORTHO_DOWN, ORTHO_UP, ORTHO_RIGHT, ORTHO_LEFT };
-	static constexpr Type mirrorXTypes[] = { DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_BACK, DIAG_FRONT, ORTHO_DOWN, ORTHO_UP, ORTHO_LEFT, ORTHO_RIGHT };
-	static constexpr Type mirrorYTypes[] = { DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_BACK, DIAG_FRONT, ORTHO_UP, ORTHO_DOWN, ORTHO_RIGHT, ORTHO_LEFT };
+		ORTHO_RIGHT = 9
 };
+constexpr inline Connection rot4Connection(Connection input) {
+	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_FRONT, Connection::DIAG_BACK, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT, Connection::ORTHO_UP, Connection::ORTHO_DOWN } [static_cast<unsigned int>(input)];
+}
+constexpr inline Connection rot2Connection(Connection input) {
+	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_FRONT, Connection::DIAG_BACK, Connection::ORTHO_DOWN, Connection::ORTHO_UP, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT } [static_cast<unsigned int>(input)];
+}
+constexpr inline Connection mirXConnection(Connection input) {
+	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_DOWN, Connection::ORTHO_UP, Connection::ORTHO_LEFT, Connection::ORTHO_RIGHT } [static_cast<unsigned int>(input)];
+}
+constexpr inline Connection mirYConnection(Connection input) {
+	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_UP, Connection::ORTHO_DOWN, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT } [static_cast<unsigned int>(input)];
+}
 
-struct Side {
-	enum : unsigned int {
-		NONE	= 0,
-		UP		= 1,
-		DOWN	= 2,
-		LEFT	= 4,
-		RIGHT	= 8
-	};
+enum class GlyphFlag : unsigned int {
+	NONE = 0,
+	UP		= 0b1111 <<  0,	
+	DOWN	= 0b1111 <<  4,
+	LEFT	= 0b1111 <<  8,
+	RIGHT	= 0b1111 << 12,
+	SA_ROT4	 = 1 << 16,	// Same after rotation of 90 degrees
+	SA_ROT2  = 1 << 17, // Same after rotation of 180 degrees
+	SA_MIRX  = 1 << 18,	// Same after mirror X
+	SA_MIRY  = 1 << 19,	// Same after mirror Y
+	CT_ROT4U = 1 << 20, // Can connect to itself on the up side after a 90 degree rotation
+	CT_ROT4D = 1 << 21, // Can connect to itself on the down side after a 90 degree rotation
+	CT_ROT4L = 1 << 22, // Can connect to itself on the left side after a 90 degree rotation
+	CT_ROT4R = 1 << 23, // Can connect to itself on the right side after a 90 degree rotation
+	CT_ROT2U = 1 << 24, // Can connect to itself on the up side after a 180 degree rotation
+	CT_ROT2D = 1 << 25, // Can connect to itself on the down side after a 180 degree rotation
+	CT_ROT2L = 1 << 26, // Can connect to itself on the left side after a 180 degree rotation
+	CT_ROT2R = 1 << 27, // Can connect to itself on the right side after a 180 degree rotation
+	CT_MIRU  = 1 << 28, // Can connect to itself on the up side after a relevant mirror
+	CT_MIRD  = 1 << 29, // Can connect to itself on the down side after a relevant mirror
+	CT_MIRL  = 1 << 30, // Can connect to itself on the left side after a relevant mirror
+	CT_MIRR  = static_cast<unsigned int>(1 << 31) // Can connect to itself on the right side after a relevant mirror
 };
+constexpr inline GlyphFlag operator|(GlyphFlag flag1, GlyphFlag flag2) {
+	return static_cast<GlyphFlag>(static_cast<unsigned int>(flag1) | static_cast<unsigned int>(flag2));
+}
+constexpr inline GlyphFlag operator&(GlyphFlag flag1, GlyphFlag flag2) {
+	return static_cast<GlyphFlag>(static_cast<unsigned int>(flag1) & static_cast<unsigned int>(flag2));
+}
 
 struct Glyph {
 	const wxString chr;
@@ -72,10 +80,10 @@ struct Glyph {
 
 	union {
 		struct {
-			Connection::Type up : 4;
-			Connection::Type down : 4;
-			Connection::Type left : 4;
-			Connection::Type right : 4;
+			Connection up : 4;
+			Connection down : 4;
+			Connection left : 4;
+			Connection right : 4;
 			unsigned int sameAfterRotate4 : 1;
 			unsigned int sameAfterRotate2 : 1;
 			unsigned int sameAfterMirrorX : 1;
@@ -93,32 +101,31 @@ struct Glyph {
 			unsigned int connectToMirrorLeft : 1;
 			unsigned int connectToMirrorRight : 1;
 		};
-		unsigned int flags;
+		GlyphFlag flags;
 	};
 
 	Glyph(wxString chr, const Glyph* rotated4, const Glyph* rotated2, const Glyph* mirroredX, const Glyph* mirroredY,
-	const Connection::Type up, const Connection::Type down, const Connection::Type left, const Connection::Type right,
+	const Connection up, const Connection down, const Connection left, const Connection right,
 	unsigned int sameAfterRotate4, unsigned int sameAfterRotate2, unsigned int sameAfterMirrorX, unsigned int sameAfterMirrorY) :
 		chr(chr), rotated4(rotated4), rotated2(rotated2), mirroredX(mirroredX), mirroredY(mirroredY),
 		up(up), down(down), left(left), right(right),
 		sameAfterRotate4(sameAfterRotate4), sameAfterRotate2(sameAfterRotate2),
 		sameAfterMirrorX(sameAfterMirrorX), sameAfterMirrorY(sameAfterMirrorY),
-		connectToRotate4Up		(up		== Connection::rotate4Types[right]),
-		connectToRotate4Down	(down	== Connection::rotate4Types[left]),
-		connectToRotate4Left	(left	== Connection::rotate4Types[up]),
-		connectToRotate4Right	(right	== Connection::rotate4Types[down]),
-		connectToRotate2Up		(up		== Connection::rotate2Types[up]),
-		connectToRotate2Down	(down	== Connection::rotate2Types[down]),
-		connectToRotate2Left	(left	== Connection::rotate2Types[left]),
-		connectToRotate2Right	(right	== Connection::rotate2Types[right]),
-		connectToMirrorUp		(up		== Connection::mirrorXTypes[up]),
-		connectToMirrorDown		(down	== Connection::mirrorXTypes[down]),
-		connectToMirrorLeft		(left	== Connection::mirrorYTypes[left]),
-		connectToMirrorRight	(right	== Connection::mirrorYTypes[right]) {}
+		connectToRotate4Up		(up		== rot4Connection(right)),
+		connectToRotate4Down	(down	== rot4Connection(left)),
+		connectToRotate4Left	(left	== rot4Connection(up)),
+		connectToRotate4Right	(right	== rot4Connection(down)),
+		connectToRotate2Up		(up		== rot2Connection(up)),
+		connectToRotate2Down	(down	== rot2Connection(down)),
+		connectToRotate2Left	(left	== rot2Connection(left)),
+		connectToRotate2Right	(right	== rot2Connection(right)),
+		connectToMirrorUp		(up		== mirXConnection(up)),
+		connectToMirrorDown		(down	== mirXConnection(down)),
+		connectToMirrorLeft		(left	== mirYConnection(left)),
+		connectToMirrorRight	(right	== mirYConnection(right)) {}
 
 	static constexpr int TOTAL = 190;
 };
-
 using GlyphVec1 = std::vector<const Glyph*>;
 using GlyphVec2 = std::vector<GlyphVec1>;
 
@@ -314,17 +321,16 @@ const inline std::array<Glyph, Glyph::TOTAL> AllGlyphs{ {
 	{ wxString::FromUTF8("\xE2\x80\xB0"), &AllGlyphs[181], &AllGlyphs[182], &AllGlyphs[182], &AllGlyphs[188], Connection::DIAG_BOTH, Connection::EMPTY, Connection::EMPTY, Connection::EMPTY, 0, 0, 0, 1 },
 	{ wxString::FromUTF8("\xE2\x80\xB9"), &AllGlyphs[188], &AllGlyphs[181], &AllGlyphs[189], &AllGlyphs[181], Connection::EMPTY, Connection::EMPTY, Connection::DIAG_BOTH, Connection::EMPTY, 0, 0, 1, 0 },
 } };
-
 const Glyph* const DefaultGlyph = &AllGlyphs[0];
 
-inline GlyphVec1 PossibleGlyphs(const Connection::Type up, const Connection::Type down, const Connection::Type left, const Connection::Type right, unsigned int boolFlags) {
+inline GlyphVec1 PossibleGlyphs(const Connection up, const Connection down, const Connection left, const Connection right, const GlyphFlag boolFlags) {
 	// It is assumed that if a flag is nonzero, it is in use. If it is zero, it is ignored.
-	unsigned int mask = (up != 0	? GlyphFlag::UP		: 0)	// If the UP side is used, add 0x000F to the mask. If not used, it will be GlyphFlag::DO_NOT_CARE (== 0)
-					  + (down != 0	? GlyphFlag::DOWN	: 0)	// If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be GlyphFlag::DO_NOT_CARE (== 0)
-					  + (left != 0	? GlyphFlag::LEFT	: 0)	// etc, for LEFT
-					  + (right != 0 ? GlyphFlag::RIGHT	: 0)	// etc, for RIGHT
-					  + (boolFlags); // All the other flags are only 1 bit long, so this is acceptable
-	unsigned int toCheck = (up << 0) + (down << 4) + (left << 8) + (right << 12) + boolFlags;
+	const GlyphFlag mask = (up != Connection::DO_NOT_CARE	? GlyphFlag::UP		: GlyphFlag::NONE)	// If the UP side is used, add 0x000F to the mask. If not used, it will be GlyphFlag::NONE (== 0)
+						 | (down != Connection::DO_NOT_CARE	? GlyphFlag::DOWN	: GlyphFlag::NONE)	// If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be GlyphFlag::NONE (== 0)
+						 | (left != Connection::DO_NOT_CARE	? GlyphFlag::LEFT	: GlyphFlag::NONE)	// etc, for LEFT
+						 | (right != Connection::DO_NOT_CARE ? GlyphFlag::RIGHT	: GlyphFlag::NONE)	// etc, for RIGHT
+						 | boolFlags; // All the other flags are only 1 bit long, so this is acceptable
+	const GlyphFlag toCheck = static_cast<GlyphFlag>((up << 0) | (down << 4) | (left << 8) | (right << 12)) | boolFlags;
 
 	GlyphVec1 glyphList;
 	for (const Glyph& glyph : AllGlyphs)

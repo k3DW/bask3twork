@@ -24,7 +24,7 @@ bool Knot::generateNoSym(ijSignature) {
 }
 bool Knot::generateHoriSym(ijSignature) {
 	const int iMid = (iMin + iMax) / 2;
-	const unsigned int rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
+	const GlyphFlag rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating horizontal symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
@@ -46,7 +46,7 @@ bool Knot::generateHoriSym(ijSignature) {
 }
 bool Knot::generateVertSym(ijSignature) {
 	const int jMid = (jMin + jMax) / 2;
-	const unsigned int colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+	const GlyphFlag colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating vertical symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
@@ -69,8 +69,8 @@ bool Knot::generateVertSym(ijSignature) {
 bool Knot::generateHoriVertSym(ijSignature) {
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
-	const unsigned int rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
-	const unsigned int colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+	const GlyphFlag rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
+	const GlyphFlag colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating vertical and horizontal symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
@@ -102,8 +102,6 @@ bool Knot::generateRot2Sym(ijSignature) {
 	const int jMid = (jMin + jMax) / 2;
 	const bool isEvenRows = isEvenSegments(iMin, iMax);
 	const bool isEvenCols = isEvenSegments(jMin, jMax);
-	const unsigned int rowFlag = isEvenRows ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
-	const unsigned int colFlag = isEvenCols ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating 2-way rotational symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
@@ -181,7 +179,7 @@ bool Knot::generateRot4Sym(ijSignature) {
 }
 
 bool Knot::checkHoriSym(ijSignature) const {
-	Connection::Type upConnection, downConnection;
+	Connection upConnection, downConnection;
 
 	// Checking the left and right sides
 	if (!(jMin == 0 && jMax == w - 1)) {
@@ -189,20 +187,20 @@ bool Knot::checkHoriSym(ijSignature) const {
 			// Left side
 			upConnection	= jMin == 0 ? Connection::EMPTY : glyphs[iIncr][jMin - 1]->right;
 			downConnection	= jMin == 0 ? Connection::EMPTY : glyphs[iDecr][jMin - 1]->right;
-			if (upConnection != Connection::mirrorXTypes[downConnection]) return false;
+			if (upConnection != mirXConnection(downConnection)) return false;
 			// Right side
 			upConnection	= jMax == w - 1 ? Connection::EMPTY : glyphs[iIncr][jMax + 1]->left;
 			downConnection	= jMax == w - 1 ? Connection::EMPTY : glyphs[iDecr][jMax + 1]->left;
-			if (upConnection != Connection::mirrorXTypes[downConnection]) return false;
+			if (upConnection != mirXConnection(downConnection)) return false;
 		}
 		if (!isEvenSegments(iMin, iMax)) { // checking the middle row, if it exists
 			const int iMid = (iMin + iMax) / 2;
 			// Left side
 			upConnection = jMin == 0 ? Connection::EMPTY : glyphs[iMid][jMin - 1]->right;
-			if (upConnection != Connection::mirrorXTypes[upConnection]) return false;
+			if (upConnection != mirXConnection(upConnection)) return false;
 			// Right side
 			upConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iMid][jMax + 1]->left;
-			if (upConnection != Connection::mirrorXTypes[upConnection]) return false;
+			if (upConnection != mirXConnection(upConnection)) return false;
 		}
 	}
 
@@ -211,13 +209,13 @@ bool Knot::checkHoriSym(ijSignature) const {
 		for (int j = jMin; j <= jMax; j++) { // for each column
 			upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][j]->down;
 			downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][j]->up;
-			if (upConnection != Connection::mirrorXTypes[downConnection]) return false;
+			if (upConnection != mirXConnection(downConnection)) return false;
 		}
 
 	return true;
 }
 bool Knot::checkVertSym(ijSignature) const {
-	Connection::Type leftConnection, rightConnection;
+	Connection leftConnection, rightConnection;
 
 	// Checking the up and down sides
 	if (!(iMin == 0 && iMax == h - 1)) {
@@ -225,20 +223,20 @@ bool Knot::checkVertSym(ijSignature) const {
 			// Up side
 			leftConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jIncr]->down;
 			rightConnection = iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jDecr]->down;
-			if (leftConnection != Connection::mirrorYTypes[rightConnection]) return false;
+			if (leftConnection != mirYConnection(rightConnection)) return false;
 			// Down side
 			leftConnection	= iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jIncr]->up;
 			rightConnection = iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jDecr]->up;
-			if (leftConnection != Connection::mirrorYTypes[rightConnection]) return false;
+			if (leftConnection != mirYConnection(rightConnection)) return false;
 		}
 		if (!isEvenSegments(jMin, jMax)) { // checking the middle column, if it exists
 			const int jMid = (jMin + jMax) / 2;
 			// Up side
 			leftConnection = iMin == 0 ? Connection::EMPTY : glyphs[iMin - 1][jMid]->down;
-			if (leftConnection != Connection::mirrorYTypes[leftConnection]) return false;
+			if (leftConnection != mirYConnection(leftConnection)) return false;
 			// Down side
 			leftConnection = iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jMid]->up;
-			if (leftConnection != Connection::mirrorYTypes[leftConnection]) return false;
+			if (leftConnection != mirYConnection(leftConnection)) return false;
 		}
 	}
 
@@ -247,28 +245,28 @@ bool Knot::checkVertSym(ijSignature) const {
 		for (int i = iMin; i <= iMax; i++) { // for each row
 			leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[i][jMin - 1]->right;
 			rightConnection = jMax == w - 1	? Connection::EMPTY : glyphs[i][jMax + 1]->left;
-			if (leftConnection != Connection::mirrorYTypes[rightConnection]) return false;
+			if (leftConnection != mirYConnection(rightConnection)) return false;
 		}
 
 	return true;
 }
 bool Knot::checkRot2Sym(ijSignature) const {
-	Connection::Type upConnection, downConnection;
+	Connection upConnection, downConnection;
 	// Checking the up and down sides
 	if (!(iMin == 0 && iMax == h - 1))
 		for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--) { // for each column
 			upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jIncr]->down;
 			downConnection	= iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jDecr]->up;
-			if (upConnection != Connection::rotate2Types[downConnection]) return false;
+			if (upConnection != rot2Connection(downConnection)) return false;
 		}
 
-	Connection::Type leftConnection, rightConnection;
+	Connection leftConnection, rightConnection;
 	// Checking the left and right sides
 	if (!(jMin == 0 && jMax == w - 1))
 		for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--) { // for each row
 			leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iIncr][jMin - 1]->right;
 			rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iDecr][jMax + 1]->left;
-			if (leftConnection != Connection::rotate2Types[rightConnection]) return false;
+			if (leftConnection != rot2Connection(rightConnection)) return false;
 		}
 
 	return true;
@@ -276,15 +274,15 @@ bool Knot::checkRot2Sym(ijSignature) const {
 bool Knot::checkRot4Sym(ijSignature) const {
 	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
 
-	Connection::Type upConnection, downConnection, leftConnection, rightConnection;
+	Connection upConnection, downConnection, leftConnection, rightConnection;
 	for (int offset = 0; offset <= iMax - iMin; offset++) {
 		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jMin + offset]->down;
 		downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][jMax - offset]->up;
 		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iMax - offset][jMin - 1]->right;
 		rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iMin + offset][jMax + 1]->left;
-		if (upConnection != Connection::rotate4Types[leftConnection] ||
-			upConnection != Connection::rotate2Types[downConnection] ||
-			upConnection != Connection::rotate2Types[Connection::rotate4Types[rightConnection]]) return false;
+		if (upConnection != rot4Connection(leftConnection) ||
+			upConnection != rot2Connection(downConnection) ||
+			upConnection != rot2Connection(rot4Connection(rightConnection))) return false;
 	}
 
 	return true;
@@ -333,7 +331,7 @@ void Knot::rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const {
 		}
 }
 
-void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const int ignoreSides, const int boolFlags) const {
+void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides, const GlyphFlag boolFlags) const {
 	/*	This function generates a knot with no symmetry, lining up with the borders of the selection (unless ignoreSide tells it to be ignored)
 	 *	The function changes `glyphIndices`, which may need to be reversed in the outer function that calls it.
 	 */
@@ -345,21 +343,21 @@ void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const
 			if (inSelection(iMin, jMin, iMax, jMax, i, j))
 				newGlyphs[i][j] = nullptr;
 
-	const bool ignoreUp = ignoreSides & Side::UP;
-	const bool ignoreDown = ignoreSides & Side::DOWN;
-	const bool ignoreLeft = ignoreSides & Side::LEFT;
-	const bool ignoreRight = ignoreSides & Side::RIGHT;
+	const bool ignoreUp		= (ignoreSides & Side::UP)		!= Side::NONE;
+	const bool ignoreDown	= (ignoreSides & Side::DOWN)	!= Side::NONE;
+	const bool ignoreLeft	= (ignoreSides & Side::LEFT)	!= Side::NONE;
+	const bool ignoreRight	= (ignoreSides & Side::RIGHT)	!= Side::NONE;
 
 	// Generate the glyphs
 	for (int i = iMin; i <= iMax; i++) {
 		for (int j = jMin; j <= jMax; j++) {
 			GlyphVec1 possibilities = PossibleGlyphs(
-				/* Cases for each Connection::Type parameter
+				/* Cases for each Connection parameter
 				 *	(1) The side should be ignored		-> DO_NOT_CARE
 				 *	(2) The glyph is on a border		-> EMPTY
 				 *	(3) The next glyph is not assigned	-> DO_NOT_CARE
 				 *	(4) Catchall default				-> The connection of the next glyph in that direction
-				 * This is done for each of the four Connection::Type arguments
+				 * This is done for each of the four Connection arguments
 				 */
 				ignoreUp	&& i == iMin ? Connection::DO_NOT_CARE : i == 0		? Connection::EMPTY : !newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down,
 				ignoreDown	&& i == iMax ? Connection::DO_NOT_CARE : i == h - 1	? Connection::EMPTY : !newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up,

@@ -31,7 +31,7 @@ private:
 	void rotate180LeftToRight(GlyphVec2& glyphGrid, ijSignature) const;
 	void rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const;
 
-	void tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const int ignoreSides = 0, const int boolFlags = 0) const;
+	void tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides = Side::NONE, const GlyphFlag boolFlags = GlyphFlag::NONE) const;
 	static inline bool inSelection(ijSignature, const int i, const int j);
 	static inline bool isEvenSegments(const int min, const int max);
 };
