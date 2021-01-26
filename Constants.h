@@ -59,6 +59,6 @@ enum SymmetryType {
 
 // Returns a random element from a vector, and will error if given a vector of size 0
 template<typename T>
-inline T pick_random(const std::vector<T>& vec) {
+constexpr inline T pick_random(const std::vector<T>& vec) {
 	return vec[rand() % vec.size()];
 }
