@@ -16,7 +16,7 @@ const int SCREEN_Y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);	// The screen 
 const wxSize MAX_SIZE(SCREEN_X, SCREEN_Y);							// The maximum size of the app window
 
 // All the types of symmetry types to be generated in this program
-enum SymmetryType {
+enum class Symmetry : unsigned int {
 	NoSym,			// No symmetry
 	HoriSym,		// Mirror symmetry across the horizontal axis
 	VertSym,		// Mirror symmetry across the vertical axis
@@ -36,7 +36,7 @@ enum SymmetryType {
 	#define declareGenerateButton(SymType) \
 		wxButton* generate##SymType##Button
 	#define initGenerateButton(SymType, displayText) \
-		generate##SymType##Button = new wxButton(this, SymType, displayText); \
+		generate##SymType##Button = new wxButton(this, static_cast<unsigned int>(Symmetry::SymType), displayText); \
 		generate##SymType##Button->Bind(wxEVT_BUTTON, &MainWindow::generateKnot, this); \
 		generateRegionSizer->Add(generate##SymType##Button)
 

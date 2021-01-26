@@ -211,15 +211,15 @@ void MainWindow::enableGenerateButtons(bool enable) {
 	}
 }
 void MainWindow::generateKnot(wxCommandEvent& evt) {
-	int id = evt.GetId();
+	Symmetry id = static_cast<Symmetry>(evt.GetId());
 	const wxString oldStatus = GetStatusBar()->GetStatusText();
 
-	if(	(id == NoSym		&& knot->generateNoSym(iMin, jMin, iMax, jMax))			||
-		(id == HoriSym		&& knot->generateHoriSym(iMin, jMin, iMax, jMax))		||
-		(id == VertSym		&& knot->generateVertSym(iMin, jMin, iMax, jMax))		||
-		(id == HoriVertSym	&& knot->generateHoriVertSym(iMin, jMin, iMax, jMax))	||
-		(id == Rot2Sym		&& knot->generateRot2Sym(iMin, jMin, iMax, jMax))		||
-		(id == Rot4Sym		&& knot->generateRot4Sym(iMin, jMin, iMax, jMax))		){
+	if(	(id == Symmetry::NoSym			&& knot->generateNoSym(iMin, jMin, iMax, jMax))			||
+		(id == Symmetry::HoriSym		&& knot->generateHoriSym(iMin, jMin, iMax, jMax))		||
+		(id == Symmetry::VertSym		&& knot->generateVertSym(iMin, jMin, iMax, jMax))		||
+		(id == Symmetry::HoriVertSym	&& knot->generateHoriVertSym(iMin, jMin, iMax, jMax))	||
+		(id == Symmetry::Rot2Sym		&& knot->generateRot2Sym(iMin, jMin, iMax, jMax))		||
+		(id == Symmetry::Rot4Sym		&& knot->generateRot4Sym(iMin, jMin, iMax, jMax))		){
 
 		disp->drawKnot();
 		this->showExportBox();
