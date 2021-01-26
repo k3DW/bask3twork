@@ -3,25 +3,25 @@
 MainWindow::MainWindow(int h, int w, wxString title) : wxFrame(nullptr, wxID_ANY, title), h(h), w(w), iMin(0), jMin(0), iMax(h - 1), jMax(w - 1) {
 	textFont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 
-	this->CreateStatusBar();
-	this->SetBackgroundColour(BACKGROUND_COLOUR);
-	this->initSizerLayout();
+	CreateStatusBar();
+	SetBackgroundColour(BACKGROUND_COLOUR);
+	initSizerLayout();
 
-	wxSize windowSize = this->GetBestSize();
-	this->SetMinSize(windowSize);
-	this->SetSize(windowSize);
+	wxSize windowSize = GetBestSize();
+	SetMinSize(windowSize);
+	SetSize(windowSize);
 }
 MainWindow::~MainWindow() {
-	this->Hide();
+	Hide();
 }
 void MainWindow::initSizerLayout() {
-	this->initDispSizer();
+	initDispSizer();
 
 	// These are in a weird order to avoid dereferencing `nullptr`s
-	this->initGenerateRegion();
-	this->initGridRegion();
-	this->initSelectRegion();
-	this->initExportRegion();
+	initGenerateRegion();
+	initGridRegion();
+	initSelectRegion();
+	initExportRegion();
 
 	buttonSizer = new wxBoxSizer(wxVERTICAL);
 	buttonSizer->AddStretchSpacer();
@@ -36,7 +36,7 @@ void MainWindow::initSizerLayout() {
 	mainSizer->Add(dispSizer, 0, wxEXPAND | wxALL, GAP_1);
 	mainSizer->AddStretchSpacer();
 	mainSizer->Add(buttonSizer, 0, wxEXPAND | (wxALL ^ wxLEFT), GAP_1);
-	this->SetSizer(mainSizer);
+	SetSizer(mainSizer);
 }
 void MainWindow::initDispSizer() {
 	if (!knot) { 
@@ -48,7 +48,7 @@ void MainWindow::initDispSizer() {
 		delete knot;
 		disp->Destroy();
 	}
-	knot = new Knot(h, w, this->GetStatusBar());
+	knot = new Knot(h, w, GetStatusBar());
 	disp = new DisplayGrid(this, knot);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
 }
@@ -92,7 +92,7 @@ void MainWindow::initSelectRegion() {
 	selectRegionSizer->Add(selectCoord, 0, wxALIGN_CENTER | wxDOWN, GAP_3);
 	selectRegionSizer->Add(selectButtonSizer, 0, wxEXPAND);
 
-	this->resetSelectCoord();
+	resetSelectCoord();
 }
 void MainWindow::initGenerateRegion() {
 	generateRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Generate");
@@ -107,7 +107,7 @@ void MainWindow::initGenerateRegion() {
 void MainWindow::initExportRegion() {
 	exportRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Export");
 	exportFont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas");
-	this->regenExportBox();
+	regenExportBox();
 }
 
 void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
@@ -127,21 +127,22 @@ void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
 	}
 
 	// Updating the height and width, reinitializing the DisplayGrid
-	this->h = heightNum;
-	this->w = widthNum;
-	this->initDispSizer();
-	this->SetMinSize(wxDefaultSize);
+	h = heightNum;
+	w = widthNum;
+	initDispSizer();
+	SetMinSize(wxDefaultSize);
 
 	// Reseting selectCoord and exportBox
-	this->resetSelectCoord();
-	this->regenExportBox();
+	resetSelectCoord();
+	regenExportBox();
 	Layout();
 
 	// Changing the minimum size of the window to fit the new DisplayGrid
 	// GetBestSize() will not return a proper value unless the MinSize is lowered (or reset)
-	wxSize newSize = this->GetBestSize();
-	this->SetMinSize(newSize);
-	if (!this->IsMaximized()) this->SetSize(newSize);
+	wxSize newSize = GetBestSize();
+	SetMinSize(newSize);
+	if (!IsMaximized())
+		SetSize(newSize);
 
 	evt.Skip();
 }
@@ -222,10 +223,10 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 		(id == Symmetry::Rot4Sym		&& knot->generateRot4Sym(iMin, jMin, iMax, jMax))		){
 
 		disp->drawKnot();
-		this->showExportBox();
+		showExportBox();
 	}
 	else
-		wxMessageBox("The specified knot was not able to be generated in " + MAX_ATTEMPTS_STR + " attempts.", "Error: Knot failed");
+		wxMessageBox("The specified knot was not able to be generated in " + intWX(MAX_ATTEMPTS) + " attempts.", "Error: Knot failed");
 
 	GetStatusBar()->SetStatusText(oldStatus);
 	evt.Skip();

@@ -53,25 +53,26 @@
 #pragma once
 #include "MainWindow.h"
 
-#define MAJOR_VERSION 0
-#define MINOR_VERSION 3
-#define PATCH_VERSION 0
-
-const wxString version = VERSION(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
-
 class App : public wxApp {
 
 private:
 	MainWindow* main;
 
+	static constexpr int MAJOR_VERSION = 0;
+	static constexpr int MINOR_VERSION = 3;
+	static constexpr int PATCH_VERSION = 0;
+	static const wxString VERSION;
+
 public:
 	virtual bool OnInit() {
-		main = new MainWindow(8, 8, "Celtic Knot Editor v" + version);
+		main = new MainWindow(8, 8, "Celtic Knot Editor v" + VERSION);
 		main->SetIcon(wxICON(AppIcon));
 		main->Show();
 		srand(time(NULL));
 		return true;
 	}
 };
+
+const wxString App::VERSION = intWX(MAJOR_VERSION) + "." + intWX(MINOR_VERSION) + (PATCH_VERSION == 0 ? wxString("") : wxString("." + intWX(PATCH_VERSION)));
 
 wxIMPLEMENT_APP(App);

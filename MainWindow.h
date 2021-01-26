@@ -1,8 +1,21 @@
 #pragma once
 #include "Constants.h"
 #include "DisplayGrid.h"
-#include "Glyph.h"
 #include "Knot.h"
+
+#define declareButton(buttonName) \
+	void buttonName##Function(wxCommandEvent& evt); \
+	wxButton* buttonName##Button
+#define initButton(buttonName, displayText) \
+	buttonName##Button = new wxButton(this, wxID_ANY, displayText); \
+	buttonName##Button->Bind(wxEVT_BUTTON, &MainWindow::##buttonName##Function, this)
+
+#define declareGenerateButton(SymType) \
+	wxButton* generate##SymType##Button
+#define initGenerateButton(SymType, displayText) \
+	generate##SymType##Button = new wxButton(this, static_cast<unsigned int>(Symmetry::SymType), displayText); \
+	generate##SymType##Button->Bind(wxEVT_BUTTON, &MainWindow::generateKnot, this); \
+	generateRegionSizer->Add(generate##SymType##Button)
 
 class MainWindow : public wxFrame {
 
@@ -62,4 +75,8 @@ private:
 	wxStaticBoxSizer* exportRegionSizer;
 		wxTextCtrl* exportBox;
 		wxFont exportFont;
+
+	static constexpr int GAP_1 = 20;
+	static constexpr int GAP_2 = 10;
+	static constexpr int GAP_3 =  5;
 };

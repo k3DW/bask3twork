@@ -2,21 +2,21 @@
 #include "MainWindow.h"
 
 DisplayGrid::DisplayGrid(wxWindow* parent, Knot* knot) : wxPanel(parent), parent(parent), knot(knot), h(knot->h), w(knot->w) {
-	this->Hide();
+	Hide();
 
 	sizer = new wxGridBagSizer(-1, 0);
-	this->SetSizer(sizer);
+	SetSizer(sizer);
 	axisFont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas");
 	tileFont = wxFont(wxSize(48, 48), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Celtic Knots");
 	
 	initAxisLabels();
 	initTiles();
 
-	this->drawKnot();
-	this->Show();
+	drawKnot();
+	Show();
 }
 DisplayGrid::~DisplayGrid() {
-	this->Hide();
+	Hide();
 }
 void DisplayGrid::initAxisLabels() {
 	for (int i = 1; i <= w; i++)

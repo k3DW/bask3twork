@@ -2,6 +2,8 @@
 #include "Constants.h"
 #include "Glyph.h"
 
+#define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
+
 class Knot {
 public:
 	Knot(int h, int w, wxStatusBar* statusBar);

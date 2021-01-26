@@ -4,18 +4,7 @@
 #include <optional>
 #include <vector>
 
-// Converts integer to wxString
-#define intWX(x) wxString::Format(wxT("%i"),x)
-
-// Converts a MAJOR, MINOR, and PATCH version number into a total version number as a wxString
-#define VERSION(MAJOR, MINOR, PATCH) intWX(MAJOR) + "." + intWX(MINOR) + (PATCH == 0 ? wxString("") : wxString(".") + intWX(PATCH))
-
-// Constants for future functionality, changing the sizing of things depending on the screen size
-const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	// The screen size in the x direction
-const int SCREEN_Y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);	// The screen size in the y direction
-const wxSize MAX_SIZE(SCREEN_X, SCREEN_Y);							// The maximum size of the app window
-
-// All the types of symmetry types to be generated in this program
+// All the types of symmetry which can be generated in this program
 enum class Symmetry : unsigned int {
 	NoSym,			// No symmetry
 	HoriSym,		// Mirror symmetry across the horizontal axis
@@ -25,40 +14,18 @@ enum class Symmetry : unsigned int {
 	Rot4Sym			// 4-way rotational symmetry
 };
 
-/* Begin definitions for `MainWindow` class */ #if true
-	#define declareButton(buttonName) \
-		void buttonName##Function(wxCommandEvent& evt); \
-		wxButton* buttonName##Button
-	#define initButton(buttonName, displayText) \
-		buttonName##Button = new wxButton(this, wxID_ANY, displayText); \
-		buttonName##Button->Bind(wxEVT_BUTTON, &MainWindow::##buttonName##Function, this)
+// Converts integer to wxString
+#define intWX(x) wxString::Format(wxT("%i"),x)
 
-	#define declareGenerateButton(SymType) \
-		wxButton* generate##SymType##Button
-	#define initGenerateButton(SymType, displayText) \
-		generate##SymType##Button = new wxButton(this, static_cast<unsigned int>(Symmetry::SymType), displayText); \
-		generate##SymType##Button->Bind(wxEVT_BUTTON, &MainWindow::generateKnot, this); \
-		generateRegionSizer->Add(generate##SymType##Button)
+// Constants for future functionality, changing the sizing of things depending on the screen size
+const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	// The screen size in the x direction
+const int SCREEN_Y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);	// The screen size in the y direction
+const wxSize MAX_SIZE(SCREEN_X, SCREEN_Y);							// The maximum size of the app window
 
-	#define GAP_1 20
-	#define GAP_2 10
-	#define GAP_3 5
-#endif /* End definitions for `MainWindow` class */
+// Constants for the colours of the program
+const wxColour BACKGROUND_COLOUR(240, 240, 240);	// The default colour of the background for the program
+const wxColour HL_COLOUR(150, 200, 255);			// The colour that denotes a "highlighted" tile
 
-/* Begin definitions for `Tile` class */ #if true
-	const wxColour BACKGROUND_COLOUR(240, 240, 240);
-	const wxColour HL_COLOUR(150, 200, 255);
-#endif /* End definitions for `Tile` class */
-
-/* Begin definitions for `Knot` class */ #if true
-	#define MAX_ATTEMPTS 10000
-	#define ATTEMPTS_DISPLAY_INCREMENT 500
-	const wxString MAX_ATTEMPTS_STR = intWX(MAX_ATTEMPTS);
-	#define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
-#endif /* End definitions for `Knot` class */
-
-// Returns a random element from a vector, and will error if given a vector of size 0
-template<typename T>
-constexpr inline T pick_random(const std::vector<T>& vec) {
-	return vec[rand() % vec.size()];
-}
+// Constants for the iterations of knot generating
+static const int MAX_ATTEMPTS = 10000;				// The maximum number of attempts for the knot to try generating
+static const int ATTEMPTS_DISPLAY_INCREMENT = 500;	// The interval at which the number of iterations is displayed
