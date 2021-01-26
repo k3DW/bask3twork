@@ -25,17 +25,6 @@ enum SymmetryType {
 	Rot4Sym			// 4-way rotational symmetry
 };
 
-// This section is a quicker way of outputting wxMessageBox popups for debugging
-extern wxString tempString;
-#define msg(x) \
-	tempString = ""; \
-	tempString << x; \
-	wxMessageBox(tempString)
-#define msgIter(list) \
-	tempString = ""; \
-	for (int c = 0; c < list.size(); c++) tempString << " " << list[c]; \
-	wxMessageBox(tempString)
-
 /* Begin definitions for `MainWindow` class */ #if true
 	#define declareButton(buttonName) \
 		void buttonName##Function(wxCommandEvent& evt); \

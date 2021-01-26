@@ -15,7 +15,7 @@ constexpr inline Side operator&(Side side1, Side side2) {
 	return static_cast<Side>(static_cast<unsigned int>(side1) & static_cast<unsigned int>(side2));
 }
 
-enum Connection : unsigned int {
+enum class Connection : unsigned int {
 		DO_NOT_CARE = 0,
 		EMPTY		= 1, 
 		DIAG_BOTH	= 2,
@@ -68,6 +68,10 @@ constexpr inline GlyphFlag operator|(GlyphFlag flag1, GlyphFlag flag2) {
 }
 constexpr inline GlyphFlag operator&(GlyphFlag flag1, GlyphFlag flag2) {
 	return static_cast<GlyphFlag>(static_cast<unsigned int>(flag1) & static_cast<unsigned int>(flag2));
+}
+constexpr inline GlyphFlag toFlag(Connection con, GlyphFlag sideFlag) {
+	// Converts a Connection on a specific side to a GlyphFlag of that specific Connection on the side
+	return static_cast<GlyphFlag>((static_cast<unsigned int>(con) * 0b1000100010001) & static_cast<unsigned int>(sideFlag));
 }
 
 struct Glyph {
@@ -330,8 +334,8 @@ inline GlyphVec1 PossibleGlyphs(const Connection up, const Connection down, cons
 						 | (left != Connection::DO_NOT_CARE	? GlyphFlag::LEFT	: GlyphFlag::NONE)	// etc, for LEFT
 						 | (right != Connection::DO_NOT_CARE ? GlyphFlag::RIGHT	: GlyphFlag::NONE)	// etc, for RIGHT
 						 | boolFlags; // All the other flags are only 1 bit long, so this is acceptable
-	const GlyphFlag toCheck = static_cast<GlyphFlag>((up << 0) | (down << 4) | (left << 8) | (right << 12)) | boolFlags;
-
+	const GlyphFlag toCheck = toFlag(up, GlyphFlag::UP) | toFlag(down, GlyphFlag::DOWN) | toFlag(left, GlyphFlag::LEFT) | toFlag(right, GlyphFlag::RIGHT) | boolFlags;
+	
 	GlyphVec1 glyphList;
 	for (const Glyph& glyph : AllGlyphs)
 		if ((glyph.flags & mask) == toCheck)

@@ -13,7 +13,7 @@ bool Knot::generateNoSym(ijSignature) {
 			statusBar->SetStatusText("Generating no symmetry... Attempt " + intWX(attempts) + "/" + MAX_ATTEMPTS_STR);
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
-			
+		
 		tryGenerating(newGlyphs, iMin, jMin, iMax, jMax);
 		if (!newGlyphs) continue;
 		
@@ -336,21 +336,22 @@ void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const
 	 *	The function changes `glyphIndices`, which may need to be reversed in the outer function that calls it.
 	 */
 	GlyphVec2 newGlyphs = *glyphGrid;
-
+	
 	// Make the `const Glyph*` pointers into `nullptr` if they're in the selection
 	for (int i = iMin; i <= iMax; i++)
 		for (int j = jMin; j <= jMax; j++)
 			if (inSelection(iMin, jMin, iMax, jMax, i, j))
 				newGlyphs[i][j] = nullptr;
-
+	
 	const bool ignoreUp		= (ignoreSides & Side::UP)		!= Side::NONE;
 	const bool ignoreDown	= (ignoreSides & Side::DOWN)	!= Side::NONE;
 	const bool ignoreLeft	= (ignoreSides & Side::LEFT)	!= Side::NONE;
 	const bool ignoreRight	= (ignoreSides & Side::RIGHT)	!= Side::NONE;
-
+	
 	// Generate the glyphs
 	for (int i = iMin; i <= iMax; i++) {
 		for (int j = jMin; j <= jMax; j++) {
+			
 			GlyphVec1 possibilities = PossibleGlyphs(
 				/* Cases for each Connection parameter
 				 *	(1) The side should be ignored		-> DO_NOT_CARE
@@ -365,10 +366,12 @@ void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const
 				ignoreRight && j == jMax ? Connection::DO_NOT_CARE : j == w - 1	? Connection::EMPTY : !newGlyphs[i][j + 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j + 1]->left,
 				boolFlags
 			);
+			
 			if (possibilities.size() == 0) {	// If there are no possible glyphs that can go here, return false
 				glyphGrid = std::nullopt;
 				return;
 			}
+			
 			newGlyphs[i][j] = pick_random(possibilities);
 		}
 	}
