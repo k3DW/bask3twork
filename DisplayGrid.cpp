@@ -12,7 +12,7 @@ DisplayGrid::DisplayGrid(wxWindow* parent, Knot* knot) : wxPanel(parent), parent
 	initAxisLabels();
 	initTiles();
 
-	drawKnot();
+	//drawKnot();
 	Show();
 }
 DisplayGrid::~DisplayGrid() {
@@ -30,7 +30,7 @@ void DisplayGrid::initTiles() {
 		for (int j = 0; j < w; j++) {
 			int id = (i * w) + j;
 			int grey = 255 - 10 * (i % 2 + j % 2);
-			tiles[i][j] = new Tile(this, id, " ", grey, tileFont);
+			tiles[i][j] = new Tile(this, id, knot->get(i, j), grey, tileFont);
 			tiles[i][j]->Bind(wxEVT_LEFT_DOWN, &DisplayGrid::leftClick, this);
 			tiles[i][j]->Bind(wxEVT_RIGHT_DOWN, &DisplayGrid::rightClick, this);
 			sizer->Add(tiles[i][j], wxGBPosition(i + 1, j + 1)/*, wxDefaultSpan, wxALIGN_CENTER*/);
@@ -54,17 +54,17 @@ void DisplayGrid::highlightSelection(ijSignature) { // This function highlights 
 	for (int i = iMin; i <= iMax; i++)
 		for (int j = jMin; j <= jMax; j++)
 			tiles[i][j]->highlight(true);
-	anythingHighlighted = true;
+	isAnythingHighlighted = true;
 	Refresh();
 }
 void DisplayGrid::clearHighlight(bool refresh) {// This function clears all tiles from being highlighted.
-	if (anythingHighlighted) {
+	if (isAnythingHighlighted) {
 		for (int i = 0; i < h; i++)
 			for (int j = 0; j < w; j++)
 				tiles[i][j]->highlight(false);
 		if (refresh)
 			Refresh();
-		anythingHighlighted = false;
+		isAnythingHighlighted = false;
 	}
 }
 

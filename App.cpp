@@ -21,7 +21,7 @@
 		~~5c) Update `std::array<Glyph, Glyph::TOTAL> AllGlyphs`
 		~~5d) Update all calls to the old index variables
 	6) Documentation
-		6a) Install Doxygen, learn how to use it
+		~~6a) Install Doxygen, learn how to use it
 		6b) Add Doxygen comments to this project
 		6c) Generate the documentation with Doxygen
 

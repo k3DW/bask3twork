@@ -10,9 +10,9 @@ public:
 	Knot(int h, int w, wxStatusBar* statusBar);
 	wxString get(const int i, const int j) const;
 
-	const int h; ///< The height of the knot, i.e. the number of rows. This is publicly accessible but not mutable. 
-	const int w; ///< The width of the knot, i.e. the number of columns. This is publicly accessible but not mutable. 
-	wxStatusBar* const statusBar; ///< The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot.
+	const int h; ///< The height of the knot, i.e. the number of rows. This is publicly accessible but not mutable
+	const int w; ///< The width of the knot, i.e. the number of columns. This is publicly accessible but not mutable
+	wxStatusBar* const statusBar; ///< The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot
 
 	bool generateNoSym(ijSignature);
 	bool generateHoriSym(ijSignature);
