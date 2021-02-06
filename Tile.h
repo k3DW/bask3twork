@@ -24,7 +24,7 @@ private:
 
 /* Tile constructors */
 /** \fn Tile::Tile(wxWindow* parent, wxWindowID id, const wxString& label, int grey, wxFont tileFont)
- * The main constructor. Sets the \c wxStaticText base object, the \c baseColour, and the font.
+ * The main constructor, sets the \c wxStaticText base object, the \c baseColour, and the font.
  * 
  * \param parent The parent \c wxWindow object, which is a DisplayGrid in the case of this program
  * \param id The identification value for this \c wxStaticText object

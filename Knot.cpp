@@ -330,33 +330,35 @@ void Knot::rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const {
 }
 
 void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides, const GlyphFlag boolFlags) const {
-	/*	This function generates a knot with no symmetry, lining up with the borders of the selection (unless ignoreSide tells it to be ignored)
-	 *	The function changes `glyphIndices`, which may need to be reversed in the outer function that calls it.
-	 */
+	/// First, make a copy of \c glyphGrid to make changes without affecting the input.
 	GlyphVec2 newGlyphs = *glyphGrid;
 	
-	// Make the `const Glyph*` pointers into `nullptr` if they're in the selection
+	/// Then, set the \c const \c Glyph* pointers of the copy to \c nullptr, if they are within the selection.
+	/// This signifies that these values are not set, since they are being regenerated in this function.
 	for (int i = iMin; i <= iMax; i++)
 		for (int j = jMin; j <= jMax; j++)
 			if (inSelection(iMin, jMin, iMax, jMax, i, j))
 				newGlyphs[i][j] = nullptr;
-	
+
+	// As an intermediary step, turn the \c ignoreSides parameter into its individual 4 \c bool value, one for each side.
 	const bool ignoreUp		= (ignoreSides & Side::UP)		!= Side::NONE;
 	const bool ignoreDown	= (ignoreSides & Side::DOWN)	!= Side::NONE;
 	const bool ignoreLeft	= (ignoreSides & Side::LEFT)	!= Side::NONE;
 	const bool ignoreRight	= (ignoreSides & Side::RIGHT)	!= Side::NONE;
 	
-	// Generate the glyphs
+	/// Next, generate the glyphs by iterating over i,j coordinates within the selection.
+	/// For each i,j pair, do the following 3 steps.
 	for (int i = iMin; i <= iMax; i++) {
 		for (int j = jMin; j <= jMax; j++) {
-			
 			GlyphVec1 possibilities = PossibleGlyphs(
-				/* Cases for each Connection parameter
-				 *	(1) The side should be ignored		-> DO_NOT_CARE
-				 *	(2) The glyph is on a border		-> EMPTY
-				 *	(3) The next glyph is not assigned	-> DO_NOT_CARE
-				 *	(4) Catchall default				-> The connection of the next glyph in that direction
-				 * This is done for each of the four Connection arguments
+				/** (1) Generate the \c vector of all possible glyphs that can fit into this spot, using the \c PossibleGlyphs() function,
+				 *	passing on the \c boolFlags parameter directly.
+				 *	For each \c Connection parameter, there are 4 possible cases, in order: 
+				 *	(a) The side should be ignored based on \c ignoreSide, therefore the parameter should be \c Connection::DO_NOT_CARE.
+				 *	(b) This glyph is on the outer edge of the selection on this particular side, so the parameter should be \c Connection::EMPTY.
+				 *	(c) The next glyph on this particular side is not yet assigned, therefore the parameter should be \c Connection::DO_NOT_CARE.
+				 *	(d) The general case, where none of the other special cases apply, therefore the parameter should be
+				 *		the connection on the opposite side, from the neighbouring glyph on this particular side.
 				 */
 				ignoreUp	&& i == iMin ? Connection::DO_NOT_CARE : i == 0		? Connection::EMPTY : !newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down,
 				ignoreDown	&& i == iMax ? Connection::DO_NOT_CARE : i == h - 1	? Connection::EMPTY : !newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up,
@@ -365,14 +367,17 @@ void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const
 				boolFlags
 			);
 			
-			if (possibilities.size() == 0) {	// If there are no possible glyphs that can go here, return false
+			/// (2) If there are no possible glyphs for this space, set \c glyphGrid to the null \c optional and end the function.
+			if (possibilities.size() == 0) {
 				glyphGrid = std::nullopt;
 				return;
 			}
 			
+			/// (3) If step 2 did not end the function, set the glyph in the copy as a random choice from the generated possibilities.
 			newGlyphs[i][j] = possibilities[rand() % possibilities.size()]; // Pick a random glyph, now that we know it has a nonzero size
 		}
 	}
+	/// At the end of the function, set \c glyphGrid equal to the created copy.
 	glyphGrid = newGlyphs;
 }
 inline bool Knot::inSelection(ijSignature, const int i, const int j) {

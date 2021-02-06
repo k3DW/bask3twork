@@ -58,15 +58,15 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1449269f4f8a696c9058d235951e7382"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_tile.html#a1449269f4f8a696c9058d235951e7382">Tile</a> (wxWindow *parent, wxWindowID id, const wxString &amp;label, int grey, wxFont tileFont)</td></tr>
-<tr class="memdesc:a1449269f4f8a696c9058d235951e7382"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main constructor.  <a href="class_tile.html#a1449269f4f8a696c9058d235951e7382">More...</a><br /></td></tr>
+<tr class="memdesc:a1449269f4f8a696c9058d235951e7382"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main constructor, sets the <code>wxStaticText</code> base object, the <code>baseColour</code>, and the font.  <a href="class_tile.html#a1449269f4f8a696c9058d235951e7382">More...</a><br /></td></tr>
 <tr class="separator:a1449269f4f8a696c9058d235951e7382"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82aba73f6188f88e75fc531506274e86"><td class="memItemLeft" align="right" valign="top"><a id="a82aba73f6188f88e75fc531506274e86"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_tile.html#a82aba73f6188f88e75fc531506274e86">Tile</a> (wxWindow *parent, wxWindowID id, int label, int grey, wxFont tileFont)</td></tr>
-<tr class="memdesc:a82aba73f6188f88e75fc531506274e86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls the main constructor, taking an integer as the displayed text instead of a <code>wxString</code>, see <a class="el" href="class_tile.html#a1449269f4f8a696c9058d235951e7382" title="The main constructor.">Tile::Tile()</a>. <br /></td></tr>
+<tr class="memdesc:a82aba73f6188f88e75fc531506274e86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls the main constructor, taking an integer as the displayed text instead of a <code>wxString</code>, see <a class="el" href="class_tile.html#a1449269f4f8a696c9058d235951e7382" title="The main constructor, sets the wxStaticText base object, the baseColour, and the font.">Tile::Tile()</a>. <br /></td></tr>
 <tr class="separator:a82aba73f6188f88e75fc531506274e86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab6bf96ed8f87ef619f3b1fc89275fe0"><td class="memItemLeft" align="right" valign="top"><a id="aab6bf96ed8f87ef619f3b1fc89275fe0"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_tile.html#aab6bf96ed8f87ef619f3b1fc89275fe0">Tile</a> (wxWindow *parent, wxWindowID id, int grey, wxFont tileFont)</td></tr>
-<tr class="memdesc:aab6bf96ed8f87ef619f3b1fc89275fe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls the main constructor, taking no value for the displayed text, and forwarding an empty string, see <a class="el" href="class_tile.html#a1449269f4f8a696c9058d235951e7382" title="The main constructor.">Tile::Tile()</a>. <br /></td></tr>
+<tr class="memdesc:aab6bf96ed8f87ef619f3b1fc89275fe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls the main constructor, taking no value for the displayed text, and forwarding an empty string, see <a class="el" href="class_tile.html#a1449269f4f8a696c9058d235951e7382" title="The main constructor, sets the wxStaticText base object, the baseColour, and the font.">Tile::Tile()</a>. <br /></td></tr>
 <tr class="separator:aab6bf96ed8f87ef619f3b1fc89275fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56bdaeed093c3c40a7f62f2a864696a2"><td class="memItemLeft" align="right" valign="top"><a id="a56bdaeed093c3c40a7f62f2a864696a2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_tile.html#a56bdaeed093c3c40a7f62f2a864696a2">highlight</a> (bool enable=true)</td></tr>
@@ -132,7 +132,6 @@ const wxColour&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Sets the <code>wxStaticText</code> base object, the <code>baseColour</code>, and the font.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">parent</td><td>The parent <code>wxWindow</code> object, which is a <a class="el" href="class_display_grid.html" title="As a more specialized wxPanel object, this class represents the grid to be displayed on the left side...">DisplayGrid</a> in the case of this program </td></tr>

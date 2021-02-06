@@ -43,6 +43,7 @@ private:
 /* Knot::Knot */
 /** \fn Knot::Knot(int h, int w, wxStatusBar* statusBar)
  * Constructor for a Knot object
+
  * \param h The height of the knot, i.e. the number of rows.
  * \param w The width of the knot, i.e. the number of columns.
  * \param statusBar The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot. This will usually be passed as GetStatusBar() when called.
@@ -50,6 +51,7 @@ private:
 /* Knot::get */
 /** \fn Knot::get(const int i, const int j) const
  * Accessor for the \c wxString representations of the Knot
+
  * \param i The row index
  * \param j The column index
  * \return The \c wxString of the Glyph object at the (i,j) location of the knot 
@@ -221,26 +223,26 @@ private:
 
 /* Private generating helper functions */
 /** \fn Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides = Side::NONE, const GlyphFlag boolFlags = GlyphFlag::NONE) const
- * This function tries to generate with no symmetry, only once, with no looping. Returns false if it cannot be generated.
+ * This function tries to generate with no symmetry, only once with no looping, and sets \c glyphGrid to \c std::nullopt if it cannot be generated.
  * 
  * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
  * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
- * The boundary conditions around the selection are maintained, with the outside being treated as an empty connection.
  * 
  * The \c ignoreSides flag only affects the side-most Glyphs. For example, if \c ignoreSides includes \c Side::LEFT,
  * then the left side connection will only be ignored on the leftmost Glyphs of the selection.
  * 
  * The \c boolFlags flag affects all Glyphs in the selection. All flags which are not specified are ignored,
  * instead of being checked for a value of zero.
- * 
- * \param glyphGrid The 2D std::vector of Glyph pointers to pass into the function to be edited
+ *
+ * \param glyphGrid The 2D std::vector of Glyph pointers to pass into the function to be edited, as an \c optional
  * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
  * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
  * \param jMin The zero-indexed leftmost column of the selection
  * \param jMax The zero-indexed rightmost column of the selection
  * \param ignoreSides The sides to ignore, as an or-composition of Side values
  * \param boolFlags The conditions which need to be met, as an or-composition of GlyphFlag values
- * \return A boolean value denoting whether or not the generating was successful
+ *
+ * \b Methodology
  */
 /** \fn Knot::inSelection(ijSignature, const int i, const int j)
  * This is a helper function that tells you whether a specific tile location is within the given selection.

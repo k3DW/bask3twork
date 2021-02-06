@@ -128,7 +128,7 @@ Private Member Functions</h2></td></tr>
 <tr class="memdesc:a54b1a9f8a1a68166428a8c2e8d5aee76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Only works on a <b>square</b> selection, copy the upper left quadrant of the selection to the other quadrants by rotating 90 degrees about the center of the selection.  <a href="class_knot.html#a54b1a9f8a1a68166428a8c2e8d5aee76">More...</a><br /></td></tr>
 <tr class="separator:a54b1a9f8a1a68166428a8c2e8d5aee76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55fc3d0353cef3f3af4a42fd1167b775"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#a55fc3d0353cef3f3af4a42fd1167b775">tryGenerating</a> (std::optional&lt; GlyphVec2 &gt; &amp;glyphGrid, const int iMin, const int jMin, const int iMax, const int jMax, const Side ignoreSides=Side::NONE, const GlyphFlag boolFlags=GlyphFlag::NONE) const</td></tr>
-<tr class="memdesc:a55fc3d0353cef3f3af4a42fd1167b775"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function tries to generate with no symmetry, only once, with no looping.  <a href="class_knot.html#a55fc3d0353cef3f3af4a42fd1167b775">More...</a><br /></td></tr>
+<tr class="memdesc:a55fc3d0353cef3f3af4a42fd1167b775"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function tries to generate with no symmetry, only once with no looping, and sets <code>glyphGrid</code> to <code>std::nullopt</code> if it cannot be generated.  <a href="class_knot.html#a55fc3d0353cef3f3af4a42fd1167b775">More...</a><br /></td></tr>
 <tr class="separator:a55fc3d0353cef3f3af4a42fd1167b775"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
@@ -1024,23 +1024,29 @@ GlyphVec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Returns false if it cannot be generated.</p>
-<p>Only generates from row <code>iMin</code> to row <code>iMax</code>, and from column <code>jMin</code> to column <code>jMax</code>. This function assumes <code>iMin</code> <code>&lt;=</code> <code>iMax</code> and <code>jMin</code> <code>&lt;=</code> <code>jMax</code>, and does not check the values. The boundary conditions around the selection are maintained, with the outside being treated as an empty connection.</p>
+<p>Only generates from row <code>iMin</code> to row <code>iMax</code>, and from column <code>jMin</code> to column <code>jMax</code>. This function assumes <code>iMin</code> <code>&lt;=</code> <code>iMax</code> and <code>jMin</code> <code>&lt;=</code> <code>jMax</code>, and does not check the values.</p>
 <p>The <code>ignoreSides</code> flag only affects the side-most Glyphs. For example, if <code>ignoreSides</code> includes <code>Side::LEFT</code>, then the left side connection will only be ignored on the leftmost Glyphs of the selection.</p>
 <p>The <code>boolFlags</code> flag affects all Glyphs in the selection. All flags which are not specified are ignored, instead of being checked for a value of zero.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">glyphGrid</td><td>The 2D std::vector of Glyph pointers to pass into the function to be edited </td></tr>
+    <tr><td class="paramname">glyphGrid</td><td>The 2D std::vector of Glyph pointers to pass into the function to be edited, as an <code>optional</code> </td></tr>
     <tr><td class="paramname">iMin</td><td>The zero-indexed upper row of the selection visually (lower numerically) </td></tr>
     <tr><td class="paramname">iMax</td><td>The zero-indexed lower row of the selection visually (higher numerically) </td></tr>
     <tr><td class="paramname">jMin</td><td>The zero-indexed leftmost column of the selection </td></tr>
     <tr><td class="paramname">jMax</td><td>The zero-indexed rightmost column of the selection </td></tr>
     <tr><td class="paramname">ignoreSides</td><td>The sides to ignore, as an or-composition of Side values </td></tr>
-    <tr><td class="paramname">boolFlags</td><td>The conditions which need to be met, as an or-composition of GlyphFlag values </td></tr>
+    <tr><td class="paramname">boolFlags</td><td>The conditions which need to be met, as an or-composition of GlyphFlag values</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A boolean value denoting whether or not the generating was successful </dd></dl>
+<p><b>Methodology</b> </p>
+<p>First, make a copy of <code>glyphGrid</code> to make changes without affecting the input.</p>
+<p>Then, set the <code>const</code> <code>Glyph*</code> pointers of the copy to <code>nullptr</code>, if they are within the selection. This signifies that these values are not set, since they are being regenerated in this function.</p>
+<p>Next, generate the glyphs by iterating over i,j coordinates within the selection. For each i,j pair, do the following 3 steps.</p>
+<p>(1) Generate the <code>vector</code> of all possible glyphs that can fit into this spot, using the <code>PossibleGlyphs()</code> function, passing on the <code>boolFlags</code> parameter directly. For each <code>Connection</code> parameter, there are 4 possible cases, in order: (a) The side should be ignored based on <code>ignoreSide</code>, therefore the parameter should be <code>Connection::DO_NOT_CARE</code>. (b) This glyph is on the outside for this particular side, which is treated as <code>Connection::EMPTY</code>. (c) The next glyph on this particular side is not yet assigned, therefore the parameter should be <code>Connection::DO_NOT_CARE</code>. (d) The general case, where none of the other special cases apply, therefore the parameter should be the connection on the opposite side, from the neighbouring glyph on this particular side.</p>
+<p>(2) If there are no possible glyphs for this space, set <code>glyphGrid</code> to the null <code>optional</code> and end the function.</p>
+<p>(3) If step 2 did not end the function, set the glyph in the copy as a random choice from the generated possibilities.</p>
+<p>At the end of the function, set <code>glyphGrid</code> equal to the created copy.</p>
 
 </div>
 </div>

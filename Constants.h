@@ -27,6 +27,11 @@ const wxSize MAX_SIZE(SCREEN_X, SCREEN_Y);							// The maximum size of the app 
 const wxColour BACKGROUND_COLOUR(240, 240, 240);	// The default colour of the background for the program
 const wxColour HL_COLOUR(150, 200, 255);			// The colour that denotes a "highlighted" tile
 
+// Constants for the fonts of the program, only used in DisplayGrid
+// For future functionality, the sizes of these fonts might need to be parametrized
+const wxFont AXIS_FONT(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas");
+const wxFont TILE_FONT(wxSize(48, 48), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Celtic Knots");
+
 // Constants for the iterations of knot generating
 static const int MAX_ATTEMPTS = 10000;				// The maximum number of attempts for the knot to try generating
 static const int ATTEMPTS_DISPLAY_INCREMENT = 500;	// The interval at which the number of iterations is displayed
