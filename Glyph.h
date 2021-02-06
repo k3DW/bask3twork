@@ -41,7 +41,7 @@ constexpr inline Connection mirYConnection(Connection input) {
 }
 
 enum class GlyphFlag : unsigned int {
-	NONE = 0,
+	NONE	= 0,
 	UP		= 0b1111 <<  0,	
 	DOWN	= 0b1111 <<  4,
 	LEFT	= 0b1111 <<  8,
