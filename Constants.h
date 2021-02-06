@@ -1,5 +1,6 @@
 #pragma once
 #include "wx/wx.h"
+#include "wx/gbsizer.h"
 #include <array>
 #include <optional>
 #include <vector>
