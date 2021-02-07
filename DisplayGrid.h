@@ -19,10 +19,10 @@ public:
 	void drawKnot();	///< Pulls data from the Knot object and displays it in the Tile grid
 
 private:
-	wxWindow* const parent;		///< The parent \c wxWindow object, which is a MainWindow in the case of this program
-	const int h;				///< The height of the knot, i.e. the number of rows, taken from the Knot in the constructor
-	const int w;				///< The width of the knot, i.e. the number of columns, taken from the Knot in the constructor
-	Knot* const knot;			///< The Knot used for this DisplayGrid, as a constant pointer to the object since each DisplayGrid corresponds to exacty one Knot object
+	wxWindow* const parent;	///< The parent \c wxWindow object, which is a MainWindow in the case of this program
+	const int h,			///< The height of the knot, i.e. the number of rows, taken from the Knot in the constructor
+			  w;			///< The width of the knot, i.e. the number of columns, taken from the Knot in the constructor
+	Knot* const knot;		///< The Knot used for this DisplayGrid, as a constant pointer to the object since each DisplayGrid corresponds to exacty one Knot object
 
 	std::vector<std::vector<Tile*>> tiles;	///< The grid of Tile objects to be used
 	wxGridBagSizer* sizer;					///< The sizer used to pack all the components in this \c wxPanel object

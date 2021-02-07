@@ -1,8 +1,6 @@
 #include "MainWindow.h"
 
 MainWindow::MainWindow(int h, int w, wxString title) : wxFrame(nullptr, wxID_ANY, title), h(h), w(w), iMin(0), jMin(0), iMax(h - 1), jMax(w - 1) {
-	textFont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-
 	CreateStatusBar();
 	SetBackgroundColour(BACKGROUND_COLOUR);
 	initSizerLayout();
@@ -39,6 +37,11 @@ void MainWindow::initSizerLayout() {
 	SetSizer(mainSizer);
 }
 void MainWindow::initDispSizer() {
+	/// \b Method
+
+	/// First, check to see if the Knot has been initialized already.
+	/// If it has not, then neither has the DisplayGrid or its sizer, so the sizer is initialized with 2 stretch spacers.
+	/// It the Knot has been initialized, then \c delete the Knot and \c Destroy() the DisplayGrid.
 	if (!knot) { 
 		dispSizer = new wxBoxSizer(wxVERTICAL);
 		dispSizer->AddStretchSpacer();
@@ -48,6 +51,9 @@ void MainWindow::initDispSizer() {
 		delete knot;
 		disp->Destroy();
 	}
+
+	/// Regardless of the above, initialize the Knot with the member variables \c h and \c w and the status bar.
+	/// Then initialize the DisplayGrid with the newly generated Knot, and insert it between the stretch spacers in its sizer.
 	knot = new Knot(h, w, GetStatusBar());
 	disp = new DisplayGrid(this, knot);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
@@ -55,11 +61,11 @@ void MainWindow::initDispSizer() {
 void MainWindow::initGridRegion() {
 	gridHeight = new wxTextCtrl(this, wxID_ANY, wxString::Format(wxT("%i"), h), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
 	gridHeight->SetMaxLength(2);
-	gridHeight->SetFont(textFont);
+	gridHeight->SetFont(TEXT_FONT);
 	
 	gridWidth = new wxTextCtrl(this, wxID_ANY, wxString::Format(wxT("%i"), w), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
 	gridWidth->SetMaxLength(2);
-	gridWidth->SetFont(textFont);
+	gridWidth->SetFont(TEXT_FONT);
 	
 	gridInputSizer = new wxBoxSizer(wxHORIZONTAL);
 	gridInputSizer->Add(gridHeight, 0, wxEXPAND);
@@ -82,7 +88,7 @@ void MainWindow::initSelectRegion() {
 	selectToggleButton->SetSize(wxSize(200, 200));
 
 	selectCoord = new wxStaticText(this, wxID_ANY, "");
-	selectCoord->SetFont(textFont);
+	selectCoord->SetFont(TEXT_FONT);
 
 	selectButtonSizer = new wxBoxSizer(wxHORIZONTAL);
 	selectButtonSizer->Add(selectToggleButton);
@@ -111,14 +117,16 @@ void MainWindow::initExportRegion() {
 }
 
 void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
-	// Checking if the values in the boxes are numbers
+	/// \b Method
+	
+	/// First, check if the values in the boxes are numbers. If not, send a \c mxMessageBox with an error message and return.
+	/// Then check if the numbers in the boxes are positive integers. If not, send a different error message and return.
 	wxString heightString = gridHeight->GetValue();
 	wxString widthString = gridWidth->GetValue();
 	if (!(heightString.IsNumber() && widthString.IsNumber())) {
 		wxMessageBox("Please enter only numbers for the new grid size.", "Error: Non-numerical grid size");
 		return;
 	}
-	// Checking if the numbers in the boxes are positive integers
 	int heightNum = wxAtoi(heightString);
 	int widthNum = wxAtoi(widthString);
 	if (!(heightNum > 0 && widthNum > 0)) {
@@ -126,19 +134,21 @@ void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
 		return;
 	}
 
-	// Updating the height and width, reinitializing the DisplayGrid
+	/// Next, update \c h and \c w member variables, then reinitialize the DisplayGrid using MainWindow::initDispSizer().
 	h = heightNum;
 	w = widthNum;
 	initDispSizer();
-	SetMinSize(wxDefaultSize);
 
-	// Reseting selectCoord and exportBox
+	/// Then, reset the select coordinates with MainWindow::resetSelectCoord()
+	/// and regenerate and export textbox with MainWindow::regenExportBox().
 	resetSelectCoord();
 	regenExportBox();
-	Layout();
+	Layout(); // To make sure everything is displayed properly.
 
-	// Changing the minimum size of the window to fit the new DisplayGrid
-	// GetBestSize() will not return a proper value unless the MinSize is lowered (or reset)
+	/// Lastly, change the size and minimum size of the window to fit the new DisplayGrid.
+	/// To do this, the minimum size must first be set to \c wxDefaultSize, before finding the new size with \c GetBestSize().
+	/// The minimum size is set to this new size, but the current size is only changed if the window is not maixmized.
+	SetMinSize(wxDefaultSize);
 	wxSize newSize = GetBestSize();
 	SetMinSize(newSize);
 	if (!IsMaximized())
@@ -148,8 +158,14 @@ void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
 }
 
 void MainWindow::updateSelectCoord() {
+	/// This function uses the stored values of \c iMin, \c jMin, \c iMax, and \c jMax to update the displayed coordinates.
+	/// Each of these stored values is zero - indexed, so the displayed value is incremented by 1.
 	selectCoord->SetLabelText("(" + intWX(iMin + 1) + "," + intWX(jMin + 1) + ") to (" + intWX(iMax + 1) + "," << intWX(jMax + 1) + ")");
 	selectRegionSizer->Layout();
+	/// This function also
+	/// (1) calls DisplayGrid::clearHighlight() to remove all possible highlighting in the grid,
+	/// (2) sets the \c show/hide button to "Show", and
+	/// (3) calls MainWindow::enableGenerateButtons() with parameter \c false to disable all of the generating buttons
 	disp->clearHighlight();
 	selectToggleButton->SetLabelText("Show");
 	enableGenerateButtons(false);
@@ -171,17 +187,29 @@ void MainWindow::resetSelectCoord() {
 	changeSelectCoord(0, 0, h - 1, w - 1);
 }
 void MainWindow::selectToggleFunction(wxCommandEvent& evt) {
+	/// \b Method
+
+	/// If the text in the \c show/hide button is "Show",
+	/// then first fix the selection coordinates with MainWindow::fixSelectCoords(),
+	/// call DisplayGrid::highlightSelection() with the index member variables,
+	/// set the button text to be "Hide",
+	/// and call MainWindow::enableGenerateButtons() to enable the buttons.
 	if (selectToggleButton->GetLabelText() == wxString("Show")) {
 		fixSelectCoord();
 		disp->highlightSelection(iMin, jMin, iMax, jMax);
 		selectToggleButton->SetLabelText("Hide");
 		enableGenerateButtons(true);
 	}
+	/// If the text in the \c show/hide button is otherwise (which can only be "Hide"),
+	/// then first call DisplayGrid::clearHighlight(),
+	/// set the button text to be "Show",
+	/// and call MainWindow::enableGenerateButtons() with paramater \c false to disable all buttons.
 	else {
 		disp->clearHighlight();
 		selectToggleButton->SetLabelText("Show");
 		enableGenerateButtons(false);
 	}
+
 	evt.Skip();
 }
 void MainWindow::selectResetFunction(wxCommandEvent& evt) {
@@ -190,6 +218,15 @@ void MainWindow::selectResetFunction(wxCommandEvent& evt) {
 }
 
 void MainWindow::enableGenerateButtons(bool enable) {
+	/// This function allows the Knot \c generate functions to have no conditional operation, and just assume that the parameters are valid.
+	/// Instead of checking for symmetry conditions within the generating function itself, the user is disallowed from pressing the button.
+
+	/// \param enable Tells the function whether to enable (conditionally) or disable (fully) the generating buttons, has a default value of \c true
+
+	/// \b Method
+
+	/// To conditionally enable the buttons, first call the \c Knot::check____Sym() functions on the current selection and store the outputs.
+	/// Then enable each of the buttons is the proper symmetry condition has been met.
 	if (enable) {
 		bool hasHoriSym = knot->checkHoriSym(iMin, jMin, iMax, jMax);
 		bool hasVertSym = knot->checkVertSym(iMin, jMin, iMax, jMax);
@@ -202,6 +239,7 @@ void MainWindow::enableGenerateButtons(bool enable) {
 		generateRot2SymButton->Enable(hasRot2Sym);
 		generateRot4SymButton->Enable(hasRot4Sym);
 	}
+	/// If \c enable is \c false, then disable each of the buttons.
 	else {
 		generateNoSymButton->Disable();
 		generateHoriSymButton->Disable();
@@ -212,9 +250,16 @@ void MainWindow::enableGenerateButtons(bool enable) {
 	}
 }
 void MainWindow::generateKnot(wxCommandEvent& evt) {
-	Symmetry id = static_cast<Symmetry>(evt.GetId());
+	/// Each of the \c Knot::generate____Sym() functions uses the status bar, so first store the current displayed message.
 	const wxString oldStatus = GetStatusBar()->GetStatusText();
 
+	/// Each of the generating buttons has its symmetry type as its ID value. Get this symmetry from the event call.
+	/// Then, check the symmetry against each of the posible symmetries.
+	/// Once there is a match, call the appropriate \c Knot::generate____Sym() function.
+	/// If this function returns \c true, then the Knot has been generated successfully,
+	/// so update the DisplayGrid with DisplayGrid::drawKnot() and update the export text box with MainWindow::showExportBox.
+	/// If the generate function returns \c false, then display an error message as a \c wxMessageBox.
+	Symmetry id = static_cast<Symmetry>(evt.GetId());
 	if(	(id == Symmetry::NoSym			&& knot->generateNoSym(iMin, jMin, iMax, jMax))			||
 		(id == Symmetry::HoriSym		&& knot->generateHoriSym(iMin, jMin, iMax, jMax))		||
 		(id == Symmetry::VertSym		&& knot->generateVertSym(iMin, jMin, iMax, jMax))		||
@@ -228,20 +273,13 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	else
 		wxMessageBox("The specified knot was not able to be generated in " + intWX(MAX_ATTEMPTS) + " attempts.", "Error: Knot failed");
 
+	/// At the end, set the status bar back to the message which was displayed at the beginning of the function.
 	GetStatusBar()->SetStatusText(oldStatus);
 	evt.Skip();
 }
 
-void MainWindow::regenExportBox() {
-	if(exportBox)
-		exportBox->Destroy();
-	exportBox = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(9 * w + 14, 19 * h + 7), wxTE_MULTILINE | wxTE_NO_VSCROLL | wxTE_READONLY);
-	exportBox->SetFont(exportFont);
-	exportRegionSizer->Prepend(exportBox, 0, wxALIGN_CENTER | wxDOWN | wxUP, GAP_3);
-}
 void MainWindow::showExportBox() {
 	wxString toExport;
-	bool display = false;
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++)
 			toExport << knot->get(i, j);
@@ -249,4 +287,11 @@ void MainWindow::showExportBox() {
 			toExport << "\r\n";
 	}
 	exportBox->SetLabel(toExport);
+}
+void MainWindow::regenExportBox() {
+	if(exportBox)
+		exportBox->Destroy();
+	exportBox = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(9 * w + 14, 19 * h + 7), wxTE_MULTILINE | wxTE_NO_VSCROLL | wxTE_READONLY);
+	exportBox->SetFont(exportFont);
+	exportRegionSizer->Prepend(exportBox, 0, wxALIGN_CENTER | wxDOWN | wxUP, GAP_3);
 }

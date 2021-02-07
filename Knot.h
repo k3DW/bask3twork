@@ -2,16 +2,14 @@
 #include "Constants.h"
 #include "Glyph.h"
 
-#define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
-
 /** This class represents a knot object as a grid of glyphs, with corresponding public functions to generate various symmetries. */
 class Knot {
 public:
 	Knot(int h, int w, wxStatusBar* statusBar);
 	wxString get(const int i, const int j) const;
 
-	const int h; ///< The height of the knot, i.e. the number of rows. This is publicly accessible but not mutable
-	const int w; ///< The width of the knot, i.e. the number of columns. This is publicly accessible but not mutable
+	const int h, ///< The height of the knot, i.e. the number of rows. This is publicly accessible but not mutable
+			  w; ///< The width of the knot, i.e. the number of columns. This is publicly accessible but not mutable
 	wxStatusBar* const statusBar; ///< The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot
 
 	bool generateNoSym(ijSignature);
@@ -66,8 +64,8 @@ private:
  * The boundary conditions around the selection are maintained, with the outside being treated as an empty connection.
  * 
  * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
- * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
  * \param jMin The zero-indexed leftmost column of the selection
+ * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
  * \param jMax The zero-indexed rightmost column of the selection
  * \return A boolean value denoting whether or not the generating was successful
  */
@@ -132,8 +130,8 @@ private:
  * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
  *
  * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
- * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
  * \param jMin The zero-indexed leftmost column of the selection
+ * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
  * \param jMax The zero-indexed rightmost column of the selection
  * \return Returns \c true if boundaries have this symmetry.
  */
@@ -173,8 +171,8 @@ private:
  *
  * \param glyphGrid The state of the knot on which to operate
  * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
- * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
  * \param jMin The zero-indexed leftmost column of the selection
+ * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
  * \param jMax The zero-indexed rightmost column of the selection
  */
 /** \fn Knot::mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const
@@ -236,8 +234,8 @@ private:
  *
  * \param glyphGrid The 2D std::vector of Glyph pointers to pass into the function to be edited, as an \c optional
  * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
- * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
  * \param jMin The zero-indexed leftmost column of the selection
+ * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
  * \param jMax The zero-indexed rightmost column of the selection
  * \param ignoreSides The sides to ignore, as an or-composition of Side values
  * \param boolFlags The conditions which need to be met, as an or-composition of GlyphFlag values
@@ -248,8 +246,8 @@ private:
  * This is a helper function that tells you whether a specific tile location is within the given selection.
  * 
  * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
- * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
  * \param jMin The zero-indexed leftmost column of the selection
+ * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
  * \param jMax The zero-indexed rightmost column of the selection
  * \param i The row index being checked
  * \param j The column index being checked

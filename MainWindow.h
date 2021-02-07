@@ -3,13 +3,15 @@
 #include "DisplayGrid.h"
 #include "Knot.h"
 
+// Declare and initialize a button with its corresponding function
 #define declareButton(buttonName) \
-	void buttonName##Function(wxCommandEvent& evt); \
-	wxButton* buttonName##Button
+	wxButton* buttonName##Button; \
+	void buttonName##Function(wxCommandEvent& evt)
 #define initButton(buttonName, displayText) \
 	buttonName##Button = new wxButton(this, wxID_ANY, displayText); \
 	buttonName##Button->Bind(wxEVT_BUTTON, &MainWindow::##buttonName##Function, this)
 
+// Declare and initialize a "generate" button, bound to the MainWindow::generateKnot() function
 #define declareGenerateButton(SymType) \
 	wxButton* generate##SymType##Button
 #define initGenerateButton(SymType, displayText) \
@@ -17,31 +19,31 @@
 	generate##SymType##Button->Bind(wxEVT_BUTTON, &MainWindow::generateKnot, this); \
 	generateRegionSizer->Add(generate##SymType##Button)
 
-/** As a more specialized \c wxFrame object, this class represents main window of the application */
+/** As a more specialized \c wxFrame object, this class represents main window of the application;
+	most of the WX object member variables are not documented here. */
 class MainWindow : public wxFrame {
 
 public:
 	MainWindow(int h, int w, wxString title);
 	~MainWindow(); ///< Hides this MainWindow object automatically, so the destruction is not visible
 
-	void updateSelectCoord();
+	void updateSelectCoord();				///< Updates the displayed selection coordinates, also has other effects.
 	void changeSelectCoord(ijSignature);
 	void fixSelectCoord();
-	void resetSelectCoord();
-
-	void enableGenerateButtons(bool enable = true);
-
-	void regenExportBox();
+	void resetSelectCoord();				///< Resets the values of \c iMin, \c jMin, \c iMax, and \c jMax to the default values, by calling MainWindow::changeSelectCoord()
 
 private:
-	int h, w;
-	int iMin, jMin, iMax, jMax; // The "selection numbers", i.e. the current grid selection
-	wxFont textFont;
+	int h,		///< The height of the knot, i.e. the number of rows.
+		w;		///< The width of the knot, i.e. the number of columns.
+	int iMin,	///< The zero-indexed upper row of the selection visually (lower numerically)
+		jMin,	///< The zero-indexed leftmost column of the selection
+		iMax,	///< The zero-indexed lower row of the selection visually (higher numerically)
+		jMax;	///< The zero-indexed rightmost column of the selection
 
 	void initSizerLayout();
-	void initDispSizer();
-	DisplayGrid* disp;
-	Knot* knot;
+	void initDispSizer();	///< One of 6 \c init functions which chunk the initializing process, but the only one documented. 
+	DisplayGrid* disp;		///< The DisplayGrid for this program, i.e. the \c wxPanel that displays the Knot.
+	Knot* knot;				///< The Knot object belonging to this program.
 	wxBoxSizer* mainSizer;
 	wxBoxSizer* dispSizer;
 	wxBoxSizer* buttonSizer;
@@ -51,17 +53,20 @@ private:
 		wxBoxSizer* gridInputSizer;
 			wxTextCtrl* gridHeight;
 			wxTextCtrl* gridWidth;
-		declareButton(gridRegen);
+		declareButton(gridRegen); ///< Applies the values in the \c wxTextCtrl boxes to regenerate the DisplayGrid to this new size.
 
 	void initSelectRegion();
 	wxStaticBoxSizer* selectRegionSizer;
 		wxStaticText* selectCoord;		// The display of "selection coordinates", i.e. top-left to bottom-right
 		wxBoxSizer* selectButtonSizer;	// The selection buttons
-			declareButton(selectToggle);	// This button is a show/hide button, which highlights the selection
-			declareButton(selectReset);		// This button resets the selection coordinates
+			declareButton(selectToggle);	///< This function is bound to the \c show/hide button, so it highlights and unhighlights the selection
+				// This button is a show/hide button, which highlights the selection
+			declareButton(selectReset);		///< This function resets the selection coordinates by calling MainWindow::resetSelectCoord(), but this function takes in a button event so it can be bound to the \c reset button.
+				// This button resets the selection coordinates
 
 	void initGenerateRegion();
-	void generateKnot(wxCommandEvent& evt);
+	void enableGenerateButtons(bool enable = true); ///< This function conditionally enables or fully disables the generating buttons.
+	void generateKnot(wxCommandEvent& evt);			///< This function checks which of the generating buttons was pressed and calls the appropriate Knot function.
 	wxStaticBoxSizer* generateRegionSizer;
 		declareGenerateButton(NoSym);
 		declareGenerateButton(HoriSym);
@@ -72,7 +77,8 @@ private:
 		// ...
 
 	void initExportRegion();
-	void showExportBox();
+	void showExportBox();		///< Loops through the Knot and grabs each character, then outputs the contents into the export textbox
+	void regenExportBox();		///< Defines the export textbox with a size dependent on the height and width of the knot
 	wxStaticBoxSizer* exportRegionSizer;
 		wxTextCtrl* exportBox;
 		wxFont exportFont;
@@ -81,3 +87,34 @@ private:
 	static constexpr int GAP_2 = 10; ///< The gap between the panels in the panel section
 	static constexpr int GAP_3 =  5; ///< The gap between elements within the panels
 };
+
+/* MainWindow constructor */
+/** \fn MainWindow::MainWindow(int h, int w, wxString title)
+ * Sets the \c wxFrame base object with the proper title, sets the initial height and width of the grid and the initial selection coordinates.
+ *
+ * Also creates the status bar, sets the background colour, initializes all WX objects, and sets the window size and minimum size.
+ *
+ * \param h The initial height of the grid, but can be changed later when MainWindow::gridRegenFunction() is called
+ * \param w The initial width of the grid, but can be changed later when MainWindow::gridRegenFunction() is called
+ * \param title The title of the whole window
+ */
+
+/* Select Coord functions */
+/** \fn MainWindow::changeSelectCoord(ijSignature)
+ * Changes the stored values of \c iMin, \c jMin, \c iMax, and \c jMax to the supplied values
+ * 
+ * Changes the stored values of \c iMin, \c jMin, \c iMax, and \c jMax to the supplied values,
+ * unless the supplied value to any of these is \c -1.
+ * This function then calls MainWindow::updateSelectionCoord() to automatically update the display every time the values change.
+ *
+ * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
+ * \param jMin The zero-indexed leftmost column of the selection
+ * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
+ * \param jMax The zero-indexed rightmost column of the selection
+ */
+/** \fn MainWindow::fixSelectCoord()
+ * Swaps the stored values of \c iMin, \c jMin, \c iMax, and \c jMax such that \c iMin \c <= \c iMax and \c jMin \c <= \c jMax.
+ * 
+ * Swaps the stored values of \c iMin, \c jMin, \c iMax, and \c jMax such that \c iMin \c <= \c iMax and \c jMin \c <= \c jMax.
+ * This function then calls MainWindow::updateSelectionCoord() to automatically update the display every time the values change.
+ */
