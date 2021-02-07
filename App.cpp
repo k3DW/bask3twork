@@ -1,35 +1,12 @@
-/* TODO for version 0.3 */
+/* TODO for version 0.4 */
 /*
 	
-	~~1) Redo the Knot data structures
-		(Breaking this down into subtasks would have been difficult, but it runs a lot faster now!)
-	~~2) Redo the horizontal and vertical symmetry checking in `Knot` class
-		~~2a) Do horizontal
-		~~2b) Do vertical
-		~~2c) Implement in `MainWindow::enableGenerateButtons()`
-	~~3) Make 2-way rotationally symmetric knots
-		~~3a) Button
-		~~3b) Generate knot
-		~~3c) Check symmetry
-	~~4) Make 4-way rotationally symmetric knots (square only)
-		~~4a) Button
-		~~4b) Generate knot
-		~~4c) Check symmetry
-	~~5) Change indices in `Glyph` objects from `unsigned int` to `const Glyph* const`
-		~~5a) Update `Glyph` constructors
-		~~5b) Update Excel
-		~~5c) Update `std::array<Glyph, Glyph::TOTAL> AllGlyphs`
-		~~5d) Update all calls to the old index variables
-	~~6) Documentation
-		~~6a) Install Doxygen, learn how to use it
-		~~6b) Add Doxygen comments to this project
-		~~6c) Generate the documentation with Doxygen
+	
 
 */
 
 /* TODO for later versions */
 /*
-	-> Change WFC algorithm to select tiles by entropy instead of random
 	-> "Copy to clipboard" button with the export box
 	-> Knots wrapping around the borders
 	-> More of the symmetries
