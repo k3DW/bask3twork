@@ -154,11 +154,11 @@ void MainWindow::updateSelectCoord() {
 	selectToggleButton->SetLabelText("Show");
 	enableGenerateButtons(false);
 }
-void MainWindow::changeSelectCoord(const int iMin_, const int jMin_, const int iMax_, const int jMax_) {
-	if (iMin_ > -1) iMin = iMin_;
-	if (jMin_ > -1) jMin = jMin_;
-	if (iMax_ > -1) iMax = iMax_;
-	if (jMax_ > -1) jMax = jMax_;
+void MainWindow::changeSelectCoord(ijSignature) {
+	if (iMin > -1) this->iMin = iMin;
+	if (jMin > -1) this->jMin = jMin;
+	if (iMax > -1) this->iMax = iMax;
+	if (jMax > -1) this->jMax = jMax;
 
 	updateSelectCoord();
 }

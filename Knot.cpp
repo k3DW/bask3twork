@@ -353,7 +353,7 @@ void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const
 			GlyphVec1 possibilities = PossibleGlyphs(
 				/** (1) Generate the \c vector of all possible glyphs that can fit into this spot, using the \c PossibleGlyphs() function,
 				 *	passing on the \c boolFlags parameter directly.
-				 *	For each \c Connection parameter, there are 4 possible cases, in order: 
+				 *	For each of the \c Connection parameters, there are 4 possible cases, in order: 
 				 *	(a) The side should be ignored based on \c ignoreSide, therefore the parameter should be \c Connection::DO_NOT_CARE.
 				 *	(b) This glyph is on the outer edge of the selection on this particular side, so the parameter should be \c Connection::EMPTY.
 				 *	(c) The next glyph on this particular side is not yet assigned, therefore the parameter should be \c Connection::DO_NOT_CARE.
@@ -377,6 +377,7 @@ void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const
 			newGlyphs[i][j] = possibilities[rand() % possibilities.size()]; // Pick a random glyph, now that we know it has a nonzero size
 		}
 	}
+
 	/// At the end of the function, set \c glyphGrid equal to the created copy.
 	glyphGrid = newGlyphs;
 }

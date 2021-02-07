@@ -17,14 +17,15 @@
 	generate##SymType##Button->Bind(wxEVT_BUTTON, &MainWindow::generateKnot, this); \
 	generateRegionSizer->Add(generate##SymType##Button)
 
+/** As a more specialized \c wxFrame object, this class represents main window of the application */
 class MainWindow : public wxFrame {
 
 public:
 	MainWindow(int h, int w, wxString title);
-	~MainWindow();
+	~MainWindow(); ///< Hides this MainWindow object automatically, so the destruction is not visible
 
 	void updateSelectCoord();
-	void changeSelectCoord(const int iMin_, const int jMin_, const int iMax_, const int jMax_);
+	void changeSelectCoord(ijSignature);
 	void fixSelectCoord();
 	void resetSelectCoord();
 
@@ -76,7 +77,7 @@ private:
 		wxTextCtrl* exportBox;
 		wxFont exportFont;
 
-	static constexpr int GAP_1 = 20;
-	static constexpr int GAP_2 = 10;
-	static constexpr int GAP_3 =  5;
+	static constexpr int GAP_1 = 20; ///< The gap from the outside of the window, and between the grid section and panel section
+	static constexpr int GAP_2 = 10; ///< The gap between the panels in the panel section
+	static constexpr int GAP_3 =  5; ///< The gap between elements within the panels
 };
