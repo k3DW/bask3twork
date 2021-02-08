@@ -3,7 +3,7 @@
 	~~0) Change Glyph structure
 		~~0a) Change GlyphFlag to be 64 bit
 		~~0b) Propagate those changes everywhere (yikes)
-		~~0c) Add SA_FDIAG and SA_BDIAG flags
+		~~0c) Add SA_MIRFD and SA_MIRBD flags
 		~~0d) Add corresponding flags to the Glyph struct
 	1) More symmetries
 		1a) Generate full symmetry (square only)
@@ -48,7 +48,7 @@ private:
 	MainWindow* main;
 
 	static constexpr int MAJOR_VERSION = 0;
-	static constexpr int MINOR_VERSION = 3;
+	static constexpr int MINOR_VERSION = 4;
 	static constexpr int PATCH_VERSION = 0;
 	static const wxString VERSION;
 
