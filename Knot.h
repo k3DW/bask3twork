@@ -12,12 +12,9 @@ public:
 			  w; ///< The width of the knot, i.e. the number of columns. This is publicly accessible but not mutable
 	wxStatusBar* const statusBar; ///< The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot
 
-	bool generateNoSym(ijSignature);
-	bool generateHoriSym(ijSignature);
-	bool generateVertSym(ijSignature);
-	bool generateHoriVertSym(ijSignature);
-	bool generateRot2Sym(ijSignature);
-	bool generateRot4Sym(ijSignature);
+	#define XX(Sym, desc) bool generate##Sym##(ijSignature);
+	SYMMETRIES
+	#undef XX
 
 	bool checkHoriSym(ijSignature) const;
 	bool checkVertSym(ijSignature) const;

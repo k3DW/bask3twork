@@ -102,15 +102,12 @@ void MainWindow::initSelectRegion() {
 }
 void MainWindow::initGenerateRegion() {
 	generateRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Generate");
-	initGenerateButton(NoSym, "No Symmetry");
-	initGenerateButton(HoriSym, "Horizontal Reflection");
-	initGenerateButton(VertSym, "Vertical Reflection");
-	initGenerateButton(HoriVertSym, "Horizontal + Vertical");
-	initGenerateButton(Rot2Sym, "2-way Rotational");
-	initGenerateButton(Rot4Sym, "4-way Rotational");
-	initGenerateButton(FwdDiag, "Forward Diagonal");
-	initGenerateButton(BackDiag, "Backward Diagonal");
-	initGenerateButton(FullSym, "Full Symmetry");
+	#define XX(Sym, desc) \
+		generate##Sym##Button = new wxButton(this, static_cast<unsigned int>(Symmetry::Sym), desc); \
+		generate##Sym##Button->Bind(wxEVT_BUTTON, &MainWindow::generateKnot, this); \
+		generateRegionSizer->Add(generate##Sym##Button);
+	SYMMETRIES
+	#undef XX
 	enableGenerateButtons(false);
 }
 void MainWindow::initExportRegion() {
@@ -241,15 +238,15 @@ void MainWindow::enableGenerateButtons(bool enable) {
 		generateHoriVertSymButton->Enable(hasVertSym && hasHoriSym);
 		generateRot2SymButton->Enable(hasRot2Sym);
 		generateRot4SymButton->Enable(hasRot4Sym);
+		generateFwdDiagButton->Enable();
+		generateBackDiagButton->Enable();
+		generateFullSymButton->Enable();
 	}
 	/// If \c enable is \c false, then disable each of the buttons.
 	else {
-		generateNoSymButton->Disable();
-		generateHoriSymButton->Disable();
-		generateVertSymButton->Disable();
-		generateHoriVertSymButton->Disable();
-		generateRot2SymButton->Disable();
-		generateRot4SymButton->Disable();
+		#define XX(Sym, desc) generate##Sym##Button->Disable();
+		SYMMETRIES
+		#undef XX
 	}
 }
 void MainWindow::generateKnot(wxCommandEvent& evt) {
@@ -263,13 +260,9 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// so update the DisplayGrid with DisplayGrid::drawKnot() and update the export text box with MainWindow::showExportBox.
 	/// If the generate function returns \c false, then display an error message as a \c wxMessageBox.
 	Symmetry id = static_cast<Symmetry>(evt.GetId());
-	if(	(id == Symmetry::NoSym			&& knot->generateNoSym(iMin, jMin, iMax, jMax))			||
-		(id == Symmetry::HoriSym		&& knot->generateHoriSym(iMin, jMin, iMax, jMax))		||
-		(id == Symmetry::VertSym		&& knot->generateVertSym(iMin, jMin, iMax, jMax))		||
-		(id == Symmetry::HoriVertSym	&& knot->generateHoriVertSym(iMin, jMin, iMax, jMax))	||
-		(id == Symmetry::Rot2Sym		&& knot->generateRot2Sym(iMin, jMin, iMax, jMax))		||
-		(id == Symmetry::Rot4Sym		&& knot->generateRot4Sym(iMin, jMin, iMax, jMax))		){
-
+	#define XX(Sym, desc) (id == Symmetry::Sym && knot->generate##Sym##(iMin, jMin, iMax, jMax)) ||
+	if(	SYMMETRIES false ){
+	#undef XX
 		disp->drawKnot();
 		showExportBox();
 	}

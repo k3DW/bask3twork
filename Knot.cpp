@@ -175,6 +175,15 @@ bool Knot::generateRot4Sym(ijSignature) {
 	}
 	return false;
 }
+bool Knot::generateFwdDiag(ijSignature) {
+	return false;
+}
+bool Knot::generateBackDiag(ijSignature) {
+	return false;
+}
+bool Knot::generateFullSym(ijSignature) {
+	return false;
+}
 
 bool Knot::checkHoriSym(ijSignature) const {
 	Connection upConnection, downConnection;

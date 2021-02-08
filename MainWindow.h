@@ -11,14 +11,6 @@
 	buttonName##Button = new wxButton(this, wxID_ANY, displayText); \
 	buttonName##Button->Bind(wxEVT_BUTTON, &MainWindow::##buttonName##Function, this)
 
-// Declare and initialize a "generate" button, bound to the MainWindow::generateKnot() function
-#define declareGenerateButton(SymType) \
-	wxButton* generate##SymType##Button
-#define initGenerateButton(SymType, displayText) \
-	generate##SymType##Button = new wxButton(this, static_cast<unsigned int>(Symmetry::SymType), displayText); \
-	generate##SymType##Button->Bind(wxEVT_BUTTON, &MainWindow::generateKnot, this); \
-	generateRegionSizer->Add(generate##SymType##Button)
-
 /** As a more specialized \c wxFrame object, this class represents main window of the application;
 	most of the WX object member variables are not documented here. */
 class MainWindow : public wxFrame {
@@ -68,16 +60,9 @@ private:
 	void enableGenerateButtons(bool enable = true); ///< This function conditionally enables or fully disables the generating buttons.
 	void generateKnot(wxCommandEvent& evt);			///< This function checks which of the generating buttons was pressed and calls the appropriate Knot function.
 	wxStaticBoxSizer* generateRegionSizer;
-		declareGenerateButton(NoSym);
-		declareGenerateButton(HoriSym);
-		declareGenerateButton(VertSym);
-		declareGenerateButton(HoriVertSym);
-		declareGenerateButton(Rot2Sym);
-		declareGenerateButton(Rot4Sym);
-		declareGenerateButton(FwdDiag);
-		declareGenerateButton(BackDiag);
-		declareGenerateButton(FullSym);
-		// ...
+		#define XX(Sym, desc) wxButton* generate##Sym##Button;
+		SYMMETRIES
+		#undef XX
 
 	void initExportRegion();
 	void showExportBox();		///< Loops through the Knot and grabs each character, then outputs the contents into the export textbox

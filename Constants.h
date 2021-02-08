@@ -8,6 +8,18 @@
 
 using ull = unsigned long long;
 
+/// The X macro used on the symmetries, to make the code simpler
+#define SYMMETRIES \
+	XX(NoSym, "No Symmetry") \
+	XX(HoriSym, "Horizontal Reflection") \
+	XX(VertSym, "Vertical Reflection") \
+	XX(HoriVertSym, "Horizontal + Vertical") \
+	XX(Rot2Sym, "2-way Rotational") \
+	XX(Rot4Sym, "4-way Rotational") \
+	XX(FwdDiag, "Forward Diagonal") \
+	XX(BackDiag, "Backward Diagonal") \
+	XX(FullSym, "Full Symmetry")
+
 /// All the types of symmetry which can be used in this program
 enum class Symmetry : unsigned int {
 	NoSym,			///< No symmetry
