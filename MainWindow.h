@@ -74,6 +74,9 @@ private:
 		declareGenerateButton(HoriVertSym);
 		declareGenerateButton(Rot2Sym);
 		declareGenerateButton(Rot4Sym);
+		declareGenerateButton(FwdDiag);
+		declareGenerateButton(BackDiag);
+		declareGenerateButton(FullSym);
 		// ...
 
 	void initExportRegion();

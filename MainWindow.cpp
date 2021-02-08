@@ -108,6 +108,9 @@ void MainWindow::initGenerateRegion() {
 	initGenerateButton(HoriVertSym, "Horizontal + Vertical");
 	initGenerateButton(Rot2Sym, "2-way Rotational");
 	initGenerateButton(Rot4Sym, "4-way Rotational");
+	initGenerateButton(FwdDiag, "Forward Diagonal");
+	initGenerateButton(BackDiag, "Backward Diagonal");
+	initGenerateButton(FullSym, "Full Symmetry");
 	enableGenerateButtons(false);
 }
 void MainWindow::initExportRegion() {
