@@ -6,8 +6,8 @@
 		~~0c) Add SA_MIRFD and SA_MIRBD flags
 		~~0d) Add corresponding flags to the Glyph struct
 	1) More symmetries
-		1a) Add new buttons to the window
-		1b) Change `Knot::tryGenerating()` to make diagonal structures
+		~~1a) Add new buttons to the window
+		1b) Add `Knot::tryGeneratingDiag()` to make diagonal structures
 		1c) Generate full symmetry (square only)
 		1d) Generate forward diagonal symmetry (square only)
 		1e) Generate backward diagonal symmetry (square only)

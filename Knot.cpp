@@ -176,6 +176,18 @@ bool Knot::generateRot4Sym(ijSignature) {
 	return false;
 }
 bool Knot::generateFwdDiag(ijSignature) {
+	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
+		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
+			statusBar->SetStatusText("Generating forward diagonal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
+
+		std::optional<GlyphVec2> newGlyphs = glyphs;
+
+		tryGenerating(newGlyphs, iMin, jMin, iMax, jMax);
+		if (!newGlyphs) continue;
+
+		glyphs = *newGlyphs;
+		return true;
+	}
 	return false;
 }
 bool Knot::generateBackDiag(ijSignature) {
@@ -343,7 +355,7 @@ void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const
 	GlyphVec2 newGlyphs = *glyphGrid;
 	
 	/// Then, set the \c const \c Glyph* pointers of the copy to \c nullptr, if they are within the selection.
-	/// This signifies that these values are not set, since they are being regenerated in this function.
+	/// This signifies that these values are not set, since they will be regenerated in this function.
 	for (int i = iMin; i <= iMax; i++)
 		for (int j = jMin; j <= jMax; j++)
 			if (inSelection(iMin, jMin, iMax, jMax, i, j))
