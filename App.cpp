@@ -1,10 +1,10 @@
 /* TODO for version 0.4 */
 /*
-	0) Change Glyph structure
+	~~0) Change Glyph structure
 		~~0a) Change GlyphFlag to be 64 bit
 		~~0b) Propagate those changes everywhere (yikes)
 		~~0c) Add SA_FDIAG and SA_BDIAG flags
-		0d) Add corresponding flags to the Glyph struct
+		~~0d) Add corresponding flags to the Glyph struct
 	1) More symmetries
 		1a) Generate full symmetry (square only)
 		1b) Generate forward diagonal symmetry (square only)
