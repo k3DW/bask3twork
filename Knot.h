@@ -31,6 +31,7 @@ private:
 	void rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const;
 
 	void tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides = Side::NONE, const GlyphFlag boolFlags = GlyphFlag::NONE) const;
+	void tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const int diagType) const;
 	static inline bool inSelection(ijSignature, const int i, const int j);
 	static inline bool isEvenSegments(const int min, const int max);
 };
@@ -236,6 +237,26 @@ private:
  * \param jMax The zero-indexed rightmost column of the selection
  * \param ignoreSides The sides to ignore, as an or-composition of Side values
  * \param boolFlags The conditions which need to be met, as an or-composition of GlyphFlag values
+ *
+ * \b Methodology
+ */
+/** \fn Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const int diagFlag) const
+ * This function tries to generate a rectangle with diagonal symmetry somewhere, only once with no looping, and sets \c glyphGrid to \c std::nullopt if it cannot be generated.
+ * 
+ * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
+ * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
+ * 
+ * The \c diagFlag parameter can take a value of 0 for forward diagonal symmetry on the UL side,
+ * a value of 1 for backward diagonal symmetry on the DL side,
+ * a value of 2 for forward diagonal symmetry on the DR side,
+ * and a value of 3 for backward diagonal symmetry on the UR side.
+ *
+ * \param glyphGrid The 2D std::vector of Glyph pointers to pass into the function to be edited, as an \c optional
+ * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
+ * \param jMin The zero-indexed leftmost column of the selection
+ * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
+ * \param jMax The zero-indexed rightmost column of the selection
+ * \param diagFlag The type of diagonal symmetry to generate
  *
  * \b Methodology
  */
