@@ -1,28 +1,35 @@
 /* TODO for version 0.4 */
 /*
-	
-	
+	1) More symmetries
+		1a) Generate full symmetry (square only)
+		1b) Generate forward diagonal symmetry (square only)
+		1c) Generate backward diagonal symmetry (square only)
+		1d) Check forward diagonal symmetry
+		1e) Check backward diagonal symmetry
+	2) Save states
+		2a) Function to write a GlyphVec2 into a ".knot" file in a specified file location, with visual file explorer
+		2b) Menu bar, with "File -> Save" that calls that function, saves as ".knot" file
+		2c) Function to read a ".knot" file, check to see if it's valid, then put into a GlyphVec2/Knot object and set the knot
+		2b) Menu bar, with "File -> Open" that calls that function
+*/
 
+/* TODO for version 0.5 */
+/*
+	1) Tile locking
+	2) Undo/redo (up to a certain level)
+	3) Wrapping around borders?
 */
 
 /* TODO for later versions */
 /*
 	-> "Copy to clipboard" button with the export box
 	-> Knots wrapping around the borders
-	-> More of the symmetries
-		-> full sym (square only)
-		-> back diag sym (square only)
-		-> fwd diag sym (square only)
 	-> DisplayGrid automatically changes size depending on the size of the screen/window
 	-> Tooltips (and other little details)
 	-> Copying sections of the knot
 	-> Inputting individual glyphs
 		-> Either typing it in
 		-> Or selecting from all possible glyphs
-	-> Locking glyphs in place
-	-> Undo/redo
-	-> Save state
-		-> Also load state
 	-> Circle blocking (selecting)
 	-> Simple weaves as example knots
 */
