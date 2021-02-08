@@ -6,11 +6,13 @@
 		~~0c) Add SA_MIRFD and SA_MIRBD flags
 		~~0d) Add corresponding flags to the Glyph struct
 	1) More symmetries
-		1a) Generate full symmetry (square only)
-		1b) Generate forward diagonal symmetry (square only)
-		1c) Generate backward diagonal symmetry (square only)
-		1d) Check forward diagonal symmetry
-		1e) Check backward diagonal symmetry
+		1a) Add new buttons to the window
+		1b) Change `Knot::tryGenerating()` to make diagonal structures
+		1c) Generate full symmetry (square only)
+		1d) Generate forward diagonal symmetry (square only)
+		1e) Generate backward diagonal symmetry (square only)
+		1f) Check forward diagonal symmetry
+		1g) Check backward diagonal symmetry
 	2) Save states
 		2a) Function to write a GlyphVec2 into a ".knot" file in a specified file location, with visual file explorer
 		2b) Menu bar, with "File -> Save" that calls that function, saves as ".knot" file
