@@ -56,7 +56,7 @@ constexpr inline Connection mirYConnection(Connection input)
 }
 
 /// The bit flag for each of the properties of a Glyph object
-enum class GlyphFlag : unsigned int {
+enum class GlyphFlag : ull {
 	NONE	= 0,			///< No flag
 	UP		= 0b1111 <<  0,	///< The upper side 4-bit mask
 	DOWN	= 0b1111 <<  4, ///< The lower side 4-bit mask
@@ -77,24 +77,26 @@ enum class GlyphFlag : unsigned int {
 	CT_MIRU  = 1 << 28,		///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its upper side
 	CT_MIRD  = 1 << 29,		///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its lower side
 	CT_MIRL  = 1 << 30,		///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its left side
-	CT_MIRR  = static_cast<unsigned int>(1 << 31), ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its right side
+	CT_MIRR  = 1LL << 31,		///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its right side
+	SA_MIRFD = 1LL << 32,	///< Is this Glyph the same after mirroring across the forward diagonal
+	SA_MIRBD = 1LL << 33,	///< Is this Glyph the same after mirroring across the backward diagonal
 
-	COND_MASK = 0b11111111111111110000000000000000, ///< The mask of all the non-Side flags
+	COND_MASK = 0b111111111111111111LL << 16, ///< The mask of all the non-Side flags
 };
 constexpr inline GlyphFlag operator|(GlyphFlag flag1, GlyphFlag flag2)
 /// Allows GlyphFlag values to have \c operator| used on them, to generate new GlyphFlag values
 {
-	return static_cast<GlyphFlag>(static_cast<unsigned int>(flag1) | static_cast<unsigned int>(flag2));
+	return static_cast<GlyphFlag>(static_cast<ull>(flag1) | static_cast<ull>(flag2));
 }
 constexpr inline GlyphFlag operator&(GlyphFlag flag1, GlyphFlag flag2)
 /// Allows GlyphFlag values to have \c operator& used on them, to generate new GlyphFlag values
 {
-	return static_cast<GlyphFlag>(static_cast<unsigned int>(flag1) & static_cast<unsigned int>(flag2));
+	return static_cast<GlyphFlag>(static_cast<ull>(flag1) & static_cast<ull>(flag2));
 }
 constexpr inline GlyphFlag toFlag(Connection con, GlyphFlag sideFlag)
 /// Converts a Connection on a specific side to a GlyphFlag of that specific Connection on the side
 {
-	return static_cast<GlyphFlag>((static_cast<unsigned int>(con) * 0b1000100010001) & static_cast<unsigned int>(sideFlag));
+	return static_cast<GlyphFlag>((static_cast<ull>(con) * 0b1000100010001) & static_cast<ull>(sideFlag));
 }
 
 /** A struct to store the information for all the possible glyphs in the Celtic Knots font,
@@ -137,22 +139,22 @@ struct Glyph {
 	Glyph(wxString chr, const Glyph* rotated4, const Glyph* rotated2, const Glyph* mirroredX, const Glyph* mirroredY,
 	const Connection up, const Connection down, const Connection left, const Connection right,
 	unsigned int sameAfterRotate4, unsigned int sameAfterRotate2, unsigned int sameAfterMirrorX, unsigned int sameAfterMirrorY) :
-		chr(chr), rotated4(rotated4), rotated2(rotated2), mirroredX(mirroredX), mirroredY(mirroredY),
-		up(up), down(down), left(left), right(right),
-		sameAfterRotate4(sameAfterRotate4), sameAfterRotate2(sameAfterRotate2),
-		sameAfterMirrorX(sameAfterMirrorX), sameAfterMirrorY(sameAfterMirrorY),
-		connectToRotate4Up		(up		== rot4Connection(right)),
-		connectToRotate4Down	(down	== rot4Connection(left)),
-		connectToRotate4Left	(left	== rot4Connection(up)),
-		connectToRotate4Right	(right	== rot4Connection(down)),
-		connectToRotate2Up		(up		== rot2Connection(up)),
-		connectToRotate2Down	(down	== rot2Connection(down)),
-		connectToRotate2Left	(left	== rot2Connection(left)),
-		connectToRotate2Right	(right	== rot2Connection(right)),
-		connectToMirrorUp		(up		== mirXConnection(up)),
-		connectToMirrorDown		(down	== mirXConnection(down)),
-		connectToMirrorLeft		(left	== mirYConnection(left)),
-		connectToMirrorRight	(right	== mirYConnection(right)) {}
+		chr{ chr }, rotated4{ rotated4 }, rotated2{ rotated2 }, mirroredX{ mirroredX }, mirroredY{ mirroredY },
+		up{ up }, down{ down }, left{ left }, right{ right },
+		sameAfterRotate4{ sameAfterRotate4 }, sameAfterRotate2{ sameAfterRotate2 },
+		sameAfterMirrorX{ sameAfterMirrorX }, sameAfterMirrorY{ sameAfterMirrorY },
+		connectToRotate4Up		{up		== rot4Connection(right)},
+		connectToRotate4Down	{down	== rot4Connection(left)},
+		connectToRotate4Left	{left	== rot4Connection(up)},
+		connectToRotate4Right	{right	== rot4Connection(down)},
+		connectToRotate2Up		{up		== rot2Connection(up)},
+		connectToRotate2Down	{down	== rot2Connection(down)},
+		connectToRotate2Left	{left	== rot2Connection(left)},
+		connectToRotate2Right	{right	== rot2Connection(right)},
+		connectToMirrorUp		{up		== mirXConnection(up)},
+		connectToMirrorDown		{down	== mirXConnection(down)},
+		connectToMirrorLeft		{left	== mirYConnection(left)},
+		connectToMirrorRight	{right	== mirYConnection(right)} {}
 
 	static constexpr int TOTAL = 190; ///< The total number of glyphs used
 };

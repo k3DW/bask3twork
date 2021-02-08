@@ -50,10 +50,10 @@ bool Knot::generateVertSym(ijSignature) {
 			statusBar->SetStatusText("Generating vertical symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
-		
+
 		tryGenerating(newGlyphs, iMin, jMin, iMax, jMid - 1, Side::RIGHT);
 		if (!newGlyphs) continue;
-		
+
 		tryGenerating(newGlyphs, iMin, jMid, iMax, jMid, Side::RIGHT, colFlag);
 		if (!newGlyphs) continue;
 		

@@ -6,6 +6,8 @@
 #include <vector>
 /// \file
 
+using ull = unsigned long long;
+
 /// All the types of symmetry which can be used in this program
 enum class Symmetry : unsigned int {
 	NoSym,			///< No symmetry
@@ -13,7 +15,10 @@ enum class Symmetry : unsigned int {
 	VertSym,		///< Mirror symmetry across the vertical axis
 	HoriVertSym,	///< Mirror symmetry across both the horizontal and vertical axes
 	Rot2Sym,		///< 2-way rotational symmetry
-	Rot4Sym			///< 4-way rotational symmetry
+	Rot4Sym,		///< 4-way rotational symmetry (square only)
+	FwdDiag,		///< Mirror symmetry across the forward diagonal (square only)
+	BackDiag,		///< Mirror symmetry across the backward diagonal (square only)
+	FullSym,		///< 4-fold dihedral symmetry (square only)
 };
 
 /// A shortcut for this function signature, which is used often throughout the code
