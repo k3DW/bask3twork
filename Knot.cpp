@@ -182,7 +182,7 @@ bool Knot::generateFwdDiag(ijSignature) {
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
-		tryGeneratingDiag(newGlyphs, iMin, jMin, iMax, jMax, 0);
+		tryGeneratingDiag(newGlyphs, iMin, jMin, iMax, jMax, true);
 		if (!newGlyphs) continue;
 
 		glyphs = *newGlyphs;
@@ -197,7 +197,7 @@ bool Knot::generateBackDiag(ijSignature) {
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
-		tryGeneratingDiag(newGlyphs, iMin, jMin, iMax, jMax, 1);
+		tryGeneratingDiag(newGlyphs, iMin, jMin, iMax, jMax, false);
 		if (!newGlyphs) continue;
 
 		glyphs = *newGlyphs;
@@ -206,14 +206,30 @@ bool Knot::generateBackDiag(ijSignature) {
 	return false;
 }
 bool Knot::generateFullSym(ijSignature) {
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
+	const GlyphFlag rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
+	const GlyphFlag colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText("Generating backward diagonal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
+			statusBar->SetStatusText("Generating full symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
-		tryGeneratingDiag(newGlyphs, iMin, jMin, iMax, jMax, 2);
+		tryGeneratingDiag(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, false, Side::DOWN | Side::RIGHT);
 		if (!newGlyphs) continue;
+
+		tryGenerating(newGlyphs, iMid, jMin, iMid, jMid - 1, Side::DOWN | Side::RIGHT, rowFlag);
+		if (!newGlyphs) continue;
+
+		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, colFlag);
+		if (!newGlyphs) continue;
+
+		tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, rowFlag | colFlag);
+		if (!newGlyphs) continue;
+
+		mirrorUpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
+		mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
 
 		glyphs = *newGlyphs;
 		return true;
@@ -426,7 +442,7 @@ void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const
 	/// At the end of the function, set \c glyphGrid equal to the created copy.
 	glyphGrid = newGlyphs;
 }
-void Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const int diagType) const {
+void Knot::tryGeneratingDiagOLD(std::optional<GlyphVec2>& glyphGrid, ijSignature, const DiagStart diag) const {
 	/// First, make a copy of \c glyphGrid to make changes without affecting the input.
 	GlyphVec2 newGlyphs = *glyphGrid;
 	
@@ -437,9 +453,10 @@ void Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, c
 			if (inSelection(iMin, jMin, iMax, jMax, i, j))
 				newGlyphs[i][j] = nullptr;
 
-	bool startUp	= (diagType == 0 || diagType == 3);
-	bool startLeft	= (diagType == 0 || diagType == 1);
-	bool backDiag	= (diagType == 0 || diagType == 2);
+	bool startUp	= (diag == DiagStart::UpLeft || diag == DiagStart::UpRight);	// Does the diagonal start on the upper side
+	bool startLeft	= (diag == DiagStart::UpLeft || diag == DiagStart::DownLeft);	// Does the diagonal start on the left side
+	bool backDiag	= (diag == DiagStart::UpLeft || diag == DiagStart::DownRight);	// Is the diagonal a back-leaning diagonal
+	GlyphFlag diagFlag = backDiag ? GlyphFlag::SA_MIRBD : GlyphFlag::SA_MIRFD;		// Select the right GlyphFlag for the lean of the diagonal
 	
 	int iStart	= startUp ? iMin : iMax;
 	int iEnd	= startUp ? iMax : iMin;
@@ -448,29 +465,29 @@ void Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, c
 	int jEnd	= startLeft ? jMax : jMin;
 	int dj		= startLeft ? 1 : -1;
 
-	// Along the diagonal
-	GlyphFlag diagFlag = backDiag ? GlyphFlag::SA_MIRBD : GlyphFlag::SA_MIRFD;
-	for (int i = iStart, j = jStart; i != (iEnd + di) && j != (jEnd + dj); i += di, j += dj) {
-		GlyphVec1 possibilities = PossibleGlyphs(
-			i == 0		? Connection::EMPTY : !newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down,
-			i == h - 1	? Connection::EMPTY : !newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up,
-			j == 0		? Connection::EMPTY : !newGlyphs[i][j - 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j - 1]->right,
-			j == w - 1	? Connection::EMPTY : !newGlyphs[i][j + 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j + 1]->left,
-			diagFlag
-		);
-
-		if (possibilities.size() == 0) {
-			glyphGrid = std::nullopt;
-			return;
-		}
-
-		newGlyphs[i][j] = possibilities[rand() % possibilities.size()]; // Pick a random glyph, now that we know it has a nonzero size
-	}
-
 	if (iMax - iMin >= jMax - jMin) {
-		for (int iDiag = iStart, jDiag = jStart; iDiag != (iEnd + di) && jDiag != (jEnd + dj); iDiag += di, jDiag += dj) {
-			for (int i = iDiag, j = jDiag + dj, iRefl = iDiag + di, jRefl = jDiag; inSelection(iMin, jMin, iMax, jMax, i, j); j += dj, iRefl += di) {
-				//wxMessageBox(intWX(i) + "," + intWX(j));
+		int iDiag = iStart;
+		for (int jDiag = jStart; iDiag != (iEnd + di) && jDiag != (jEnd + dj); iDiag += di, jDiag += dj) {
+			for (int i = iDiag, j = jDiag, iRefl = iDiag, jRefl = jDiag; inSelection(iMin, jMin, iMax, jMax, i, j); j += dj, iRefl += di) {
+				GlyphVec1 possibilities = PossibleGlyphs(
+					i == 0		? Connection::EMPTY : !newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down,
+					i == h - 1	? Connection::EMPTY : !newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up,
+					j == 0		? Connection::EMPTY : !newGlyphs[i][j - 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j - 1]->right,
+					j == w - 1	? Connection::EMPTY : !newGlyphs[i][j + 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j + 1]->left,
+					j == jDiag ? diagFlag : GlyphFlag::NONE
+				);
+
+				if (possibilities.size() == 0) {
+					glyphGrid = std::nullopt;
+					return;
+				}
+
+				newGlyphs[i][j] = possibilities[rand() % possibilities.size()]; // Pick a random glyph, now that we know it has a nonzero size
+				if (j != jDiag) newGlyphs[iRefl][jRefl] = backDiag ? newGlyphs[i][j]->mirroredBD : newGlyphs[i][j]->mirroredFD; // Mirror it across the appropriate diagonal
+			}
+		}
+		for (int i = iDiag; i >= iMin && i <= iMax; i += di) {
+			for (int j = jMin; j <= jMax; j++) {
 				GlyphVec1 possibilities = PossibleGlyphs(
 					i == 0		? Connection::EMPTY : !newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down,
 					i == h - 1	? Connection::EMPTY : !newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up,
@@ -485,7 +502,6 @@ void Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, c
 				}
 
 				newGlyphs[i][j] = possibilities[rand() % possibilities.size()]; // Pick a random glyph, now that we know it has a nonzero size
-				newGlyphs[iRefl][jRefl] = backDiag ? newGlyphs[i][j]->mirroredBD : newGlyphs[i][j]->mirroredFD;
 			}
 		}
 	}
@@ -493,16 +509,68 @@ void Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, c
 
 	}
 
-
-
-
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% REMOVE THIS LATER
+	/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% REMOVE THIS LATER
 	for (int i = iMin; i <= iMax; i++)
 		for (int j = jMin; j <= jMax; j++)
 			if (!newGlyphs[i][j])
 				newGlyphs[i][j] = DefaultGlyph;
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+	glyphGrid = newGlyphs;
+}
+void Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const bool fwdDiag, const Side ignoreSides) const {
+	if (iMax - iMin != jMax - jMin) { // The selection must be square
+		glyphGrid = std::nullopt;
+		return;
+	}
+
+	/// First, make a copy of \c glyphGrid to make changes without affecting the input.
+	GlyphVec2 newGlyphs = *glyphGrid;
+	
+	/// Then, set the \c const \c Glyph* pointers of the copy to \c nullptr, if they are within the selection.
+	/// This signifies that these values are not set, since they will be regenerated in this function.
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			if (inSelection(iMin, jMin, iMax, jMax, i, j))
+				newGlyphs[i][j] = nullptr;
+
+	// As an intermediary step, turn the \c ignoreSides parameter into its individual 4 \c bool value, one for each side.
+	const bool ignoreUp		= (ignoreSides & Side::UP)		!= Side::NONE;
+	const bool ignoreDown	= (ignoreSides & Side::DOWN)	!= Side::NONE;
+	const bool ignoreLeft	= (ignoreSides & Side::LEFT)	!= Side::NONE;
+	const bool ignoreRight	= (ignoreSides & Side::RIGHT)	!= Side::NONE;
+	//const int iStart = 
+
+	/// Next, generate the glyphs by iterating over i,j coordinates within the selection.
+	/// For each i,j pair, do the following 3 steps.
+	for (int i = (fwdDiag ? iMax : iMin); (fwdDiag ? i >= iMin : i <= iMax); (fwdDiag ? i-- : i++)) {
+		bool firstInRow = true;
+		for (int j = jMin; j <= jMax; j++) {
+			if (newGlyphs[i][j]) continue;
+
+			GlyphVec1 possibilities = PossibleGlyphs(
+				ignoreUp	&& i == iMin ? Connection::DO_NOT_CARE : i == 0		? Connection::EMPTY : !newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down,
+				ignoreDown	&& i == iMax ? Connection::DO_NOT_CARE : i == h - 1 ? Connection::EMPTY : !newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up,
+				ignoreLeft	&& j == jMin ? Connection::DO_NOT_CARE : j == 0		? Connection::EMPTY : !newGlyphs[i][j - 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j - 1]->right,
+				ignoreRight && j == jMax ? Connection::DO_NOT_CARE : j == w - 1 ? Connection::EMPTY : !newGlyphs[i][j + 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j + 1]->left,
+				firstInRow ? (fwdDiag ? GlyphFlag::SA_MIRFD : GlyphFlag::SA_MIRBD) : GlyphFlag::NONE
+			);
+
+			if (possibilities.size() == 0) {
+				glyphGrid = std::nullopt;
+				return;
+			}
+
+			newGlyphs[i][j] = possibilities[rand() % possibilities.size()]; // Pick a random glyph, now that we know it has a nonzero size
+			if (!firstInRow) {
+				if (fwdDiag) newGlyphs[-j + jMin + iMax][-i + iMax + jMin] = newGlyphs[i][j]->mirroredFD;
+				else		 newGlyphs[ j - jMin + iMin][ i - iMin + jMin] = newGlyphs[i][j]->mirroredBD;
+			}
+			else firstInRow = false;
+		}
+	}
+
+	/// At the end of the function, set \c glyphGrid equal to the created copy.
 	glyphGrid = newGlyphs;
 }
 inline bool Knot::inSelection(ijSignature, const int i, const int j) {
