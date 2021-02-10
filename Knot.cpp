@@ -364,13 +364,6 @@ void Knot::mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const {
 		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
 			glyphGrid[i][jDecr] = glyphGrid[i][jIncr]->mirroredY;
 }
-/* unused */ void Knot::mirrorBDiagLToR(GlyphVec2& glyphGrid, ijSignature) const {
-	if (iMax - iMin != jMax - jMin) return; // The selection must be square
-	for (int i = iMin; i <= iMax; i++)
-		for (int j = jMin; j <= jMax; j++)
-			if (j - jMin > i - iMin)
-				glyphGrid[i][j] = glyphGrid[j - jMin + iMin][i - iMin + jMin]->mirroredBD;
-}
 void Knot::rotate180UpToDown(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)
 		for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--)
