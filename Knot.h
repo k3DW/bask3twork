@@ -27,7 +27,6 @@ private:
 
 	void mirrorUpToDown(GlyphVec2& glyphGrid, ijSignature) const;
 	void mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const;
-	/* undocumented, unused */ void mirrorBDiagLToR(GlyphVec2& glyphGrid, ijSignature) const;
 	void rotate180UpToDown(GlyphVec2& glyphGrid, ijSignature) const;
 	void rotate180LeftToRight(GlyphVec2& glyphGrid, ijSignature) const;
 	void rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const;
