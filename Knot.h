@@ -246,10 +246,10 @@ private:
  * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
  * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
  * 
- * The \c diagFlag parameter can take a value of 0 for forward diagonal symmetry on the UL side,
- * a value of 1 for backward diagonal symmetry on the DL side,
- * a value of 2 for forward diagonal symmetry on the DR side,
- * and a value of 3 for backward diagonal symmetry on the UR side.
+ * The \c diagFlag parameter can take a value of 0 for backward diagonal symmetry for the UL side,
+ * a value of 1 for forward diagonal symmetry from the DL side,
+ * a value of 2 for backward diagonal symmetry from the DR side,
+ * and a value of 3 for forward diagonal symmetry from the UR side.
  *
  * \param glyphGrid The 2D std::vector of Glyph pointers to pass into the function to be edited, as an \c optional
  * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
