@@ -8,9 +8,10 @@
 	1) More symmetries
 		~~1a) Add new buttons to the window
 		~~1b) Add `Knot::tryGeneratingDiag()` to make diagonal structures
-		1c) Generate full symmetry (square only)
+		~~1c) Generate full symmetry (square only)
 		~~1d) Generate forward diagonal symmetry (square only)
 		~~1e) Generate backward diagonal symmetry (square only)
+		1f) Document `Knot::tryGeneratingDiag()`, `Knot::generateFwdDiag()`, `Knot::generateBackDiag()`, `Knot::generateFullSym()`
 		1f) Check forward diagonal symmetry
 		1g) Check backward diagonal symmetry
 	2) Save states

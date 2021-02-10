@@ -208,8 +208,8 @@ bool Knot::generateBackDiag(ijSignature) {
 bool Knot::generateFullSym(ijSignature) {
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
-	const GlyphFlag rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
-	const GlyphFlag colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+	const bool isEvenRows = isEvenSegments(iMin, iMax);
+	const bool isEvenCols = isEvenSegments(jMin, jMax);
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating full symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
@@ -218,18 +218,13 @@ bool Knot::generateFullSym(ijSignature) {
 
 		tryGeneratingDiag(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, false, Side::DOWN | Side::RIGHT);
 		if (!newGlyphs) continue;
+		rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
 
-		tryGenerating(newGlyphs, iMid, jMin, iMid, jMid - 1, Side::DOWN | Side::RIGHT, rowFlag);
+		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid + static_cast<int>(isEvenCols), Side::DOWN);
 		if (!newGlyphs) continue;
 
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, colFlag);
-		if (!newGlyphs) continue;
-
-		tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, rowFlag | colFlag);
-		if (!newGlyphs) continue;
-
-		mirrorUpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
-		mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
+		//mirrorUpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
+		//mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
 
 		glyphs = *newGlyphs;
 		return true;

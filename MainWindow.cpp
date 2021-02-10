@@ -235,12 +235,12 @@ void MainWindow::enableGenerateButtons(bool enable) {
 		generateNoSymButton->Enable();
 		generateHoriSymButton->Enable(hasHoriSym);
 		generateVertSymButton->Enable(hasVertSym);
-		generateHoriVertSymButton->Enable(hasVertSym && hasHoriSym);
+		generateHoriVertSymButton->Enable(hasHoriSym && hasVertSym);
 		generateRot2SymButton->Enable(hasRot2Sym);
 		generateRot4SymButton->Enable(hasRot4Sym);
 		generateFwdDiagButton->Enable();
 		generateBackDiagButton->Enable();
-		generateFullSymButton->Enable();
+		generateFullSymButton->Enable(hasHoriSym && hasVertSym && hasRot4Sym);
 	}
 	/// If \c enable is \c false, then disable each of the buttons.
 	else {
