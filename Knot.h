@@ -13,8 +13,9 @@ public:
 	wxStatusBar* const statusBar; ///< The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot
 
 	#define XX(Sym, desc) bool generate##Sym##(ijSignature);
-	SYMMETRIES
+	/* undocumented */ SYMMETRIES
 	#undef XX
+	//undocumented ^^^ last 3 (and update docs for others)
 
 	bool checkHoriSym(ijSignature) const;
 	bool checkVertSym(ijSignature) const;
@@ -26,12 +27,13 @@ private:
 
 	void mirrorUpToDown(GlyphVec2& glyphGrid, ijSignature) const;
 	void mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const;
+	/* undocumented, unused */ void mirrorBDiagLToR(GlyphVec2& glyphGrid, ijSignature) const;
 	void rotate180UpToDown(GlyphVec2& glyphGrid, ijSignature) const;
 	void rotate180LeftToRight(GlyphVec2& glyphGrid, ijSignature) const;
 	void rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const;
 
 	void tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides = Side::NONE, const GlyphFlag boolFlags = GlyphFlag::NONE) const;	
-	void tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const bool fwdDiag, const Side ignoreSides = Side::NONE) const;
+	/* undocumented */ void tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const bool fwdDiag, const Side ignoreSides = Side::NONE) const;
 	static inline bool inSelection(ijSignature, const int i, const int j);
 	static inline bool isEvenSegments(const int min, const int max);
 };

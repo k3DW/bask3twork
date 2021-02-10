@@ -143,6 +143,7 @@ bool Knot::generateRot2Sym(ijSignature) {
 	return false;
 }
 bool Knot::generateRot4Sym(ijSignature) {
+	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
 	const bool isEven = isEvenSegments(iMin, iMax);
@@ -176,6 +177,7 @@ bool Knot::generateRot4Sym(ijSignature) {
 	return false;
 }
 bool Knot::generateFwdDiag(ijSignature) {
+	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating forward diagonal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
@@ -191,6 +193,7 @@ bool Knot::generateFwdDiag(ijSignature) {
 	return false;
 }
 bool Knot::generateBackDiag(ijSignature) {
+	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating backward diagonal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
@@ -206,10 +209,11 @@ bool Knot::generateBackDiag(ijSignature) {
 	return false;
 }
 bool Knot::generateFullSym(ijSignature) {
+	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
-	const bool isEvenRows = isEvenSegments(iMin, iMax);
-	const bool isEvenCols = isEvenSegments(jMin, jMax);
+	const bool isEven = isEvenSegments(iMin, iMax);
+	const GlyphFlag colFlag = isEven ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating full symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
@@ -218,13 +222,21 @@ bool Knot::generateFullSym(ijSignature) {
 
 		tryGeneratingDiag(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, false, Side::DOWN | Side::RIGHT);
 		if (!newGlyphs) continue;
+
+		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, colFlag);
+		if (!newGlyphs) continue;
+		mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
 		rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
 
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid + static_cast<int>(isEvenCols), Side::DOWN);
-		if (!newGlyphs) continue;
-
-		//mirrorUpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
-		//mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
+		if (isEven) {
+			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, GlyphFlag::SA_MIRBD | GlyphFlag::CT_MIRR | GlyphFlag::CT_MIRD | GlyphFlag::CT_ROT4R);
+			if (!newGlyphs) continue;
+			rotate90FromUpLeft(*newGlyphs, iMid, jMid, iMid + 1, jMid + 1);
+		}
+		else {
+			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::NONE, GlyphFlag::SA_MIRBD | GlyphFlag::SA_ROT4);
+			if (!newGlyphs) continue;
+		}
 
 		glyphs = *newGlyphs;
 		return true;
@@ -351,6 +363,13 @@ void Knot::mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int i = iMin; i <= iMax; i++)
 		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
 			glyphGrid[i][jDecr] = glyphGrid[i][jIncr]->mirroredY;
+}
+/* unused */ void Knot::mirrorBDiagLToR(GlyphVec2& glyphGrid, ijSignature) const {
+	if (iMax - iMin != jMax - jMin) return; // The selection must be square
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			if (j - jMin > i - iMin)
+				glyphGrid[i][j] = glyphGrid[j - jMin + iMin][i - iMin + jMin]->mirroredBD;
 }
 void Knot::rotate180UpToDown(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)
