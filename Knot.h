@@ -31,8 +31,6 @@ private:
 	void rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const;
 
 	void tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides = Side::NONE, const GlyphFlag boolFlags = GlyphFlag::NONE) const;
-	enum class DiagStart { UpLeft, DownLeft, DownRight, UpRight };
-	void tryGeneratingDiagOLD(std::optional<GlyphVec2>& glyphGrid, ijSignature, const DiagStart diag) const;
 	void tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const bool fwdDiag, const Side ignoreSides = Side::NONE) const;
 	static inline bool inSelection(ijSignature, const int i, const int j);
 	static inline bool isEvenSegments(const int min, const int max);
