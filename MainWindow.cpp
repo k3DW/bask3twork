@@ -232,14 +232,16 @@ void MainWindow::enableGenerateButtons(bool enable) {
 		bool hasVertSym = knot->checkVertSym(iMin, jMin, iMax, jMax);
 		bool hasRot2Sym = knot->checkRot2Sym(iMin, jMin, iMax, jMax);
 		bool hasRot4Sym = knot->checkRot4Sym(iMin, jMin, iMax, jMax);
+		bool hasFwdDiag = knot->checkFwdDiag(iMin, jMin, iMax, jMax);
+		bool hasBackDiag = knot->checkBackDiag(iMin, jMin, iMax, jMax);
 		generateNoSymButton->Enable();
 		generateHoriSymButton->Enable(hasHoriSym);
 		generateVertSymButton->Enable(hasVertSym);
 		generateHoriVertSymButton->Enable(hasHoriSym && hasVertSym);
 		generateRot2SymButton->Enable(hasRot2Sym);
 		generateRot4SymButton->Enable(hasRot4Sym);
-		generateFwdDiagButton->Enable();
-		generateBackDiagButton->Enable();
+		generateFwdDiagButton->Enable(hasFwdDiag);
+		generateBackDiagButton->Enable(hasBackDiag);
 		generateFullSymButton->Enable(hasHoriSym && hasVertSym && hasRot4Sym);
 	}
 	/// If \c enable is \c false, then disable each of the buttons.

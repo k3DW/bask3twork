@@ -54,6 +54,16 @@ constexpr inline Connection mirYConnection(Connection input)
 {
 	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_UP, Connection::ORTHO_DOWN, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT } [static_cast<unsigned int>(input)];
 }
+constexpr inline Connection mirFDConnection(Connection input)
+/// This function takes a Connection to its counterpart after being mirrored across the forward diagonal line
+{
+	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT, Connection::ORTHO_DOWN, Connection::ORTHO_UP } [static_cast<unsigned int>(input)];
+}
+constexpr inline Connection mirBDConnection(Connection input)
+/// This function takes a Connection to its counterpart after being mirrored across the backward diagonal line
+{
+	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_LEFT, Connection::ORTHO_RIGHT, Connection::ORTHO_UP, Connection::ORTHO_DOWN } [static_cast<unsigned int>(input)];
+}
 
 /// The bit flag for each of the properties of a Glyph object
 enum class GlyphFlag : ull {

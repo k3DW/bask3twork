@@ -5,16 +5,16 @@
 		~~0b) Propagate those changes everywhere (yikes)
 		~~0c) Add SA_MIRFD and SA_MIRBD flags
 		~~0d) Add corresponding flags to the Glyph struct
-	1) More symmetries
+	~~1) More symmetries
 		~~1a) Add new buttons to the window
 		~~1b) Add `Knot::tryGeneratingDiag()` to make diagonal structures
 		~~1c) Generate full symmetry (square only)
 		~~1d) Generate forward diagonal symmetry (square only)
 		~~1e) Generate backward diagonal symmetry (square only)
-		1f) Document `Knot::tryGeneratingDiag()`, `Knot::generateFwdDiag()`, `Knot::generateBackDiag()`, `Knot::generateFullSym()`
-		1g) Update all documentation for "Knot.h"
-		1h) Check forward diagonal symmetry
-		1i) Check backward diagonal symmetry
+		~~1f) Document `Knot::tryGeneratingDiag()`, `Knot::generateFwdDiag()`, `Knot::generateBackDiag()`, `Knot::generateFullSym()`
+		~~1g) Update all documentation for "Knot.h" (didn't finish, but will do later)
+		~~1h) Check forward diagonal symmetry
+		~~1i) Check backward diagonal symmetry
 	2) Save states
 		2a) Function to write a GlyphVec2 into a ".knot" file in a specified file location, with visual file explorer
 		2b) Menu bar, with "File -> Save" that calls that function, saves as ".knot" file

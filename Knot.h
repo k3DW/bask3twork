@@ -13,14 +13,15 @@ public:
 	wxStatusBar* const statusBar; ///< The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot
 
 	#define XX(Sym, desc) bool generate##Sym##(ijSignature);
-	/* undocumented */ SYMMETRIES
+	SYMMETRIES
 	#undef XX
-	//undocumented ^^^ last 3 (and update docs for others)
 
 	bool checkHoriSym(ijSignature) const;
 	bool checkVertSym(ijSignature) const;
 	bool checkRot2Sym(ijSignature) const;
 	bool checkRot4Sym(ijSignature) const;
+	bool checkFwdDiag(ijSignature) const;
+	bool checkBackDiag(ijSignature) const;
 
 private:
 	GlyphVec2 glyphs; ///< The current state of the Knot, as a 2D std::vector of Glyph pointers
@@ -32,7 +33,7 @@ private:
 	void rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const;
 
 	void tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides = Side::NONE, const GlyphFlag boolFlags = GlyphFlag::NONE) const;	
-	/* undocumented */ void tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const bool fwdDiag, const Side ignoreSides = Side::NONE) const;
+	void tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const bool fwdDiag, const Side ignoreSides = Side::NONE) const;
 	static inline bool inSelection(ijSignature, const int i, const int j);
 	static inline bool isEvenSegments(const int min, const int max);
 };
@@ -111,7 +112,43 @@ private:
 /** \fn Knot::generateRot4Sym(ijsignature)
  * Only works on a \b square selection, generate a knot with 4-way rotational symmetry about the center of the selection.
  * 
- * This function will only work properly for \b square selections, but will not give any error if a non-square selection is passed.
+ * This function will only work properly for \b square selections, and will do nothing if a non-square selection is passed.
+ * 
+ * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
+ * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
+ * The boundary conditions around the selection are maintained, with the outside being treated as an empty connection.
+ * The symmtery of the boundary conditions are not checked, so if a selection is chosen with non-symmetric boundaries, the full knot will have broken connections.
+ * 
+ * See Knot::generateNoSym() for parameters and return value.
+ */
+/** \fn Knot::generateFwdDiag(ijsignature)
+ * Only works on a \b square selection, generate a knot with mirror symmetry across the forward diagonal of the selection.
+ * 
+ * This function will only work properly for \b square selections, and will do nothing if a non-square selection is passed.
+ * 
+ * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
+ * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
+ * The boundary conditions around the selection are maintained, with the outside being treated as an empty connection.
+ * The symmtery of the boundary conditions are not checked, so if a selection is chosen with non-symmetric boundaries, the full knot will have broken connections.
+ * 
+ * See Knot::generateNoSym() for parameters and return value.
+ */
+/** \fn Knot::generateBackDiag(ijsignature)
+ * Only works on a \b square selection, generate a knot with mirror symmetry across the backward diagonal of the selection.
+ * 
+ * This function will only work properly for \b square selections, and will do nothing if a non-square selection is passed.
+ * 
+ * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
+ * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
+ * The boundary conditions around the selection are maintained, with the outside being treated as an empty connection.
+ * The symmtery of the boundary conditions are not checked, so if a selection is chosen with non-symmetric boundaries, the full knot will have broken connections.
+ * 
+ * See Knot::generateNoSym() for parameters and return value.
+ */
+/** \fn Knot::generateFullSym(ijsignature)
+ * Only works on a \b square selection, generate a knot with full D4 symmetry, essentially a combination of Knot::generateHoriVertSym() and Knot::generateRot4Sym() concurrently.
+ * 
+ * This function will only work properly for \b square selections, and will do nothing if a non-square selection is passed.
  * 
  * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
  * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
@@ -152,6 +189,22 @@ private:
  */
 /** \fn Knot::checkRot4Sym(ijsignature)
  * Check if the boundary around the selection is 4-way rotationally symmetric about the central point of the selection.
+ * 
+ * Only checks from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
+ * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
+ *
+ * See Knot::checkHoriSym() for parameters.
+ */
+/** \fn Knot::checkFwdDiag(ijsignature)
+ * Check if the boundary around the selection is symmetric about the forward diagonal of the selection, meaning it must be square.
+ * 
+ * Only checks from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
+ * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
+ *
+ * See Knot::checkHoriSym() for parameters.
+ */
+/** \fn Knot::checkBackDiag(ijsignature)
+ * Check if the boundary around the selection is symmetric about the backward diagonal of the selection, meaning it must be square.
  * 
  * Only checks from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
  * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
@@ -220,7 +273,7 @@ private:
 
 /* Private generating helper functions */
 /** \fn Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides = Side::NONE, const GlyphFlag boolFlags = GlyphFlag::NONE) const
- * This function tries to generate with no symmetry, only once with no looping, and sets \c glyphGrid to \c std::nullopt if it cannot be generated.
+ * This function tries to generate a rectangle with no symmetry, only once with no looping, and sets \c glyphGrid to \c std::nullopt if it cannot be generated.
  * 
  * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
  * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
@@ -241,23 +294,20 @@ private:
  *
  * \b Methodology
  */
-/** \fn Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const int diagFlag) const
- * This function tries to generate a rectangle with diagonal symmetry somewhere, only once with no looping, and sets \c glyphGrid to \c std::nullopt if it cannot be generated.
+/** \fn Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const bool fwdDiag) const
+ * This function tries to generate a square with diagonal symmetry, only once with no looping, and sets \c glyphGrid to \c std::nullopt if it cannot be generated.
  * 
  * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
- * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
+ * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values, except that the selection is square.
  * 
- * The \c diagFlag parameter can take a value of 0 for backward diagonal symmetry for the UL side,
- * a value of 1 for forward diagonal symmetry from the DL side,
- * a value of 2 for backward diagonal symmetry from the DR side,
- * and a value of 3 for forward diagonal symmetry from the UR side.
- *
+ * The \c fwdDiag parameter takes a value of \c true if the diagonal is in the same direction of the forward slash,
+ * 
  * \param glyphGrid The 2D std::vector of Glyph pointers to pass into the function to be edited, as an \c optional
  * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
  * \param jMin The zero-indexed leftmost column of the selection
  * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
  * \param jMax The zero-indexed rightmost column of the selection
- * \param diagFlag The type of diagonal symmetry to generate
+ * \param fwdDiag The type of diagonal symmetry to generate
  *
  * \b Methodology
  */

@@ -342,13 +342,43 @@ bool Knot::checkRot4Sym(ijSignature) const {
 
 	Connection upConnection, downConnection, leftConnection, rightConnection;
 	for (int offset = 0; offset <= iMax - iMin; offset++) {
-		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jMin + offset]->down;
-		downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][jMax - offset]->up;
-		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iMax - offset][jMin - 1]->right;
-		rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iMin + offset][jMax + 1]->left;
+		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jMin + offset]->down;	// Top row, from left to right
+		downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][jMax - offset]->up;		// Bottom row, from right to left
+		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iMax - offset][jMin - 1]->right;	// Left column, from bottom to top
+		rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iMin + offset][jMax + 1]->left;	// Right column, from top to bottom
 		if (upConnection != rot4Connection(leftConnection) ||
 			upConnection != rot2Connection(downConnection) ||
 			upConnection != rot2Connection(rot4Connection(rightConnection))) return false;
+	}
+
+	return true;
+}
+bool Knot::checkFwdDiag(ijSignature) const {
+	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
+
+	Connection upConnection, downConnection, leftConnection, rightConnection;
+	for (int offset = 0; offset <= iMax - iMin; offset++) {
+		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jMin + offset]->down;	// Top row, from left to right
+		downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][jMin + offset]->up;		// Bottom row, from left to right
+		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iMax - offset][jMin - 1]->right;	// Left column, from bottom to top
+		rightConnection = jMax == w - 1	? Connection::EMPTY : glyphs[iMax - offset][jMax + 1]->left;	// Right column, from bottom to top
+		if (upConnection != mirFDConnection(rightConnection) || leftConnection != mirFDConnection(downConnection))
+			return false;
+	}
+
+	return true;
+}
+bool Knot::checkBackDiag(ijSignature) const {
+	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
+
+	Connection upConnection, downConnection, leftConnection, rightConnection;
+	for (int offset = 0; offset <= iMax - iMin; offset++) {
+		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jMin + offset]->down;	// Top row, from left to right
+		downConnection	= iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jMin + offset]->up;		// Bottom row, from left to right
+		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iMin + offset][jMin - 1]->right;	// Left column, from top to bottom
+		rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iMin + offset][jMax + 1]->left;	// Right column, from top to bottom
+		if (upConnection != mirBDConnection(leftConnection) || rightConnection != mirBDConnection(downConnection))
+			return false;
 	}
 
 	return true;
@@ -450,12 +480,13 @@ void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const
 	glyphGrid = newGlyphs;
 }
 void Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const bool fwdDiag, const Side ignoreSides) const {
+	/// First, make sure that the selection is square. If is it not, end the function immediately.
 	if (iMax - iMin != jMax - jMin) { // The selection must be square
 		glyphGrid = std::nullopt;
 		return;
 	}
 
-	/// First, make a copy of \c glyphGrid to make changes without affecting the input.
+	/// Next, make a copy of \c glyphGrid to make changes without affecting the input.
 	GlyphVec2 newGlyphs = *glyphGrid;
 	
 	/// Then, set the \c const \c Glyph* pointers of the copy to \c nullptr, if they are within the selection.
@@ -470,10 +501,11 @@ void Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, c
 	const bool ignoreDown	= (ignoreSides & Side::DOWN)	!= Side::NONE;
 	const bool ignoreLeft	= (ignoreSides & Side::LEFT)	!= Side::NONE;
 	const bool ignoreRight	= (ignoreSides & Side::RIGHT)	!= Side::NONE;
-	//const int iStart = 
 
 	/// Next, generate the glyphs by iterating over i,j coordinates within the selection.
-	/// For each i,j pair, do the following 3 steps.
+	/// This is done similarly to Knot::tryGenerating(), with a few modifications.
+	/// Every time a glyph is added, its mirror across the diagonal is also added, unless it is along the diagonal itself.
+	/// This requires an extra check at the beginning to see if the current glyph is assigned yet, and a check at the end to see if mirroring should occur.
 	for (int i = (fwdDiag ? iMax : iMin); (fwdDiag ? i >= iMin : i <= iMax); (fwdDiag ? i-- : i++)) {
 		bool firstInRow = true;
 		for (int j = jMin; j <= jMax; j++) {
