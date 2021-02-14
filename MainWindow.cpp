@@ -3,6 +3,8 @@
 MainWindow::MainWindow(int h, int w, wxString title) : wxFrame(nullptr, wxID_ANY, title), h(h), w(w), iMin(0), jMin(0), iMax(h - 1), jMax(w - 1) {
 	CreateStatusBar();
 	SetBackgroundColour(BACKGROUND_COLOUR);
+	initMenuBar();
+
 	initSizerLayout();
 
 	wxSize windowSize = GetBestSize();
@@ -11,6 +13,25 @@ MainWindow::MainWindow(int h, int w, wxString title) : wxFrame(nullptr, wxID_ANY
 }
 MainWindow::~MainWindow() {
 	Hide();
+}
+void MainWindow::initMenuBar() {
+	menuFile = new wxMenu();
+	menuFile->Append(wxID_OPEN, "&Open", "Open a knot file.");
+	menuFile->Append(wxID_SAVE, "&Save", "Save a knot file.");
+	menuFile->Bind(wxEVT_MENU, &MainWindow::menuFileEventHandler, this);
+
+	//menuGenerate = new wxMenu();
+	//menuGenerateNoSym = new wxMenuItem(nullptr, 100, "test");
+	//menuGenerate->Bind()
+	//menuGenerate->Append(100, "&No Symmetry");
+	//menuGenerate->Append(101, "&Horizontal Symmetry");
+	//menuGenerate->Bind(wxEVT_MENU, &MainWindow::generateKnot, this);
+	//Connect(100, wxEVT_MENU, wxCommandEventHandler(MainWindow::generateKnot));
+
+	menuBar = new wxMenuBar();
+	menuBar->Append(menuFile, "&File");
+	//menuBar->Append(menuGenerate, "&Generate");
+	SetMenuBar(menuBar);
 }
 void MainWindow::initSizerLayout() {
 	initDispSizer();
@@ -114,6 +135,12 @@ void MainWindow::initExportRegion() {
 	exportRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Export");
 	exportFont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas");
 	regenExportBox();
+}
+
+void MainWindow::menuFileEventHandler(wxCommandEvent& evt) {
+	if (evt.GetId() == wxID_OPEN) wxMessageBox("Open");
+	else if (evt.GetId() == wxID_SAVE) wxMessageBox("Save");
+	evt.Skip();
 }
 
 void MainWindow::gridRegenFunction(wxCommandEvent& evt) {

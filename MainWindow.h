@@ -32,6 +32,13 @@ private:
 		iMax,	///< The zero-indexed lower row of the selection visually (higher numerically)
 		jMax;	///< The zero-indexed rightmost column of the selection
 
+	void initMenuBar();
+	void menuFileEventHandler(wxCommandEvent& evt);
+	wxMenuBar* menuBar;
+	wxMenu* menuFile;
+	//wxMenu* menuGenerate;
+	//	wxMenuItem* menuGenerateNoSym;
+
 	void initSizerLayout();
 	void initDispSizer();	///< One of 6 \c init functions which chunk the initializing process, but the only one documented. 
 	DisplayGrid* disp;		///< The DisplayGrid for this program, i.e. the \c wxPanel that displays the Knot.
