@@ -138,9 +138,45 @@ void MainWindow::initExportRegion() {
 }
 
 void MainWindow::menuFileEventHandler(wxCommandEvent& evt) {
-	if (evt.GetId() == wxID_OPEN) wxMessageBox("Open");
-	else if (evt.GetId() == wxID_SAVE) wxMessageBox("Save");
+	if (evt.GetId() == wxID_OPEN)
+		openFile(evt);
+	else if (evt.GetId() == wxID_SAVE)
+		saveFile(evt);
 	evt.Skip();
+}
+void MainWindow::openFile(wxCommandEvent& evt) {
+	// Open a wxFileDialog to get the name of the file.
+	//wxFileDialog openFileDialog(this, "Open Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|All files (*.*)|*.*", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
+	wxFileDialog openFileDialog(this, "Open Knot file", "", "", "k3DW Knot Files (*.k3knot)", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
+
+	// If the wxFileDialog gets closed, stop the function.
+	if (openFileDialog.ShowModal() == wxID_CANCEL)
+		return;
+
+	// proceed loading the file chosen by the user;
+	// this can be done with e.g. wxWidgets input streams:
+	//wxFileInputStream input_stream(openFileDialog.GetPath());
+	//if (!input_stream.IsOk()) {
+		//wxMessageBox("Cannot open file " + openFileDialog.GetPath() + ".");
+		//return;
+	//}
+}
+void MainWindow::saveFile(wxCommandEvent& evt) {
+	// Open a wxFileDialog to get the name of the file.
+	wxFileDialog saveFileDialog(this, "Save Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot", wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_CHANGE_DIR);
+
+	// If the wxFileDialog gets closed, stop the function.
+	if (saveFileDialog.ShowModal() == wxID_CANCEL)
+		return;
+
+	// save the current contents in the file;
+	// this can be done with e.g. wxWidgets output streams:
+	//wxFileOutputStream output_stream(saveFileDialog.GetPath());
+	//if (!output_stream.IsOk())
+	//{
+		//wxLogError("Cannot save current contents in file '%s'.", saveFileDialog.GetPath());
+		//return;
+	//}
 }
 
 void MainWindow::gridRegenFunction(wxCommandEvent& evt) {

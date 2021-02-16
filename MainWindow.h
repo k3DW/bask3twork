@@ -33,11 +33,14 @@ private:
 		jMax;	///< The zero-indexed rightmost column of the selection
 
 	void initMenuBar();
-	void menuFileEventHandler(wxCommandEvent& evt);
 	wxMenuBar* menuBar;
 	wxMenu* menuFile;
 	//wxMenu* menuGenerate;
 	//	wxMenuItem* menuGenerateNoSym;
+
+	void menuFileEventHandler(wxCommandEvent& evt);
+	void openFile(wxCommandEvent& evt);
+	void saveFile(wxCommandEvent& evt);
 
 	void initSizerLayout();
 	void initDispSizer();	///< One of 6 \c init functions which chunk the initializing process, but the only one documented. 
