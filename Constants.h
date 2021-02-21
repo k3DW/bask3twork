@@ -2,6 +2,7 @@
 #include "wx/wx.h"
 #include "wx/gbsizer.h"
 #include "wx/wfstream.h"
+#include "wx/textfile.h"
 #include <array>
 #include <optional>
 #include <vector>

@@ -18,7 +18,7 @@ void MainWindow::initMenuBar() {
 	menuFile = new wxMenu();
 	menuFile->Append(wxID_OPEN, "&Open", "Open a knot file.");
 	menuFile->Append(wxID_SAVE, "&Save", "Save a knot file.");
-	menuFile->Bind(wxEVT_MENU, &MainWindow::menuFileEventHandler, this);
+	menuFile->Bind(wxEVT_MENU, &MainWindow::fileEventHandler, this);
 
 	//menuGenerate = new wxMenu();
 	//menuGenerateNoSym = new wxMenuItem(nullptr, 100, "test");
@@ -137,7 +137,7 @@ void MainWindow::initExportRegion() {
 	regenExportBox();
 }
 
-void MainWindow::menuFileEventHandler(wxCommandEvent& evt) {
+void MainWindow::fileEventHandler(wxCommandEvent& evt) {
 	if (evt.GetId() == wxID_OPEN)
 		openFile(evt);
 	else if (evt.GetId() == wxID_SAVE)
@@ -163,20 +163,33 @@ void MainWindow::openFile(wxCommandEvent& evt) {
 }
 void MainWindow::saveFile(wxCommandEvent& evt) {
 	// Open a wxFileDialog to get the name of the file.
-	wxFileDialog saveFileDialog(this, "Save Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot", wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_CHANGE_DIR);
+	wxFileDialog saveFileDialog(this, "Save Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt*)|*.txt*", wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_CHANGE_DIR);
 
 	// If the wxFileDialog gets closed, stop the function.
 	if (saveFileDialog.ShowModal() == wxID_CANCEL)
 		return;
 
-	// save the current contents in the file;
-	// this can be done with e.g. wxWidgets output streams:
-	//wxFileOutputStream output_stream(saveFileDialog.GetPath());
-	//if (!output_stream.IsOk())
-	//{
-		//wxLogError("Cannot save current contents in file '%s'.", saveFileDialog.GetPath());
-		//return;
-	//}
+	// Uses a wxTextFile to write to this file; could also use wxFileOutputStream
+	wxTextFile file(saveFileDialog.GetPath());
+
+	// Clear the file if it exists, or create a file if it doesn't exist
+	if (file.Exists()) {
+		file.Open();
+		file.Clear();
+	}
+	else file.Create();
+
+	// Write the knot to the file, line by line
+	for (int i = 0; i < knot->h; i++) {
+		wxString line = "";
+		for (int j = 0; j < knot->w; j++)
+			line << knot->get(i, j);
+		file.AddLine(line);
+	}
+
+	// Save changes, then close
+	file.Write();
+	file.Close();
 }
 
 void MainWindow::gridRegenFunction(wxCommandEvent& evt) {

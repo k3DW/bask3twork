@@ -38,9 +38,9 @@ private:
 	//wxMenu* menuGenerate;
 	//	wxMenuItem* menuGenerateNoSym;
 
-	void menuFileEventHandler(wxCommandEvent& evt);
-	void openFile(wxCommandEvent& evt);
-	void saveFile(wxCommandEvent& evt);
+	void fileEventHandler(wxCommandEvent& evt); ///< Handles all events for items under the "File" menu
+	void openFile(wxCommandEvent& evt);	
+	void saveFile(wxCommandEvent& evt);			///< Saves the current knot as a \c .k3knot file or a \c .txt file
 
 	void initSizerLayout();
 	void initDispSizer();	///< One of 6 \c init functions which chunk the initializing process, but the only one documented. 
