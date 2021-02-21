@@ -45,6 +45,8 @@ enum class Symmetry : unsigned int {
 const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	///< For future functionality, the screen size in the x direction
 const int SCREEN_Y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);	///< For future functionality, the screen size in the y direction
 const wxSize MAX_SIZE{ SCREEN_X, SCREEN_Y };						///< For future functionality, the maximum size of the app window
+const size_t MAX_H = 100;
+const size_t MAX_W = 100;
 
 // Constants for the colours of the program
 const wxColour BACKGROUND_COLOUR{ 240, 240, 240 };	///< The default colour of the background for the program

@@ -16,8 +16,8 @@ MainWindow::~MainWindow() {
 }
 void MainWindow::initMenuBar() {
 	menuFile = new wxMenu();
-	menuFile->Append(wxID_OPEN, "&Open", "Open a knot file.");
-	menuFile->Append(wxID_SAVE, "&Save", "Save a knot file.");
+	menuFile->Append(wxID_OPEN, "&Open\tCtrl-O", "Open a knot file.");
+	menuFile->Append(wxID_SAVE, "&Save\tCtrl-S", "Save a knot file.");
 	menuFile->Bind(wxEVT_MENU, &MainWindow::fileEventHandler, this);
 
 	//menuGenerate = new wxMenu();
@@ -146,20 +146,54 @@ void MainWindow::fileEventHandler(wxCommandEvent& evt) {
 }
 void MainWindow::openFile(wxCommandEvent& evt) {
 	// Open a wxFileDialog to get the name of the file.
-	//wxFileDialog openFileDialog(this, "Open Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|All files (*.*)|*.*", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
-	wxFileDialog openFileDialog(this, "Open Knot file", "", "", "k3DW Knot Files (*.k3knot)", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
+	wxFileDialog openFileDialog(this, "Open Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt*)|*.txt*", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
 
 	// If the wxFileDialog gets closed, stop the function.
 	if (openFileDialog.ShowModal() == wxID_CANCEL)
 		return;
 
-	// proceed loading the file chosen by the user;
-	// this can be done with e.g. wxWidgets input streams:
-	//wxFileInputStream input_stream(openFileDialog.GetPath());
-	//if (!input_stream.IsOk()) {
-		//wxMessageBox("Cannot open file " + openFileDialog.GetPath() + ".");
-		//return;
-	//}
+	// Uses a wxTextFile to read from this file; could also use wxFileInputStream.
+	wxTextFile file(openFileDialog.GetPath());
+	file.Open();
+
+	// Check the row count, must be 1 <= rows <= MAX_H
+	if (file.GetLineCount() > MAX_H) {
+		wxMessageBox("Please choose a smaller file.", "Error: File size is too large");
+		return;
+	}
+	if (file.GetLineCount() == 0) {
+		wxMessageBox("Please choose a non-empty file.", "Error: File is empty");
+		return;
+	}
+
+	size_t newH = file.GetLineCount();
+	size_t newW = 0;
+
+	GlyphVec2 glyphs;
+	glyphs.reserve(newH);
+
+	for (wxString line = file.GetFirstLine(); !file.Eof(); line = file.GetNextLine()) {
+		if (newW > 0 && line.size() != newW) {
+			wxMessageBox("Please choose a valid knot file. The number of characters in every row must be equal.", "Error: File has jagged rows");
+			return;
+		}
+		if (newW == 0)
+			newW = line.size();
+
+		GlyphVec1 glyphRow;
+		glyphRow.reserve(newW);
+		for (wxUniChar c : line) {
+			// TODO: fix the Glyph pointer pushed to `glyphRow`
+			glyphRow.push_back(&AllGlyphs[0]);
+		}
+		glyphs.push_back(glyphRow);
+	}
+
+	// TODO:
+	//		call `gridRegenFunction`, but with a new Knot from `GlyphVec2 glyphs` above
+	//		or maybe rewrite the function
+	
+	file.Close();
 }
 void MainWindow::saveFile(wxCommandEvent& evt) {
 	// Open a wxFileDialog to get the name of the file.
@@ -207,6 +241,10 @@ void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
 	int widthNum = wxAtoi(widthString);
 	if (!(heightNum > 0 && widthNum > 0)) {
 		wxMessageBox("Please enter positive whole numbers for the new grid size.", "Error: Non-integer grid size");
+		return;
+	}
+	if (heightNum > MAX_H || widthNum > MAX_W) {
+		wxMessageBox("Please enter sizes that are, at most, " + intWX(MAX_H) + " by " + intWX(MAX_W) + ".", "Error: Knot size too large");
 		return;
 	}
 
