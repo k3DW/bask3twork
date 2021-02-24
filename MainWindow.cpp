@@ -182,10 +182,8 @@ void MainWindow::openFile(wxCommandEvent& evt) {
 
 		GlyphVec1 glyphRow;
 		glyphRow.reserve(newW);
-		for (wxUniChar c : line) {
-			// TODO: fix the Glyph pointer pushed to `glyphRow`
-			glyphRow.push_back(&AllGlyphs[0]);
-		}
+		for (wxUniChar c : line)
+			glyphRow.push_back(UnicharToGlyph[c]);
 		glyphs.push_back(glyphRow);
 	}
 

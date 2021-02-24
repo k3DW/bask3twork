@@ -4,6 +4,7 @@
 #include "wx/wfstream.h"
 #include "wx/textfile.h"
 #include <array>
+#include <map>
 #include <optional>
 #include <vector>
 /// \file
@@ -45,8 +46,8 @@ enum class Symmetry : unsigned int {
 const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	///< For future functionality, the screen size in the x direction
 const int SCREEN_Y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);	///< For future functionality, the screen size in the y direction
 const wxSize MAX_SIZE{ SCREEN_X, SCREEN_Y };						///< For future functionality, the maximum size of the app window
-const size_t MAX_H = 100;
-const size_t MAX_W = 100;
+constexpr size_t MAX_H = 100;
+constexpr size_t MAX_W = 100;
 
 // Constants for the colours of the program
 const wxColour BACKGROUND_COLOUR{ 240, 240, 240 };	///< The default colour of the background for the program
@@ -59,5 +60,5 @@ const wxFont TILE_FONT{ wxSize(48, 48), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL
 const wxFont TEXT_FONT{ 12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL };									///< The font for the \c selectCoords and the \c grid text boxes
 
 // Constants for the iterations of knot generating
-static const int MAX_ATTEMPTS = 10000;				///< The maximum number of attempts for the Knot to try generating
-static const int ATTEMPTS_DISPLAY_INCREMENT = 500;	///< The interval at which the number of iterations is displayed
+constexpr int MAX_ATTEMPTS = 10000;				///< The maximum number of attempts for the Knot to try generating
+constexpr int ATTEMPTS_DISPLAY_INCREMENT = 500;	///< The interval at which the number of iterations is displayed
