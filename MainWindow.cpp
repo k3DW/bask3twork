@@ -191,9 +191,30 @@ void MainWindow::openFile(wxCommandEvent& evt) {
 		glyphs.push_back(glyphRow);
 	}
 
-	// TODO:
-	//		call `gridRegenFunction`, but with a new Knot from `GlyphVec2 glyphs` above
-	//		or maybe rewrite the function
+	// Delete the current knot and destroy the DisplayGrid.
+	delete knot;
+	disp->Destroy();
+
+	// Set the height and width, then set the grid regen textbox values.
+	h = glyphs.size();
+	w = glyphs[0].size();
+	gridHeight->SetValue(intWX(h));
+	gridWidth->SetValue(intWX(w));
+
+	// Next, initialize the Knot with the variable \c glyphs and the status bar.
+	// Initialize the DisplayGrid with the newly generated Knot, and insert it between the stretch spacers in its sizer.
+	knot = new Knot(glyphs, GetStatusBar());
+	disp = new DisplayGrid(this, knot);
+	dispSizer->Insert(1, disp, 0, wxEXPAND);
+
+	// Then, reset the select coordinates with MainWindow::resetSelectCoord()
+	// and regenerate and export textbox with MainWindow::regenExportBox() and MainWindow::showExportBox().
+	resetSelectCoord();
+	regenExportBox();
+	showExportBox();
+
+	// Lastly, refresh the minimum size of the window.
+	RefreshMinSize();
 	
 	file.Close();
 }
