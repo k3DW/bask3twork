@@ -157,7 +157,7 @@ void MainWindow::openFile(wxCommandEvent& evt) {
 	const size_t rowCount = file.GetLineCount();
 	const size_t colCount = file.GetFirstLine().size();
 	if (rowCount > MAX_H || colCount > MAX_W) {
-		wxMessageBox("Please choose a smaller file. The file can only be " + intWX(MAX_H) + " rows by " + intWX(MAX_W) + " columns.", "Error: File size is too large");
+		wxMessageBox("Please choose a smaller file. The file can only be " + intWX(MAX_H) + " rows by " + intWX(MAX_W) + " columns.", "Error: File is too large");
 		return;
 	}
 	if (rowCount < 1) {
@@ -165,7 +165,7 @@ void MainWindow::openFile(wxCommandEvent& evt) {
 		return;
 	}
 	if (colCount < 1) {
-		wxMessageBox("Please choose a file with non-empty rows.", "Error: File is empty");
+		wxMessageBox("Please choose a file with non-empty rows.", "Error: First row is empty");
 		return;
 	}
 
