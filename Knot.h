@@ -6,6 +6,7 @@
 class Knot {
 public:
 	Knot(int h, int w, wxStatusBar* statusBar);
+	Knot(GlyphVec2 glyphs, wxStatusBar* statusBar);
 	wxString get(const int i, const int j) const;
 
 	const int h, ///< The height of the knot, i.e. the number of rows. This is publicly accessible but not mutable

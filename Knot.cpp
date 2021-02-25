@@ -1,6 +1,7 @@
 #include "Knot.h"
 
 Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar), glyphs(GlyphVec2(h, GlyphVec1(w, DefaultGlyph))) {}
+Knot::Knot(GlyphVec2 glyphs, wxStatusBar* statusBar) : h(glyphs.size()), w(glyphs[0].size()), statusBar(statusBar), glyphs(glyphs) {}
 wxString Knot::get(const int i, const int j) const {
 	return glyphs[i][j]->chr;
 }
