@@ -153,33 +153,41 @@ void MainWindow::openFile(wxCommandEvent& evt) {
 	file.Open();
 
 	// Check the row count, must be 1 <= rows <= MAX_H
-	if (file.GetLineCount() > MAX_H) {
-		wxMessageBox("Please choose a smaller file.", "Error: File size is too large");
+	// Get the column count of the first row, must be 1 <= columns <= MAX_W
+	const size_t rowCount = file.GetLineCount();
+	const size_t colCount = file.GetFirstLine().size();
+	if (rowCount > MAX_H || colCount > MAX_W) {
+		wxMessageBox("Please choose a smaller file. The file can only be " + intWX(MAX_H) + " rows by " + intWX(MAX_W) + " columns.", "Error: File size is too large");
 		return;
 	}
-	if (file.GetLineCount() == 0) {
+	if (rowCount < 1) {
 		wxMessageBox("Please choose a non-empty file.", "Error: File is empty");
 		return;
 	}
+	if (colCount < 1) {
+		wxMessageBox("Please choose a file with non-empty rows.", "Error: File is empty");
+		return;
+	}
 
-	size_t newH = file.GetLineCount();
-	size_t newW = 0;
-
+	// Make a 2D vector of Glyphs, to be later written to the new Knot
 	GlyphVec2 glyphs;
-	glyphs.reserve(newH);
+	glyphs.reserve(rowCount);
 
+	// For each line in the file
 	for (wxString line = file.GetFirstLine(); !file.Eof(); line = file.GetNextLine()) {
-		if (newW > 0 && line.size() != newW) {
+		// If the width has a different number of columns than it should, output an error
+		if (line.size() != colCount) {
 			wxMessageBox("Please choose a valid knot file. The number of characters in every row must be equal.", "Error: File has jagged rows");
 			return;
 		}
-		if (newW == 0)
-			newW = line.size();
 
+		// Make a 1D vector of Glyphs, to be written to the 2D vector
 		GlyphVec1 glyphRow;
-		glyphRow.reserve(newW);
+		glyphRow.reserve(colCount);
+
+		// Take each character from the line, and push the corresponding Glyph to the vector
 		for (wxUniChar c : line)
-			glyphRow.push_back(UnicharToGlyph[c]);
+			glyphRow.push_back(UnicharToGlyph.at(c));
 		glyphs.push_back(glyphRow);
 	}
 

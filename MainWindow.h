@@ -39,7 +39,7 @@ private:
 	//	wxMenuItem* menuGenerateNoSym;
 
 	void fileEventHandler(wxCommandEvent& evt); ///< Handles all events for items under the "File" menu
-	void openFile(wxCommandEvent& evt);	
+	void openFile(wxCommandEvent& evt);			///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
 	void saveFile(wxCommandEvent& evt);			///< Saves the current knot as a \c .k3knot file or a \c .txt file
 
 	void initSizerLayout();
