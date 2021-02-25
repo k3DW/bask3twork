@@ -44,6 +44,7 @@ private:
 
 	void initSizerLayout();
 	void initDispSizer();	///< One of 6 \c init functions which chunk the initializing process, but the only one documented. 
+	void RefreshMinSize();	///< Sets the minimum size of the window, and sets the size of the window if not maximized.
 	DisplayGrid* disp;		///< The DisplayGrid for this program, i.e. the \c wxPanel that displays the Knot.
 	Knot* knot;				///< The Knot object belonging to this program.
 	wxBoxSizer* mainSizer;

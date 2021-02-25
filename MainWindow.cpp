@@ -4,12 +4,8 @@ MainWindow::MainWindow(int h, int w, wxString title) : wxFrame(nullptr, wxID_ANY
 	CreateStatusBar();
 	SetBackgroundColour(BACKGROUND_COLOUR);
 	initMenuBar();
-
 	initSizerLayout();
-
-	wxSize windowSize = GetBestSize();
-	SetMinSize(windowSize);
-	SetSize(windowSize);
+	RefreshMinSize();
 }
 MainWindow::~MainWindow() {
 	Hide();
@@ -255,9 +251,16 @@ void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
 	/// and regenerate and export textbox with MainWindow::regenExportBox().
 	resetSelectCoord();
 	regenExportBox();
-	Layout(); // To make sure everything is displayed properly.
 
-	/// Lastly, change the size and minimum size of the window to fit the new DisplayGrid.
+	/// Lastly, refresh the minimum size of the window.
+	RefreshMinSize();
+
+	evt.Skip();
+}
+void MainWindow::RefreshMinSize() {
+	/// \b Method
+
+	/// Change the size and minimum size of the window to fit the content.
 	/// To do this, the minimum size must first be set to \c wxDefaultSize, before finding the new size with \c GetBestSize().
 	/// The minimum size is set to this new size, but the current size is only changed if the window is not maixmized.
 	SetMinSize(wxDefaultSize);
@@ -265,8 +268,7 @@ void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
 	SetMinSize(newSize);
 	if (!IsMaximized())
 		SetSize(newSize);
-
-	evt.Skip();
+	Layout();
 }
 
 void MainWindow::updateSelectCoord() {
