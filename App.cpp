@@ -15,10 +15,10 @@
 		~~1g) Update all documentation for "Knot.h" (didn't finish, but will do later)
 		~~1h) Check forward diagonal symmetry
 		~~1i) Check backward diagonal symmetry
-	2) Save states
+	~~2) Save states
 		~~2a) Function to write a GlyphVec2 into a ".knot" file in a specified file location, with visual file explorer
 		~~2b) Menu bar, with "File -> Save" that calls that function, saves as ".knot" file
-		2c) Function to read a ".knot" file, check to see if it's valid, then put into a GlyphVec2/Knot object and set the knot
+		~~2c) Function to read a ".knot" file, check to see if it's valid, then put into a GlyphVec2/Knot object and set the knot
 		~~2b) Menu bar, with "File -> Open" that calls that function
 */
 
