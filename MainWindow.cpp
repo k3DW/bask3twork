@@ -142,7 +142,7 @@ void MainWindow::fileEventHandler(wxCommandEvent& evt) {
 }
 void MainWindow::openFile(wxCommandEvent& evt) {
 	// Open a wxFileDialog to get the name of the file.
-	wxFileDialog openFileDialog(this, "Open Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt*)|*.txt*", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
+	wxFileDialog openFileDialog(this, "Open Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt)|*.txt", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
 
 	// If the wxFileDialog gets closed, stop the function.
 	if (openFileDialog.ShowModal() == wxID_CANCEL)
@@ -220,7 +220,7 @@ void MainWindow::openFile(wxCommandEvent& evt) {
 }
 void MainWindow::saveFile(wxCommandEvent& evt) {
 	// Open a wxFileDialog to get the name of the file.
-	wxFileDialog saveFileDialog(this, "Save Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt*)|*.txt*", wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_CHANGE_DIR);
+	wxFileDialog saveFileDialog(this, "Save Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt)|*.txt", wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_CHANGE_DIR);
 
 	// If the wxFileDialog gets closed, stop the function.
 	if (saveFileDialog.ShowModal() == wxID_CANCEL)
