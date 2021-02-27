@@ -5,8 +5,8 @@
 		~~1b) Add functionality
 	2) Wrapping around borders
 		~~2a) Add wxMenuItems to toggle wrapping in X and Y respectively
-		2b) Add 2 bool member variables to the Knot class to save wrapping state
-		2b) Incorporate wrapping functionality into the generating functions
+		~~2b) Add 2 bool member variables to the Knot class to save wrapping state
+		2c) Incorporate wrapping functionality into the generating functions
 	3) Put more things into the wxMenuBar to remove bloat from the right side
 		3a) Enable or disable symmetry buttons
 		3b) Put grid regeneration into its own wxMenu

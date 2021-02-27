@@ -25,7 +25,9 @@ public:
 	bool checkBackDiag(ijSignature) const;
 
 private:
-	GlyphVec2 glyphs; ///< The current state of the Knot, as a 2D std::vector of Glyph pointers
+	GlyphVec2 glyphs;			///< The current state of the Knot, as a 2D std::vector of Glyph pointers
+	bool wrapXEnabled = false;	///< Is wrapping enabled in the X direction
+	bool wrapYEnabled = false;	///< Is wrapping enabled in the Y direction
 
 	void mirrorUpToDown(GlyphVec2& glyphGrid, ijSignature) const;
 	void mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const;
