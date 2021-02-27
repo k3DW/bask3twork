@@ -135,13 +135,7 @@ void MainWindow::initExportRegion() {
 
 	exportCopyButton = new wxButton(this, wxID_ANY, "Copy", wxDefaultPosition, wxSize(54, 23));
 	exportCopyButton->Bind(wxEVT_BUTTON, &MainWindow::exportCopyFunction, this);
-
-	exportCopySizer = new wxBoxSizer(wxHORIZONTAL);
-	exportCopySizer->AddStretchSpacer();
-	exportCopySizer->Add(exportCopyButton);
-	exportCopySizer->AddStretchSpacer();
-
-	exportRegionSizer->Add(exportCopySizer, 0, wxEXPAND);
+	exportRegionSizer->Add(exportCopyButton, 0, wxEXPAND);
 }
 
 void MainWindow::fileEventHandler(wxCommandEvent& evt) {

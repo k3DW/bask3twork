@@ -81,7 +81,6 @@ private:
 	wxStaticBoxSizer* exportRegionSizer;
 		wxTextCtrl* exportBox;
 		wxFont exportFont;
-		wxBoxSizer* exportCopySizer;
 		declareButton(exportCopy);	///< This function copies the current text data in the exportBox into the clipboard, saving it after closing the program.
 
 	static constexpr int GAP_1 = 20; ///< The gap from the outside of the window, and between the grid section and panel section
