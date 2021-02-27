@@ -1,37 +1,22 @@
-/* TODO for version 0.4 */
-/*
-	~~0) Change Glyph structure
-		~~0a) Change GlyphFlag to be 64 bit
-		~~0b) Propagate those changes everywhere (yikes)
-		~~0c) Add SA_MIRFD and SA_MIRBD flags
-		~~0d) Add corresponding flags to the Glyph struct
-	~~1) More symmetries
-		~~1a) Add new buttons to the window
-		~~1b) Add `Knot::tryGeneratingDiag()` to make diagonal structures
-		~~1c) Generate full symmetry (square only)
-		~~1d) Generate forward diagonal symmetry (square only)
-		~~1e) Generate backward diagonal symmetry (square only)
-		~~1f) Document `Knot::tryGeneratingDiag()`, `Knot::generateFwdDiag()`, `Knot::generateBackDiag()`, `Knot::generateFullSym()`
-		~~1g) Update all documentation for "Knot.h" (didn't finish, but will do later)
-		~~1h) Check forward diagonal symmetry
-		~~1i) Check backward diagonal symmetry
-	~~2) Save states
-		~~2a) Function to write a GlyphVec2 into a ".knot" file in a specified file location, with visual file explorer
-		~~2b) Menu bar, with "File -> Save" that calls that function, saves as ".knot" file
-		~~2c) Function to read a ".knot" file, check to see if it's valid, then put into a GlyphVec2/Knot object and set the knot
-		~~2b) Menu bar, with "File -> Open" that calls that function
-*/
-
 /* TODO for version 0.5 */
 /*
-	1) Tile locking
-	2) Undo/redo (up to a certain level)
-	3) Wrapping around borders?
+	1) "Copy to clipboard" button with the export box
+		1a) Add physical button
+		1b) Add functionality
+	2) Wrapping around borders
+		2a) Add wxMenu items to toggle wrapping in X and Y respectively
+		2b) Add 2 bool member variables to the Knot class to save wrapping state
+		2b) Incorporate wrapping functionality into the generating functions
+	3) Put more things into the wxMenuBar to remove bloat from the right side
+		3a) Enable or disable symmetry buttons
+		3b) Put grid regeneration into its own wxMenu
+	4) Tile locking
+		4a) Flesh this one out once the others are done
 */
 
 /* TODO for later versions */
 /*
-	-> "Copy to clipboard" button with the export box
+	-> Undo/redo (up to a certain level)
 	-> Knots wrapping around the borders
 	-> DisplayGrid automatically changes size depending on the size of the screen/window
 	-> Tooltips (and other little details)
