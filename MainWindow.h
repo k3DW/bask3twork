@@ -33,14 +33,22 @@ private:
 		jMax;	///< The zero-indexed rightmost column of the selection
 
 	void initMenuBar();
+	void menuEventHandler(wxCommandEvent& evt); ///< Handles all events for menu presses
 	wxMenuBar* menuBar;
 	wxMenu* menuFile;
-	//wxMenu* menuGenerate;
-	//	wxMenuItem* menuGenerateNoSym;
+		void openFile();	///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
+		void saveFile();	///< Saves the current knot as a \c .k3knot file or a \c .txt file
+	wxMenu* menuGenerate;
+		wxMenuItem* menuWrapX;
+		wxMenuItem* menuWrapY;
+		void toggleWrap(bool inXDirection);	///< Toggles the knot wrapping in the direction specified
 
-	void fileEventHandler(wxCommandEvent& evt); ///< Handles all events for items under the "File" menu
-	void openFile(wxCommandEvent& evt);			///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
-	void saveFile(wxCommandEvent& evt);			///< Saves the current knot as a \c .k3knot file or a \c .txt file
+	enum class MenuID : int {
+		OPEN,
+		SAVE,
+		WRAP_X,
+		WRAP_Y,
+	};
 
 	void initSizerLayout();
 	void initDispSizer();	///< One of 6 \c init functions which chunk the initializing process, but the only one documented. 

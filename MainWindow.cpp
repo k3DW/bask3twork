@@ -12,9 +12,14 @@ MainWindow::~MainWindow() {
 }
 void MainWindow::initMenuBar() {
 	menuFile = new wxMenu();
-	menuFile->Append(wxID_OPEN, "&Open\tCtrl-O", "Open a knot file.");
-	menuFile->Append(wxID_SAVE, "&Save\tCtrl-S", "Save a knot file.");
-	menuFile->Bind(wxEVT_MENU, &MainWindow::fileEventHandler, this);
+	menuFile->Append(static_cast<int>(MenuID::OPEN), "&Open\tCtrl-O", "Open a knot file.");
+	menuFile->Append(static_cast<int>(MenuID::SAVE), "&Save\tCtrl-S", "Save a knot file.");
+	menuFile->Bind(wxEVT_MENU, &MainWindow::menuEventHandler, this);
+
+	menuGenerate = new wxMenu();
+	menuWrapX = menuGenerate->AppendCheckItem(static_cast<int>(MenuID::WRAP_X), "Wrap &X", "Toggle wrapping around the grid in the left-right direction.");
+	menuWrapY = menuGenerate->AppendCheckItem(static_cast<int>(MenuID::WRAP_Y), "Wrap &Y", "Toggle wrapping around the grid in the up-down direction.");
+	menuGenerate->Bind(wxEVT_MENU, &MainWindow::menuEventHandler, this);
 
 	//menuGenerate = new wxMenu();
 	//menuGenerateNoSym = new wxMenuItem(nullptr, 100, "test");
@@ -26,7 +31,7 @@ void MainWindow::initMenuBar() {
 
 	menuBar = new wxMenuBar();
 	menuBar->Append(menuFile, "&File");
-	//menuBar->Append(menuGenerate, "&Generate");
+	menuBar->Append(menuGenerate, "&Generate");
 	SetMenuBar(menuBar);
 }
 void MainWindow::initSizerLayout() {
@@ -138,14 +143,18 @@ void MainWindow::initExportRegion() {
 	exportRegionSizer->Add(exportCopyButton, 0, wxEXPAND);
 }
 
-void MainWindow::fileEventHandler(wxCommandEvent& evt) {
-	if (evt.GetId() == wxID_OPEN)
-		openFile(evt);
-	else if (evt.GetId() == wxID_SAVE)
-		saveFile(evt);
+void MainWindow::menuEventHandler(wxCommandEvent& evt) {
+	if (evt.GetId() == static_cast<int>(MenuID::OPEN))
+		openFile();
+	else if (evt.GetId() == static_cast<int>(MenuID::SAVE))
+		saveFile();
+	else if (evt.GetId() == static_cast<int>(MenuID::WRAP_X))
+		toggleWrap(true);
+	else if (evt.GetId() == static_cast<int>(MenuID::WRAP_Y))
+		toggleWrap(false);
 	evt.Skip();
 }
-void MainWindow::openFile(wxCommandEvent& evt) {
+void MainWindow::openFile() {
 	// Open a wxFileDialog to get the name of the file.
 	wxFileDialog openFileDialog(this, "Open Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt)|*.txt", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
 
@@ -223,7 +232,7 @@ void MainWindow::openFile(wxCommandEvent& evt) {
 	
 	file.Close();
 }
-void MainWindow::saveFile(wxCommandEvent& evt) {
+void MainWindow::saveFile() {
 	// Open a wxFileDialog to get the name of the file.
 	wxFileDialog saveFileDialog(this, "Save Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt)|*.txt", wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_CHANGE_DIR);
 
@@ -252,6 +261,24 @@ void MainWindow::saveFile(wxCommandEvent& evt) {
 	// Save changes, then close
 	file.Write();
 	file.Close();
+}
+void MainWindow::toggleWrap(bool inXDirection) {
+	if (inXDirection) {
+		if (menuWrapX->IsChecked()) {
+			// turn x wrap on
+		}
+		else {
+			// turn x wrap off
+		}
+	}
+	else {
+		if (menuWrapY->IsChecked()) {
+			// turn y wrap on
+		}
+		else {
+			// turn y wrap off
+		}
+	}
 }
 
 void MainWindow::gridRegenFunction(wxCommandEvent& evt) {

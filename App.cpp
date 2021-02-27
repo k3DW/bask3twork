@@ -4,7 +4,7 @@
 		~~1a) Add physical button
 		~~1b) Add functionality
 	2) Wrapping around borders
-		2a) Add wxMenu items to toggle wrapping in X and Y respectively
+		~~2a) Add wxMenuItems to toggle wrapping in X and Y respectively
 		2b) Add 2 bool member variables to the Knot class to save wrapping state
 		2b) Incorporate wrapping functionality into the generating functions
 	3) Put more things into the wxMenuBar to remove bloat from the right side
