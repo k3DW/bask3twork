@@ -448,6 +448,11 @@ void MainWindow::regenExportBox() {
 	exportRegionSizer->Prepend(exportBox, 0, wxALIGN_CENTER | wxUP | wxDOWN, GAP_3);
 }
 void MainWindow::exportCopyFunction(wxCommandEvent& evt) {
-
+	// Open the clipboard
+	if (wxTheClipboard->Open())	{
+		wxTheClipboard->SetData(new wxTextDataObject(exportBox->GetLabel()));	// Copy the knot into the clipboard
+		wxTheClipboard->Flush();												// Keep the knot in the clipboard after closing the program
+		wxTheClipboard->Close();												// Close the clipboard
+	}
 	evt.Skip();
 }

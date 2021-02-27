@@ -1,8 +1,9 @@
 #pragma once
 #include "wx/wx.h"
+#include "wx/clipbrd.h"
 #include "wx/gbsizer.h"
-#include "wx/wfstream.h"
 #include "wx/textfile.h"
+#include "wx/wfstream.h"
 #include <array>
 #include <map>
 #include <optional>

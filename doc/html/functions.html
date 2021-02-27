@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="k3DW.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Knots
-   &#160;<span id="projectnumber">Version 0.3</span>
+   &#160;<span id="projectnumber">Version 0.5</span>
    </div>
    <div id="projectbrief">Celtic Knot Editor</div>
   </td>
@@ -53,6 +53,12 @@ $(function() {
 <h3><a id="index_c"></a>- c -</h3><ul>
 <li>changeSelectCoord()
 : <a class="el" href="class_main_window.html#a09f290132a33413e87c6f6801177ad81">MainWindow</a>
+</li>
+<li>checkBackDiag()
+: <a class="el" href="class_knot.html#a64eb2903bc849214108fbf74325d2a5d">Knot</a>
+</li>
+<li>checkFwdDiag()
+: <a class="el" href="class_knot.html#af10a5cadb9660433348d2d7c9a487791">Knot</a>
 </li>
 <li>checkHoriSym()
 : <a class="el" href="class_knot.html#a84a7574ecd5600e6a5eb02c4acfa30e3">Knot</a>
@@ -131,10 +137,16 @@ $(function() {
 <li>enableGenerateButtons()
 : <a class="el" href="class_main_window.html#a0873756d4998ad2b6d0468cc3b3cb7d4">MainWindow</a>
 </li>
+<li>exportCopyFunction()
+: <a class="el" href="class_main_window.html#aba57a4431db0099267b9647e9fc5aa25">MainWindow</a>
+</li>
 </ul>
 
 
 <h3><a id="index_f"></a>- f -</h3><ul>
+<li>fileEventHandler()
+: <a class="el" href="class_main_window.html#adfcb2458373467f30093a625bb6be994">MainWindow</a>
+</li>
 <li>fixSelectCoord()
 : <a class="el" href="class_main_window.html#adeeeaf0a2ce95f2677608c878a422727">MainWindow</a>
 </li>
@@ -153,6 +165,15 @@ $(function() {
 </li>
 <li>GAP_3
 : <a class="el" href="class_main_window.html#a89d84e04791163a981f7fc8f8e82d4bf">MainWindow</a>
+</li>
+<li>generateBackDiag()
+: <a class="el" href="class_knot.html#ad2a28099c634ac2c350c471dd3d96f95">Knot</a>
+</li>
+<li>generateFullSym()
+: <a class="el" href="class_knot.html#a64ee7c5ccdd2b81ddbf65b073425996b">Knot</a>
+</li>
+<li>generateFwdDiag()
+: <a class="el" href="class_knot.html#a992fbe11459d527ac587c2b0efc5d8b6">Knot</a>
 </li>
 <li>generateHoriSym()
 : <a class="el" href="class_knot.html#aa1ba8747637566b8eb43c86bec79c825">Knot</a>
@@ -179,7 +200,7 @@ $(function() {
 : <a class="el" href="class_knot.html#a8c15ad602bf0e474b05ba5069b0b51fe">Knot</a>
 </li>
 <li>Glyph()
-: <a class="el" href="struct_glyph.html#af02754a0aba5cf8c0cd3d20671b8565e">Glyph</a>
+: <a class="el" href="struct_glyph.html#a242057280fbfcc37e3a5ecf24cd8e708">Glyph</a>
 </li>
 <li>glyphs
 : <a class="el" href="class_knot.html#aca7854cd4ab46a4308d9dad548eeb77b">Knot</a>
@@ -270,6 +291,12 @@ $(function() {
 <li>MainWindow()
 : <a class="el" href="class_main_window.html#af5f08d7b8a2aab6ce55d10d50ccb859c">MainWindow</a>
 </li>
+<li>mirroredBD
+: <a class="el" href="struct_glyph.html#aac009e9cb098f4b1218bf618ea07d184">Glyph</a>
+</li>
+<li>mirroredFD
+: <a class="el" href="struct_glyph.html#a64faed76d0785c35d723c57ab2dc9bec">Glyph</a>
+</li>
 <li>mirroredX
 : <a class="el" href="struct_glyph.html#a3615d268eaad8febfbadc3d383921e37">Glyph</a>
 </li>
@@ -285,6 +312,13 @@ $(function() {
 </ul>
 
 
+<h3><a id="index_o"></a>- o -</h3><ul>
+<li>openFile()
+: <a class="el" href="class_main_window.html#a997c9e0273b88186de7cbcf49db5172d">MainWindow</a>
+</li>
+</ul>
+
+
 <h3><a id="index_p"></a>- p -</h3><ul>
 <li>parent
 : <a class="el" href="class_display_grid.html#a3a58cbcb8bd88d7cf108f59581292916">DisplayGrid</a>
@@ -293,6 +327,9 @@ $(function() {
 
 
 <h3><a id="index_r"></a>- r -</h3><ul>
+<li>RefreshMinSize()
+: <a class="el" href="class_main_window.html#ae377ce9609d5f9e1eec62dd3e71b0948">MainWindow</a>
+</li>
 <li>regenExportBox()
 : <a class="el" href="class_main_window.html#acf8bff11024070e822bfb7aa34dee206">MainWindow</a>
 </li>
@@ -324,6 +361,12 @@ $(function() {
 
 
 <h3><a id="index_s"></a>- s -</h3><ul>
+<li>sameAfterMirrorBackDiag
+: <a class="el" href="struct_glyph.html#ad73b924e5c6c8eb279c97388a6127174">Glyph</a>
+</li>
+<li>sameAfterMirrorFwdDiag
+: <a class="el" href="struct_glyph.html#a61f56a64430774dbbcf1b59db9307405">Glyph</a>
+</li>
 <li>sameAfterMirrorX
 : <a class="el" href="struct_glyph.html#afefb963206df1fd2a21a5504262bb5d0">Glyph</a>
 </li>
@@ -335,6 +378,9 @@ $(function() {
 </li>
 <li>sameAfterRotate4
 : <a class="el" href="struct_glyph.html#ae2c7eab6e9ac83de1c246e931a5845f5">Glyph</a>
+</li>
+<li>saveFile()
+: <a class="el" href="class_main_window.html#a8f69cf25f56995107794871ddde22459">MainWindow</a>
 </li>
 <li>selectResetFunction()
 : <a class="el" href="class_main_window.html#a6e8f08681148ff02a9046334a86022c3">MainWindow</a>
@@ -366,6 +412,9 @@ $(function() {
 </li>
 <li>tryGenerating()
 : <a class="el" href="class_knot.html#a55fc3d0353cef3f3af4a42fd1167b775">Knot</a>
+</li>
+<li>tryGeneratingDiag()
+: <a class="el" href="class_knot.html#a0810ffb68f953f3a8c48221117804cad">Knot</a>
 </li>
 </ul>
 

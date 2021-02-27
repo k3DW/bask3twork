@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="k3DW.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Knots
-   &#160;<span id="projectnumber">Version 0.3</span>
+   &#160;<span id="projectnumber">Version 0.5</span>
    </div>
    <div id="projectbrief">Celtic Knot Editor</div>
   </td>
@@ -82,6 +82,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af67516fc1c13e5ce93459983b02899da"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#af67516fc1c13e5ce93459983b02899da">generateRot4Sym</a> (const int iMin, const int jMin, const int iMax, const int jMax)</td></tr>
 <tr class="memdesc:af67516fc1c13e5ce93459983b02899da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Only works on a <b>square</b> selection, generate a knot with 4-way rotational symmetry about the center of the selection.  <a href="class_knot.html#af67516fc1c13e5ce93459983b02899da">More...</a><br /></td></tr>
 <tr class="separator:af67516fc1c13e5ce93459983b02899da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a992fbe11459d527ac587c2b0efc5d8b6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#a992fbe11459d527ac587c2b0efc5d8b6">generateFwdDiag</a> (const int iMin, const int jMin, const int iMax, const int jMax)</td></tr>
+<tr class="memdesc:a992fbe11459d527ac587c2b0efc5d8b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Only works on a <b>square</b> selection, generate a knot with mirror symmetry across the forward diagonal of the selection.  <a href="class_knot.html#a992fbe11459d527ac587c2b0efc5d8b6">More...</a><br /></td></tr>
+<tr class="separator:a992fbe11459d527ac587c2b0efc5d8b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2a28099c634ac2c350c471dd3d96f95"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#ad2a28099c634ac2c350c471dd3d96f95">generateBackDiag</a> (const int iMin, const int jMin, const int iMax, const int jMax)</td></tr>
+<tr class="memdesc:ad2a28099c634ac2c350c471dd3d96f95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Only works on a <b>square</b> selection, generate a knot with mirror symmetry across the backward diagonal of the selection.  <a href="class_knot.html#ad2a28099c634ac2c350c471dd3d96f95">More...</a><br /></td></tr>
+<tr class="separator:ad2a28099c634ac2c350c471dd3d96f95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64ee7c5ccdd2b81ddbf65b073425996b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#a64ee7c5ccdd2b81ddbf65b073425996b">generateFullSym</a> (const int iMin, const int jMin, const int iMax, const int jMax)</td></tr>
+<tr class="memdesc:a64ee7c5ccdd2b81ddbf65b073425996b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Only works on a <b>square</b> selection, generate a knot with full D4 symmetry, essentially a combination of <a class="el" href="class_knot.html#a4658c0f91033c5848ac736a68e7efbbb" title="Generate a knot with symmetry across both the horizontal and vertical axes of the selection.">Knot::generateHoriVertSym()</a> and <a class="el" href="class_knot.html#af67516fc1c13e5ce93459983b02899da" title="Only works on a square selection, generate a knot with 4-way rotational symmetry about the center of ...">Knot::generateRot4Sym()</a> concurrently.  <a href="class_knot.html#a64ee7c5ccdd2b81ddbf65b073425996b">More...</a><br /></td></tr>
+<tr class="separator:a64ee7c5ccdd2b81ddbf65b073425996b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84a7574ecd5600e6a5eb02c4acfa30e3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#a84a7574ecd5600e6a5eb02c4acfa30e3">checkHoriSym</a> (const int iMin, const int jMin, const int iMax, const int jMax) const</td></tr>
 <tr class="memdesc:a84a7574ecd5600e6a5eb02c4acfa30e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the boundary around the selection is symmetric about the horizontal axis of the selection.  <a href="class_knot.html#a84a7574ecd5600e6a5eb02c4acfa30e3">More...</a><br /></td></tr>
 <tr class="separator:a84a7574ecd5600e6a5eb02c4acfa30e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -94,6 +103,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abec66b18d83b543f80a709daf558b05b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#abec66b18d83b543f80a709daf558b05b">checkRot4Sym</a> (const int iMin, const int jMin, const int iMax, const int jMax) const</td></tr>
 <tr class="memdesc:abec66b18d83b543f80a709daf558b05b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the boundary around the selection is 4-way rotationally symmetric about the central point of the selection.  <a href="class_knot.html#abec66b18d83b543f80a709daf558b05b">More...</a><br /></td></tr>
 <tr class="separator:abec66b18d83b543f80a709daf558b05b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af10a5cadb9660433348d2d7c9a487791"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#af10a5cadb9660433348d2d7c9a487791">checkFwdDiag</a> (const int iMin, const int jMin, const int iMax, const int jMax) const</td></tr>
+<tr class="memdesc:af10a5cadb9660433348d2d7c9a487791"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the boundary around the selection is symmetric about the forward diagonal of the selection, meaning it must be square.  <a href="class_knot.html#af10a5cadb9660433348d2d7c9a487791">More...</a><br /></td></tr>
+<tr class="separator:af10a5cadb9660433348d2d7c9a487791"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64eb2903bc849214108fbf74325d2a5d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#a64eb2903bc849214108fbf74325d2a5d">checkBackDiag</a> (const int iMin, const int jMin, const int iMax, const int jMax) const</td></tr>
+<tr class="memdesc:a64eb2903bc849214108fbf74325d2a5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the boundary around the selection is symmetric about the backward diagonal of the selection, meaning it must be square.  <a href="class_knot.html#a64eb2903bc849214108fbf74325d2a5d">More...</a><br /></td></tr>
+<tr class="separator:a64eb2903bc849214108fbf74325d2a5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -127,9 +142,12 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a54b1a9f8a1a68166428a8c2e8d5aee76"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#a54b1a9f8a1a68166428a8c2e8d5aee76">rotate90FromUpLeft</a> (<a class="el" href="_glyph_8h.html#a639b232f8cc3a7f38c2a525ad711d2f1">GlyphVec2</a> &amp;glyphGrid, const int iMin, const int jMin, const int iMax, const int jMax) const</td></tr>
 <tr class="memdesc:a54b1a9f8a1a68166428a8c2e8d5aee76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Only works on a <b>square</b> selection, copy the upper left quadrant of the selection to the other quadrants by rotating 90 degrees about the center of the selection.  <a href="class_knot.html#a54b1a9f8a1a68166428a8c2e8d5aee76">More...</a><br /></td></tr>
 <tr class="separator:a54b1a9f8a1a68166428a8c2e8d5aee76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55fc3d0353cef3f3af4a42fd1167b775"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#a55fc3d0353cef3f3af4a42fd1167b775">tryGenerating</a> (std::optional&lt; <a class="el" href="_glyph_8h.html#a639b232f8cc3a7f38c2a525ad711d2f1">GlyphVec2</a> &gt; &amp;glyphGrid, const int iMin, const int jMin, const int iMax, const int jMax, const <a class="el" href="_glyph_8h.html#a8ad556416c540197a47d0dd20a2e833d">Side</a> ignoreSides=<a class="el" href="_glyph_8h.html#a8ad556416c540197a47d0dd20a2e833dab50339a10e1de285ac99d4c3990b8693">Side::NONE</a>, const <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a> boolFlags=<a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174ab50339a10e1de285ac99d4c3990b8693">GlyphFlag::NONE</a>) const</td></tr>
-<tr class="memdesc:a55fc3d0353cef3f3af4a42fd1167b775"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function tries to generate with no symmetry, only once with no looping, and sets <code>glyphGrid</code> to <code>std::nullopt</code> if it cannot be generated.  <a href="class_knot.html#a55fc3d0353cef3f3af4a42fd1167b775">More...</a><br /></td></tr>
+<tr class="memitem:a55fc3d0353cef3f3af4a42fd1167b775"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#a55fc3d0353cef3f3af4a42fd1167b775">tryGenerating</a> (std::optional&lt; <a class="el" href="_glyph_8h.html#a639b232f8cc3a7f38c2a525ad711d2f1">GlyphVec2</a> &gt; &amp;glyphGrid, const int iMin, const int jMin, const int iMax, const int jMax, const <a class="el" href="_glyph_8h.html#a8ad556416c540197a47d0dd20a2e833d">Side</a> ignoreSides=<a class="el" href="_glyph_8h.html#a8ad556416c540197a47d0dd20a2e833dab50339a10e1de285ac99d4c3990b8693">Side::NONE</a>, const <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a> boolFlags=<a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8ab50339a10e1de285ac99d4c3990b8693">GlyphFlag::NONE</a>) const</td></tr>
+<tr class="memdesc:a55fc3d0353cef3f3af4a42fd1167b775"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function tries to generate a rectangle with no symmetry, only once with no looping, and sets <code>glyphGrid</code> to <code>std::nullopt</code> if it cannot be generated.  <a href="class_knot.html#a55fc3d0353cef3f3af4a42fd1167b775">More...</a><br /></td></tr>
 <tr class="separator:a55fc3d0353cef3f3af4a42fd1167b775"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0810ffb68f953f3a8c48221117804cad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_knot.html#a0810ffb68f953f3a8c48221117804cad">tryGeneratingDiag</a> (std::optional&lt; <a class="el" href="_glyph_8h.html#a639b232f8cc3a7f38c2a525ad711d2f1">GlyphVec2</a> &gt; &amp;glyphGrid, const int iMin, const int jMin, const int iMax, const int jMax, const bool fwdDiag, const <a class="el" href="_glyph_8h.html#a8ad556416c540197a47d0dd20a2e833d">Side</a> ignoreSides=<a class="el" href="_glyph_8h.html#a8ad556416c540197a47d0dd20a2e833dab50339a10e1de285ac99d4c3990b8693">Side::NONE</a>) const</td></tr>
+<tr class="memdesc:a0810ffb68f953f3a8c48221117804cad"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function tries to generate a square with diagonal symmetry, only once with no looping, and sets <code>glyphGrid</code> to <code>std::nullopt</code> if it cannot be generated.  <a href="class_knot.html#a0810ffb68f953f3a8c48221117804cad">More...</a><br /></td></tr>
+<tr class="separator:a0810ffb68f953f3a8c48221117804cad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
@@ -483,7 +501,136 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>This function will only work properly for <b>square</b> selections, but will not give any error if a non-square selection is passed.</p>
+<p>This function will only work properly for <b>square</b> selections, and will do nothing if a non-square selection is passed.</p>
+<p>Only generates from row <code>iMin</code> to row <code>iMax</code>, and from column <code>jMin</code> to column <code>jMax</code>. This function assumes <code>iMin</code> <code>&lt;=</code> <code>iMax</code> and <code>jMin</code> <code>&lt;=</code> <code>jMax</code>, and does not check the values. The boundary conditions around the selection are maintained, with the outside being treated as an empty connection. The symmtery of the boundary conditions are not checked, so if a selection is chosen with non-symmetric boundaries, the full knot will have broken connections.</p>
+<p>See <a class="el" href="class_knot.html#aab9b99511c701b9e8e68b1eed8cdf1d3" title="Generate a knot with no symmetry.">Knot::generateNoSym()</a> for parameters and return value. </p>
+
+</div>
+</div>
+<a id="a992fbe11459d527ac587c2b0efc5d8b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a992fbe11459d527ac587c2b0efc5d8b6">&#9670;&nbsp;</a></span>generateFwdDiag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Knot::generateFwdDiag </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>iMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>jMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>iMax</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>jMax</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>This function will only work properly for <b>square</b> selections, and will do nothing if a non-square selection is passed.</p>
+<p>Only generates from row <code>iMin</code> to row <code>iMax</code>, and from column <code>jMin</code> to column <code>jMax</code>. This function assumes <code>iMin</code> <code>&lt;=</code> <code>iMax</code> and <code>jMin</code> <code>&lt;=</code> <code>jMax</code>, and does not check the values. The boundary conditions around the selection are maintained, with the outside being treated as an empty connection. The symmtery of the boundary conditions are not checked, so if a selection is chosen with non-symmetric boundaries, the full knot will have broken connections.</p>
+<p>See <a class="el" href="class_knot.html#aab9b99511c701b9e8e68b1eed8cdf1d3" title="Generate a knot with no symmetry.">Knot::generateNoSym()</a> for parameters and return value. </p>
+
+</div>
+</div>
+<a id="ad2a28099c634ac2c350c471dd3d96f95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2a28099c634ac2c350c471dd3d96f95">&#9670;&nbsp;</a></span>generateBackDiag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Knot::generateBackDiag </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>iMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>jMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>iMax</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>jMax</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>This function will only work properly for <b>square</b> selections, and will do nothing if a non-square selection is passed.</p>
+<p>Only generates from row <code>iMin</code> to row <code>iMax</code>, and from column <code>jMin</code> to column <code>jMax</code>. This function assumes <code>iMin</code> <code>&lt;=</code> <code>iMax</code> and <code>jMin</code> <code>&lt;=</code> <code>jMax</code>, and does not check the values. The boundary conditions around the selection are maintained, with the outside being treated as an empty connection. The symmtery of the boundary conditions are not checked, so if a selection is chosen with non-symmetric boundaries, the full knot will have broken connections.</p>
+<p>See <a class="el" href="class_knot.html#aab9b99511c701b9e8e68b1eed8cdf1d3" title="Generate a knot with no symmetry.">Knot::generateNoSym()</a> for parameters and return value. </p>
+
+</div>
+</div>
+<a id="a64ee7c5ccdd2b81ddbf65b073425996b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64ee7c5ccdd2b81ddbf65b073425996b">&#9670;&nbsp;</a></span>generateFullSym()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Knot::generateFullSym </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>iMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>jMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>iMax</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>jMax</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>This function will only work properly for <b>square</b> selections, and will do nothing if a non-square selection is passed.</p>
 <p>Only generates from row <code>iMin</code> to row <code>iMax</code>, and from column <code>jMin</code> to column <code>jMax</code>. This function assumes <code>iMin</code> <code>&lt;=</code> <code>iMax</code> and <code>jMin</code> <code>&lt;=</code> <code>jMax</code>, and does not check the values. The boundary conditions around the selection are maintained, with the outside being treated as an empty connection. The symmtery of the boundary conditions are not checked, so if a selection is chosen with non-symmetric boundaries, the full knot will have broken connections.</p>
 <p>See <a class="el" href="class_knot.html#aab9b99511c701b9e8e68b1eed8cdf1d3" title="Generate a knot with no symmetry.">Knot::generateNoSym()</a> for parameters and return value. </p>
 
@@ -632,6 +779,90 @@ Private Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">Knot::checkRot4Sym </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>iMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>jMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>iMax</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>jMax</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Only checks from row <code>iMin</code> to row <code>iMax</code>, and from column <code>jMin</code> to column <code>jMax</code>. This function assumes <code>iMin</code> <code>&lt;=</code> <code>iMax</code> and <code>jMin</code> <code>&lt;=</code> <code>jMax</code>, and does not check the values.</p>
+<p>See <a class="el" href="class_knot.html#a84a7574ecd5600e6a5eb02c4acfa30e3" title="Check if the boundary around the selection is symmetric about the horizontal axis of the selection.">Knot::checkHoriSym()</a> for parameters. </p>
+
+</div>
+</div>
+<a id="af10a5cadb9660433348d2d7c9a487791"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af10a5cadb9660433348d2d7c9a487791">&#9670;&nbsp;</a></span>checkFwdDiag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Knot::checkFwdDiag </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>iMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>jMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>iMax</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>jMax</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Only checks from row <code>iMin</code> to row <code>iMax</code>, and from column <code>jMin</code> to column <code>jMax</code>. This function assumes <code>iMin</code> <code>&lt;=</code> <code>iMax</code> and <code>jMin</code> <code>&lt;=</code> <code>jMax</code>, and does not check the values.</p>
+<p>See <a class="el" href="class_knot.html#a84a7574ecd5600e6a5eb02c4acfa30e3" title="Check if the boundary around the selection is symmetric about the horizontal axis of the selection.">Knot::checkHoriSym()</a> for parameters. </p>
+
+</div>
+</div>
+<a id="a64eb2903bc849214108fbf74325d2a5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64eb2903bc849214108fbf74325d2a5d">&#9670;&nbsp;</a></span>checkBackDiag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Knot::checkBackDiag </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>iMin</em>, </td>
@@ -1009,8 +1240,8 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a>&#160;</td>
-          <td class="paramname"><em>boolFlags</em> = <code><a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174ab50339a10e1de285ac99d4c3990b8693">GlyphFlag::NONE</a></code>&#160;</td>
+          <td class="paramtype">const <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a>&#160;</td>
+          <td class="paramname"><em>boolFlags</em> = <code><a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8ab50339a10e1de285ac99d4c3990b8693">GlyphFlag::NONE</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1041,11 +1272,96 @@ Private Attributes</h2></td></tr>
 </dl>
 <p><b>Methodology</b> </p>
 <p>First, make a copy of <code>glyphGrid</code> to make changes without affecting the input.</p>
-<p>Then, set the <code>const</code> <code>Glyph*</code> pointers of the copy to <code>nullptr</code>, if they are within the selection. This signifies that these values are not set, since they are being regenerated in this function.</p>
+<p>Then, set the <code>const</code> <code>Glyph*</code> pointers of the copy to <code>nullptr</code>, if they are within the selection. This signifies that these values are not set, since they will be regenerated in this function.</p>
 <p>Next, generate the glyphs by iterating over i,j coordinates within the selection. For each i,j pair, do the following 3 steps.</p>
 <p>(1) Generate the <code>vector</code> of all possible glyphs that can fit into this spot, using the <code><a class="el" href="_glyph_8h.html#a07c66574c82c3dff89801d09614610a2" title="This function takes in the desired flags and outputs the vector of all glyphs which meet the criteria...">PossibleGlyphs()</a></code> function, passing on the <code>boolFlags</code> parameter directly. For each of the <code>Connection</code> parameters, there are 4 possible cases, in order: (a) The side should be ignored based on <code>ignoreSide</code>, therefore the parameter should be <code><a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960" title="The connection is irrelevant (no Glyph objects should ever be assigned this value,...">Connection::DO_NOT_CARE</a></code>. (b) This glyph is on the outer edge of the selection on this particular side, so the parameter should be <code><a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7baba2b45bdc11e2a4a6e86aab2ac693cbb" title="The empty connection, where nothing is passing through this edge.">Connection::EMPTY</a></code>. (c) The next glyph on this particular side is not yet assigned, therefore the parameter should be <code><a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960" title="The connection is irrelevant (no Glyph objects should ever be assigned this value,...">Connection::DO_NOT_CARE</a></code>. (d) The general case, where none of the other special cases apply, therefore the parameter should be the connection on the opposite side, from the neighbouring glyph on this particular side.</p>
 <p>(2) If there are no possible glyphs for this space, set <code>glyphGrid</code> to the null <code>optional</code> and end the function.</p>
 <p>(3) If step 2 did not end the function, set the glyph in the copy as a random choice from the generated possibilities.</p>
+<p>At the end of the function, set <code>glyphGrid</code> equal to the created copy.</p>
+
+</div>
+</div>
+<a id="a0810ffb68f953f3a8c48221117804cad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0810ffb68f953f3a8c48221117804cad">&#9670;&nbsp;</a></span>tryGeneratingDiag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Knot::tryGeneratingDiag </td>
+          <td>(</td>
+          <td class="paramtype">std::optional&lt; <a class="el" href="_glyph_8h.html#a639b232f8cc3a7f38c2a525ad711d2f1">GlyphVec2</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>glyphGrid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>iMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>jMin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>iMax</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>jMax</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>fwdDiag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="_glyph_8h.html#a8ad556416c540197a47d0dd20a2e833d">Side</a>&#160;</td>
+          <td class="paramname"><em>ignoreSides</em> = <code><a class="el" href="_glyph_8h.html#a8ad556416c540197a47d0dd20a2e833dab50339a10e1de285ac99d4c3990b8693">Side::NONE</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Only generates from row <code>iMin</code> to row <code>iMax</code>, and from column <code>jMin</code> to column <code>jMax</code>. This function assumes <code>iMin</code> <code>&lt;=</code> <code>iMax</code> and <code>jMin</code> <code>&lt;=</code> <code>jMax</code>, and does not check the values, except that the selection is square.</p>
+<p>The <code>fwdDiag</code> parameter takes a value of <code>true</code> if the diagonal is in the same direction of the forward slash,</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">glyphGrid</td><td>The 2D std::vector of <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> pointers to pass into the function to be edited, as an <code>optional</code> </td></tr>
+    <tr><td class="paramname">iMin</td><td>The zero-indexed upper row of the selection visually (lower numerically) </td></tr>
+    <tr><td class="paramname">jMin</td><td>The zero-indexed leftmost column of the selection </td></tr>
+    <tr><td class="paramname">iMax</td><td>The zero-indexed lower row of the selection visually (higher numerically) </td></tr>
+    <tr><td class="paramname">jMax</td><td>The zero-indexed rightmost column of the selection </td></tr>
+    <tr><td class="paramname">fwdDiag</td><td>The type of diagonal symmetry to generate</td></tr>
+  </table>
+  </dd>
+</dl>
+<p><b>Methodology</b> </p>
+<p>First, make sure that the selection is square. If is it not, end the function immediately.</p>
+<p>Next, make a copy of <code>glyphGrid</code> to make changes without affecting the input.</p>
+<p>Then, set the <code>const</code> <code>Glyph*</code> pointers of the copy to <code>nullptr</code>, if they are within the selection. This signifies that these values are not set, since they will be regenerated in this function.</p>
+<p>Next, generate the glyphs by iterating over i,j coordinates within the selection. This is done similarly to <a class="el" href="class_knot.html#a55fc3d0353cef3f3af4a42fd1167b775" title="This function tries to generate a rectangle with no symmetry, only once with no looping,...">Knot::tryGenerating()</a>, with a few modifications. Every time a glyph is added, its mirror across the diagonal is also added, unless it is along the diagonal itself. This requires an extra check at the beginning to see if the current glyph is assigned yet, and a check at the end to see if mirroring should occur.</p>
 <p>At the end of the function, set <code>glyphGrid</code> equal to the created copy.</p>
 
 </div>
