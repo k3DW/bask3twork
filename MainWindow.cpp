@@ -130,7 +130,18 @@ void MainWindow::initGenerateRegion() {
 void MainWindow::initExportRegion() {
 	exportRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Export");
 	exportFont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas");
+
 	regenExportBox();
+
+	exportCopyButton = new wxButton(this, wxID_ANY, "Copy", wxDefaultPosition, wxSize(54, 23));
+	exportCopyButton->Bind(wxEVT_BUTTON, &MainWindow::exportCopyFunction, this);
+
+	exportCopySizer = new wxBoxSizer(wxHORIZONTAL);
+	exportCopySizer->AddStretchSpacer();
+	exportCopySizer->Add(exportCopyButton);
+	exportCopySizer->AddStretchSpacer();
+
+	exportRegionSizer->Add(exportCopySizer, 0, wxEXPAND);
 }
 
 void MainWindow::fileEventHandler(wxCommandEvent& evt) {
@@ -430,9 +441,13 @@ void MainWindow::showExportBox() {
 	exportBox->SetLabel(toExport);
 }
 void MainWindow::regenExportBox() {
-	if(exportBox)
+	if (exportBox)
 		exportBox->Destroy();
 	exportBox = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(9 * w + 14, 19 * h + 7), wxTE_MULTILINE | wxTE_NO_VSCROLL | wxTE_READONLY);
 	exportBox->SetFont(exportFont);
-	exportRegionSizer->Prepend(exportBox, 0, wxALIGN_CENTER | wxDOWN | wxUP, GAP_3);
+	exportRegionSizer->Prepend(exportBox, 0, wxALIGN_CENTER | wxUP | wxDOWN, GAP_3);
+}
+void MainWindow::exportCopyFunction(wxCommandEvent& evt) {
+
+	evt.Skip();
 }

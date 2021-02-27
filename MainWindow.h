@@ -81,6 +81,8 @@ private:
 	wxStaticBoxSizer* exportRegionSizer;
 		wxTextCtrl* exportBox;
 		wxFont exportFont;
+		wxBoxSizer* exportCopySizer;
+		declareButton(exportCopy);
 
 	static constexpr int GAP_1 = 20; ///< The gap from the outside of the window, and between the grid section and panel section
 	static constexpr int GAP_2 = 10; ///< The gap between the panels in the panel section
