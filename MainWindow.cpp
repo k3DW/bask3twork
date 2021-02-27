@@ -308,10 +308,13 @@ void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
 	w = widthNum;
 	initDispSizer();
 
-	/// Then, reset the select coordinates with MainWindow::resetSelectCoord()
-	/// and regenerate and export textbox with MainWindow::regenExportBox().
+	/// Then, reset the select coordinates with MainWindow::resetSelectCoord(),
+	/// regenerate and export textbox with MainWindow::regenExportBox(),
+	/// and reset the knot wrapping \c wxMenuItem objects.
 	resetSelectCoord();
 	regenExportBox();
+	menuWrapX->Check(false);
+	menuWrapY->Check(false);
 
 	/// Lastly, refresh the minimum size of the window.
 	RefreshMinSize();
