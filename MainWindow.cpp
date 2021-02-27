@@ -95,7 +95,7 @@ void MainWindow::initGridRegion() {
 	gridInputSizer->Add(gridWidth, 0, wxEXPAND);
 	
 	initButton(gridRegen, "Regenerate Grid");
-	gridRegenButton->SetToolTip("TEST");
+	// gridRegenButton->SetToolTip("TEST");
 
 	gridRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Grid");
 	gridRegionSizer->Add(gridInputSizer, 0, wxEXPAND | wxDOWN, GAP_3);
