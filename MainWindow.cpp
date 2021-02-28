@@ -17,8 +17,8 @@ void MainWindow::initMenuBar() {
 	menuFile->Bind(wxEVT_MENU, &MainWindow::menuEventHandler, this);
 
 	menuGenerate = new wxMenu();
-	menuWrapX = menuGenerate->AppendCheckItem(static_cast<int>(MenuID::WRAP_X), "Wrap &X", "Toggle wrapping around the grid in the left-right direction.");
-	menuWrapY = menuGenerate->AppendCheckItem(static_cast<int>(MenuID::WRAP_Y), "Wrap &Y", "Toggle wrapping around the grid in the up-down direction.");
+	menuWrapX = menuGenerate->AppendCheckItem(static_cast<int>(MenuID::WRAP_X), "Wrap &X\tCtrl-X", "Toggle wrapping around the grid in the left-right direction.");
+	menuWrapY = menuGenerate->AppendCheckItem(static_cast<int>(MenuID::WRAP_Y), "Wrap &Y\tCtrl-Y", "Toggle wrapping around the grid in the up-down direction.");
 	menuGenerate->Bind(wxEVT_MENU, &MainWindow::menuEventHandler, this);
 
 	//menuGenerate = new wxMenu();
