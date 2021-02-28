@@ -450,29 +450,37 @@ void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const
 	for (int i = iMin; i <= iMax; i++) {
 		for (int j = jMin; j <= jMax; j++) {
 			GlyphVec1 possibilities = PossibleGlyphs(
-				/** (1) Generate the \c vector of all possible glyphs that can fit into this spot, using the \c PossibleGlyphs() function,
+				/** \b (1) Generate the \c vector of all possible glyphs that can fit into this spot, using the \c PossibleGlyphs() function,
 				 *	passing on the \c boolFlags parameter directly.
-				 *	For each of the \c Connection parameters, there are 4 possible cases, in order: 
+				 *	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation: 
+				 *	
 				 *	(a) The side should be ignored based on \c ignoreSide, therefore the parameter should be \c Connection::DO_NOT_CARE.
-				 *	(b) This glyph is on the outer edge of the selection on this particular side, so the parameter should be \c Connection::EMPTY.
-				 *	(c) The next glyph on this particular side is not yet assigned, therefore the parameter should be \c Connection::DO_NOT_CARE.
-				 *	(d) The general case, where none of the other special cases apply, therefore the parameter should be
+				 *	(b) This glyph is on the outer edge of the selection on this particular side, so branch to condition C, otherwise branch to condition F.
+				 *	
+				 *	(c) Wrapping is not enabled in this direction, therefore the parameter should be \c Connection::EMPTY.
+				 *	(d) The glyph directly on the other end of the wrap is not assigned, therefore the parameter should be \c Connection::DO_NOT_CARE.
+				 *	(e) The general wrapping case, where none of the other special wrapping cases apply, therefore the parameter should be
+				 *		the connection on the opposite side of the glyph on the other end of the wrap.
+				 *	
+				 *	(f) The next glyph on this particular side is not yet assigned, therefore the parameter should be \c Connection::DO_NOT_CARE.
+				 *	(g) The general case, where none of the other special cases apply, therefore the parameter should be
 				 *		the connection on the opposite side, from the neighbouring glyph on this particular side.
 				 */
-				ignoreUp	&& i == iMin ? Connection::DO_NOT_CARE : i == 0		? Connection::EMPTY : !newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down,
-				ignoreDown	&& i == iMax ? Connection::DO_NOT_CARE : i == h - 1	? Connection::EMPTY : !newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up,
-				ignoreLeft	&& j == jMin ? Connection::DO_NOT_CARE : j == 0		? Connection::EMPTY : !newGlyphs[i][j - 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j - 1]->right,
-				ignoreRight && j == jMax ? Connection::DO_NOT_CARE : j == w - 1	? Connection::EMPTY : !newGlyphs[i][j + 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j + 1]->left,
+
+				ignoreUp	&& i == iMin ? Connection::DO_NOT_CARE : i == 0		? (!wrapYEnabled ? Connection::EMPTY : !newGlyphs[h - 1][j]	? Connection::DO_NOT_CARE : newGlyphs[h - 1][j]->down	) : (!newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down	) ,
+				ignoreDown	&& i == iMax ? Connection::DO_NOT_CARE : i == h - 1	? (!wrapYEnabled ? Connection::EMPTY : !newGlyphs[0][j]		? Connection::DO_NOT_CARE : newGlyphs[0][j]->up			) : (!newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up	) ,
+				ignoreLeft	&& j == jMin ? Connection::DO_NOT_CARE : j == 0		? (!wrapXEnabled ? Connection::EMPTY : !newGlyphs[i][w - 1]	? Connection::DO_NOT_CARE : newGlyphs[i][w - 1]->right	) : (!newGlyphs[i][j - 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j - 1]->right) ,
+				ignoreRight	&& j == jMax ? Connection::DO_NOT_CARE : j == w - 1	? (!wrapXEnabled ? Connection::EMPTY : !newGlyphs[i][0]		? Connection::DO_NOT_CARE : newGlyphs[i][0]->left		) : (!newGlyphs[i][j + 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j + 1]->left	) ,
 				boolFlags
 			);
 			
-			/// (2) If there are no possible glyphs for this space, set \c glyphGrid to the null \c optional and end the function.
+			/// \b (2) If there are no possible glyphs for this space, set \c glyphGrid to the null \c optional and end the function.
 			if (possibilities.size() == 0) {
 				glyphGrid = std::nullopt;
 				return;
 			}
 			
-			/// (3) If step 2 did not end the function, set the glyph in the copy as a random choice from the generated possibilities.
+			/// \b (3) If step 2 did not end the function, set the glyph in the copy as a random choice from the generated possibilities.
 			newGlyphs[i][j] = possibilities[rand() % possibilities.size()]; // Pick a random glyph, now that we know it has a nonzero size
 		}
 	}
