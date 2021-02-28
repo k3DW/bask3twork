@@ -24,24 +24,25 @@ bool Knot::generateNoSym(ijSignature) {
 bool Knot::generateHoriSym(ijSignature) {
 	const int iMid = (iMin + iMax) / 2;
 	const GlyphFlag rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
+
+	const GlyphFlag wrapYFlag = (wrapYEnabled && iMin == 0 && iMax == h - 1) ? GlyphFlag::CT_MIRU : GlyphFlag::NONE;
+	const Side wrapYSide = (wrapYEnabled && iMin == 0 && iMax == h - 1) ? Side::UP : Side::NONE;
+
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating horizontal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
-		if (wrapYEnabled && iMin == 0 && iMax == h - 1) {
-			tryGenerating(newGlyphs, iMin, jMin, iMin, jMax, Side::DOWN | Side::UP, GlyphFlag::CT_MIRU);
-			if (!newGlyphs) continue;
+		// Top row
+		tryGenerating(newGlyphs, iMin, jMin, iMin, jMax, Side::DOWN | wrapYSide, wrapYFlag);
+		if (!newGlyphs) continue;
 
-			tryGenerating(newGlyphs, iMin + 1, jMin, iMid - 1, jMax, Side::DOWN);
-			if (!newGlyphs) continue;
-		}
-		else {
-			tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMax, Side::DOWN);
-			if (!newGlyphs) continue;
-		}
-
+		// Intermediate rows
+		tryGenerating(newGlyphs, iMin + 1, jMin, iMid - 1, jMax, Side::DOWN);
+		if (!newGlyphs) continue;
+		
+		// Middle row
 		tryGenerating(newGlyphs, iMid, jMin, iMid, jMax, Side::DOWN, rowFlag);
 		if (!newGlyphs) continue;
 
@@ -55,24 +56,25 @@ bool Knot::generateHoriSym(ijSignature) {
 bool Knot::generateVertSym(ijSignature) {
 	const int jMid = (jMin + jMax) / 2;
 	const GlyphFlag colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+
+	const GlyphFlag wrapXFlag = (wrapXEnabled && jMin == 0 && jMax == w - 1) ? GlyphFlag::CT_MIRL : GlyphFlag::NONE;
+	const Side wrapXSide = (wrapXEnabled && jMin == 0 && jMax == w - 1) ? Side::LEFT : Side::NONE;
+
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating vertical symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
-		if (wrapXEnabled && jMin == 0 && jMax == w - 1) {
-			tryGenerating(newGlyphs, iMin, jMin, iMax, jMin, Side::RIGHT | Side::LEFT, GlyphFlag::CT_MIRL);
-			if (!newGlyphs) continue;
+		// Left column
+		tryGenerating(newGlyphs, iMin, jMin, iMax, jMin, Side::RIGHT | wrapXSide, wrapXFlag);
+		if (!newGlyphs) continue;
 
-			tryGenerating(newGlyphs, iMin, jMin + 1, iMax, jMid - 1, Side::RIGHT);
-			if (!newGlyphs) continue;
-		}
-		else {
-			tryGenerating(newGlyphs, iMin, jMin, iMax, jMid - 1, Side::RIGHT);
-			if (!newGlyphs) continue;
-		}
+		// Intermediate columns
+		tryGenerating(newGlyphs, iMin, jMin + 1, iMax, jMid - 1, Side::RIGHT);
+		if (!newGlyphs) continue;
 
+		// Middle column
 		tryGenerating(newGlyphs, iMin, jMid, iMax, jMid, Side::RIGHT, colFlag);
 		if (!newGlyphs) continue;
 		
