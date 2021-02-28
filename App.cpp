@@ -23,6 +23,7 @@
 
 /* TODO for later versions */
 /*
+	-> Knot navigation, like moving all the data in a certain direction
 	-> Undo/redo (up to a certain level)
 	-> Knots wrapping around the borders
 	-> DisplayGrid automatically changes size depending on the size of the screen/window
