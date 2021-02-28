@@ -272,7 +272,8 @@ void MainWindow::toggleWrap(bool inXDirection) {
 	else
 		knot->wrapYEnabled = menuWrapY->IsChecked();
 
-	enableGenerateButtons();
+	if (generateNoSymButton->IsEnabled())
+		enableGenerateButtons();
 }
 
 void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
