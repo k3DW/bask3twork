@@ -11,7 +11,9 @@ public:
 
 	const int h, ///< The height of the knot, i.e. the number of rows. This is publicly accessible but not mutable
 			  w; ///< The width of the knot, i.e. the number of columns. This is publicly accessible but not mutable
-	wxStatusBar* const statusBar; ///< The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot
+	wxStatusBar* const statusBar;	///< The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot
+	bool wrapXEnabled = false;		///< Is wrapping enabled in the X direction
+	bool wrapYEnabled = false;		///< Is wrapping enabled in the Y direction
 
 	#define XX(Sym, desc) bool generate##Sym##(ijSignature);
 	SYMMETRIES
@@ -25,9 +27,7 @@ public:
 	bool checkBackDiag(ijSignature) const;
 
 private:
-	GlyphVec2 glyphs;			///< The current state of the Knot, as a 2D std::vector of Glyph pointers
-	bool wrapXEnabled = false;	///< Is wrapping enabled in the X direction
-	bool wrapYEnabled = false;	///< Is wrapping enabled in the Y direction
+	GlyphVec2 glyphs;	///< The current state of the Knot, as a 2D std::vector of Glyph pointers
 
 	void mirrorUpToDown(GlyphVec2& glyphGrid, ijSignature) const;
 	void mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const;

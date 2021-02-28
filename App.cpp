@@ -6,7 +6,14 @@
 	2) Wrapping around borders
 		~~2a) Add wxMenuItems to toggle wrapping in X and Y respectively
 		~~2b) Add 2 bool member variables to the Knot class to save wrapping state
-		2c) Incorporate wrapping functionality into the generating functions
+		2c) Update Knot::tryGenerating() to incorporate wrapping functionality
+		2d) Update Knot::tryGeneratingDiag() to incorporate wrapping functionality
+		2e) Update Knot::checkHoriSym() to incorporate wrapping functionality
+		2f) Update Knot::checkVertSym() to incorporate wrapping functionality
+		2g) Update Knot::checkRot2Sym() to incorporate wrapping functionality
+		2h) Update Knot::checkRot4Sym() to incorporate wrapping functionality
+		2i) Update Knot::checkFwdDiag() to incorporate wrapping functionality
+		2j) Update Knot::checkBackDiag() to incorporate wrapping functionality
 	3) Put more things into the wxMenuBar to remove bloat from the right side
 		3a) Enable or disable symmetry buttons
 		3b) Put grid regeneration into its own wxMenu

@@ -263,22 +263,12 @@ void MainWindow::saveFile() {
 	file.Close();
 }
 void MainWindow::toggleWrap(bool inXDirection) {
-	if (inXDirection) {
-		if (menuWrapX->IsChecked()) {
-			// turn x wrap on
-		}
-		else {
-			// turn x wrap off
-		}
-	}
-	else {
-		if (menuWrapY->IsChecked()) {
-			// turn y wrap on
-		}
-		else {
-			// turn y wrap off
-		}
-	}
+	if (inXDirection)
+		knot->wrapXEnabled = menuWrapX->IsChecked();
+	else
+		knot->wrapYEnabled = menuWrapY->IsChecked();
+
+	enableGenerateButtons();
 }
 
 void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
