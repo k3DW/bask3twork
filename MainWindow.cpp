@@ -227,6 +227,10 @@ void MainWindow::openFile() {
 	regenExportBox();
 	showExportBox();
 
+	// Reset the wrapping checkboxes
+	menuWrapX->Check(false);
+	menuWrapY->Check(false);
+
 	// Lastly, refresh the minimum size of the window.
 	RefreshMinSize();
 	
