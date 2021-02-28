@@ -30,8 +30,17 @@ bool Knot::generateHoriSym(ijSignature) {
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
-		tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMax, Side::DOWN);
-		if (!newGlyphs) continue;
+		if (wrapYEnabled && iMin == 0 && iMax == h - 1) {
+			tryGenerating(newGlyphs, iMin, jMin, iMin, jMax, Side::DOWN | Side::UP, GlyphFlag::CT_MIRU);
+			if (!newGlyphs) continue;
+
+			tryGenerating(newGlyphs, iMin + 1, jMin, iMid - 1, jMax, Side::DOWN);
+			if (!newGlyphs) continue;
+		}
+		else {
+			tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMax, Side::DOWN);
+			if (!newGlyphs) continue;
+		}
 
 		tryGenerating(newGlyphs, iMid, jMin, iMid, jMax, Side::DOWN, rowFlag);
 		if (!newGlyphs) continue;
@@ -52,8 +61,17 @@ bool Knot::generateVertSym(ijSignature) {
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
-		tryGenerating(newGlyphs, iMin, jMin, iMax, jMid - 1, Side::RIGHT);
-		if (!newGlyphs) continue;
+		if (wrapXEnabled && jMin == 0 && jMax == w - 1) {
+			tryGenerating(newGlyphs, iMin, jMin, iMax, jMin, Side::RIGHT | Side::LEFT, GlyphFlag::CT_MIRL);
+			if (!newGlyphs) continue;
+
+			tryGenerating(newGlyphs, iMin, jMin + 1, iMax, jMid - 1, Side::RIGHT);
+			if (!newGlyphs) continue;
+		}
+		else {
+			tryGenerating(newGlyphs, iMin, jMin, iMax, jMid - 1, Side::RIGHT);
+			if (!newGlyphs) continue;
+		}
 
 		tryGenerating(newGlyphs, iMin, jMid, iMax, jMid, Side::RIGHT, colFlag);
 		if (!newGlyphs) continue;

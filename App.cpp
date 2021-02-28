@@ -6,7 +6,15 @@
 	2) Wrapping around borders
 		~~2a) Add wxMenuItems to toggle wrapping in X and Y respectively
 		~~2b) Add 2 bool member variables to the Knot class to save wrapping state
-		2c) Update Knot::tryGenerating() to incorporate wrapping functionality
+		~~2c) Update Knot::tryGenerating() to incorporate wrapping functionality
+		~~2c-1) Fix Knot::generateHoriSym()
+		~~2c-2) Fix Knot::generateVertSym()
+		2c-3) Fix Knot::generateHoriVertSym()
+		2c-4) Fix Knot::generateRot2Sym()
+		2c-5) Fix Knot::generateRot4Sym()
+		2c-6) Fix Knot::generateFwdDiag()
+		2c-7) Fix Knot::generateBackDiag()
+		2c-8) Fix Knot::generateFullSym()
 		2d) Update Knot::tryGeneratingDiag() to incorporate wrapping functionality
 		2e) Update Knot::checkHoriSym() to incorporate wrapping functionality
 		2f) Update Knot::checkVertSym() to incorporate wrapping functionality
