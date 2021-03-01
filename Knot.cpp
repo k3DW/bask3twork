@@ -151,20 +151,65 @@ bool Knot::generateRot2Sym(ijSignature) {
 	const int jMid = (jMin + jMax) / 2;
 	const bool isEvenRows = isEvenSegments(iMin, iMax);
 	const bool isEvenCols = isEvenSegments(jMin, jMax);
+
+	const Side wrapYSide = (wrapYEnabled && iMin == 0 && iMax == h - 1) ? Side::UP : Side::NONE;
+	const Side wrapXSide = (wrapXEnabled && jMin == 0 && jMax == w - 1) ? Side::LEFT : Side::NONE;
+
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating 2-way rotational symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
-		tryGenerating(newGlyphs, iMin, jMin, iMax, jMid - 1, Side::RIGHT);
+		// Top left corner region
+		tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, Side::DOWN | Side::RIGHT | wrapYSide | wrapXSide);
 		if (!newGlyphs) continue;
+		// Bottom right corner region
 		rotate180LeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
 		
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid + static_cast<int>(isEvenCols), Side::DOWN);
+		// Bottom left corner region
+		tryGenerating(newGlyphs, iMid + 1 + isEvenRows, jMin, iMax, jMid - 1, Side::UP | Side::RIGHT);
 		if (!newGlyphs) continue;
-		rotate180UpToDown(*newGlyphs, iMin, jMid, iMax, jMid + static_cast<int>(isEvenCols));
+		// Top right corner region
+		rotate180LeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
 
+		// Left middle region
+		if (isEvenRows) {
+			tryGenerating(newGlyphs, iMid, jMin, iMid, jMid - 1, Side::DOWN | Side::RIGHT | wrapXSide);
+			if (!newGlyphs) continue;
+			rotate180LeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
+
+			tryGenerating(newGlyphs, iMid + 1, jMin, iMid + 1, jMid - 1, Side::RIGHT);
+			if (!newGlyphs) continue;
+			rotate180LeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
+		}
+		else {
+			tryGenerating(newGlyphs, iMid, jMin, iMid, jMin, Side::RIGHT | wrapXSide, GlyphFlag::CT_ROT2L);
+			if (!newGlyphs) continue;
+			tryGenerating(newGlyphs, iMid, jMin + 1, iMid, jMid - 1, Side::RIGHT);
+			if (!newGlyphs) continue;
+			rotate180LeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
+		}
+
+		// Top middle region
+		if (isEvenCols) {
+			tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT | wrapYSide);
+			if (!newGlyphs) continue;
+			rotate180UpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
+
+			tryGenerating(newGlyphs, iMin, jMid + 1, iMid - 1, jMid + 1, Side::DOWN);
+			if (!newGlyphs) continue;
+			rotate180UpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
+		}
+		else {
+			tryGenerating(newGlyphs, iMin, jMid, iMin, jMid, Side::DOWN | wrapYSide, GlyphFlag::CT_ROT2U);
+			if (!newGlyphs) continue;
+			tryGenerating(newGlyphs, iMin + 1, jMid, iMid - 1, jMid, Side::DOWN);
+			if (!newGlyphs) continue;
+			rotate180UpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
+		}
+
+		// Middle middle region
 		if (!isEvenRows && !isEvenCols) {
 			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::NONE, GlyphFlag::SA_ROT2);
 			if (!newGlyphs) continue;

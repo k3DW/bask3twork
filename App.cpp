@@ -10,7 +10,7 @@
 		~~2c-1) Fix Knot::generateHoriSym()
 		~~2c-2) Fix Knot::generateVertSym()
 		~~2c-3) Fix Knot::generateHoriVertSym()
-		2c-4) Fix Knot::generateRot2Sym()
+		~~2c-4) Fix Knot::generateRot2Sym()
 		2c-5) Fix Knot::generateRot4Sym()
 		2d) Update Knot::tryGeneratingDiag() to incorporate wrapping functionality
 		2d-1) Fix Knot::generateFwdDiag()
