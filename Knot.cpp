@@ -137,19 +137,6 @@ bool Knot::generateHoriVertSym(ijSignature) {
 		// Middle middle square
 		tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, midRowFlag | midColFlag);
 		if (!newGlyphs) continue;
-
-		/*
-		tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, Side::DOWN | Side::RIGHT);
-		if (!newGlyphs) continue;
-
-		tryGenerating(newGlyphs, iMid, jMin, iMid, jMid - 1, Side::DOWN | Side::RIGHT, midRowFlag);
-		if (!newGlyphs) continue;
-
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, midColFlag);
-		if (!newGlyphs) continue;
-
-		tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, midRowFlag | midColFlag);
-		if (!newGlyphs) continue;*/
 		
 		mirrorUpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
 		mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
