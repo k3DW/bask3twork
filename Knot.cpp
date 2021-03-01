@@ -23,7 +23,7 @@ bool Knot::generateNoSym(ijSignature) {
 }
 bool Knot::generateHoriSym(ijSignature) {
 	const int iMid = (iMin + iMax) / 2;
-	const GlyphFlag rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
+	const GlyphFlag midRowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
 
 	const GlyphFlag wrapYFlag = (wrapYEnabled && iMin == 0 && iMax == h - 1) ? GlyphFlag::CT_MIRU : GlyphFlag::NONE;
 	const Side wrapYSide = (wrapYEnabled && iMin == 0 && iMax == h - 1) ? Side::UP : Side::NONE;
@@ -43,7 +43,7 @@ bool Knot::generateHoriSym(ijSignature) {
 		if (!newGlyphs) continue;
 		
 		// Middle row
-		tryGenerating(newGlyphs, iMid, jMin, iMid, jMax, Side::DOWN, rowFlag);
+		tryGenerating(newGlyphs, iMid, jMin, iMid, jMax, Side::DOWN, midRowFlag);
 		if (!newGlyphs) continue;
 
 		mirrorUpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
@@ -55,7 +55,7 @@ bool Knot::generateHoriSym(ijSignature) {
 }
 bool Knot::generateVertSym(ijSignature) {
 	const int jMid = (jMin + jMax) / 2;
-	const GlyphFlag colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+	const GlyphFlag midColFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 
 	const GlyphFlag wrapXFlag = (wrapXEnabled && jMin == 0 && jMax == w - 1) ? GlyphFlag::CT_MIRL : GlyphFlag::NONE;
 	const Side wrapXSide = (wrapXEnabled && jMin == 0 && jMax == w - 1) ? Side::LEFT : Side::NONE;
@@ -75,7 +75,7 @@ bool Knot::generateVertSym(ijSignature) {
 		if (!newGlyphs) continue;
 
 		// Middle column
-		tryGenerating(newGlyphs, iMin, jMid, iMax, jMid, Side::RIGHT, colFlag);
+		tryGenerating(newGlyphs, iMin, jMid, iMax, jMid, Side::RIGHT, midColFlag);
 		if (!newGlyphs) continue;
 		
 		mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
