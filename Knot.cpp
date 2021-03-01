@@ -88,25 +88,68 @@ bool Knot::generateVertSym(ijSignature) {
 bool Knot::generateHoriVertSym(ijSignature) {
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
-	const GlyphFlag rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
-	const GlyphFlag colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+	const GlyphFlag midRowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
+	const GlyphFlag midColFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+
+	const GlyphFlag wrapYFlag = (wrapYEnabled && iMin == 0 && iMax == h - 1) ? GlyphFlag::CT_MIRU : GlyphFlag::NONE;
+	const GlyphFlag wrapXFlag = (wrapXEnabled && jMin == 0 && jMax == w - 1) ? GlyphFlag::CT_MIRL : GlyphFlag::NONE;
+	const Side wrapYSide = (wrapYEnabled && iMin == 0 && iMax == h - 1) ? Side::UP : Side::NONE;
+	const Side wrapXSide = (wrapXEnabled && jMin == 0 && jMax == w - 1) ? Side::LEFT : Side::NONE;
+
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating vertical and horizontal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
+		// Top left square
+		tryGenerating(newGlyphs, iMin, jMin, iMin, jMin, Side::DOWN | Side::RIGHT | wrapYSide | wrapXSide, wrapYFlag | wrapXFlag);
+		if (!newGlyphs) continue;
+
+		// Top row
+		tryGenerating(newGlyphs, iMin, jMin + 1, iMin, jMid - 1, Side::DOWN | Side::RIGHT | wrapYSide, wrapYFlag);
+		if (!newGlyphs) continue;
+
+		// Top middle square
+		tryGenerating(newGlyphs, iMin, jMid, iMin, jMid, Side::DOWN | Side::RIGHT | wrapYSide, wrapYFlag | midColFlag);
+		if (!newGlyphs) continue;
+
+		// Left column
+		tryGenerating(newGlyphs, iMin + 1, jMin, iMid - 1, jMin, Side::DOWN | Side::RIGHT | wrapXSide, wrapXFlag);
+		if (!newGlyphs) continue;
+
+		// Interediate region
+		tryGenerating(newGlyphs, iMin + 1, jMin + 1, iMid - 1, jMid - 1, Side::DOWN | Side::RIGHT);
+		if (!newGlyphs) continue;
+
+		// Middle column
+		tryGenerating(newGlyphs, iMin + 1, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, midColFlag);
+		if (!newGlyphs) continue;
+
+		// Left middle square
+		tryGenerating(newGlyphs, iMid, jMin, iMid, jMin, Side::DOWN | Side::RIGHT | wrapXSide, wrapXFlag | midRowFlag);
+		if (!newGlyphs) continue;
+
+		// Middle row
+		tryGenerating(newGlyphs, iMid, jMin + 1, iMid, jMid - 1, Side::DOWN | Side::RIGHT, midRowFlag);
+		if (!newGlyphs) continue;
+
+		// Middle middle square
+		tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, midRowFlag | midColFlag);
+		if (!newGlyphs) continue;
+
+		/*
 		tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, Side::DOWN | Side::RIGHT);
 		if (!newGlyphs) continue;
 
-		tryGenerating(newGlyphs, iMid, jMin, iMid, jMid - 1, Side::DOWN | Side::RIGHT, rowFlag);
+		tryGenerating(newGlyphs, iMid, jMin, iMid, jMid - 1, Side::DOWN | Side::RIGHT, midRowFlag);
 		if (!newGlyphs) continue;
 
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, colFlag);
+		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, midColFlag);
 		if (!newGlyphs) continue;
 
-		tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, rowFlag | colFlag);
-		if (!newGlyphs) continue;
+		tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, midRowFlag | midColFlag);
+		if (!newGlyphs) continue;*/
 		
 		mirrorUpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
 		mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
