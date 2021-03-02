@@ -508,19 +508,13 @@ void Knot::rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const {
 	const int jMid = (jMin + jMax) / 2;
 	const bool isEven = isEvenSegments(iMin, iMax);
 
-	for (int iOffset = 0; iOffset <= iMid - iMin - static_cast<int>(isEven); iOffset++)
-		for (int jOffset = 0; jOffset <= jMid - jMin - static_cast<int>(isEven); jOffset++) {
+	for (int iOffset = 0; iOffset <= iMid - iMin - !isEven; iOffset++) {
+		for (int jOffset = 0; jOffset <= jMid - jMin; jOffset++) {
 			glyphGrid[iMin + jOffset][jMax - iOffset] = glyphGrid[iMin + iOffset][jMin + jOffset]->rotated4;
 			glyphGrid[iMax - iOffset][jMax - jOffset] = glyphGrid[iMin + iOffset][jMin + jOffset]->rotated2; // Same as ->rotated4->rotated4
 			glyphGrid[iMax - jOffset][jMin + iOffset] = glyphGrid[iMin + iOffset][jMin + jOffset]->rotated2->rotated4; // Same as ->rotated4->rotated4->rotated4
 		}
-
-	for (int iOffset = 0; iOffset <= iMid - iMin; iOffset++)
-		for (int jOffset = 0; jOffset <= static_cast<int>(isEven); jOffset++) {
-			glyphGrid[iMid + jOffset][jMax - iOffset] = glyphGrid[iMin + iOffset][jMid + jOffset]->rotated4;
-			glyphGrid[iMax - iOffset][jMid + static_cast<int>(isEven) - jOffset] = glyphGrid[iMin + iOffset][jMid + jOffset]->rotated2; // Same as ->rotated4->rotated4
-			glyphGrid[iMid + static_cast<int>(isEven) - jOffset][jMin + iOffset] = glyphGrid[iMin + iOffset][jMid + jOffset]->rotated2->rotated4; // Same as ->rotated4->rotated4->rotated4
-		}
+	}
 }
 
 void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides, const GlyphFlag boolFlags) const {
