@@ -243,21 +243,44 @@ bool Knot::generateRot4Sym(ijSignature) {
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
 	const bool isEven = isEvenSegments(iMin, iMax);
+
+	const bool doWrap = (wrapYEnabled && iMin == 0 && iMax == h - 1) && (wrapXEnabled && jMin == 0 && jMax == w - 1);
+
+	const Side wrapYSide = doWrap ? Side::UP : Side::NONE;
+	const Side wrapXSide = doWrap ? Side::LEFT : Side::NONE;
+
+
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating 2-way rotational symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
-		tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, Side::DOWN | Side::RIGHT);
+		tryGenerating(newGlyphs, iMin, jMin, iMin, jMin, Side::DOWN | Side::RIGHT | wrapYSide | wrapXSide, GlyphFlag::CT_ROT4L);
+		if (!newGlyphs) continue;
+		tryGenerating(newGlyphs, iMin, jMin + 1, iMin, jMid - !isEven, Side::DOWN | Side::RIGHT | wrapYSide);
+		if (!newGlyphs) continue;
+		if (!isEven) {
+			tryGenerating(newGlyphs, iMin, jMid, iMin, jMid, Side::DOWN | Side::RIGHT | wrapYSide, GlyphFlag::CT_ROT2U);
+			if (!newGlyphs) continue;
+		}
+		rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
+
+		tryGenerating(newGlyphs, iMin + 1, jMin, iMid - !isEven, jMin, Side::RIGHT);
+		if (!newGlyphs) continue;
+		tryGenerating(newGlyphs, iMin + 1, jMin + 1, iMid - 1, jMid - 1, Side::DOWN | Side::RIGHT);
 		if (!newGlyphs) continue;
 		rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
-		
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid + static_cast<int>(isEven), Side::DOWN);
+
+		tryGenerating(newGlyphs, iMin + 1, jMid, iMid - 1, jMid, Side::DOWN | (isEven ? Side::RIGHT : Side::NONE));
 		if (!newGlyphs) continue;
 		rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
 
 		if (isEven) {
+			tryGenerating(newGlyphs, iMid, jMin + 1, iMid, jMid - 1, Side::RIGHT);
+			if (!newGlyphs) continue;
+			rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
+
 			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, GlyphFlag::CT_ROT4R);
 			if (!newGlyphs) continue;
 			rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
