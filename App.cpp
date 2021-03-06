@@ -26,12 +26,11 @@
 	3) Put more things into the wxMenuBar to remove bloat from the right side
 		3a) Enable or disable symmetry buttons
 		3b) Put grid regeneration into its own wxMenu
-	4) Tile locking
-		4a) Flesh this one out once the others are done
 */
 
 /* TODO for later versions */
 /*
+	-> Tile locking
 	-> Knot navigation, like moving all the data in a certain direction
 	-> Undo/redo (up to a certain level)
 	-> Knots wrapping around the borders
