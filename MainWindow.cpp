@@ -272,7 +272,7 @@ void MainWindow::toggleWrap(bool inXDirection) {
 	else
 		knot->wrapYEnabled = menuWrapY->IsChecked();
 
-	if (generateNoSymButton->IsEnabled())
+	if (selectToggleButton->GetLabelText() == wxString("Hide"))
 		enableGenerateButtons();
 }
 
@@ -400,7 +400,7 @@ void MainWindow::enableGenerateButtons(bool enable) {
 
 	/// To conditionally enable the buttons, first call the \c Knot::check____Sym() functions on the current selection and store the outputs.
 	/// Then enable each of the buttons is the proper symmetry condition has been met.
-	if (enable) {
+	if (enable && knot->checkWrapping(iMin, jMin, iMax, jMax)) {
 		bool hasHoriSym = knot->checkHoriSym(iMin, jMin, iMax, jMax);
 		bool hasVertSym = knot->checkVertSym(iMin, jMin, iMax, jMax);
 		bool hasRot2Sym = knot->checkRot2Sym(iMin, jMin, iMax, jMax);

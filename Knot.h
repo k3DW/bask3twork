@@ -25,6 +25,7 @@ public:
 	bool checkRot4Sym(ijSignature) const;
 	bool checkFwdDiag(ijSignature) const;
 	bool checkBackDiag(ijSignature) const;
+	bool checkWrapping(ijSignature) const;
 
 private:
 	GlyphVec2 glyphs;	///< The current state of the Knot, as a 2D std::vector of Glyph pointers
@@ -213,6 +214,11 @@ private:
  * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
  *
  * See Knot::checkHoriSym() for parameters.
+ */
+/** \fn Knot::checkWrapping(ijSignature)
+ * Check if any of the previous wrapping conditions made it so that non wrapped knots cannot be generated.
+ * 
+ * This function is different from the other \c check functions, since this function returning false skips evaluation of the others.
  */
 
 /* Knot::[doCopy] */

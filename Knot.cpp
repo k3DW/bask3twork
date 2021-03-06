@@ -478,6 +478,39 @@ bool Knot::checkBackDiag(ijSignature) const {
 
 	return true;
 }
+bool Knot::checkWrapping(ijSignature) const {
+	// If the wrap in the Y direction is not enabled
+	if (!wrapYEnabled) {
+		// Only do the check if the selection either includes the top or bottom row, but not both
+		if (iMin == 0 && iMax != h - 1) {
+			for (int j = jMin; j <= jMax; j++)
+				if (glyphs[iMin][j]->up != Connection::EMPTY)
+					return false;
+		}
+		else if (iMin != 0 && iMax == h - 1) {
+			for (int j = jMin; j <= jMax; j++)
+				if (glyphs[iMax][j]->down != Connection::EMPTY)
+					return false;
+		}
+	}
+
+	// If the wrap in the X direction is not enabled
+	if (!wrapXEnabled) {
+		// Only do the check if the selection either includes the left or right column, but not both
+		if (jMin == 0 && jMax != w - 1) {
+			for (int i = iMin; i <= iMax; i++)
+				if (glyphs[i][jMin]->left != Connection::EMPTY)
+					return false;
+		}
+		else if (jMin != 0 && jMax == w - 1) {
+			for (int i = iMin; i <= iMax; i++)
+				if (glyphs[i][jMax]->right != Connection::EMPTY)
+					return false;
+		}
+	}
+
+	return true;
+}
 
 void Knot::mirrorUpToDown(GlyphVec2& glyphGrid, ijSignature) const {
 	for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)
