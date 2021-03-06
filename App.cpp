@@ -22,7 +22,7 @@
 		2h) Update Knot::checkRot4Sym() to incorporate wrapping functionality
 		2i) Update Knot::checkFwdDiag() to incorporate wrapping functionality
 		2j) Update Knot::checkBackDiag() to incorporate wrapping functionality
-		2k) New function Knot::checkWrapping() to disallow non-wrapped generating if wrapped conditions are in place
+		~~2k) New function Knot::checkWrapping() to disallow non-wrapped generating if wrapped conditions are in place
 	3) Put more things into the wxMenuBar to remove bloat from the right side
 		3a) Enable or disable symmetry buttons
 		3b) Put grid regeneration into its own wxMenu
