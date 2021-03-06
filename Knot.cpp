@@ -367,35 +367,23 @@ bool Knot::checkHoriSym(ijSignature) const {
 	Connection upConnection, downConnection;
 
 	// Checking the left and right sides
-	if (!(jMin == 0 && jMax == w - 1)) {
-		for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--) { // for each row
-			// Left side
-			upConnection	= jMin == 0 ? Connection::EMPTY : glyphs[iIncr][jMin - 1]->right;
-			downConnection	= jMin == 0 ? Connection::EMPTY : glyphs[iDecr][jMin - 1]->right;
-			if (upConnection != mirXConnection(downConnection)) return false;
-			// Right side
-			upConnection	= jMax == w - 1 ? Connection::EMPTY : glyphs[iIncr][jMax + 1]->left;
-			downConnection	= jMax == w - 1 ? Connection::EMPTY : glyphs[iDecr][jMax + 1]->left;
-			if (upConnection != mirXConnection(downConnection)) return false;
-		}
-		if (!isEvenSegments(iMin, iMax)) { // checking the middle row, if it exists
-			const int iMid = (iMin + iMax) / 2;
-			// Left side
-			upConnection = jMin == 0 ? Connection::EMPTY : glyphs[iMid][jMin - 1]->right;
-			if (upConnection != mirXConnection(upConnection)) return false;
-			// Right side
-			upConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iMid][jMax + 1]->left;
-			if (upConnection != mirXConnection(upConnection)) return false;
-		}
+	for (int iIncr = iMin, iDecr = iMax; iIncr <= iDecr; iIncr++, iDecr--) { // for each row
+		// Left side
+		upConnection	= glyphs[iIncr][jMin]->left;
+		downConnection	= glyphs[iDecr][jMin]->left;
+		if (upConnection != mirXConnection(downConnection)) return false;
+		// Right side
+		upConnection	= glyphs[iIncr][jMax]->right;
+		downConnection	= glyphs[iDecr][jMax]->right;
+		if (upConnection != mirXConnection(downConnection)) return false;
 	}
 
 	// Checking the up and down sides
-	if (!(iMin == 0 && iMax == h - 1))
-		for (int j = jMin; j <= jMax; j++) { // for each column
-			upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][j]->down;
-			downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][j]->up;
-			if (upConnection != mirXConnection(downConnection)) return false;
-		}
+	for (int j = jMin; j <= jMax; j++) { // for each column
+		upConnection	= glyphs[iMin][j]->up;
+		downConnection	= glyphs[iMax][j]->down;
+		if (upConnection != mirXConnection(downConnection)) return false;
+	}
 
 	return true;
 }
@@ -403,35 +391,23 @@ bool Knot::checkVertSym(ijSignature) const {
 	Connection leftConnection, rightConnection;
 
 	// Checking the up and down sides
-	if (!(iMin == 0 && iMax == h - 1)) {
-		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--) { // for each column
-			// Up side
-			leftConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jIncr]->down;
-			rightConnection = iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jDecr]->down;
-			if (leftConnection != mirYConnection(rightConnection)) return false;
-			// Down side
-			leftConnection	= iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jIncr]->up;
-			rightConnection = iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jDecr]->up;
-			if (leftConnection != mirYConnection(rightConnection)) return false;
-		}
-		if (!isEvenSegments(jMin, jMax)) { // checking the middle column, if it exists
-			const int jMid = (jMin + jMax) / 2;
-			// Up side
-			leftConnection = iMin == 0 ? Connection::EMPTY : glyphs[iMin - 1][jMid]->down;
-			if (leftConnection != mirYConnection(leftConnection)) return false;
-			// Down side
-			leftConnection = iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jMid]->up;
-			if (leftConnection != mirYConnection(leftConnection)) return false;
-		}
+	for (int jIncr = jMin, jDecr = jMax; jIncr <= jDecr; jIncr++, jDecr--) { // for each column
+		// Up side
+		leftConnection	= glyphs[iMin][jIncr]->up;
+		rightConnection = glyphs[iMin][jDecr]->up;
+		if (leftConnection != mirYConnection(rightConnection)) return false;
+		// Down side
+		leftConnection	= glyphs[iMax][jIncr]->down;
+		rightConnection = glyphs[iMax][jDecr]->down;
+		if (leftConnection != mirYConnection(rightConnection)) return false;
 	}
 
 	// Checking the left and right sides
-	if (!(jMin == 0 && jMax == w - 1))
-		for (int i = iMin; i <= iMax; i++) { // for each row
-			leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[i][jMin - 1]->right;
-			rightConnection = jMax == w - 1	? Connection::EMPTY : glyphs[i][jMax + 1]->left;
-			if (leftConnection != mirYConnection(rightConnection)) return false;
-		}
+	for (int i = iMin; i <= iMax; i++) { // for each row
+		leftConnection	= glyphs[i][jMin]->left;
+		rightConnection = glyphs[i][jMax]->right;
+		if (leftConnection != mirYConnection(rightConnection)) return false;
+	}
 
 	return true;
 }
