@@ -249,10 +249,9 @@ bool Knot::generateRot4Sym(ijSignature) {
 	const Side wrapYSide = doWrap ? Side::UP : Side::NONE;
 	const Side wrapXSide = doWrap ? Side::LEFT : Side::NONE;
 
-
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText("Generating 2-way rotational symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
+			statusBar->SetStatusText("Generating 4-way rotational symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
 		std::optional<GlyphVec2> newGlyphs = glyphs;
 
@@ -364,6 +363,9 @@ bool Knot::generateFullSym(ijSignature) {
 }
 
 bool Knot::checkHoriSym(ijSignature) const {
+	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)
+		return true;
+
 	Connection upConnection, downConnection;
 
 	// Checking the left and right sides
@@ -388,6 +390,9 @@ bool Knot::checkHoriSym(ijSignature) const {
 	return true;
 }
 bool Knot::checkVertSym(ijSignature) const {
+	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)
+		return true;
+
 	Connection leftConnection, rightConnection;
 
 	// Checking the up and down sides
@@ -412,6 +417,9 @@ bool Knot::checkVertSym(ijSignature) const {
 	return true;
 }
 bool Knot::checkRot2Sym(ijSignature) const {
+	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)
+		return true;
+
 	Connection upConnection, downConnection;
 	// Checking the up and down sides
 	for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--) { // for each column
@@ -433,6 +441,9 @@ bool Knot::checkRot2Sym(ijSignature) const {
 bool Knot::checkRot4Sym(ijSignature) const {
 	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
 
+	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)
+		return true;
+
 	Connection upConnection, downConnection, leftConnection, rightConnection;
 	for (int offset = 0; offset <= iMax - iMin; offset++) {
 		upConnection	= glyphs[iMin][jMin + offset]->up;		// Top row, from left to right
@@ -441,7 +452,7 @@ bool Knot::checkRot4Sym(ijSignature) const {
 		rightConnection = glyphs[iMin + offset][jMax]->right;	// Right column, from top to bottom
 		if (upConnection != rot4Connection(leftConnection) ||
 			upConnection != rot2Connection(downConnection) ||
-			upConnection != rot2Connection(rot4Connection(rightConnection))) return false;
+			rot4Connection(upConnection) != rightConnection ) return false;
 	}
 
 	return true;
