@@ -444,8 +444,10 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	else
 		wxMessageBox("The specified knot was not able to be generated in " + intWX(MAX_ATTEMPTS) + " attempts.", "Error: Knot failed");
 
-	/// At the end, set the status bar back to the message which was displayed at the beginning of the function.
+	/// At the end, set the status bar back to the message which was displayed at the beginning of the function,
+	/// and re-enable the generate buttons.
 	GetStatusBar()->SetStatusText(oldStatus);
+	enableGenerateButtons();
 	evt.Skip();
 }
 

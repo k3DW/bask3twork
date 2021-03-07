@@ -414,21 +414,19 @@ bool Knot::checkVertSym(ijSignature) const {
 bool Knot::checkRot2Sym(ijSignature) const {
 	Connection upConnection, downConnection;
 	// Checking the up and down sides
-	if (!(iMin == 0 && iMax == h - 1))
-		for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--) { // for each column
-			upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jIncr]->down;
-			downConnection	= iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jDecr]->up;
-			if (upConnection != rot2Connection(downConnection)) return false;
-		}
+	for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--) { // for each column
+		upConnection	= glyphs[iMin][jIncr]->up;
+		downConnection	= glyphs[iMax][jDecr]->down;
+		if (upConnection != rot2Connection(downConnection)) return false;
+	}
 
 	Connection leftConnection, rightConnection;
 	// Checking the left and right sides
-	if (!(jMin == 0 && jMax == w - 1))
-		for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--) { // for each row
-			leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iIncr][jMin - 1]->right;
-			rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iDecr][jMax + 1]->left;
-			if (leftConnection != rot2Connection(rightConnection)) return false;
-		}
+	for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--) { // for each row
+		leftConnection	= glyphs[iIncr][jMin]->left;
+		rightConnection = glyphs[iDecr][jMax]->right;
+		if (leftConnection != rot2Connection(rightConnection)) return false;
+	}
 
 	return true;
 }
@@ -437,10 +435,10 @@ bool Knot::checkRot4Sym(ijSignature) const {
 
 	Connection upConnection, downConnection, leftConnection, rightConnection;
 	for (int offset = 0; offset <= iMax - iMin; offset++) {
-		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jMin + offset]->down;	// Top row, from left to right
-		downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][jMax - offset]->up;		// Bottom row, from right to left
-		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iMax - offset][jMin - 1]->right;	// Left column, from bottom to top
-		rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iMin + offset][jMax + 1]->left;	// Right column, from top to bottom
+		upConnection	= glyphs[iMin][jMin + offset]->up;		// Top row, from left to right
+		downConnection	= glyphs[iMax][jMax - offset]->down;	// Bottom row, from right to left
+		leftConnection	= glyphs[iMax - offset][jMin]->left;	// Left column, from bottom to top
+		rightConnection = glyphs[iMin + offset][jMax]->right;	// Right column, from top to bottom
 		if (upConnection != rot4Connection(leftConnection) ||
 			upConnection != rot2Connection(downConnection) ||
 			upConnection != rot2Connection(rot4Connection(rightConnection))) return false;
