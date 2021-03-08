@@ -20,8 +20,8 @@
 		~~2f) Update Knot::checkVertSym() to incorporate wrapping functionality
 		~~2g) Update Knot::checkRot2Sym() to incorporate wrapping functionality
 		~~2h) Update Knot::checkRot4Sym() to incorporate wrapping functionality
-		2i) Update Knot::checkFwdDiag() to incorporate wrapping functionality
-		2j) Update Knot::checkBackDiag() to incorporate wrapping functionality
+		~~2i) Update Knot::checkFwdDiag() to incorporate wrapping functionality
+		~~2j) Update Knot::checkBackDiag() to incorporate wrapping functionality
 		~~2k) New function Knot::checkWrapping() to disallow non-wrapped generating if wrapped conditions are in place
 	3) Put more things into the wxMenuBar to remove bloat from the right side
 		3a) Enable or disable symmetry buttons

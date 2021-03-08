@@ -511,10 +511,10 @@ bool Knot::checkFwdDiag(ijSignature) const {
 
 	Connection upConnection, downConnection, leftConnection, rightConnection;
 	for (int offset = 0; offset <= iMax - iMin; offset++) {
-		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jMin + offset]->down;	// Top row, from left to right
-		downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][jMin + offset]->up;		// Bottom row, from left to right
-		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iMax - offset][jMin - 1]->right;	// Left column, from bottom to top
-		rightConnection = jMax == w - 1	? Connection::EMPTY : glyphs[iMax - offset][jMax + 1]->left;	// Right column, from bottom to top
+		upConnection	= glyphs[iMin][jMin + offset]->up;		// Top row, from left to right
+		downConnection	= glyphs[iMax][jMin + offset]->down;	// Bottom row, from left to right
+		leftConnection	= glyphs[iMax - offset][jMin]->left;	// Left column, from bottom to top
+		rightConnection = glyphs[iMax - offset][jMax]->right;	// Right column, from bottom to top
 		if (upConnection != mirFDConnection(rightConnection) || leftConnection != mirFDConnection(downConnection))
 			return false;
 	}
@@ -526,10 +526,10 @@ bool Knot::checkBackDiag(ijSignature) const {
 
 	Connection upConnection, downConnection, leftConnection, rightConnection;
 	for (int offset = 0; offset <= iMax - iMin; offset++) {
-		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jMin + offset]->down;	// Top row, from left to right
-		downConnection	= iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jMin + offset]->up;		// Bottom row, from left to right
-		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iMin + offset][jMin - 1]->right;	// Left column, from top to bottom
-		rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iMin + offset][jMax + 1]->left;	// Right column, from top to bottom
+		upConnection	= glyphs[iMin][jMin + offset]->up;		// Top row, from left to right
+		downConnection	= glyphs[iMax][jMin + offset]->down;	// Bottom row, from left to right
+		leftConnection	= glyphs[iMin + offset][jMin]->left;	// Left column, from top to bottom
+		rightConnection = glyphs[iMin + offset][jMax]->right;	// Right column, from top to bottom
 		if (upConnection != mirBDConnection(leftConnection) || rightConnection != mirBDConnection(downConnection))
 			return false;
 	}
