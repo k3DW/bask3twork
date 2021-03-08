@@ -700,10 +700,15 @@ void Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, c
 			if (newGlyphs[i][j]) continue;
 
 			GlyphVec1 possibilities = PossibleGlyphs(
-				ignoreUp	&& i == iMin ? Connection::DO_NOT_CARE : i == 0		? Connection::EMPTY : !newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down,
-				ignoreDown	&& i == iMax ? Connection::DO_NOT_CARE : i == h - 1 ? Connection::EMPTY : !newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up,
-				ignoreLeft	&& j == jMin ? Connection::DO_NOT_CARE : j == 0		? Connection::EMPTY : !newGlyphs[i][j - 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j - 1]->right,
-				ignoreRight && j == jMax ? Connection::DO_NOT_CARE : j == w - 1 ? Connection::EMPTY : !newGlyphs[i][j + 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j + 1]->left,
+				//ignoreUp	&& i == iMin ? Connection::DO_NOT_CARE : i == 0		? Connection::EMPTY : !newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down,
+				//ignoreDown	&& i == iMax ? Connection::DO_NOT_CARE : i == h - 1 ? Connection::EMPTY : !newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up,
+				//ignoreLeft	&& j == jMin ? Connection::DO_NOT_CARE : j == 0		? Connection::EMPTY : !newGlyphs[i][j - 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j - 1]->right,
+				//ignoreRight && j == jMax ? Connection::DO_NOT_CARE : j == w - 1 ? Connection::EMPTY : !newGlyphs[i][j + 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j + 1]->left,
+				ignoreUp && i == iMin ? Connection::DO_NOT_CARE : i == 0 ? (!wrapYEnabled ? Connection::EMPTY : !newGlyphs[h - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[h - 1][j]->down) : (!newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down),
+				ignoreDown && i == iMax ? Connection::DO_NOT_CARE : i == h - 1 ? (!wrapYEnabled ? Connection::EMPTY : !newGlyphs[0][j] ? Connection::DO_NOT_CARE : newGlyphs[0][j]->up) : (!newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up),
+				ignoreLeft && j == jMin ? Connection::DO_NOT_CARE : j == 0 ? (!wrapXEnabled ? Connection::EMPTY : !newGlyphs[i][w - 1] ? Connection::DO_NOT_CARE : newGlyphs[i][w - 1]->right) : (!newGlyphs[i][j - 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j - 1]->right),
+				ignoreRight && j == jMax ? Connection::DO_NOT_CARE : j == w - 1 ? (!wrapXEnabled ? Connection::EMPTY : !newGlyphs[i][0] ? Connection::DO_NOT_CARE : newGlyphs[i][0]->left) : (!newGlyphs[i][j + 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j + 1]->left),
+
 				firstInRow ? (fwdDiag ? GlyphFlag::SA_MIRFD : GlyphFlag::SA_MIRBD) : GlyphFlag::NONE
 			);
 
