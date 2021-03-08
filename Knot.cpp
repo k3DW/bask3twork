@@ -7,11 +7,16 @@ wxString Knot::get(const int i, const int j) const {
 }
 
 bool Knot::generateNoSym(ijSignature) {
+	GlyphVec2 baseGlyphs = glyphs;
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			baseGlyphs[i][j] = DefaultGlyph;
+
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating no symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
+		std::optional<GlyphVec2> newGlyphs = baseGlyphs;
 		
 		tryGenerating(newGlyphs, iMin, jMin, iMax, jMax);
 		if (!newGlyphs) continue;
@@ -22,6 +27,11 @@ bool Knot::generateNoSym(ijSignature) {
 	return false;
 }
 bool Knot::generateHoriSym(ijSignature) {
+	GlyphVec2 baseGlyphs = glyphs;
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			baseGlyphs[i][j] = DefaultGlyph;
+
 	const int iMid = (iMin + iMax) / 2;
 	const GlyphFlag midRowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
 
@@ -32,7 +42,7 @@ bool Knot::generateHoriSym(ijSignature) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating horizontal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
+		std::optional<GlyphVec2> newGlyphs = baseGlyphs;
 
 		// Top row
 		tryGenerating(newGlyphs, iMin, jMin, iMin, jMax, Side::DOWN | wrapYSide, wrapYFlag);
@@ -54,6 +64,11 @@ bool Knot::generateHoriSym(ijSignature) {
 	return false;
 }
 bool Knot::generateVertSym(ijSignature) {
+	GlyphVec2 baseGlyphs = glyphs;
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			baseGlyphs[i][j] = DefaultGlyph;
+
 	const int jMid = (jMin + jMax) / 2;
 	const GlyphFlag midColFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 
@@ -64,7 +79,7 @@ bool Knot::generateVertSym(ijSignature) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating vertical symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
+		std::optional<GlyphVec2> newGlyphs = baseGlyphs;
 
 		// Left column
 		tryGenerating(newGlyphs, iMin, jMin, iMax, jMin, Side::RIGHT | wrapXSide, wrapXFlag);
@@ -86,6 +101,11 @@ bool Knot::generateVertSym(ijSignature) {
 	return false;
 }
 bool Knot::generateHoriVertSym(ijSignature) {
+	GlyphVec2 baseGlyphs = glyphs;
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			baseGlyphs[i][j] = DefaultGlyph;
+
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
 	const GlyphFlag midRowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
@@ -100,7 +120,7 @@ bool Knot::generateHoriVertSym(ijSignature) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating vertical and horizontal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
+		std::optional<GlyphVec2> newGlyphs = baseGlyphs;
 
 		// Top left square
 		tryGenerating(newGlyphs, iMin, jMin, iMin, jMin, Side::DOWN | Side::RIGHT | wrapYSide | wrapXSide, wrapYFlag | wrapXFlag);
@@ -147,6 +167,11 @@ bool Knot::generateHoriVertSym(ijSignature) {
 	return false;
 }
 bool Knot::generateRot2Sym(ijSignature) {
+	GlyphVec2 baseGlyphs = glyphs;
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			baseGlyphs[i][j] = DefaultGlyph;
+
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
 	const bool isEvenRows = isEvenSegments(iMin, iMax);
@@ -159,7 +184,7 @@ bool Knot::generateRot2Sym(ijSignature) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating 2-way rotational symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
+		std::optional<GlyphVec2> newGlyphs = baseGlyphs;
 
 		// Top left corner region
 		tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, Side::DOWN | Side::RIGHT | wrapYSide | wrapXSide);
@@ -240,6 +265,12 @@ bool Knot::generateRot2Sym(ijSignature) {
 }
 bool Knot::generateRot4Sym(ijSignature) {
 	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
+
+	GlyphVec2 baseGlyphs = glyphs;
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			baseGlyphs[i][j] = DefaultGlyph;
+
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
 	const bool isEven = isEvenSegments(iMin, iMax);
@@ -253,7 +284,7 @@ bool Knot::generateRot4Sym(ijSignature) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating 4-way rotational symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
+		std::optional<GlyphVec2> newGlyphs = baseGlyphs;
 
 		tryGenerating(newGlyphs, iMin, jMin, iMin, jMin, Side::DOWN | Side::RIGHT | wrapYSide | wrapXSide, GlyphFlag::CT_ROT4L);
 		if (!newGlyphs) continue;
@@ -296,11 +327,17 @@ bool Knot::generateRot4Sym(ijSignature) {
 }
 bool Knot::generateFwdDiag(ijSignature) {
 	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
+
+	GlyphVec2 baseGlyphs = glyphs;
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			baseGlyphs[i][j] = DefaultGlyph;
+
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating forward diagonal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
+		std::optional<GlyphVec2> newGlyphs = baseGlyphs;
 
 		tryGeneratingDiag(newGlyphs, iMin, jMin, iMax, jMax, true);
 		if (!newGlyphs) continue;
@@ -312,11 +349,17 @@ bool Knot::generateFwdDiag(ijSignature) {
 }
 bool Knot::generateBackDiag(ijSignature) {
 	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
+
+	GlyphVec2 baseGlyphs = glyphs;
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			baseGlyphs[i][j] = DefaultGlyph;
+
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating backward diagonal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
+		std::optional<GlyphVec2> newGlyphs = baseGlyphs;
 
 		tryGeneratingDiag(newGlyphs, iMin, jMin, iMax, jMax, false);
 		if (!newGlyphs) continue;
@@ -328,6 +371,12 @@ bool Knot::generateBackDiag(ijSignature) {
 }
 bool Knot::generateFullSym(ijSignature) {
 	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
+
+	GlyphVec2 baseGlyphs = glyphs;
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			baseGlyphs[i][j] = DefaultGlyph;
+
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
 	const bool isEven = isEvenSegments(iMin, iMax);
@@ -336,7 +385,7 @@ bool Knot::generateFullSym(ijSignature) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText("Generating full symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
+		std::optional<GlyphVec2> newGlyphs = baseGlyphs;
 
 		tryGeneratingDiag(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, false, Side::DOWN | Side::RIGHT);
 		if (!newGlyphs) continue;
