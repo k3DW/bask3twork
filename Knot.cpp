@@ -509,6 +509,9 @@ bool Knot::checkRot4Sym(ijSignature) const {
 bool Knot::checkFwdDiag(ijSignature) const {
 	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
 
+	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)
+		return true;
+
 	Connection upConnection, downConnection, leftConnection, rightConnection;
 	for (int offset = 0; offset <= iMax - iMin; offset++) {
 		upConnection	= glyphs[iMin][jMin + offset]->up;		// Top row, from left to right
@@ -523,6 +526,9 @@ bool Knot::checkFwdDiag(ijSignature) const {
 }
 bool Knot::checkBackDiag(ijSignature) const {
 	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
+
+	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)
+		return true;
 
 	Connection upConnection, downConnection, leftConnection, rightConnection;
 	for (int offset = 0; offset <= iMax - iMin; offset++) {
