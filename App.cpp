@@ -15,7 +15,7 @@
 		~~2d) Update Knot::tryGeneratingDiag() to incorporate wrapping functionality
 		~~2d-1) Fix Knot::generateFwdDiag()
 		~~2d-2) Fix Knot::generateBackDiag()
-		2d-3) Fix Knot::generateFullSym()
+		~~2d-3) Fix Knot::generateFullSym()
 		~~2e) Update Knot::checkHoriSym() to incorporate wrapping functionality
 		~~2f) Update Knot::checkVertSym() to incorporate wrapping functionality
 		~~2g) Update Knot::checkRot2Sym() to incorporate wrapping functionality

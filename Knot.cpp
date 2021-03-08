@@ -380,6 +380,13 @@ bool Knot::generateFullSym(ijSignature) {
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
 	const bool isEven = isEvenSegments(iMin, iMax);
+	const GlyphFlag midColFlag = isEven ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+
+	const bool doWrap = (wrapYEnabled && iMin == 0 && iMax == h - 1) && (wrapXEnabled && jMin == 0 && jMax == w - 1);
+
+	const Side wrapYSide = doWrap ? Side::UP : Side::NONE;
+	const Side wrapXSide = doWrap ? Side::LEFT : Side::NONE;
+
 	const GlyphFlag colFlag = isEven ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
@@ -387,12 +394,21 @@ bool Knot::generateFullSym(ijSignature) {
 
 		std::optional<GlyphVec2> newGlyphs = baseGlyphs;
 
-		tryGeneratingDiag(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, false, Side::DOWN | Side::RIGHT);
+		tryGenerating(newGlyphs, iMin, jMin, iMin, jMin, Side::DOWN | Side::RIGHT | wrapYSide | wrapXSide, GlyphFlag::CT_MIRU | GlyphFlag::SA_MIRBD);
 		if (!newGlyphs) continue;
+		tryGenerating(newGlyphs, iMin, jMin + 1, iMin, jMid - 1, Side::DOWN | Side::RIGHT | wrapYSide, GlyphFlag::CT_MIRU);
+		if (!newGlyphs) continue;
+		tryGenerating(newGlyphs, iMin, jMid, iMin, jMid, Side::DOWN | Side::RIGHT | wrapYSide, GlyphFlag::CT_MIRU | midColFlag);
+		if (!newGlyphs) continue;
+		for (int j = jMin + 1, i = iMin + 1; j <= jMid; j++, i++)
+			(*newGlyphs)[i][jMin] = (*newGlyphs)[iMin][j]->mirroredBD;
 
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, colFlag);
+		tryGeneratingDiag(newGlyphs, iMin + 1, jMin + 1, iMid - 1, jMid - 1, false, Side::DOWN | Side::RIGHT);
 		if (!newGlyphs) continue;
-		mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
+		tryGenerating(newGlyphs, iMin + 1, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, midColFlag);
+		if (!newGlyphs) continue;
+		for (int i = iMin + 1, j = jMin + 1; i <= iMid - 1; i++, j++)
+			(*newGlyphs)[iMid][j] = (*newGlyphs)[i][jMid]->mirroredBD;
 		rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
 
 		if (isEven) {
