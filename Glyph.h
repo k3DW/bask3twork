@@ -583,10 +583,10 @@ inline GlyphVec1 PossibleGlyphs(const Connection up, const Connection down, cons
 	/// First a bit mask is created. If the \c up Connection is anything other than Connection::DO_NOT_CARE, then use GlyphFlag::UP in the mask.
 	/// Do this same process for the other 3 Connection values. As well, add the \c boolFlags to the mask with the GlyphFlag::COND_MASK applied.
 	/// It is assumed that if a flag is nonzero, it is in use. If it is zero, it is ignored.
-	const GlyphFlag mask = (up != Connection::DO_NOT_CARE	? GlyphFlag::UP		: GlyphFlag::NONE)	// If the UP side is used, add 0x000F to the mask. If not used, it will be GlyphFlag::NONE (== 0)
-						 | (down != Connection::DO_NOT_CARE	? GlyphFlag::DOWN	: GlyphFlag::NONE)	// If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be GlyphFlag::NONE (== 0)
-						 | (left != Connection::DO_NOT_CARE	? GlyphFlag::LEFT	: GlyphFlag::NONE)	// etc, for LEFT
-						 | (right != Connection::DO_NOT_CARE ? GlyphFlag::RIGHT	: GlyphFlag::NONE)	// etc, for RIGHT
+	const GlyphFlag mask = (up		!= Connection::DO_NOT_CARE ? GlyphFlag::UP		: GlyphFlag::NONE)	// If the UP side is used, add 0x000F to the mask. If not used, it will be GlyphFlag::NONE (== 0)
+						 | (down	!= Connection::DO_NOT_CARE ? GlyphFlag::DOWN	: GlyphFlag::NONE)	// If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be GlyphFlag::NONE (== 0)
+						 | (left	!= Connection::DO_NOT_CARE ? GlyphFlag::LEFT	: GlyphFlag::NONE)	// etc, for LEFT
+						 | (right	!= Connection::DO_NOT_CARE ? GlyphFlag::RIGHT	: GlyphFlag::NONE)	// etc, for RIGHT
 						 | (boolFlags & GlyphFlag::COND_MASK); // All the other flags are only 1 bit long, so this is acceptable
 
 	/// Next, determine which value needs to be checked against. For the 4 sides, use the toFlag() function.
