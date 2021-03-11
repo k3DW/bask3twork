@@ -601,3 +601,21 @@ inline GlyphVec1 PossibleGlyphs(const Connection up, const Connection down, cons
 			glyphList.push_back(&glyph);
 	return glyphList;
 }
+inline const Glyph* RandomGlyph(const Connection up, const Connection down, const Connection left, const Connection right, const GlyphFlag boolFlags)
+/// This function takes in the desired flags and outputs one random Glyph of all glyphs which meet the criteria.
+{
+	/// \b Parameters
+	
+	/// See PossibleGlyphs()
+
+	/// \b Method
+
+	/// This function forwards the parameters onto PossibleGlyphs() and selects one random Glyph from the output list.
+	/// If the list is empty, return \c nullptr
+
+	GlyphVec1 list = PossibleGlyphs(up, down, left, right, boolFlags);
+	if (list.size() == 0)
+		return nullptr;
+	else
+		return list[rand() % list.size()];
+}
