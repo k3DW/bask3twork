@@ -47,12 +47,10 @@ bool Knot::generate(Symmetry sym, ijSignature)
 		generateFunction = &Knot::generateVertSym;
 		statusBeginning += "vertical symmetry... ";
 		break;
-	/*
 	case Symmetry::HoriVertSym:
 		generateFunction = &Knot::generateHoriVertSym;
 		statusBeginning += "horizontal + vertical symmetry... ";
 		break;
-	//*/
 	default:
 		return false;
 	}
@@ -218,7 +216,7 @@ inline bool Knot::generateVertSym(GlyphVec2& glyphGrid, ijSignature) const
 	/// \b (5) If the loop finishes, then the Knot has been successfully generated. Return \c true.
 	return true;
 }
-//inline bool Knot::generateHoriVertSym(GlyphVec2& glyphGrid, ijSignature) const
+inline bool Knot::generateHoriVertSym(GlyphVec2& glyphGrid, ijSignature) const
 /** Generate a knot with vertical symmetry, for the given selection.
  *
  * The same conditions apply as in the first paragraph of Knot::generate().
@@ -227,7 +225,7 @@ inline bool Knot::generateVertSym(GlyphVec2& glyphGrid, ijSignature) const
  *
  * \b Method
  */
-/*{
+{
 	/// First, initialize the same initial variables from both Knot::generateHoriSym() and Knot::generateVertSym().
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
@@ -267,7 +265,7 @@ inline bool Knot::generateVertSym(GlyphVec2& glyphGrid, ijSignature) const
 
 	/// \b (5) If the loop finishes, then the Knot has been successfully generated. Return \c true.
 	return true;
-}//*/
+}
 
 bool Knot::checkHoriSym(ijSignature) const {
 	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)

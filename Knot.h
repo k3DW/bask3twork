@@ -32,7 +32,7 @@ private:
 	SYMMETRIES
 	#undef XX
 
-	static inline bool inSelection(ijSignature, const int i, const int j);
+	/* not used */ static inline bool inSelection(ijSignature, const int i, const int j);
 	static inline bool isEvenSegments(const int min, const int max);
 };
 
@@ -222,7 +222,7 @@ private:
 
 /* Private generating helper functions */
 /** \fn Knot::inSelection(ijSignature, const int i, const int j)
- * This is a helper function that tells you whether a specific tile location is within the given selection.
+ * NOT USED, TO BE REMOVED; This is a helper function that tells you whether a specific tile location is within the given selection.
  * 
  * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
  * \param jMin The zero-indexed leftmost column of the selection
