@@ -10,12 +10,12 @@
 		~~2c-1) Fix Knot::generateHoriSym()
 		~~2c-2) Fix Knot::generateVertSym()
 		~~2c-3) Fix Knot::generateHoriVertSym()
-		~~2c-4) Fix Knot::generateRot2Sym()
-		~~2c-5) Fix Knot::generateRot4Sym()
+		2c-4) Fix Knot::generateRot2Sym()
+		2c-5) Fix Knot::generateRot4Sym()
 		~~2d) Update Knot::tryGeneratingDiag() to incorporate wrapping functionality
 		2d-1) Fix Knot::generateFwdDiag()
 		2d-2) Fix Knot::generateBackDiag()
-		~~2d-3) Fix Knot::generateFullSym()
+		2d-3) Fix Knot::generateFullSym()
 		~~2e) Update Knot::checkHoriSym() to incorporate wrapping functionality
 		~~2f) Update Knot::checkVertSym() to incorporate wrapping functionality
 		~~2g) Update Knot::checkRot2Sym() to incorporate wrapping functionality
@@ -26,6 +26,9 @@
 	3) Put more things into the wxMenuBar to remove bloat from the right side
 		3a) Enable or disable symmetry buttons
 		3b) Put grid regeneration into its own wxMenu
+	4) Misc
+		4a) Combine `RandomGlyph()` and `PossibleGlyphs()` into one function
+		4b) Possibly extract and factor out all common logic in various `Knot::generate___Sym()` functions
 */
 
 /* TODO for later versions */
