@@ -425,19 +425,16 @@ void MainWindow::enableGenerateButtons(bool enable) {
 	}
 }
 void MainWindow::generateKnot(wxCommandEvent& evt) {
-	/// Each of the \c Knot::generate____Sym() functions uses the status bar, so first store the current displayed message.
+	/// The Knot::generate() function uses the status bar, so first store the current displayed message.
 	const wxString oldStatus = GetStatusBar()->GetStatusText();
 
 	/// Each of the generating buttons has its symmetry type as its ID value. Get this symmetry from the event call.
-	/// Then, check the symmetry against each of the posible symmetries.
-	/// Once there is a match, call the appropriate \c Knot::generate____Sym() function.
+	/// Then, forward on this symmetry to Knot::generate() with the selection coordinates to be generated.
 	/// If this function returns \c true, then the Knot has been generated successfully,
-	/// so update the DisplayGrid with DisplayGrid::drawKnot() and update the export text box with MainWindow::showExportBox.
+	/// so update the DisplayGrid with DisplayGrid::drawKnot() and update the export text box with MainWindow::showExportBox().
 	/// If the generate function returns \c false, then display an error message as a \c wxMessageBox.
-	Symmetry id = static_cast<Symmetry>(evt.GetId());
-	#define XX(Sym, desc) (id == Symmetry::Sym && knot->generate##Sym##(iMin, jMin, iMax, jMax)) ||
-	if(	SYMMETRIES false ){
-	#undef XX
+	Symmetry sym = static_cast<Symmetry>(evt.GetId());
+	if (knot->generate(sym, iMin, jMin, iMax, jMax)) {
 		disp->drawKnot();
 		showExportBox();
 	}
