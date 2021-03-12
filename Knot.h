@@ -32,16 +32,8 @@ public:
 private:
 	GlyphVec2 glyphs;	///< The current state of the Knot, as a 2D std::vector of Glyph pointers
 
-	void mirrorUpToDown(GlyphVec2& glyphGrid, ijSignature) const;
-	void mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const;
-	void rotate180UpToDown(GlyphVec2& glyphGrid, ijSignature) const;
-	void rotate180LeftToRight(GlyphVec2& glyphGrid, ijSignature) const;
-	void rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const;
-
-	void tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides = Side::NONE, const GlyphFlag boolFlags = GlyphFlag::NONE) const;	
-	void tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const bool fwdDiag, const Side ignoreSides = Side::NONE) const;
 	static inline bool inSelection(ijSignature, const int i, const int j);
-	static inline bool isEvenSegments(const int min, const int max);
+	/* maybe not used */ static inline bool isEvenSegments(const int min, const int max);
 };
 
 /* Knot::Knot */
@@ -228,105 +220,7 @@ private:
  * This function is different from the other \c check functions, since this function returning false skips evaluation of the others.
  */
 
-/* Knot::[doCopy] */
-/** \fn Knot::mirrorUpToDown(GlyphVec2& glyphGrid, ijSignature) const
- * Copy the upper half of the selection to the lower half by mirroring.
- *
- * Only mirrors from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax. This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
- * There is no error checking on the boundaries of the mirrored sections. This will execute regardless.
- * 
- * This function is used in the "generate" functions. In the case of a selection with an odd number of rows, the middle row is unaffected. This function does not affect Knot::glyphs.
- *
- * \param glyphGrid The state of the knot on which to operate
- * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
- * \param jMin The zero-indexed leftmost column of the selection
- * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
- * \param jMax The zero-indexed rightmost column of the selection
- */
-/** \fn Knot::mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const
- * Copy the left half of the selection to the right half by mirroring.
- *
- * Only mirrors from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax. This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
- * There is no error checking on the boundaries of the mirrored sections. This will execute regardless.
- * 
- * This function is used in the "generate" functions. In the case of a selection with an odd number of columns, the middle column is unaffected. This function does not affect Knot::glyphs.
- *
- * See Knot::mirrorUpToDown() for parameters.
- */
-/** \fn Knot::rotate180UpToDown(GlyphVec2& glyphGrid, ijSignature) const
- * Copy the upper half of the selection to the lower half by rotating 180 degrees about the center of the selection.
- *
- * Only mirrors from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax. This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
- * There is no error checking on the boundaries of the mirrored sections. This will execute regardless.
- * 
- * This function is used in the "generate" functions. In the case of a selection with an odd number of rows, the middle rows is unaffected. This function does not affect Knot::glyphs.
- *
- * See Knot::mirrorUpToDown() for parameters.
- */
-/** \fn Knot::rotate180LeftToRight(GlyphVec2& glyphGrid, ijSignature) const
- * Copy the left half of the selection to the right half by rotating 180 degrees about the center of the selection.
- *
- * Only mirrors from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax. This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
- * There is no error checking on the boundaries of the mirrored sections. This will execute regardless.
- * 
- * This function is used in the "generate" functions. In the case of a selection with an odd number of columns, the middle column is unaffected. This function does not affect Knot::glyphs.
- *
- * See Knot::mirrorUpToDown() for parameters.
- */
-/** \fn Knot::rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const
- * Only works on a \b square selection, copy the upper left quadrant of the selection to the other quadrants by rotating 90 degrees about the center of the selection.
- * 
- * This function will only work properly for \b square selections, and will do \b nothing if a non-square selection is passed.
- *
- * Only mirrors from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax. This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
- * There is no error checking on the boundaries of the mirrored sections. This will execute regardless.
- * 
- * This function is used in the "generate" functions. In the case of a selection with an odd number of rows and/or columns, the middle row and/or column will be unaffected.
- * This function does not affect Knot::glyphs.
- *
- * See Knot::mirrorUpToDown() for parameters.
- */
-
 /* Private generating helper functions */
-/** \fn Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides = Side::NONE, const GlyphFlag boolFlags = GlyphFlag::NONE) const
- * This function tries to generate a rectangle with no symmetry, only once with no looping, and sets \c glyphGrid to \c std::nullopt if it cannot be generated.
- * 
- * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
- * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
- * 
- * The \c ignoreSides flag only affects the side-most Glyphs. For example, if \c ignoreSides includes \c Side::LEFT,
- * then the left side connection will only be ignored on the leftmost Glyphs of the selection.
- * 
- * The \c boolFlags flag affects all Glyphs in the selection. All flags which are not specified are ignored,
- * instead of being checked for a value of zero.
- *
- * \param glyphGrid The 2D std::vector of Glyph pointers to pass into the function to be edited, as an \c optional
- * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
- * \param jMin The zero-indexed leftmost column of the selection
- * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
- * \param jMax The zero-indexed rightmost column of the selection
- * \param ignoreSides The sides to ignore, as an or-composition of Side values
- * \param boolFlags The conditions which need to be met, as an or-composition of GlyphFlag values
- *
- * \b Methodology
- */
-/** \fn Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const bool fwdDiag) const
- * This function tries to generate a square with diagonal symmetry, only once with no looping, and sets \c glyphGrid to \c std::nullopt if it cannot be generated.
- * 
- * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
- * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values, except that the selection is square.
- * 
- * The \c fwdDiag parameter takes a value of \c true if the diagonal is in the same direction of the forward slash,
- * 
- * \param glyphGrid The 2D std::vector of Glyph pointers to pass into the function to be edited, as an \c optional
- * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
- * \param jMin The zero-indexed leftmost column of the selection
- * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
- * \param jMax The zero-indexed rightmost column of the selection
- * \param fwdDiag The type of diagonal symmetry to generate
- *
- * \b Methodology
- */
 /** \fn Knot::inSelection(ijSignature, const int i, const int j)
  * This is a helper function that tells you whether a specific tile location is within the given selection.
  * 
