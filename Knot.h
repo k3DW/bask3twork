@@ -17,10 +17,6 @@ public:
 
 	bool generate(Symmetry sym, ijSignature);
 
-	#define XX(Sym, desc) bool generate##Sym##(GlyphVec2& glyphGrid, ijSignature) const;
-	SYMMETRIES
-	#undef XX
-
 	bool checkHoriSym(ijSignature) const;
 	bool checkVertSym(ijSignature) const;
 	bool checkRot2Sym(ijSignature) const;
@@ -32,8 +28,12 @@ public:
 private:
 	GlyphVec2 glyphs;	///< The current state of the Knot, as a 2D std::vector of Glyph pointers
 
+	#define XX(Sym, desc) bool generate##Sym##(GlyphVec2& glyphGrid, ijSignature) const;
+	SYMMETRIES
+	#undef XX
+
 	static inline bool inSelection(ijSignature, const int i, const int j);
-	/* maybe not used */ static inline bool isEvenSegments(const int min, const int max);
+	static inline bool isEvenSegments(const int min, const int max);
 };
 
 /* Knot::Knot */
