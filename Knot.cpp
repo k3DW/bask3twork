@@ -309,7 +309,7 @@ inline bool Knot::generateRot4Sym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
-	bool doWrap = (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1) ? wrapXEnabled && wrapYEnabled : true;
+	const bool doWrap = (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1) ? wrapXEnabled && wrapYEnabled : true;
 
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
