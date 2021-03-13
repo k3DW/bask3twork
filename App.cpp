@@ -26,9 +26,9 @@
 	3) Put more things into the wxMenuBar to remove bloat from the right side
 		3a) Enable or disable symmetry buttons
 		3b) Put grid regeneration into its own wxMenu
-	4) Misc
+	~~4) Misc
 		~~4a) Combine `RandomGlyph()` and `PossibleGlyphs()` into one function
-		4b) Possibly extract and factor out all common logic in various `Knot::generate___Sym()` functions
+		~~4b) Possibly extract and factor out all common logic in various `Knot::generate___Sym()` functions
 */
 
 /* TODO for later versions */
@@ -36,7 +36,6 @@
 	-> Tile locking
 	-> Knot navigation, like moving all the data in a certain direction
 	-> Undo/redo (up to a certain level)
-	-> Knots wrapping around the borders
 	-> DisplayGrid automatically changes size depending on the size of the screen/window
 	-> Tooltips (and other little details)
 	-> Copying sections of the knot
