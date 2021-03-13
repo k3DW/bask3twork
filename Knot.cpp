@@ -55,6 +55,10 @@ bool Knot::generate(Symmetry sym, ijSignature)
 		generateFunction = &Knot::generateRot2Sym;
 		statusBeginning += "2-way rotational symmetry... ";
 		break;
+	case Symmetry::Rot4Sym:
+		generateFunction = &Knot::generateRot4Sym;
+		statusBeginning += "4-way rotational symmetry... ";
+		break;
 	default:
 		return false;
 	}
@@ -289,6 +293,48 @@ inline bool Knot::generateRot2Sym(GlyphVec2& glyphGrid, ijSignature) const
 
 			/// \b (4) The corresponding rotated Glyph is set, across the knot.
 			glyphGrid[iDecr][jDecr] = glyphGrid[i][j]->rotated2;
+		}
+	}
+
+	/// \b (5) If the loop finishes, then the Knot has been successfully generated. Return \c true.
+	return true;
+}
+inline bool Knot::generateRot4Sym(GlyphVec2& glyphGrid, ijSignature) const
+/** Generate a knot with 4-way rotational symmetry, for the given selection.
+ *
+ * The same conditions apply as in the first paragraph of Knot::generate().
+ *
+ * The \c glyphGrid variable is supplied from Knot::generate(), already initialized with \c nullptr entries in the selection.
+ *
+ * \b Method
+ */
+{
+	bool doWrap = wrapXEnabled && wrapYEnabled;
+
+	/// For each location in the selection, do the following.
+	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
+		for (int j = jMin, jOffset = 0; j <= jMax; j++, jOffset++) {
+			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
+			if (glyphGrid[i][j]) continue;
+
+			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location, with the \c GlyphFlag::NONE flag.
+			///	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation,
+			/// which is described in Knot::generateNoSym().
+			glyphGrid[i][j] = RandomGlyph(
+				i == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
+				j == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
+				j == w - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				isEvenSegments(iMin, iMax) && i == (iMin + iMax) / 2 && j == (jMin + jMax) / 2 ? GlyphFlag::CT_ROT4R : GlyphFlag::NONE
+			);
+
+			/// \b (3) If this newly generated Glyph turns out to be \c nullptr, then there were no options for this location. Return \c false.
+			if (!glyphGrid[i][j]) return false;
+
+			/// \b (4) The corresponding rotated Glyph is set, across the knot.
+			glyphGrid[iMin + jOffset][jMax - iOffset] = glyphGrid[i][j]->rotated4;
+			glyphGrid[iMax - iOffset][jMax - jOffset] = glyphGrid[i][j]->rotated2;
+			glyphGrid[iMax - jOffset][jMin + iOffset] = glyphGrid[i][j]->rotated2->rotated4;
 		}
 	}
 
