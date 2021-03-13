@@ -106,6 +106,16 @@ inline bool Knot::generateNoSym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
+	const bool doWrapX = wrapXEnabled;
+	const bool doWrapY = wrapYEnabled;
+
+	const bool isAllRows = iMin == 0 && iMax == h - 1;
+	const bool isAllCols = jMin == 0 && jMax == w - 1;
+
+	const bool isEven = isEvenSegments(iMin, iMax);
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
+
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
 		for (int j = jMin, jOffset = 0; j <= jMax; j++, jOffset++) {
@@ -126,10 +136,10 @@ inline bool Knot::generateNoSym(GlyphVec2& glyphGrid, ijSignature) const
 				 *	(f) In the general case, where none of the other special cases apply, the parameter should be
 				 *		the connection on the opposite side, from the neighbouring glyph on this particular side.
 				 */
-				i == 0		? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[h - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
-				i == h - 1  ? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
-				j == 0		? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][w - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
-				j == w - 1  ? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1  ? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
+				j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
+				j == w - 1  ? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
 				GlyphFlag::NONE
 			);
 
@@ -150,7 +160,15 @@ inline bool Knot::generateHoriSym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
+	const bool doWrapX = wrapXEnabled;
+	const bool doWrapY = wrapYEnabled;
+
 	const bool isAllRows = iMin == 0 && iMax == h - 1;
+	const bool isAllCols = jMin == 0 && jMax == w - 1;
+
+	const bool isEven = isEvenSegments(iMin, iMax);
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
 
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
@@ -166,10 +184,10 @@ inline bool Knot::generateHoriSym(GlyphVec2& glyphGrid, ijSignature) const
 			/// (b) the Glyph is appropriately flagged for the middle row if it is in the middle row,
 			/// or (c) there are no further restrictions otherwise.
 			glyphGrid[i][j] = RandomGlyph(
-				i == 0		? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[h - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
-				i == h - 1  ? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
-				j == 0		? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][w - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
-				j == w - 1  ? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1  ? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
+				j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
+				j == w - 1  ? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
 				(isAllRows && i == 0) ? GlyphFlag::CT_MIRU : GlyphFlag::NONE
 			);
 
@@ -194,7 +212,15 @@ inline bool Knot::generateVertSym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
+	const bool doWrapX = wrapXEnabled;
+	const bool doWrapY = wrapYEnabled;
+
+	const bool isAllRows = iMin == 0 && iMax == h - 1;
 	const bool isAllCols = jMin == 0 && jMax == w - 1;
+
+	const bool isEven = isEvenSegments(iMin, iMax);
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
 
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
@@ -210,10 +236,10 @@ inline bool Knot::generateVertSym(GlyphVec2& glyphGrid, ijSignature) const
 			/// (b) the Glyph is appropriately flagged for the middle column if it is in the middle column,
 			/// or (c) there are no further restrictions otherwise.
 			glyphGrid[i][j] = RandomGlyph(
-				i == 0		? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[h - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
-				i == h - 1  ? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
-				j == 0		? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][w - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
-				j == w - 1  ? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1  ? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
+				j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
+				j == w - 1  ? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
 				(isAllCols && j == 0) ? GlyphFlag::CT_MIRL : GlyphFlag::NONE
 			);
 
@@ -238,8 +264,15 @@ inline bool Knot::generateHoriVertSym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
+	const bool doWrapX = wrapXEnabled;
+	const bool doWrapY = wrapYEnabled;
+
 	const bool isAllRows = iMin == 0 && iMax == h - 1;
 	const bool isAllCols = jMin == 0 && jMax == w - 1;
+
+	const bool isEven = isEvenSegments(iMin, iMax);
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
 
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
@@ -253,10 +286,10 @@ inline bool Knot::generateHoriVertSym(GlyphVec2& glyphGrid, ijSignature) const
 			/// The \c boolFlags argument is dependent on the row and the column,
 			/// as a union of the logic done in Knot::generateHoriSym() and Knot::generateVertSym().
 			glyphGrid[i][j] = RandomGlyph(
-				i == 0		? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[h - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
-				i == h - 1  ? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
-				j == 0		? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][w - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
-				j == w - 1  ? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1  ? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
+				j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
+				j == w - 1  ? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
 				((isAllRows && i == 0) ? GlyphFlag::CT_MIRU : GlyphFlag::NONE) | ((isAllCols && j == 0) ? GlyphFlag::CT_MIRL : GlyphFlag::NONE)
 			);
 
@@ -283,6 +316,16 @@ inline bool Knot::generateRot2Sym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
+	const bool doWrapX = wrapXEnabled;
+	const bool doWrapY = wrapYEnabled;
+
+	const bool isAllRows = iMin == 0 && iMax == h - 1;
+	const bool isAllCols = jMin == 0 && jMax == w - 1;
+
+	const bool isEven = isEvenSegments(iMin, iMax);
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
+
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
 		for (int j = jMin, jOffset = 0; j <= jMax; j++, jOffset++) {
@@ -293,10 +336,10 @@ inline bool Knot::generateRot2Sym(GlyphVec2& glyphGrid, ijSignature) const
 			///	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation,
 			/// which is described in Knot::generateNoSym().
 			glyphGrid[i][j] = RandomGlyph(
-				i == 0		? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[h - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
-				i == h - 1  ? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
-				j == 0		? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][w - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
-				j == w - 1  ? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1  ? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
+				j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
+				j == w - 1  ? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
 				GlyphFlag::NONE
 			);
 
@@ -321,7 +364,12 @@ inline bool Knot::generateRot4Sym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
-	const bool doWrap = wrapXEnabled && wrapYEnabled;
+	const bool doWrapX = wrapXEnabled && wrapYEnabled;
+	const bool doWrapY = wrapXEnabled && wrapYEnabled;
+
+	const bool isAllRows = iMin == 0 && iMax == h - 1;
+	const bool isAllCols = jMin == 0 && jMax == w - 1;
+
 	const bool isEven = isEvenSegments(iMin, iMax);
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
@@ -338,10 +386,10 @@ inline bool Knot::generateRot4Sym(GlyphVec2& glyphGrid, ijSignature) const
 			/// The \c boolFlags argument is \c GlyphFlag::NONE,
 			/// except for the very middle location in an even selection, where it must be \c GlyphFlag::CT_ROT4R.
 			glyphGrid[i][j] = RandomGlyph(
-				i == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
-				i == h - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
-				j == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
-				j == w - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1  ? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
+				j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
+				j == w - 1  ? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
 				isEven && i == iMid && j == jMid ? GlyphFlag::CT_ROT4R : GlyphFlag::NONE
 			);
 
@@ -368,7 +416,15 @@ inline bool Knot::generateFwdDiag(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
-	const bool doWrap = wrapXEnabled && wrapYEnabled;
+	const bool doWrapX = wrapXEnabled && wrapYEnabled;
+	const bool doWrapY = wrapXEnabled && wrapYEnabled;
+
+	const bool isAllRows = iMin == 0 && iMax == h - 1;
+	const bool isAllCols = jMin == 0 && jMax == w - 1;
+
+	const bool isEven = isEvenSegments(iMin, iMax);
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
 
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
@@ -380,10 +436,10 @@ inline bool Knot::generateFwdDiag(GlyphVec2& glyphGrid, ijSignature) const
 			///	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation,
 			/// which is described in Knot::generateNoSym().
 			glyphGrid[i][j] = RandomGlyph(
-				i == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
-				i == h - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
-				j == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
-				j == w - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1  ? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
+				j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
+				j == w - 1  ? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
 				GlyphFlag::NONE
 			);
 
@@ -408,7 +464,15 @@ inline bool Knot::generateBackDiag(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
-	const bool doWrap = wrapXEnabled && wrapYEnabled;
+	const bool doWrapX = wrapXEnabled && wrapYEnabled;
+	const bool doWrapY = wrapXEnabled && wrapYEnabled;
+
+	const bool isAllRows = iMin == 0 && iMax == h - 1;
+	const bool isAllCols = jMin == 0 && jMax == w - 1;
+
+	const bool isEven = isEvenSegments(iMin, iMax);
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
 
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
@@ -422,10 +486,10 @@ inline bool Knot::generateBackDiag(GlyphVec2& glyphGrid, ijSignature) const
 			/// The \c boolFlags argument is \c GlyphFlag::NONE,
 			/// except for the locations along the backward diagonal, where it must be \c GlyphFlag::SA_MIRBD.
 			glyphGrid[i][j] = RandomGlyph(
-				i == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
-				i == h - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
-				j == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
-				j == w - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1  ? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
+				j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
+				j == w - 1  ? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
 				iOffset == jOffset ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE
 			);
 
@@ -450,9 +514,15 @@ inline bool Knot::generateFullSym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
+	const bool doWrapX = wrapXEnabled && wrapYEnabled;
+	const bool doWrapY = wrapXEnabled && wrapYEnabled;
+
 	const bool isAllRows = iMin == 0 && iMax == h - 1;
 	const bool isAllCols = jMin == 0 && jMax == w - 1;
-	const bool doWrap = wrapXEnabled && wrapYEnabled;
+
+	const bool isEven = isEvenSegments(iMin, iMax);
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
 
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
@@ -466,10 +536,10 @@ inline bool Knot::generateFullSym(GlyphVec2& glyphGrid, ijSignature) const
 			/// The \c boolFlags argument is \c GlyphFlag::NONE,
 			/// except for the locations along the backward diagonal, where it must be \c GlyphFlag::SA_MIRBD.
 			glyphGrid[i][j] = RandomGlyph(
-				i == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
-				i == h - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
-				j == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
-				j == w - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1  ? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
+				j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
+				j == w - 1  ? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
 				((isAllRows && i == 0) ? GlyphFlag::CT_MIRU : GlyphFlag::NONE) | ((isAllCols && j == 0) ? GlyphFlag::CT_MIRL : GlyphFlag::NONE) | (iOffset == jOffset ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE)
 			);
 
