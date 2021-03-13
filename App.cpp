@@ -27,7 +27,7 @@
 		3a) Enable or disable symmetry buttons
 		3b) Put grid regeneration into its own wxMenu
 	4) Misc
-		4a) Combine `RandomGlyph()` and `PossibleGlyphs()` into one function
+		~~4a) Combine `RandomGlyph()` and `PossibleGlyphs()` into one function
 		4b) Possibly extract and factor out all common logic in various `Knot::generate___Sym()` functions
 */
 

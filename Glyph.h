@@ -566,7 +566,7 @@ const inline std::map<wxUniChar, const Glyph*> UnicharToGlyph = {
 /// The default Glyph to fill the Knot upon initialization, which is set as the \c space character, \c \x20
 const Glyph* const DefaultGlyph = &AllGlyphs[0];
 
-inline GlyphVec1 PossibleGlyphs(const Connection up, const Connection down, const Connection left, const Connection right, const GlyphFlag boolFlags)
+inline const Glyph* RandomGlyph(const Connection up, const Connection down, const Connection left, const Connection right, const GlyphFlag boolFlags)
 /// This function takes in the desired flags and outputs the vector of all glyphs which meet the criteria.
 {
 	/// \param up The Connection desired for the upper side. If this does not matter, then pass Connection::DO_NOT_CARE
@@ -574,48 +574,34 @@ inline GlyphVec1 PossibleGlyphs(const Connection up, const Connection down, cons
 	/// \param left The Connection desired for the left side. If this does not matter, then pass Connection::DO_NOT_CARE
 	/// \param right The Connection desired for the right side. If this does not matter, then pass Connection::DO_NOT_CARE
 	/// \param boolFlag The other condition flags to check for the glyphs, passed by using \c operator| on GlyphFlag values. Any bits with a value of \c 0 are ignored
-	
+
 	/// \b Method
 
 	/// This function allows all properties of the Glyphs to be checked at once, instead of checking multiple properties in order.
-	/// Using this function, as opposed to the previous methods, sped up the knot generating by a large factor.
+	/// Using this function allows for high speed Glyph selection, since all attributes are assessed simultaneously.
 
 	/// First a bit mask is created. If the \c up Connection is anything other than Connection::DO_NOT_CARE, then use GlyphFlag::UP in the mask.
 	/// Do this same process for the other 3 Connection values. As well, add the \c boolFlags to the mask with the GlyphFlag::COND_MASK applied.
 	/// It is assumed that if a flag is nonzero, it is in use. If it is zero, it is ignored.
-	const GlyphFlag mask = (up		!= Connection::DO_NOT_CARE ? GlyphFlag::UP		: GlyphFlag::NONE)	// If the UP side is used, add 0x000F to the mask. If not used, it will be GlyphFlag::NONE (== 0)
-						 | (down	!= Connection::DO_NOT_CARE ? GlyphFlag::DOWN	: GlyphFlag::NONE)	// If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be GlyphFlag::NONE (== 0)
-						 | (left	!= Connection::DO_NOT_CARE ? GlyphFlag::LEFT	: GlyphFlag::NONE)	// etc, for LEFT
-						 | (right	!= Connection::DO_NOT_CARE ? GlyphFlag::RIGHT	: GlyphFlag::NONE)	// etc, for RIGHT
-						 | (boolFlags & GlyphFlag::COND_MASK); // All the other flags are only 1 bit long, so this is acceptable
+	const GlyphFlag mask = (up != Connection::DO_NOT_CARE ? GlyphFlag::UP : GlyphFlag::NONE)	// If the UP side is used, add 0x000F to the mask. If not used, it will be GlyphFlag::NONE (== 0)
+		| (down != Connection::DO_NOT_CARE ? GlyphFlag::DOWN : GlyphFlag::NONE)	// If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be GlyphFlag::NONE (== 0)
+		| (left != Connection::DO_NOT_CARE ? GlyphFlag::LEFT : GlyphFlag::NONE)	// etc, for LEFT
+		| (right != Connection::DO_NOT_CARE ? GlyphFlag::RIGHT : GlyphFlag::NONE)	// etc, for RIGHT
+		| (boolFlags & GlyphFlag::COND_MASK); // All the other flags are only 1 bit long, so this is acceptable
 
 	/// Next, determine which value needs to be checked against. For the 4 sides, use the toFlag() function.
 	/// Add the boolFlags, with the GlyphFlag::COND_MASK applied.
 	const GlyphFlag toCheck = toFlag(up, GlyphFlag::UP) | toFlag(down, GlyphFlag::DOWN) | toFlag(left, GlyphFlag::LEFT) | toFlag(right, GlyphFlag::RIGHT) | (boolFlags & GlyphFlag::COND_MASK);
-	
+
 	/// Once all that is done, loop through AllGlyphs. If the \c flags member of the Glyph with the mask applied from above
 	/// is equal to the value which needs to be checked, then add the pointer to this Glyph to the output vector.
 	GlyphVec1 glyphList;
 	for (const Glyph& glyph : AllGlyphs)
 		if ((glyph.flags & mask) == toCheck)
 			glyphList.push_back(&glyph);
-	return glyphList;
-}
-inline const Glyph* RandomGlyph(const Connection up, const Connection down, const Connection left, const Connection right, const GlyphFlag boolFlags)
-/// This function takes in the desired flags and outputs one random Glyph of all glyphs which meet the criteria.
-{
-	/// \b Parameters
-	
-	/// See PossibleGlyphs()
 
-	/// \b Method
-
-	/// This function forwards the parameters onto PossibleGlyphs() and selects one random Glyph from the output list.
-	/// If the list is empty, return \c nullptr
-
-	GlyphVec1 list = PossibleGlyphs(up, down, left, right, boolFlags);
-	if (list.size() == 0)
+	if (glyphList.size() == 0)
 		return nullptr;
 	else
-		return list[rand() % list.size()];
+		return glyphList[rand() % glyphList.size()];
 }
