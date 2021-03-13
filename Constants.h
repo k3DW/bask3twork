@@ -24,18 +24,24 @@ using ull = unsigned long long;
 	XX(BackDiag, "Backward Diagonal") \
 	XX(FullSym, "Full Symmetry")
 
-/// All the types of symmetry which can be used in this program
+/// All the types of symmetry which can be used in this program.
+/// The bit flags tell Knot::generate() how to generate.
 enum class Symmetry : unsigned int {
-	NoSym,			///< No symmetry
-	HoriSym,		///< Mirror symmetry across the horizontal axis
-	VertSym,		///< Mirror symmetry across the vertical axis
-	HoriVertSym,	///< Mirror symmetry across both the horizontal and vertical axes
-	Rot2Sym,		///< 2-way rotational symmetry
-	Rot4Sym,		///< 4-way rotational symmetry (square only)
-	FwdDiag,		///< Mirror symmetry across the forward diagonal (square only)
-	BackDiag,		///< Mirror symmetry across the backward diagonal (square only)
-	FullSym,		///< 4-fold dihedral symmetry (square only)
+	NoSym		= 0b000000,	///< No symmetry
+	HoriSym		= 0b000001,	///< Mirror symmetry across the horizontal axis
+	VertSym		= 0b000010,	///< Mirror symmetry across the vertical axis
+	HoriVertSym = 0b000111,	///< Mirror symmetry across both the horizontal and vertical axes
+	Rot2Sym		= 0b000100,	///< 2-way rotational symmetry
+	Rot4Sym		= 0b001100,	///< 4-way rotational symmetry (square only)
+	FwdDiag		= 0b010000,	///< Mirror symmetry across the forward diagonal (square only)
+	BackDiag	= 0b100000,	///< Mirror symmetry across the backward diagonal (square only)
+	FullSym		= 0b111111,	///< 4-fold dihedral symmetry (square only)
 };
+constexpr inline bool operator&(Symmetry sym, unsigned int n)
+/// Logical AND between Symmetry \c sym and the value of \c n
+{
+	return static_cast<unsigned int>(static_cast<unsigned int>(sym) & n);
+}
 
 /// A shortcut for this function signature, which is used often throughout the code
 #define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
