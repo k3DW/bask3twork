@@ -148,9 +148,6 @@ bool Knot::tryGenerating(GlyphVec2& glyphGrid, Symmetry sym, ijSignature) const
 			if (bitRot4) { glyphGrid[iMin + jOffset][jMax - iOffset] = glyphGrid[i][j]->rotated4; glyphGrid[iMax - jOffset][jMin + iOffset] = glyphGrid[i][j]->rotated2->rotated4; }
 			if (bitFwDi) glyphGrid[iMax - jOffset][jMax - iOffset] = glyphGrid[i][j]->mirroredFD;
 			if (bitBkDi) glyphGrid[iMin + jOffset][jMin + iOffset] = glyphGrid[i][j]->mirroredBD;
-				
-				// http://bit.ly/advisor2021-miro
-
 		}
 	}
 
