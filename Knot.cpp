@@ -51,6 +51,10 @@ bool Knot::generate(Symmetry sym, ijSignature)
 		generateFunction = &Knot::generateHoriVertSym;
 		statusBeginning += "horizontal + vertical symmetry... ";
 		break;
+	case Symmetry::Rot2Sym:
+		generateFunction = &Knot::generateRot2Sym;
+		statusBeginning += "2-way rotational symmetry... ";
+		break;
 	default:
 		return false;
 	}
@@ -122,7 +126,7 @@ inline bool Knot::generateNoSym(GlyphVec2& glyphGrid, ijSignature) const
 }
 inline bool Knot::generateHoriSym(GlyphVec2& glyphGrid, ijSignature) const
 /** Generate a knot with horizontal symmetry, for the given selection.
- *
+ * 
  * The same conditions apply as in the first paragraph of Knot::generate().
  *
  * The \c glyphGrid variable is supplied from Knot::generate(), already initialized with \c nullptr entries in the selection.
@@ -170,7 +174,7 @@ inline bool Knot::generateHoriSym(GlyphVec2& glyphGrid, ijSignature) const
 }
 inline bool Knot::generateVertSym(GlyphVec2& glyphGrid, ijSignature) const
 /** Generate a knot with vertical symmetry, for the given selection.
- *
+ * 
  * The same conditions apply as in the first paragraph of Knot::generate().
  *
  * The \c glyphGrid variable is supplied from Knot::generate(), already initialized with \c nullptr entries in the selection.
@@ -217,8 +221,8 @@ inline bool Knot::generateVertSym(GlyphVec2& glyphGrid, ijSignature) const
 	return true;
 }
 inline bool Knot::generateHoriVertSym(GlyphVec2& glyphGrid, ijSignature) const
-/** Generate a knot with vertical symmetry, for the given selection.
- *
+/** Generate a knot with horizontal and vertical symmetry, for the given selection.
+ * 
  * The same conditions apply as in the first paragraph of Knot::generate().
  *
  * The \c glyphGrid variable is supplied from Knot::generate(), already initialized with \c nullptr entries in the selection.
@@ -259,6 +263,51 @@ inline bool Knot::generateHoriVertSym(GlyphVec2& glyphGrid, ijSignature) const
 			/// \b (4) The corresponding mirrored Glyph pointers are set. Across the horizontal line, vertical line, and both.
 			glyphGrid[iDecr][j] = glyphGrid[i][j]->mirroredX;
 			glyphGrid[i][jDecr] = glyphGrid[i][j]->mirroredY;
+			glyphGrid[iDecr][jDecr] = glyphGrid[i][j]->rotated2;
+		}
+	}
+
+	/// \b (5) If the loop finishes, then the Knot has been successfully generated. Return \c true.
+	return true;
+}
+inline bool Knot::generateRot2Sym(GlyphVec2& glyphGrid, ijSignature) const
+/** Generate a knot with 2-way rotational symmetry, for the given selection.
+ *
+ * The same conditions apply as in the first paragraph of Knot::generate().
+ *
+ * The \c glyphGrid variable is supplied from Knot::generate(), already initialized with \c nullptr entries in the selection.
+ *
+ * \b Method
+ */
+{
+	/// First, initialize the same initial variables from both Knot::generateHoriSym() and Knot::generateVertSym().
+	const int iMid = (iMin + iMax) / 2;
+	const int jMid = (jMin + jMax) / 2;
+	const bool isEvenRows = isEvenSegments(iMin, iMax);
+	const bool isEvenCols = isEvenSegments(jMin, jMax);
+
+	/// For each location in the selection, do the following.
+	for (int i = iMin, iDecr = iMax; i <= iDecr; i++, iDecr--) {
+		for (int j = jMin, jDecr = jMax; j <= jMax; j++, jDecr--) {
+			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
+			if (glyphGrid[i][j]) continue;
+
+			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location, with the \c GlyphFlag::NONE flag.
+			///	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation,
+			/// which is described in Knot::generateNoSym().
+			/// The \c boolFlags argument is dependent on the row and the column.
+			glyphGrid[i][j] = RandomGlyph(
+				i == 0		? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[h - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1  ? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
+				j == 0		? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][w - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
+				j == w - 1  ? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				(i == iMid && !isEvenRows ? GlyphFlag::SA_MIRX : GlyphFlag::NONE) | (j == jMid && !isEvenCols ? GlyphFlag::SA_MIRY : GlyphFlag::NONE)
+			);
+
+			/// \b (3) If this newly generated Glyph turns out to be \c nullptr, then there were no options for this location. Return \c false.
+			if (!glyphGrid[i][j]) return false;
+
+			/// \b (4) The corresponding rotated Glyph is set, across the knot.
 			glyphGrid[iDecr][jDecr] = glyphGrid[i][j]->rotated2;
 		}
 	}
