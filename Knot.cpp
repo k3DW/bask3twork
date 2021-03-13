@@ -317,7 +317,7 @@ inline bool Knot::generateRot4Sym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
-	const bool doWrap = (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1) ? wrapXEnabled && wrapYEnabled : true;
+	const bool doWrap = wrapXEnabled && wrapYEnabled;
 	const bool isEven = isEvenSegments(iMin, iMax);
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
