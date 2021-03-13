@@ -217,7 +217,7 @@ private:
 /** \fn Knot::checkWrapping(ijSignature)
  * Check if any of the previous wrapping conditions made it so that non wrapped knots cannot be generated.
  * 
- * This function is different from the other \c check functions, since this function returning false skips evaluation of the others.
+ * This function is different from the other \c check functions, since this function returning \c false skips evaluation of the others.
  */
 
 /* Private generating helper functions */

@@ -300,9 +300,9 @@ inline bool Knot::generateRot2Sym(GlyphVec2& glyphGrid, ijSignature) const
 	return true;
 }
 inline bool Knot::generateRot4Sym(GlyphVec2& glyphGrid, ijSignature) const
-/** Generate a knot with 4-way rotational symmetry, for the given selection.
+/** Generate a knot with 4-way rotational symmetry, for the given square selection.
  *
- * The same conditions apply as in the first paragraph of Knot::generate().
+ * The same conditions apply as in the first paragraph of Knot::generate(), plus the selection must be square.
  *
  * The \c glyphGrid variable is supplied from Knot::generate(), already initialized with \c nullptr entries in the selection.
  *
@@ -310,6 +310,9 @@ inline bool Knot::generateRot4Sym(GlyphVec2& glyphGrid, ijSignature) const
  */
 {
 	const bool doWrap = (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1) ? wrapXEnabled && wrapYEnabled : true;
+	const bool isEven = isEvenSegments(iMin, iMax);
+	const int iMid = (iMin == iMax) / 2;
+	const int jMid = (jMin == jMax) / 2;
 
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
@@ -317,15 +320,17 @@ inline bool Knot::generateRot4Sym(GlyphVec2& glyphGrid, ijSignature) const
 			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
 			if (glyphGrid[i][j]) continue;
 
-			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location, with the \c GlyphFlag::NONE flag.
+			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location.
 			///	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation,
 			/// which is described in Knot::generateNoSym().
+			/// The \c boolFlags argument is \c GlyphFlag::NONE,
+			/// except for the very middle location in an even selection, where it must be \c GlyphFlag::CT_ROT4R.
 			glyphGrid[i][j] = RandomGlyph(
 				i == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
 				i == h - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
 				j == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
 				j == w - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
-				isEvenSegments(iMin, iMax) && i == (iMin + iMax) / 2 && j == (jMin + jMax) / 2 ? GlyphFlag::CT_ROT4R : GlyphFlag::NONE
+				isEven && i == iMid && j == jMid ? GlyphFlag::CT_ROT4R : GlyphFlag::NONE
 			);
 
 			/// \b (3) If this newly generated Glyph turns out to be \c nullptr, then there were no options for this location. Return \c false.
