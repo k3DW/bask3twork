@@ -419,9 +419,15 @@ void MainWindow::enableGenerateButtons(bool enable) {
 	}
 	/// If \c enable is \c false, then disable each of the buttons.
 	else {
-		#define XX(Sym, desc) generate##Sym##Button->Disable();
-		SYMMETRIES
-		#undef XX
+		generateNoSymButton->Disable();
+		generateHoriSymButton->Disable();
+		generateVertSymButton->Disable();
+		generateHoriVertSymButton->Disable();
+		generateRot2SymButton->Disable();
+		generateRot4SymButton->Disable();
+		generateFwdDiagButton->Disable();
+		generateBackDiagButton->Disable();
+		generateFullSymButton->Disable();
 	}
 }
 void MainWindow::generateKnot(wxCommandEvent& evt) {
