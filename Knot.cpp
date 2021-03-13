@@ -141,8 +141,8 @@ inline bool Knot::generateHoriSym(GlyphVec2& glyphGrid, ijSignature) const
 	const bool isAllRows = iMin == 0 && iMax == h - 1;
 
 	/// For each location in the selection, do the following.
-	for (int i = iMin, iDecr = iMax; i <= iDecr; i++, iDecr--) {
-		for (int j = jMin; j <= jMax; j++) {
+	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
+		for (int j = jMin, jOffset = 0; j <= jMax; j++, jOffset++) {
 			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
 			if (glyphGrid[i][j]) continue;
 
@@ -165,7 +165,7 @@ inline bool Knot::generateHoriSym(GlyphVec2& glyphGrid, ijSignature) const
 			if (!glyphGrid[i][j]) return false;
 
 			/// \b (4) The corresponding Glyph across the horizontal line is set to the mirrored version of the Glyph which was just generated.
-			glyphGrid[iDecr][j] = glyphGrid[i][j]->mirroredX;
+			glyphGrid[iMax - iOffset][j] = glyphGrid[i][j]->mirroredX;
 		}
 	}
 
@@ -185,8 +185,8 @@ inline bool Knot::generateVertSym(GlyphVec2& glyphGrid, ijSignature) const
 	const bool isAllCols = jMin == 0 && jMax == w - 1;
 
 	/// For each location in the selection, do the following.
-	for (int i = iMin; i <= iMax; i++) {
-		for (int j = jMin, jDecr = jMax; j <= jDecr; j++, jDecr--) {
+	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
+		for (int j = jMin, jOffset = 0; j <= jMax; j++, jOffset++) {
 			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
 			if (glyphGrid[i][j]) continue;
 
@@ -209,7 +209,7 @@ inline bool Knot::generateVertSym(GlyphVec2& glyphGrid, ijSignature) const
 			if (!glyphGrid[i][j]) return false;
 
 			/// \b (4) The corresponding Glyph across the vertical line is set to the mirrored version of the Glyph which was just generated.
-			glyphGrid[i][jDecr] = glyphGrid[i][j]->mirroredY;
+			glyphGrid[i][jMax - jOffset] = glyphGrid[i][j]->mirroredY;
 		}
 	}
 
@@ -230,8 +230,8 @@ inline bool Knot::generateHoriVertSym(GlyphVec2& glyphGrid, ijSignature) const
 	const bool isAllCols = jMin == 0 && jMax == w - 1;
 
 	/// For each location in the selection, do the following.
-	for (int i = iMin, iDecr = iMax; i <= iDecr; i++, iDecr--) {
-		for (int j = jMin, jDecr = jMax; j <= jDecr; j++, jDecr--) {
+	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
+		for (int j = jMin, jOffset = 0; j <= jMax; j++, jOffset++) {
 			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
 			if (glyphGrid[i][j]) continue;
 
@@ -252,9 +252,9 @@ inline bool Knot::generateHoriVertSym(GlyphVec2& glyphGrid, ijSignature) const
 			if (!glyphGrid[i][j]) return false;
 
 			/// \b (4) The corresponding mirrored Glyph pointers are set. Across the horizontal line, vertical line, and both.
-			glyphGrid[iDecr][j] = glyphGrid[i][j]->mirroredX;
-			glyphGrid[i][jDecr] = glyphGrid[i][j]->mirroredY;
-			glyphGrid[iDecr][jDecr] = glyphGrid[i][j]->rotated2;
+			glyphGrid[iMax - iOffset][j] = glyphGrid[i][j]->mirroredX;
+			glyphGrid[i][jMax - jOffset] = glyphGrid[i][j]->mirroredY;
+			glyphGrid[iMax - iOffset][jMax - jOffset] = glyphGrid[i][j]->rotated2;
 		}
 	}
 
@@ -272,8 +272,8 @@ inline bool Knot::generateRot2Sym(GlyphVec2& glyphGrid, ijSignature) const
  */
 {
 	/// For each location in the selection, do the following.
-	for (int i = iMin, iDecr = iMax; i <= iDecr; i++, iDecr--) {
-		for (int j = jMin, jDecr = jMax; j <= jMax; j++, jDecr--) {
+	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
+		for (int j = jMin, jOffset = 0; j <= jMax; j++, jOffset++) {
 			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
 			if (glyphGrid[i][j]) continue;
 
@@ -292,7 +292,7 @@ inline bool Knot::generateRot2Sym(GlyphVec2& glyphGrid, ijSignature) const
 			if (!glyphGrid[i][j]) return false;
 
 			/// \b (4) The corresponding rotated Glyph is set, across the knot.
-			glyphGrid[iDecr][jDecr] = glyphGrid[i][j]->rotated2;
+			glyphGrid[iMax - iOffset][jMax - jOffset] = glyphGrid[i][j]->rotated2;
 		}
 	}
 
