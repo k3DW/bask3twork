@@ -134,10 +134,6 @@ inline bool Knot::generateHoriSym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
-	/// First, initialize some variables, like the index of the middle row,
-	/// the GlyphFlag for all Glyphs in this middle row, and the boolean for whether or not the selection encompasses all rows.
-	const int iMid = (iMin + iMax) / 2;
-	const GlyphFlag midRowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
 	const bool isAllRows = iMin == 0 && iMax == h - 1;
 
 	/// For each location in the selection, do the following.
@@ -146,7 +142,7 @@ inline bool Knot::generateHoriSym(GlyphVec2& glyphGrid, ijSignature) const
 			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
 			if (glyphGrid[i][j]) continue;
 
-			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location, with the \c GlyphFlag::NONE flag.
+			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location.
 			///	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation,
 			/// which is described in Knot::generateNoSym().
 			/// The \c boolFlags argument is dependent on the row,
@@ -158,7 +154,7 @@ inline bool Knot::generateHoriSym(GlyphVec2& glyphGrid, ijSignature) const
 				i == h - 1  ? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
 				j == 0		? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][w - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
 				j == w - 1  ? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
-				(isAllRows && i == 0) ? GlyphFlag::CT_MIRU : i == iMid ? midRowFlag : GlyphFlag::NONE
+				(isAllRows && i == 0) ? GlyphFlag::CT_MIRU : GlyphFlag::NONE
 			);
 
 			/// \b (3) If this newly generated Glyph turns out to be \c nullptr, then there were no options for this location. Return \c false.
@@ -182,10 +178,6 @@ inline bool Knot::generateVertSym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
-	/// First, initialize some variables, like the index of the middle column,
-	/// the GlyphFlag for all Glyphs in this middle column, and the boolean for whether or not the selection encompasses all columns.
-	const int jMid = (jMin + jMax) / 2;
-	const GlyphFlag midColFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	const bool isAllCols = jMin == 0 && jMax == w - 1;
 
 	/// For each location in the selection, do the following.
@@ -194,7 +186,7 @@ inline bool Knot::generateVertSym(GlyphVec2& glyphGrid, ijSignature) const
 			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
 			if (glyphGrid[i][j]) continue;
 
-			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location, with the \c GlyphFlag::NONE flag.
+			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location.
 			///	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation,
 			/// which is described in Knot::generateNoSym().
 			/// The \c boolFlags argument is dependent on the column,
@@ -206,7 +198,7 @@ inline bool Knot::generateVertSym(GlyphVec2& glyphGrid, ijSignature) const
 				i == h - 1  ? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
 				j == 0		? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][w - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
 				j == w - 1  ? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
-				(isAllCols && j == 0) ? GlyphFlag::CT_MIRL : j == jMid ? midColFlag : GlyphFlag::NONE
+				(isAllCols && j == 0) ? GlyphFlag::CT_MIRL : GlyphFlag::NONE
 			);
 
 			/// \b (3) If this newly generated Glyph turns out to be \c nullptr, then there were no options for this location. Return \c false.
@@ -230,11 +222,6 @@ inline bool Knot::generateHoriVertSym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
-	/// First, initialize the same initial variables from both Knot::generateHoriSym() and Knot::generateVertSym().
-	const int iMid = (iMin + iMax) / 2;
-	const int jMid = (jMin + jMax) / 2;
-	const GlyphFlag midRowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
-	const GlyphFlag midColFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	const bool isAllRows = iMin == 0 && iMax == h - 1;
 	const bool isAllCols = jMin == 0 && jMax == w - 1;
 
@@ -244,7 +231,7 @@ inline bool Knot::generateHoriVertSym(GlyphVec2& glyphGrid, ijSignature) const
 			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
 			if (glyphGrid[i][j]) continue;
 
-			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location, with the \c GlyphFlag::NONE flag.
+			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location.
 			///	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation,
 			/// which is described in Knot::generateNoSym().
 			/// The \c boolFlags argument is dependent on the row and the column,
@@ -254,7 +241,7 @@ inline bool Knot::generateHoriVertSym(GlyphVec2& glyphGrid, ijSignature) const
 				i == h - 1  ? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
 				j == 0		? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][w - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
 				j == w - 1  ? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
-				((isAllRows && i == 0) ? GlyphFlag::CT_MIRU : i == iMid ? midRowFlag : GlyphFlag::NONE) | ((isAllCols && j == 0) ? GlyphFlag::CT_MIRL : j == jMid ? midColFlag : GlyphFlag::NONE)
+				((isAllRows && i == 0) ? GlyphFlag::CT_MIRU : GlyphFlag::NONE) | ((isAllCols && j == 0) ? GlyphFlag::CT_MIRL : GlyphFlag::NONE)
 			);
 
 			/// \b (3) If this newly generated Glyph turns out to be \c nullptr, then there were no options for this location. Return \c false.
@@ -280,12 +267,6 @@ inline bool Knot::generateRot2Sym(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
-	/// First, initialize the same initial variables from both Knot::generateHoriSym() and Knot::generateVertSym().
-	const int iMid = (iMin + iMax) / 2;
-	const int jMid = (jMin + jMax) / 2;
-	const bool isEvenRows = isEvenSegments(iMin, iMax);
-	const bool isEvenCols = isEvenSegments(jMin, jMax);
-
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iDecr = iMax; i <= iDecr; i++, iDecr--) {
 		for (int j = jMin, jDecr = jMax; j <= jMax; j++, jDecr--) {
@@ -295,13 +276,12 @@ inline bool Knot::generateRot2Sym(GlyphVec2& glyphGrid, ijSignature) const
 			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location, with the \c GlyphFlag::NONE flag.
 			///	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation,
 			/// which is described in Knot::generateNoSym().
-			/// The \c boolFlags argument is dependent on the row and the column.
 			glyphGrid[i][j] = RandomGlyph(
 				i == 0		? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[h - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
 				i == h - 1  ? (!wrapYEnabled ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
 				j == 0		? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][w - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
 				j == w - 1  ? (!wrapXEnabled ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
-				(i == iMid && !isEvenRows ? GlyphFlag::SA_MIRX : GlyphFlag::NONE) | (j == jMid && !isEvenCols ? GlyphFlag::SA_MIRY : GlyphFlag::NONE)
+				GlyphFlag::NONE
 			);
 
 			/// \b (3) If this newly generated Glyph turns out to be \c nullptr, then there were no options for this location. Return \c false.
