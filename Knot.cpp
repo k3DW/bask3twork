@@ -107,8 +107,8 @@ inline bool Knot::generateNoSym(GlyphVec2& glyphGrid, ijSignature) const
  */
 {
 	/// For each location in the selection, do the following.
-	for (int i = iMin; i <= iMax; i++) {
-		for (int j = jMin; j <= jMax; j++) {
+	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
+		for (int j = jMin, jOffset = 0; j <= jMax; j++, jOffset++) {
 			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
 			if (glyphGrid[i][j]) continue;
 
