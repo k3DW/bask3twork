@@ -67,6 +67,10 @@ bool Knot::generate(Symmetry sym, ijSignature)
 		generateFunction = &Knot::generateBackDiag;
 		statusBeginning += "backward diagonal symmetry... ";
 		break;
+	case Symmetry::FullSym:
+		generateFunction = &Knot::generateFullSym;
+		statusBeginning += "full symmetry... ";
+		break;
 	default:
 		return false;
 	}
@@ -429,6 +433,56 @@ inline bool Knot::generateBackDiag(GlyphVec2& glyphGrid, ijSignature) const
 			if (!glyphGrid[i][j]) return false;
 
 			/// \b (4) The corresponding rotated Glyph is set, across the knot.
+			glyphGrid[iMin + jOffset][jMin + iOffset] = glyphGrid[i][j]->mirroredBD;
+		}
+	}
+
+	/// \b (5) If the loop finishes, then the Knot has been successfully generated. Return \c true.
+	return true;
+}
+inline bool Knot::generateFullSym(GlyphVec2& glyphGrid, ijSignature) const
+/** Generate a knot with full D4 symmetry, for the given square selection.
+ *
+ * The same conditions apply as in the first paragraph of Knot::generate(), plus the selection must be square.
+ *
+ * The \c glyphGrid variable is supplied from Knot::generate(), already initialized with \c nullptr entries in the selection.
+ *
+ * \b Method
+ */
+{
+	const bool isAllRows = iMin == 0 && iMax == h - 1;
+	const bool isAllCols = jMin == 0 && jMax == w - 1;
+	const bool doWrap = wrapXEnabled && wrapYEnabled;
+
+	/// For each location in the selection, do the following.
+	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
+		for (int j = jMin, jOffset = 0; j <= jMax; j++, jOffset++) {
+			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
+			if (glyphGrid[i][j]) continue;
+
+			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location.
+			///	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation,
+			/// which is described in Knot::generateNoSym().
+			/// The \c boolFlags argument is \c GlyphFlag::NONE,
+			/// except for the locations along the backward diagonal, where it must be \c GlyphFlag::SA_MIRBD.
+			glyphGrid[i][j] = RandomGlyph(
+				i == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down	) : (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up			) : (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up	) ,
+				j == 0		? (!doWrap ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right	) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right) ,
+				j == w - 1  ? (!doWrap ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left		) : (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				((isAllRows && i == 0) ? GlyphFlag::CT_MIRU : GlyphFlag::NONE) | ((isAllCols && j == 0) ? GlyphFlag::CT_MIRL : GlyphFlag::NONE) | (iOffset == jOffset ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE)
+			);
+
+			/// \b (3) If this newly generated Glyph turns out to be \c nullptr, then there were no options for this location. Return \c false.
+			if (!glyphGrid[i][j]) return false;
+
+			/// \b (4) The corresponding rotated Glyph is set, across the knot.
+			glyphGrid[iMax - iOffset][j] = glyphGrid[i][j]->mirroredX;
+			glyphGrid[i][jMax - jOffset] = glyphGrid[i][j]->mirroredY;
+			glyphGrid[iMin + jOffset][jMax - iOffset] = glyphGrid[i][j]->rotated4;
+			glyphGrid[iMax - iOffset][jMax - jOffset] = glyphGrid[i][j]->rotated2;
+			glyphGrid[iMax - jOffset][jMin + iOffset] = glyphGrid[i][j]->rotated2->rotated4;
+			glyphGrid[iMax - jOffset][jMax - iOffset] = glyphGrid[i][j]->mirroredFD;
 			glyphGrid[iMin + jOffset][jMin + iOffset] = glyphGrid[i][j]->mirroredBD;
 		}
 	}

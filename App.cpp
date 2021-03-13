@@ -3,7 +3,7 @@
 	~~1) "Copy to clipboard" button with the export box
 		~~1a) Add physical button
 		~~1b) Add functionality
-	2) Wrapping around borders
+	~~2) Wrapping around borders
 		~~2a) Add wxMenuItems to toggle wrapping in X and Y respectively
 		~~2b) Add 2 bool member variables to the Knot class to save wrapping state
 		~~2c) Update Knot::tryGenerating() to incorporate wrapping functionality
@@ -15,7 +15,7 @@
 		~~2d) Update Knot::tryGeneratingDiag() to incorporate wrapping functionality
 		~~2d-1) Fix Knot::generateFwdDiag()
 		~~2d-2) Fix Knot::generateBackDiag()
-		2d-3) Fix Knot::generateFullSym()
+		~~2d-3) Fix Knot::generateFullSym()
 		~~2e) Update Knot::checkHoriSym() to incorporate wrapping functionality
 		~~2f) Update Knot::checkVertSym() to incorporate wrapping functionality
 		~~2g) Update Knot::checkRot2Sym() to incorporate wrapping functionality
