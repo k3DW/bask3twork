@@ -364,7 +364,7 @@ inline bool Knot::generateFwdDiag(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
-	const bool doWrap = (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1) ? wrapXEnabled && wrapYEnabled : true;
+	const bool doWrap = wrapXEnabled && wrapYEnabled;
 
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
@@ -404,7 +404,7 @@ inline bool Knot::generateBackDiag(GlyphVec2& glyphGrid, ijSignature) const
  * \b Method
  */
 {
-	const bool doWrap = (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1) ? wrapXEnabled && wrapYEnabled : true;
+	const bool doWrap = wrapXEnabled && wrapYEnabled;
 
 	/// For each location in the selection, do the following.
 	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
