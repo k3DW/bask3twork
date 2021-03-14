@@ -53,12 +53,12 @@ bool Knot::generate(Symmetry sym, ijSignature)
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText(statusBeginning + "Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		/// (2) Call Knot::tryGenerating() using the copy of \c glyphs created above.
+		/// \b (2) Call Knot::tryGenerating() using the copy of \c glyphs created above.
 		///		If it fails, \c continue the loop and try again.
 		std::optional<GlyphVec2> newGlyphs = tryGenerating(baseGlyphs, sym, iMin, jMin, iMax, jMax);
 		if (!newGlyphs) continue;
 
-		/// (3) If the knot has been successfully generated, set \c glyphs equal to this generated version and return \c true.
+		/// \b (3) If the knot has been successfully generated, set \c glyphs equal to this generated version and return \c true.
 		glyphs = *newGlyphs;
 		return true;
 	}
