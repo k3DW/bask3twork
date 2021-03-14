@@ -28,7 +28,7 @@ public:
 private:
 	GlyphVec2 glyphs;	///< The current state of the Knot, as a 2D std::vector of Glyph pointers
 
-	bool tryGenerating(GlyphVec2& glyphGrid, Symmetry sym, ijSignature) const;
+	std::optional<GlyphVec2> tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, ijSignature) const;
 };
 
 /* Knot::Knot */

@@ -53,28 +53,27 @@ bool Knot::generate(Symmetry sym, ijSignature)
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText(statusBeginning + "Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		/// \b (2) Make a copy of the previously copied and modified version of \c glyphs, and then call Knot::tryGenerating() on it.
-		///		If it returns \c false, then the generating has failed, so \c continue the loop and try again.
-		GlyphVec2 newGlyphs = baseGlyphs;
-		if (!tryGenerating(newGlyphs, sym, iMin, jMin, iMax, jMax))
-			continue;
+		/// (2) Call Knot::tryGenerating() using the copy of \c glyphs created above.
+		///		If it fails, \c continue the loop and try again.
+		std::optional<GlyphVec2> newGlyphs = tryGenerating(baseGlyphs, sym, iMin, jMin, iMax, jMax);
+		if (!newGlyphs) continue;
 
-		/// \b (3) If the knot has been successfully generated, set \c glyphs equal to this generated version and return \c true.
-		glyphs = newGlyphs;
+		/// (3) If the knot has been successfully generated, set \c glyphs equal to this generated version and return \c true.
+		glyphs = *newGlyphs;
 		return true;
 	}
 	/// \b (4) If this loop has been completed, then the maximum number of attempts have been tried. Therefore return \c false.
 	return false;
 }
 
-bool Knot::tryGenerating(GlyphVec2& glyphGrid, Symmetry sym, ijSignature) const
-/** Called only from Knot::generate(), try generating a knot with the given symmetry, for the given selection.
+std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, ijSignature) const
+/** Called only from Knot::generate(), try generating a knot with the given symmetry for the given selection.
  * 
- * This function pulls out the required logic in Knot::generate() in order to generate the Knot selection once, and places it into its own function. 
+ * This function pulls the required logic in Knot::generate() in order to generate the Knot selection once, and places it into its own function. 
  *
  * The same conditions apply as in the first paragraph of Knot::generate().
  *
- * The \c glyphGrid variable is supplied from Knot::generate(), already initialized with \c nullptr entries in the selection.
+ * The \c glyphGrid variable is supplied from Knot::generate(), already initialized with \c nullptr entries for the selection.
  *
  * \b Method
  */
@@ -139,8 +138,8 @@ bool Knot::tryGenerating(GlyphVec2& glyphGrid, Symmetry sym, ijSignature) const
 				)
 			);
 
-			/// \b (3) If this newly generated Glyph turns out to be \c nullptr, then there were no options for this location. Return \c false.
-			if (!glyphGrid[i][j]) return false;
+			/// \b (3) If this newly generated Glyph turns out to be \c nullptr, then there were no options for this location. Return \c std::nullopt.
+			if (!glyphGrid[i][j]) return std::nullopt;
 
 			/// \b (4) If the function has made it to this point, then reflect and rotate the newly generated Glyph to the appropriate spots given the symmetry required.
 			if (bitHori) glyphGrid[iMax - iOffset][j] = glyphGrid[i][j]->mirroredX;
@@ -153,7 +152,7 @@ bool Knot::tryGenerating(GlyphVec2& glyphGrid, Symmetry sym, ijSignature) const
 	}
 
 	/// \b (5) If the loop finishes, then the Knot has been successfully generated. Return \c true.
-	return true;
+	return glyphGrid;
 }
 
 bool Knot::checkHoriSym(ijSignature) const {
