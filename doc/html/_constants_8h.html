@@ -44,6 +44,7 @@ $(function() {
   <div class="summary">
 <a href="#define-members">Macros</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">Constants.h File Reference</div>  </div>
@@ -68,21 +69,28 @@ Macros</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:a9287d101a96c8964490509aea95bde44"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44">Symmetry</a> : unsigned int { <br />
-&#160;&#160;<a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44a6c449459f8bed8e5283b2fba58502ace">NoSym</a>
-, <a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44af8fa85ba776379781126bc0d6707dd99">HoriSym</a>
-, <a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44aebf8b10ed35c60cd6bf26f8bd9a7c892">VertSym</a>
-, <a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44a164fafe6902aa417e85eb74c629a7f89">HoriVertSym</a>
+&#160;&#160;<a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44a6c449459f8bed8e5283b2fba58502ace">NoSym</a> = 0b000000
+, <a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44af8fa85ba776379781126bc0d6707dd99">HoriSym</a> = 0b000001
+, <a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44aebf8b10ed35c60cd6bf26f8bd9a7c892">VertSym</a> = 0b000010
+, <a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44a164fafe6902aa417e85eb74c629a7f89">HoriVertSym</a> = 0b000111
 , <br />
-&#160;&#160;<a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44abf08ad1d373fc44377243c9995d9984a">Rot2Sym</a>
-, <a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44ada7ae2793e3953f2c84afb670b4c7ea0">Rot4Sym</a>
-, <a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44ad401f5cd36790d7020296dd534e16231">FwdDiag</a>
-, <a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44a0f8775bdfb74018cea5b6a5d55605cc7">BackDiag</a>
+&#160;&#160;<a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44abf08ad1d373fc44377243c9995d9984a">Rot2Sym</a> = 0b000100
+, <a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44ada7ae2793e3953f2c84afb670b4c7ea0">Rot4Sym</a> = 0b001100
+, <a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44ad401f5cd36790d7020296dd534e16231">FwdDiag</a> = 0b010000
+, <a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44a0f8775bdfb74018cea5b6a5d55605cc7">BackDiag</a> = 0b100000
 , <br />
-&#160;&#160;<a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44a6640b92730db5f67328d8af88e956ebc">FullSym</a>
+&#160;&#160;<a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44a6640b92730db5f67328d8af88e956ebc">FullSym</a> = 0b111111
 <br />
  }</td></tr>
 <tr class="memdesc:a9287d101a96c8964490509aea95bde44"><td class="mdescLeft">&#160;</td><td class="mdescRight">All the types of symmetry which can be used in this program.  <a href="_constants_8h.html#a9287d101a96c8964490509aea95bde44">More...</a><br /></td></tr>
 <tr class="separator:a9287d101a96c8964490509aea95bde44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a92d63aa4c42d24785bcf0f247d31fc10"><td class="memItemLeft" align="right" valign="top"><a id="a92d63aa4c42d24785bcf0f247d31fc10"></a>
+constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_constants_8h.html#a92d63aa4c42d24785bcf0f247d31fc10">operator&amp;</a> (<a class="el" href="_constants_8h.html#a9287d101a96c8964490509aea95bde44">Symmetry</a> sym, unsigned int n)</td></tr>
+<tr class="memdesc:a92d63aa4c42d24785bcf0f247d31fc10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logical AND between Symmetry <code>sym</code> and the value of <code>n</code>. <br /></td></tr>
+<tr class="separator:a92d63aa4c42d24785bcf0f247d31fc10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -98,6 +106,14 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 const wxSize&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_constants_8h.html#a281ddbdd60b8b6da29fdf2c331960fee">MAX_SIZE</a> { <a class="el" href="_constants_8h.html#a988283c30b31d1207a4ba6c296c3ebb8">SCREEN_X</a>, <a class="el" href="_constants_8h.html#ad5985be075034333aa7f7f3894151963">SCREEN_Y</a> }</td></tr>
 <tr class="memdesc:a281ddbdd60b8b6da29fdf2c331960fee"><td class="mdescLeft">&#160;</td><td class="mdescRight">For future functionality, the maximum size of the app window. <br /></td></tr>
 <tr class="separator:a281ddbdd60b8b6da29fdf2c331960fee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8707c306fb8bb1bc7277818b92120988"><td class="memItemLeft" align="right" valign="top"><a id="a8707c306fb8bb1bc7277818b92120988"></a>
+constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_constants_8h.html#a8707c306fb8bb1bc7277818b92120988">MAX_H</a> = 100</td></tr>
+<tr class="memdesc:a8707c306fb8bb1bc7277818b92120988"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum height of the grid allowed in the program, in terms of tiles. <br /></td></tr>
+<tr class="separator:a8707c306fb8bb1bc7277818b92120988"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acca7acf74078fb082d6be972e7085605"><td class="memItemLeft" align="right" valign="top"><a id="acca7acf74078fb082d6be972e7085605"></a>
+constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_constants_8h.html#acca7acf74078fb082d6be972e7085605">MAX_W</a> = 100</td></tr>
+<tr class="memdesc:acca7acf74078fb082d6be972e7085605"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum width of the grid allowed in the program, in terms of tiles. <br /></td></tr>
+<tr class="separator:acca7acf74078fb082d6be972e7085605"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab902e020ade0884b07ea188032fd114d"><td class="memItemLeft" align="right" valign="top"><a id="ab902e020ade0884b07ea188032fd114d"></a>
 const wxColour&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_constants_8h.html#ab902e020ade0884b07ea188032fd114d">BACKGROUND_COLOUR</a> { 240, 240, 240 }</td></tr>
 <tr class="memdesc:ab902e020ade0884b07ea188032fd114d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default colour of the background for the program. <br /></td></tr>
@@ -147,6 +163,7 @@ constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
   </tr>
 </table>
 </div><div class="memdoc">
+<p>The bit flags tell <a class="el" href="class_knot.html#a499a98001b243526e87d7ddebadd4e0a" title="Generate a knot with the given symmetry in the given selection.">Knot::generate()</a> how to generate. In order from least-significant to most-significant bit, the bits mean the following. (1) This symmetry includes horizontal reflection. (2) This symmetry includes vertical reflection. (3) This symmetry includes 2-fold rotation. (4) This symmetry includes 4-fold rotation. (5) This symmetry includes forward diagonal reflection. (6) This symmetry includes backward diagonal reflection. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a9287d101a96c8964490509aea95bde44a6c449459f8bed8e5283b2fba58502ace"></a>NoSym&#160;</td><td class="fielddoc"><p>No symmetry. </p>
 </td></tr>
