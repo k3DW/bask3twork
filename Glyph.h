@@ -2,7 +2,7 @@
 #include "Constants.h"
 /// \file
 
-/// The side of a glyph, as a bitfield enum, which can undergo the \c operator| and \c operator&
+/// The side of a Glyph, as a bitfield enum, which can undergo the \c operator| and \c operator&
 enum class Side : unsigned int {
 	NONE	= 0, ///< No side
 	UP		= 1, ///< Upper side
@@ -21,7 +21,7 @@ constexpr inline Side operator&(Side side1, Side side2)
 	return static_cast<Side>(static_cast<unsigned int>(side1) & static_cast<unsigned int>(side2));
 } 
 
-/// The connection on one side of a glyph, as an incremental enum, which can undergo the \c operator| and \c operator&
+/// The connection on one side of a Glyph, as an incremental enum, which can undergo the \c operator| and \c operator&
 enum class Connection : unsigned int {
 		DO_NOT_CARE = 0, ///< The connection is irrelevant (no Glyph objects should ever be assigned this value, it is for usage in functions)
 		EMPTY		= 1, ///< The empty connection, where nothing is passing through this edge
@@ -177,7 +177,7 @@ using GlyphVec1 = std::vector<const Glyph*>;	///< Syntactic sugar for a 1D vecto
 using GlyphVec2 = std::vector<GlyphVec1>;		///< Syntactic sugar for a 2D vector of pointers to \c const \c Glyph
 
 /// The array of every Glyph in the program (generated in Excel), the only place where a Glyph object is initialized;
-/// every other place a Glyph is referenced in the whole codebase is actually a pointer to one of the Glyphs in AllGlyphs.
+/// every other place a Glyph is referenced in the whole codebase is actually a pointer to one of the Glyphs in \c AllGlyphs.
 const inline std::array<Glyph, Glyph::TOTAL> AllGlyphs{ {
 	{ wxUniChar(32), &AllGlyphs[0], &AllGlyphs[0], &AllGlyphs[0], &AllGlyphs[0], &AllGlyphs[0], &AllGlyphs[0], Connection::EMPTY, Connection::EMPTY, Connection::EMPTY, Connection::EMPTY, 1, 1, 1, 1, 1, 1 },
 	{ wxUniChar(33), &AllGlyphs[94], &AllGlyphs[1], &AllGlyphs[1], &AllGlyphs[1], &AllGlyphs[94], &AllGlyphs[94], Connection::EMPTY, Connection::EMPTY, Connection::ORTHO_BOTH, Connection::ORTHO_BOTH, 0, 1, 1, 1, 0, 0 },
@@ -370,7 +370,7 @@ const inline std::array<Glyph, Glyph::TOTAL> AllGlyphs{ {
 	{ wxUniChar(8240), &AllGlyphs[181], &AllGlyphs[182], &AllGlyphs[182], &AllGlyphs[188], &AllGlyphs[181], &AllGlyphs[189], Connection::DIAG_BOTH, Connection::EMPTY, Connection::EMPTY, Connection::EMPTY, 0, 0, 0, 1, 0, 0 },
 	{ wxUniChar(8249), &AllGlyphs[188], &AllGlyphs[181], &AllGlyphs[189], &AllGlyphs[181], &AllGlyphs[182], &AllGlyphs[188], Connection::EMPTY, Connection::EMPTY, Connection::DIAG_BOTH, Connection::EMPTY, 0, 0, 1, 0, 0, 0 },
 } };
-/// The mapping from the unicode character to the glyph that uses that character, used for reading knots.
+/// The mapping from the unicode character to the Glyph that uses that character, used for reading knots.
 const inline std::map<wxUniChar, const Glyph*> UnicharToGlyph = {
 	{ wxUniChar(32), &AllGlyphs[0] },
 	{ wxUniChar(33), &AllGlyphs[1] },
@@ -569,31 +569,31 @@ const Glyph* const DefaultGlyph = &AllGlyphs[0];
 inline const Glyph* RandomGlyph(const Connection up, const Connection down, const Connection left, const Connection right, const GlyphFlag boolFlags)
 /// This function takes in the desired flags and outputs the vector of all glyphs which meet the criteria.
 {
-	/// \param up The Connection desired for the upper side. If this does not matter, then pass Connection::DO_NOT_CARE
-	/// \param down The Connection desired for the lower side. If this does not matter, then pass Connection::DO_NOT_CARE
-	/// \param left The Connection desired for the left side. If this does not matter, then pass Connection::DO_NOT_CARE
-	/// \param right The Connection desired for the right side. If this does not matter, then pass Connection::DO_NOT_CARE
-	/// \param boolFlag The other condition flags to check for the glyphs, passed by using \c operator| on GlyphFlag values. Any bits with a value of \c 0 are ignored
+	/// \param up The \c Connection desired for the upper side. If this does not matter, then pass \c Connection::DO_NOT_CARE
+	/// \param down The \c Connection desired for the lower side. If this does not matter, then pass \c Connection::DO_NOT_CARE
+	/// \param left The \c Connection desired for the left side. If this does not matter, then pass \c Connection::DO_NOT_CARE
+	/// \param right The \c Connection desired for the right side. If this does not matter, then pass \c Connection::DO_NOT_CARE
+	/// \param boolFlag The other condition flags to check for the glyphs, passed by using \c operator| on \c GlyphFlag values. Any bits with a value of \c 0 are ignored
 
 	/// \b Method
 
 	/// This function allows all properties of the Glyphs to be checked at once, instead of checking multiple properties in order.
 	/// Using this function allows for high speed Glyph selection, since all attributes are assessed simultaneously.
 
-	/// First a bit mask is created. If the \c up Connection is anything other than Connection::DO_NOT_CARE, then use GlyphFlag::UP in the mask.
-	/// Do this same process for the other 3 Connection values. As well, add the \c boolFlags to the mask with the GlyphFlag::COND_MASK applied.
+	/// First a bit mask is created. If the \c up Connection is anything other than \c Connection::DO_NOT_CARE, then use \c GlyphFlag::UP in the mask.
+	/// Do this same process for the other 3 Connection values. As well, add the \c boolFlags to the mask with the \c GlyphFlag::COND_MASK applied.
 	/// It is assumed that if a flag is nonzero, it is in use. If it is zero, it is ignored.
-	const GlyphFlag mask = (up != Connection::DO_NOT_CARE ? GlyphFlag::UP : GlyphFlag::NONE)	// If the UP side is used, add 0x000F to the mask. If not used, it will be GlyphFlag::NONE (== 0)
-		| (down != Connection::DO_NOT_CARE ? GlyphFlag::DOWN : GlyphFlag::NONE)	// If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be GlyphFlag::NONE (== 0)
-		| (left != Connection::DO_NOT_CARE ? GlyphFlag::LEFT : GlyphFlag::NONE)	// etc, for LEFT
-		| (right != Connection::DO_NOT_CARE ? GlyphFlag::RIGHT : GlyphFlag::NONE)	// etc, for RIGHT
-		| (boolFlags & GlyphFlag::COND_MASK); // All the other flags are only 1 bit long, so this is acceptable
+	const GlyphFlag mask = (up		!= Connection::DO_NOT_CARE ? GlyphFlag::UP		: GlyphFlag::NONE)	// If the UP side is used, add 0x000F to the mask. If not used, it will be \c GlyphFlag::NONE (== 0)
+						 | (down	!= Connection::DO_NOT_CARE ? GlyphFlag::DOWN	: GlyphFlag::NONE)	// If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be \c GlyphFlag::NONE (== 0)
+						 | (left	!= Connection::DO_NOT_CARE ? GlyphFlag::LEFT	: GlyphFlag::NONE)	// etc, for LEFT
+						 | (right	!= Connection::DO_NOT_CARE ? GlyphFlag::RIGHT	: GlyphFlag::NONE)	// etc, for RIGHT
+						 | (boolFlags & GlyphFlag::COND_MASK); // All the other flags are only 1 bit long, so this is acceptable
 
 	/// Next, determine which value needs to be checked against. For the 4 sides, use the toFlag() function.
-	/// Add the boolFlags, with the GlyphFlag::COND_MASK applied.
+	/// Add the boolFlags, with the \c GlyphFlag::COND_MASK applied.
 	const GlyphFlag toCheck = toFlag(up, GlyphFlag::UP) | toFlag(down, GlyphFlag::DOWN) | toFlag(left, GlyphFlag::LEFT) | toFlag(right, GlyphFlag::RIGHT) | (boolFlags & GlyphFlag::COND_MASK);
 
-	/// Once all that is done, loop through AllGlyphs. If the \c flags member of the Glyph with the mask applied from above
+	/// Once all that is done, loop through \c AllGlyphs. If the \c flags member of the Glyph with the mask applied from above
 	/// is equal to the value which needs to be checked, then add the pointer to this Glyph to the output vector.
 	GlyphVec1 glyphList;
 	for (const Glyph& glyph : AllGlyphs)
