@@ -23,14 +23,9 @@ bool Knot::generate(Symmetry sym, ijSignature)
  * \b Method
  */
 {
-	/// First, make a copy of \c glyphs, and set all members in the selection to \c nullptr to denote that they are unassigned.
-	GlyphVec2 baseGlyphs = glyphs;
-	for (int i = iMin; i <= iMax; i++)
-		for (int j = jMin; j <= jMax; j++)
-			baseGlyphs[i][j] = nullptr;
-
-	/// Then, instantiate a pointer-to-Knot-member-function and set it to the appropriate generating funtion depending on the symmetry.
-	/// This pointer and be dereferenced and called the same way, regardless of the generating function.
+	/// First, instantiate a \c wxString to show in the status bar,
+	/// then add to it in a \c switch statement for the specific symmetry used.
+	/// If the value for \c sym is not valid, this \c switch statement will cause the function to return \c false.
 	wxString statusBeginning = "Generating ";
 	switch (sym) {
 		case Symmetry::NoSym:		{ statusBeginning += "no symmetry... ";						break; }
@@ -46,23 +41,29 @@ bool Knot::generate(Symmetry sym, ijSignature)
 			return false;
 	}
 
+	/// Then, make a copy of \c glyphs, and set all members in the selection to \c nullptr to denote that they are unassigned.
+	GlyphVec2 baseGlyphs = glyphs;
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			baseGlyphs[i][j] = nullptr;
+
 	/// Next, enter a loop, counting the number of attempts made at generating this knot. The steps are as follows.
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
-		/// (1) At certain intervals of numbers of attempts, update the status bar with the number of attempts made.
+		/// \b (1) At certain intervals of numbers of attempts, update the status bar with the number of attempts made.
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
 			statusBar->SetStatusText(statusBeginning + "Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		/// (2) Make a copy of the previously copied and modified version of \c glyphs, and then call Knot::tryGenerating() on it.
+		/// \b (2) Make a copy of the previously copied and modified version of \c glyphs, and then call Knot::tryGenerating() on it.
 		///		If it returns \c false, then the generating has failed, so \c continue the loop and try again.
 		GlyphVec2 newGlyphs = baseGlyphs;
 		if (!tryGenerating(newGlyphs, sym, iMin, jMin, iMax, jMax))
 			continue;
 
-		/// (3) If the knot has been successfully generated, set \c glyphs equal to this generated version and return \c true.
+		/// \b (3) If the knot has been successfully generated, set \c glyphs equal to this generated version and return \c true.
 		glyphs = newGlyphs;
 		return true;
 	}
-	/// (4) If this loop has been completed, then the maximum number of attempts have been tried. Therefore return \c false.
+	/// \b (4) If this loop has been completed, then the maximum number of attempts have been tried. Therefore return \c false.
 	return false;
 }
 
