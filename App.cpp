@@ -23,12 +23,13 @@
 		~~2i) Update Knot::checkFwdDiag() to incorporate wrapping functionality
 		~~2j) Update Knot::checkBackDiag() to incorporate wrapping functionality
 		~~2k) New function Knot::checkWrapping() to disallow non-wrapped generating if wrapped conditions are in place
-	3) Put more things into the wxMenuBar to remove bloat from the right side
-		3a) Enable or disable symmetry buttons
-		3b) Put grid regeneration into its own wxMenu
-	~~4) Misc
-		~~4a) Combine `RandomGlyph()` and `PossibleGlyphs()` into one function
-		~~4b) Possibly extract and factor out all common logic in various `Knot::generate___Sym()` functions
+		~~2l) Possibly extract and factor out all common logic in various `Knot::generate___Sym()` functions
+		~~2m) Combine `RandomGlyph()` and `PossibleGlyphs()` into one function
+	3) Put grid regeneration into its own wxMenu
+		3a) Add menu item
+		3b) Make wxDialog pop-up
+		3c) Add controls to the pop-up
+		3d) Implement logic
 */
 
 /* TODO for later versions */
