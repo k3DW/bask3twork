@@ -138,14 +138,12 @@ void MainWindow::initExportRegion() {
 }
 
 void MainWindow::menuEventHandler(wxCommandEvent& evt) {
-	if (evt.GetId() == static_cast<int>(MenuID::OPEN))
-		openFile();
-	else if (evt.GetId() == static_cast<int>(MenuID::SAVE))
-		saveFile();
-	else if (evt.GetId() == static_cast<int>(MenuID::WRAP_X))
-		toggleWrap(true);
-	else if (evt.GetId() == static_cast<int>(MenuID::WRAP_Y))
-		toggleWrap(false);
+	switch (static_cast<MenuID>(evt.GetId())) {
+		case MenuID::OPEN:		{ openFile();			break; }
+		case MenuID::SAVE:		{ saveFile();			break; }
+		case MenuID::WRAP_X:	{ toggleWrap(true);		break; }
+		case MenuID::WRAP_Y:	{ toggleWrap(false);	break; }
+	}
 	evt.Skip();
 }
 void MainWindow::openFile() {
