@@ -26,7 +26,7 @@
 		~~2l) Possibly extract and factor out all common logic in various `Knot::generate___Sym()` functions
 		~~2m) Combine `RandomGlyph()` and `PossibleGlyphs()` into one function
 	3) Put grid regeneration into its own wxMenu
-		3a) Add menu item
+		~~3a) Add menu item
 		3b) Make wxDialog pop-up
 		3c) Add controls to the pop-up
 		3d) Implement logic

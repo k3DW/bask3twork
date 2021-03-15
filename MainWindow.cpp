@@ -12,22 +12,16 @@ MainWindow::~MainWindow() {
 }
 void MainWindow::initMenuBar() {
 	menuFile = new wxMenu();
+	menuFile->Bind(wxEVT_MENU, &MainWindow::menuEventHandler, this);
 	menuFile->Append(static_cast<int>(MenuID::OPEN), "&Open\tCtrl-O", "Open a knot file.");
 	menuFile->Append(static_cast<int>(MenuID::SAVE), "&Save\tCtrl-S", "Save a knot file.");
-	menuFile->Bind(wxEVT_MENU, &MainWindow::menuEventHandler, this);
 
 	menuGenerate = new wxMenu();
+	menuGenerate->Bind(wxEVT_MENU, &MainWindow::menuEventHandler, this);
 	menuWrapX = menuGenerate->AppendCheckItem(static_cast<int>(MenuID::WRAP_X), "Wrap &X\tCtrl-X", "Toggle wrapping around the grid in the left-right direction.");
 	menuWrapY = menuGenerate->AppendCheckItem(static_cast<int>(MenuID::WRAP_Y), "Wrap &Y\tCtrl-Y", "Toggle wrapping around the grid in the up-down direction.");
-	menuGenerate->Bind(wxEVT_MENU, &MainWindow::menuEventHandler, this);
-
-	//menuGenerate = new wxMenu();
-	//menuGenerateNoSym = new wxMenuItem(nullptr, 100, "test");
-	//menuGenerate->Bind()
-	//menuGenerate->Append(100, "&No Symmetry");
-	//menuGenerate->Append(101, "&Horizontal Symmetry");
-	//menuGenerate->Bind(wxEVT_MENU, &MainWindow::generateKnot, this);
-	//Connect(100, wxEVT_MENU, wxCommandEventHandler(MainWindow::generateKnot));
+	menuGenerate->AppendSeparator();
+	menuGenerate->Append(static_cast<int>(MenuID::REFRESH_GRID), "&Refresh Grid\tCtrl-R", "Resize and reinitialize the grid.");
 
 	menuBar = new wxMenuBar();
 	menuBar->Append(menuFile, "&File");

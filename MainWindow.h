@@ -48,6 +48,7 @@ private:
 		SAVE,
 		WRAP_X,
 		WRAP_Y,
+		REFRESH_GRID,
 	};
 
 	void initSizerLayout();
