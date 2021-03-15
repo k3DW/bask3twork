@@ -27,8 +27,8 @@
 		~~2m) Combine `RandomGlyph()` and `PossibleGlyphs()` into one function
 	3) Put grid regeneration into its own wxMenu
 		~~3a) Add menu item
-		3b) Make wxDialog pop-up
-		3c) Add controls to the pop-up
+		~~3b) Make wxDialog pop-up
+		~~3c) Add controls to the pop-up
 		3d) Implement logic
 */
 

@@ -139,10 +139,11 @@ void MainWindow::initExportRegion() {
 
 void MainWindow::menuEventHandler(wxCommandEvent& evt) {
 	switch (static_cast<MenuID>(evt.GetId())) {
-		case MenuID::OPEN:		{ openFile();			break; }
-		case MenuID::SAVE:		{ saveFile();			break; }
-		case MenuID::WRAP_X:	{ toggleWrap(true);		break; }
-		case MenuID::WRAP_Y:	{ toggleWrap(false);	break; }
+		case MenuID::OPEN:			{ openFile();			break; }
+		case MenuID::SAVE:			{ saveFile();			break; }
+		case MenuID::WRAP_X:		{ toggleWrap(true);		break; }
+		case MenuID::WRAP_Y:		{ toggleWrap(false);	break; }
+		case MenuID::REFRESH_GRID:	{ refreshGrid();		break; }
 	}
 	evt.Skip();
 }
@@ -266,6 +267,38 @@ void MainWindow::toggleWrap(bool inXDirection) {
 
 	if (selectToggleButton->GetLabelText() == wxString("Hide"))
 		enableGenerateButtons();
+}
+void MainWindow::refreshGrid() {
+	wxDialog* dlg = new wxDialog(nullptr, wxID_ANY, "Dimensions");
+
+	wxTextCtrl* heightText = new wxTextCtrl(dlg, wxID_ANY, intWX(h), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
+	heightText->SetMaxLength(2);
+	heightText->SetFont(TEXT_FONT);
+	wxTextCtrl* widthText = new wxTextCtrl(dlg, wxID_ANY, intWX(w), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
+	widthText->SetMaxLength(2);
+	widthText->SetFont(TEXT_FONT);
+
+	wxBoxSizer* textSizer = new wxBoxSizer(wxHORIZONTAL);
+	textSizer->Add(heightText, 0, wxEXPAND);
+	textSizer->Add(new wxStaticText(dlg, wxID_ANY, " by "), 0, wxALIGN_CENTER);
+	textSizer->Add(widthText, 0, wxEXPAND);
+
+	wxButton* btn = new wxButton(dlg, wxID_ANY, "Refresh Grid");
+
+	wxBoxSizer* dlgSizer = new wxBoxSizer(wxVERTICAL);
+	dlgSizer->Add(textSizer, 0, wxEXPAND | wxALL, GAP_3);
+	dlgSizer->Add(btn, 0, wxEXPAND | (wxALL ^ wxUP), GAP_3);
+	dlg->SetSizer(dlgSizer);
+
+	dlg->SetMinSize(wxDefaultSize);
+	dlg->SetMinSize(dlg->GetBestSize());
+	dlg->SetSize(dlg->GetBestSize());
+
+	if (dlg->ShowModal() == wxID_OK) {
+		
+	}
+
+	dlg->Destroy();
 }
 
 void MainWindow::gridRegenFunction(wxCommandEvent& evt) {

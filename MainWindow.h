@@ -42,6 +42,7 @@ private:
 		wxMenuItem* menuWrapX;
 		wxMenuItem* menuWrapY;
 		void toggleWrap(bool inXDirection);	///< Toggles the knot wrapping in the direction specified
+		void refreshGrid();
 
 	enum class MenuID : int {
 		OPEN,
