@@ -61,13 +61,6 @@ private:
 	wxBoxSizer* dispSizer;
 	wxBoxSizer* buttonSizer;
 
-	void initGridRegion();
-	wxStaticBoxSizer* gridRegionSizer;
-		wxBoxSizer* gridInputSizer;
-			wxTextCtrl* gridHeight;
-			wxTextCtrl* gridWidth;
-		declareButton(gridRegen); ///< Applies the values in the \c wxTextCtrl boxes to regenerate the DisplayGrid to this new size.
-
 	void initSelectRegion();
 	wxStaticBoxSizer* selectRegionSizer;
 		wxStaticText* selectCoord;		// The display of "selection coordinates", i.e. top-left to bottom-right

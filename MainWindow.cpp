@@ -33,13 +33,11 @@ void MainWindow::initSizerLayout() {
 
 	// These are in a weird order to avoid dereferencing `nullptr`s
 	initGenerateRegion();
-	initGridRegion();
 	initSelectRegion();
 	initExportRegion();
 
 	buttonSizer = new wxBoxSizer(wxVERTICAL);
 	buttonSizer->AddStretchSpacer();
-	buttonSizer->Add(gridRegionSizer, 0, wxDOWN, GAP_2);
 	buttonSizer->Add(selectRegionSizer, 0, wxDOWN, GAP_2);
 	buttonSizer->Add(generateRegionSizer, 0, wxDOWN, GAP_2);
 	buttonSizer->Add(exportRegionSizer);
@@ -73,27 +71,6 @@ void MainWindow::initDispSizer() {
 	knot = new Knot(h, w, GetStatusBar());
 	disp = new DisplayGrid(this, knot);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
-}
-void MainWindow::initGridRegion() {
-	gridHeight = new wxTextCtrl(this, wxID_ANY, wxString::Format(wxT("%i"), h), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
-	gridHeight->SetMaxLength(2);
-	gridHeight->SetFont(TEXT_FONT);
-	
-	gridWidth = new wxTextCtrl(this, wxID_ANY, wxString::Format(wxT("%i"), w), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
-	gridWidth->SetMaxLength(2);
-	gridWidth->SetFont(TEXT_FONT);
-	
-	gridInputSizer = new wxBoxSizer(wxHORIZONTAL);
-	gridInputSizer->Add(gridHeight, 0, wxEXPAND);
-	gridInputSizer->Add(new wxStaticText(this, wxID_ANY, " by "), 0, wxALIGN_CENTER);
-	gridInputSizer->Add(gridWidth, 0, wxEXPAND);
-	
-	initButton(gridRegen, "Regenerate Grid");
-	// gridRegenButton->SetToolTip("TEST");
-
-	gridRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Grid");
-	gridRegionSizer->Add(gridInputSizer, 0, wxEXPAND | wxDOWN, GAP_3);
-	gridRegionSizer->Add(gridRegenButton, 0, wxEXPAND);
 }
 void MainWindow::initSelectRegion() {
 	selectToggleButton = new wxButton(this, wxID_ANY, "Show", wxDefaultPosition, wxSize(65,23));
@@ -205,8 +182,6 @@ void MainWindow::openFile() {
 	// Set the height and width, then set the grid regen textbox values.
 	h = glyphs.size();
 	w = glyphs[0].size();
-	gridHeight->SetValue(intWX(h));
-	gridWidth->SetValue(intWX(w));
 
 	// Next, initialize the Knot with the variable \c glyphs and the status bar.
 	// Initialize the DisplayGrid with the newly generated Knot, and insert it between the stretch spacers in its sizer.
@@ -348,46 +323,6 @@ void MainWindow::refreshGrid() {
 	dlg->Destroy();
 }
 
-void MainWindow::gridRegenFunction(wxCommandEvent& evt) {
-	/// \b Method
-	
-	/// First, check if the values in the boxes are numbers. If not, send a \c mxMessageBox with an error message and return.
-	/// Then check if the numbers in the boxes are positive integers. If not, send a different error message and return.
-	wxString heightString = gridHeight->GetValue();
-	wxString widthString = gridWidth->GetValue();
-	if (!(heightString.IsNumber() && widthString.IsNumber())) {
-		wxMessageBox("Please enter only numbers for the new grid size.", "Error: Non-numerical grid size");
-		return;
-	}
-	int heightNum = wxAtoi(heightString);
-	int widthNum = wxAtoi(widthString);
-	if (!(heightNum > 0 && widthNum > 0)) {
-		wxMessageBox("Please enter positive whole numbers for the new grid size.", "Error: Non-integer grid size");
-		return;
-	}
-	if (heightNum > MAX_H || widthNum > MAX_W) {
-		wxMessageBox("Please enter sizes that are, at most, " + intWX(MAX_H) + " by " + intWX(MAX_W) + ".", "Error: Knot size too large");
-		return;
-	}
-
-	/// Next, update \c h and \c w member variables, then reinitialize the DisplayGrid using MainWindow::initDispSizer().
-	h = heightNum;
-	w = widthNum;
-	initDispSizer();
-
-	/// Then, reset the select coordinates with MainWindow::resetSelectCoord(),
-	/// regenerate and export textbox with MainWindow::regenExportBox(),
-	/// and reset the knot wrapping \c wxMenuItem objects.
-	resetSelectCoord();
-	regenExportBox();
-	menuWrapX->Check(false);
-	menuWrapY->Check(false);
-
-	/// Lastly, refresh the minimum size of the window.
-	RefreshMinSize();
-
-	evt.Skip();
-}
 void MainWindow::RefreshMinSize() {
 	/// \b Method
 
