@@ -269,7 +269,8 @@ void MainWindow::toggleWrap(bool inXDirection) {
 		enableGenerateButtons();
 }
 void MainWindow::refreshGrid() {
-	wxDialog* dlg = new wxDialog(nullptr, wxID_ANY, "Dimensions");
+	wxDialog* dlg = new wxDialog(nullptr, 54321, "Grid");
+	dlg->SetIcon(wxICON(AppIcon));
 
 	wxTextCtrl* heightText = new wxTextCtrl(dlg, wxID_ANY, intWX(h), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
 	heightText->SetMaxLength(2);
@@ -283,7 +284,8 @@ void MainWindow::refreshGrid() {
 	textSizer->Add(new wxStaticText(dlg, wxID_ANY, " by "), 0, wxALIGN_CENTER);
 	textSizer->Add(widthText, 0, wxEXPAND);
 
-	wxButton* btn = new wxButton(dlg, wxID_ANY, "Refresh Grid");
+	int btnID = static_cast<int>(rand());
+	wxButton* btn = new wxButton(dlg, btnID, "Refresh Grid");
 
 	wxBoxSizer* dlgSizer = new wxBoxSizer(wxVERTICAL);
 	dlgSizer->Add(textSizer, 0, wxEXPAND | wxALL, GAP_3);
@@ -293,6 +295,51 @@ void MainWindow::refreshGrid() {
 	dlg->SetMinSize(wxDefaultSize);
 	dlg->SetMinSize(dlg->GetBestSize());
 	dlg->SetSize(dlg->GetBestSize());
+
+	dlg->Bind(wxEVT_BUTTON, 
+		[this, dlg, heightText, widthText](wxCommandEvent& evt) {
+			// / \b Method
+
+			// / First, check if the values in the boxes are numbers. If not, send a \c mxMessageBox with an error message and return.
+			// / Then check if the numbers in the boxes are positive integers. If not, send a different error message and return.
+			wxString heightString = heightText->GetValue();
+			wxString widthString = widthText->GetValue();
+			if (!(heightString.IsNumber() && widthString.IsNumber())) {
+				wxMessageBox("Please enter only numbers for the new grid size.", "Error: Non-numerical grid size");
+				return;
+			}
+			int heightNum = wxAtoi(heightString);
+			int widthNum = wxAtoi(widthString);
+			if (!(heightNum > 0 && widthNum > 0)) {
+				wxMessageBox("Please enter positive whole numbers for the new grid size.", "Error: Non-integer grid size");
+				return;
+			}
+			if (heightNum > MAX_H || widthNum > MAX_W) {
+				wxMessageBox("Please enter sizes that are, at most, " + intWX(MAX_H) + " by " + intWX(MAX_W) + ".", "Error: Knot size too large");
+				return;
+			}
+
+			// / Next, update \c h and \c w member variables, then reinitialize the DisplayGrid using MainWindow::initDispSizer().
+			h = heightNum;
+			w = widthNum;
+			initDispSizer();
+
+			// / Then, reset the select coordinates with MainWindow::resetSelectCoord(),
+			// / regenerate and export textbox with MainWindow::regenExportBox(),
+			// / and reset the knot wrapping \c wxMenuItem objects.
+			resetSelectCoord();
+			regenExportBox();
+			menuWrapX->Check(false);
+			menuWrapY->Check(false);
+
+			// / Lastly, refresh the minimum size of the window.
+			RefreshMinSize();
+
+			dlg->EndModal(0);
+			
+			evt.Skip();
+		}, 
+	btnID);
 
 	if (dlg->ShowModal() == wxID_OK) {
 		
