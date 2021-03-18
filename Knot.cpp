@@ -91,10 +91,13 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 	const bool bitBkDi = static_cast<bool>(sym & 0x20);
 
 	const bool isEvenRows = (iMax - iMin + 1) % 2 == 0;
+	const bool isEvenCols = (jMax - jMin + 1) % 2 == 0;
 	const bool isAllRows = iMin == 0 && iMax == h - 1;
 	const bool isAllCols = jMin == 0 && jMax == w - 1;
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
+	const GlyphFlag midRowFlag = isEvenRows ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
+	const GlyphFlag midColFlag = isEvenCols ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 
 	const bool isSquare = bitRot4 || bitFwDi || bitBkDi;
 	const bool doWrapX = wrapXEnabled && (!isSquare || wrapYEnabled);
@@ -132,7 +135,9 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 				 */
 				(
 					(bitHori && isAllRows && i == 0 ? GlyphFlag::CT_MIRU : GlyphFlag::NONE) | 
+					(bitHori && i == iMid ? midRowFlag : GlyphFlag::NONE) | 
 					(bitVert && isAllCols && j == 0 ? GlyphFlag::CT_MIRL : GlyphFlag::NONE) |
+					(bitVert && j == jMid ? midColFlag : GlyphFlag::NONE) |
 					(bitRot4 && isEvenRows && i == iMid && j == jMid ? GlyphFlag::CT_ROT4R : GlyphFlag::NONE) |
 					(bitBkDi && iOffset == jOffset ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE)
 				)
