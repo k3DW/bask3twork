@@ -102,7 +102,7 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 
 	const bool isSquare = bitRot4 || bitFwDi || bitBkDi;
 	const GlyphFlag midRot4Flag = isSquare ? (isEvenRows ? GlyphFlag::CT_ROT4R : !isEvenRows ? GlyphFlag::SA_ROT4 : GlyphFlag::NONE) : GlyphFlag::NONE;
-	const GlyphFlag selfFlag = (iMin == iMax ? GlyphFlag::CT_SELFD : GlyphFlag::NONE) | (jMin == jMax ? GlyphFlag::CT_SELFR : GlyphFlag::NONE); // If this selection is only 1 row in length in either direction, flag appropriately
+	const GlyphFlag selfFlag = (h == 1 ? GlyphFlag::CT_SELFD : GlyphFlag::NONE) | (w == 1 ? GlyphFlag::CT_SELFR : GlyphFlag::NONE); // If this selection is only 1 row in length in either direction, flag appropriately
 	
 	const bool doWrapX = wrapXEnabled && (!isSquare || wrapYEnabled);
 	const bool doWrapY = wrapYEnabled && (!isSquare || wrapXEnabled);
