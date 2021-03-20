@@ -96,10 +96,14 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 	const bool isAllCols = jMin == 0 && jMax == w - 1;
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
-	const GlyphFlag midRowFlag = isEvenRows ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
-	const GlyphFlag midColFlag = isEvenCols ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+	const GlyphFlag midHoriFlag = isEvenRows ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
+	const GlyphFlag midVertFlag = isEvenCols ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+	const GlyphFlag midRot2Flag = isEvenRows && !isEvenCols ? GlyphFlag::CT_ROT2D : !isEvenRows && isEvenCols ? GlyphFlag::CT_ROT2R : !isEvenRows && !isEvenCols ? GlyphFlag::SA_ROT2 : GlyphFlag::NONE;
 
 	const bool isSquare = bitRot4 || bitFwDi || bitBkDi;
+	const GlyphFlag midRot4Flag = isSquare ? (isEvenRows ? GlyphFlag::CT_ROT4R : !isEvenRows ? GlyphFlag::SA_ROT4 : GlyphFlag::NONE) : GlyphFlag::NONE;
+	const GlyphFlag selfFlag = (iMin == iMax ? GlyphFlag::CT_SELFD : GlyphFlag::NONE) | (jMin == jMax ? GlyphFlag::CT_SELFR : GlyphFlag::NONE); // If this selection is only 1 row in length in either direction, flag appropriately
+	
 	const bool doWrapX = wrapXEnabled && (!isSquare || wrapYEnabled);
 	const bool doWrapY = wrapYEnabled && (!isSquare || wrapXEnabled);
 
@@ -129,25 +133,24 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 				j == w - 1	? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left)		: (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
 				/** The \c boolFlags argument in RandomGlyph() has different components added, under various conditions. 
 				 *  (a) If this type of symmetry includes horizontal reflection, then add \c GlyphFlag::CT_MIRU, only if the selection encompasses all rows and if the current location is in the uppermost row of the Knot.
-				 *  (b) If this type of symmetry includes vertical reflection, then add \c GlyphFlag::CT_MIRL, only if the selection encompasses all columns and if the current location is in the leftmost column of the Knot.
-				 *  (c) If this type of symmetry includes 4-fold rotation, then add \c GlyphFlag::CT_ROT4R, only if the selection has an even number of rows and if the location is in the middle row and the middle column.
-				 *  (d) If this type of symmetry includes back diagonal reflection, then add \c GlyphFlag::SA_MIRBD, only if the \c i offset and the \c j offset are equal, meaning that the location is along the diagonal.
+				 *  (b) If this type of symmetry includes horizontal reflection but this time the current operation is in the middle row, then add either \c GlyphFlag::CT_MIRD or \c GlyphFlag::SA_MIRX depending on parity.
+				 *  (c) If this type of symmetry includes vertical reflection, then add \c GlyphFlag::CT_MIRL, only if the selection encompasses all columns and if the current location is in the leftmost column of the Knot.
+				 *  (d) If this type of symmetry includes vertical reflection but this time the current operation is in the middle column, then add either \c GlyphFlag::CT_MIRR or \c GlyphFlag::SA_MIRY depending on parity.
+				 *  (e) If this type of symmetry includes 2-way rotation and the current operation is in the middle row and middle column, then add either \c GlyphFlag::CT_ROT2D, \c GlyphFlag::CT_ROT2R, or \c GlyphFlag::SA_ROT2, depending on the parities.
+				 *  (f) If this type of symmetry includes 4-way rotation and the current operation is in the middle row and middle column, then add either \c GlyphFlag::CT_ROT4R or \c GlyphFlag::SA_ROT4 depending on the parity.
+				 *  (g) If this type of symmetry includes back diagonal reflection, then add \c GlyphFlag::SA_MIRBD, only if the \c i offset and the \c j offset are equal, meaning that the location is along the diagonal.
+				 *  (h) If this selection is only 1 row in height, add GlyphFlag::CT_SELFD.
+				 *  (i) If this selection is only 1 column in width, add GlyphFlag::CT_SELFR.
 				 */
 				(
 					(bitHori && isAllRows && i == 0 ? GlyphFlag::CT_MIRU : GlyphFlag::NONE) | 
-					(bitHori && i == iMid ? midRowFlag : GlyphFlag::NONE) | 
+					(bitHori && i == iMid ? midHoriFlag : GlyphFlag::NONE) | 
 					(bitVert && isAllCols && j == 0 ? GlyphFlag::CT_MIRL : GlyphFlag::NONE) |
-					(bitVert && j == jMid ? midColFlag : GlyphFlag::NONE) |
-					(bitRot2 && i == iMid && j == jMid ? (
-						isEvenRows && !isEvenCols ? GlyphFlag::CT_ROT2D : 
-						!isEvenRows && isEvenCols ? GlyphFlag::CT_ROT2R : 
-						!isEvenRows && !isEvenCols ? GlyphFlag::SA_ROT2 : GlyphFlag::NONE
-					) : GlyphFlag::NONE) |
-					(bitRot4 && isSquare && i == iMid && j == jMid ? (
-						isEvenRows ? GlyphFlag::CT_ROT4R :
-						!isEvenRows ? GlyphFlag::SA_ROT4 : GlyphFlag::NONE
-					) : GlyphFlag::NONE) |
-					(bitBkDi && isSquare && iOffset == jOffset ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE)
+					(bitVert && j == jMid ? midVertFlag : GlyphFlag::NONE) |
+					(bitRot2 && i == iMid && j == jMid ? midRot2Flag : GlyphFlag::NONE) |
+					(bitRot4 && i == iMid && j == jMid ? midRot4Flag : GlyphFlag::NONE) |
+					(bitBkDi && isSquare && iOffset == jOffset ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE) |
+					(selfFlag)
 				)
 			);
 
