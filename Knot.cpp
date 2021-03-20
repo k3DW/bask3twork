@@ -98,8 +98,8 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 	const int jMid = (jMin + jMax) / 2;
 	const GlyphFlag midHoriFlag = isEvenRows ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
 	const GlyphFlag midVertFlag = isEvenCols ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
-	const GlyphFlag midRot2Flag = isEvenRows && !isEvenCols ? GlyphFlag::CT_ROT2D : !isEvenRows && isEvenCols ? GlyphFlag::CT_ROT2R : !isEvenRows && !isEvenCols ? GlyphFlag::SA_ROT2 : GlyphFlag::NONE;
-
+	const GlyphFlag midRot2Flag = isEvenRows ? (isEvenCols ? GlyphFlag::NONE : GlyphFlag::CT_ROT2D) : (isEvenCols ? GlyphFlag::CT_ROT2R : GlyphFlag::SA_ROT2);
+	
 	const bool isSquare = bitRot4 || bitFwDi || bitBkDi;
 	const GlyphFlag midRot4Flag = isSquare ? (isEvenRows ? GlyphFlag::CT_ROT4R : !isEvenRows ? GlyphFlag::SA_ROT4 : GlyphFlag::NONE) : GlyphFlag::NONE;
 	const GlyphFlag selfFlag = (h == 1 ? GlyphFlag::CT_SELFD : GlyphFlag::NONE) | (w == 1 ? GlyphFlag::CT_SELFR : GlyphFlag::NONE); // If this selection is only 1 row in length in either direction, flag appropriately
