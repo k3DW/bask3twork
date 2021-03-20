@@ -138,8 +138,16 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 					(bitHori && i == iMid ? midRowFlag : GlyphFlag::NONE) | 
 					(bitVert && isAllCols && j == 0 ? GlyphFlag::CT_MIRL : GlyphFlag::NONE) |
 					(bitVert && j == jMid ? midColFlag : GlyphFlag::NONE) |
-					(bitRot4 && isEvenRows && i == iMid && j == jMid ? GlyphFlag::CT_ROT4R : GlyphFlag::NONE) |
-					(bitBkDi && iOffset == jOffset ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE)
+					(bitRot2 && i == iMid && j == jMid ? (
+						isEvenRows && !isEvenCols ? GlyphFlag::CT_ROT2D : 
+						!isEvenRows && isEvenCols ? GlyphFlag::CT_ROT2R : 
+						!isEvenRows && !isEvenCols ? GlyphFlag::SA_ROT2 : GlyphFlag::NONE
+					) : GlyphFlag::NONE) |
+					(bitRot4 && isSquare && i == iMid && j == jMid ? (
+						isEvenRows ? GlyphFlag::CT_ROT4R :
+						!isEvenRows ? GlyphFlag::SA_ROT4 : GlyphFlag::NONE
+					) : GlyphFlag::NONE) |
+					(bitBkDi && isSquare && iOffset == jOffset ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE)
 				)
 			);
 

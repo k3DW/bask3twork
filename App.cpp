@@ -32,7 +32,7 @@
 		~~3d) Implement logic
 	4) FIX BUGS
 		4a) Edge case of thin knots with wrapping
-		4b) Edge case of central glyph with reflecting
+		~~4b) Proper symmetry flags
 */
 
 /* TODO for later versions */
