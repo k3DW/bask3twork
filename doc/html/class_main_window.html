@@ -104,9 +104,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:ae377ce9609d5f9e1eec62dd3e71b0948"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#ae377ce9609d5f9e1eec62dd3e71b0948">RefreshMinSize</a> ()</td></tr>
 <tr class="memdesc:ae377ce9609d5f9e1eec62dd3e71b0948"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the minimum size of the window, and sets the size of the window if not maximized.  <a href="class_main_window.html#ae377ce9609d5f9e1eec62dd3e71b0948">More...</a><br /></td></tr>
 <tr class="separator:ae377ce9609d5f9e1eec62dd3e71b0948"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdc2c19c7dc438183d81a4906e224d08"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#afdc2c19c7dc438183d81a4906e224d08">gridRegenFunction</a> (wxCommandEvent &amp;evt)</td></tr>
-<tr class="memdesc:afdc2c19c7dc438183d81a4906e224d08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the values in the <code>wxTextCtrl</code> boxes to regenerate the <a class="el" href="class_display_grid.html" title="As a more specialized wxPanel object, this class represents the grid to be displayed on the left side...">DisplayGrid</a> to this new size.  <a href="class_main_window.html#afdc2c19c7dc438183d81a4906e224d08">More...</a><br /></td></tr>
-<tr class="separator:afdc2c19c7dc438183d81a4906e224d08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6e5abdf73f1a309b5200ce28209b1c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_main_window.html#ae6e5abdf73f1a309b5200ce28209b1c1">selectToggleFunction</a> (wxCommandEvent &amp;evt)</td></tr>
 <tr class="memdesc:ae6e5abdf73f1a309b5200ce28209b1c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function is bound to the <code>show/hide</code> button, so it highlights and unhighlights the selection.  <a href="class_main_window.html#ae6e5abdf73f1a309b5200ce28209b1c1">More...</a><br /></td></tr>
 <tr class="separator:ae6e5abdf73f1a309b5200ce28209b1c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -218,8 +215,8 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class
 <p>Also creates the status bar, sets the background colour, initializes all WX objects, and sets the window size and minimum size.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">h</td><td>The initial height of the grid, but can be changed later when <a class="el" href="class_main_window.html#afdc2c19c7dc438183d81a4906e224d08" title="Applies the values in the wxTextCtrl boxes to regenerate the DisplayGrid to this new size.">MainWindow::gridRegenFunction()</a> is called </td></tr>
-    <tr><td class="paramname">w</td><td>The initial width of the grid, but can be changed later when <a class="el" href="class_main_window.html#afdc2c19c7dc438183d81a4906e224d08" title="Applies the values in the wxTextCtrl boxes to regenerate the DisplayGrid to this new size.">MainWindow::gridRegenFunction()</a> is called </td></tr>
+    <tr><td class="paramname">h</td><td>The initial height of the grid, but can be changed later when MainWindow::gridRegenFunction() is called </td></tr>
+    <tr><td class="paramname">w</td><td>The initial width of the grid, but can be changed later when MainWindow::gridRegenFunction() is called </td></tr>
     <tr><td class="paramname">title</td><td>The title of the whole window </td></tr>
   </table>
   </dd>
@@ -367,37 +364,6 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class
 </div><div class="memdoc">
 <p><b>Method</b> </p>
 <p>Change the size and minimum size of the window to fit the content. To do this, the minimum size must first be set to <code>wxDefaultSize</code>, before finding the new size with <code>GetBestSize()</code>. The minimum size is set to this new size, but the current size is only changed if the window is not maixmized.</p>
-
-</div>
-</div>
-<a id="afdc2c19c7dc438183d81a4906e224d08"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afdc2c19c7dc438183d81a4906e224d08">&#9670;&nbsp;</a></span>gridRegenFunction()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void MainWindow::gridRegenFunction </td>
-          <td>(</td>
-          <td class="paramtype">wxCommandEvent &amp;&#160;</td>
-          <td class="paramname"><em>evt</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p><b>Method</b> </p>
-<p>First, check if the values in the boxes are numbers. If not, send a <code>mxMessageBox</code> with an error message and return. Then check if the numbers in the boxes are positive integers. If not, send a different error message and return.</p>
-<p>Next, update <code>h</code> and <code>w</code> member variables, then reinitialize the <a class="el" href="class_display_grid.html" title="As a more specialized wxPanel object, this class represents the grid to be displayed on the left side...">DisplayGrid</a> using <a class="el" href="class_main_window.html#a552d704ac83592a88ff964205e39db0f" title="One of 6 init functions which chunk the initializing process, but the only one documented.">MainWindow::initDispSizer()</a>.</p>
-<p>Then, reset the select coordinates with <a class="el" href="class_main_window.html#aa6801d72b7991e7c4b542b13aaa96a9c" title="Resets the values of iMin, jMin, iMax, and jMax to the default values, by calling MainWindow::changeS...">MainWindow::resetSelectCoord()</a>, regenerate and export textbox with <a class="el" href="class_main_window.html#acf8bff11024070e822bfb7aa34dee206" title="Defines the export textbox with a size dependent on the height and width of the knot.">MainWindow::regenExportBox()</a>, and reset the knot wrapping <code>wxMenuItem</code> objects.</p>
-<p>Lastly, refresh the minimum size of the window.</p>
 
 </div>
 </div>
