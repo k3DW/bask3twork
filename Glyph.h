@@ -90,8 +90,12 @@ enum class GlyphFlag : ull {
 	CT_MIRR  = 1LL << 31,	///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its right side
 	SA_MIRFD = 1LL << 32,	///< Is this Glyph the same after mirroring across the forward diagonal
 	SA_MIRBD = 1LL << 33,	///< Is this Glyph the same after mirroring across the backward diagonal
+	CT_SELFU = 1LL << 34,	///< Can this Glyph connect to itself on the upper side of the Glyph
+	CT_SELFD = 1LL << 35,	///< Can this Glyph connect to itself on the lower side of the Glyph
+	CT_SELFL = 1LL << 36,	///< Can this Glyph connect to itself on the left side of the Glyph
+	CT_SELFR = 1LL << 37,	///< Can this Glyph connect to itself on the right side of the Glyph
 
-	COND_MASK = 0b111111111111111111LL << 16, ///< The mask of all the non-Side flags
+	COND_MASK = 0b1111111111111111111111LL << 16, ///< The mask of all the non-Side flags
 };
 constexpr inline GlyphFlag operator|(GlyphFlag flag1, GlyphFlag flag2)
 /// Allows GlyphFlag values to have \c operator| used on them, to generate new GlyphFlag values
@@ -145,6 +149,10 @@ struct Glyph {
 			unsigned int connectToMirrorRight : 1;	///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its right side
 			unsigned int sameAfterMirrorFwdDiag : 1;	///< Is this Glyph the same after mirroring across the horizontal line
 			unsigned int sameAfterMirrorBackDiag : 1;	///< Is this Glyph the same after mirroring across the vertical line
+			unsigned int connectToSelfUp	: 1;	///< Can this Glyph connect to itself on the upper side of the Glyph
+			unsigned int connectToSelfDown	: 1;	///< Can this Glyph connect to itself on the lower side of the Glyph
+			unsigned int connectToSelfLeft	: 1;	///< Can this Glyph connect to itself on the left side of the Glyph
+			unsigned int connectToSelfRight	: 1;	///< Can this Glyph connect to itself on the right side of the Glyph
 		};
 		GlyphFlag flags;	///< The total signature of this glyph, in a union with all the other flags to access the individual flags simultaneously
 	};
@@ -169,7 +177,11 @@ struct Glyph {
 		connectToMirrorDown		{down	== mirXConnection(down)},
 		connectToMirrorLeft		{left	== mirYConnection(left)},
 		connectToMirrorRight	{right	== mirYConnection(right)},
-		sameAfterMirrorFwdDiag{ sameAfterMirrorFwdDiag }, sameAfterMirrorBackDiag{ sameAfterMirrorBackDiag } {}
+		sameAfterMirrorFwdDiag{ sameAfterMirrorFwdDiag }, sameAfterMirrorBackDiag{ sameAfterMirrorBackDiag },
+		connectToSelfUp			{up		== down},
+		connectToSelfDown		{up		== down},
+		connectToSelfLeft		{left	== right},
+		connectToSelfRight		{left	== right}	{}
 
 	static constexpr int TOTAL = 190; ///< The total number of glyphs used
 };
