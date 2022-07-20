@@ -60,7 +60,7 @@ private:
 
 	static constexpr int MAJOR_VERSION = 0;
 	static constexpr int MINOR_VERSION = 5;
-	static constexpr int PATCH_VERSION = 0;
+	static constexpr int PATCH_VERSION = 1;
 	static const wxString VERSION;
 
 public:
