@@ -20,7 +20,7 @@
   <td id="projectlogo"><img alt="Logo" src="k3DW.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Knots
-   &#160;<span id="projectnumber">Version 0.3</span>
+   &#160;<span id="projectnumber">Version 0.5</span>
    </div>
    <div id="projectbrief">Celtic Knot Editor</div>
   </td>
@@ -80,7 +80,7 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="_glyph_8h.html#a8ad556416c540197a47d0dd20a2e833da21507b40c80068eda19865706fdc2403">RIGHT</a> = 8
 <br />
  }</td></tr>
-<tr class="memdesc:a8ad556416c540197a47d0dd20a2e833d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The side of a glyph, as a bitfield enum, which can undergo the <code>operator|</code> and <code>operator&amp;</code>.  <a href="_glyph_8h.html#a8ad556416c540197a47d0dd20a2e833d">More...</a><br /></td></tr>
+<tr class="memdesc:a8ad556416c540197a47d0dd20a2e833d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The side of a <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a>, as a bitfield enum, which can undergo the <code>operator|</code> and <code>operator&amp;</code>.  <a href="_glyph_8h.html#a8ad556416c540197a47d0dd20a2e833d">More...</a><br /></td></tr>
 <tr class="separator:a8ad556416c540197a47d0dd20a2e833d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32899c246f578f1d729ea03e9493ab7b"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> : unsigned int { <br />
 &#160;&#160;<a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960">DO_NOT_CARE</a> = 0
@@ -97,40 +97,47 @@ Enumerations</h2></td></tr>
 , <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba43d5dc58ac8482dd1ef76432c61bcc32">ORTHO_RIGHT</a> = 9
 <br />
  }</td></tr>
-<tr class="memdesc:a32899c246f578f1d729ea03e9493ab7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The connection on one side of a glyph, as an incremental enum, which can undergo the <code>operator|</code> and <code>operator&amp;</code>.  <a href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">More...</a><br /></td></tr>
+<tr class="memdesc:a32899c246f578f1d729ea03e9493ab7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The connection on one side of a <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a>, as an incremental enum, which can undergo the <code>operator|</code> and <code>operator&amp;</code>.  <a href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">More...</a><br /></td></tr>
 <tr class="separator:a32899c246f578f1d729ea03e9493ab7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af98d1403e4d5e9c6708d46be391e8174"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a> : unsigned int { <br />
-&#160;&#160;<a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174ab50339a10e1de285ac99d4c3990b8693">NONE</a> = 0
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174afbaedde498cdead4f2780217646e9ba1">UP</a> = 0b1111 &lt;&lt; 0
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174ac4e0e4e3118472beeb2ae75827450f1f">DOWN</a> = 0b1111 &lt;&lt; 4
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174a684d325a7303f52e64011467ff5c5758">LEFT</a> = 0b1111 &lt;&lt; 8
+<tr class="memitem:a13a5bd18bbef428ccc52ab93179506f8"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a> : ull { <br />
+&#160;&#160;<a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8ab50339a10e1de285ac99d4c3990b8693">NONE</a> = 0
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8afbaedde498cdead4f2780217646e9ba1">UP</a> = 0b1111 &lt;&lt; 0
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8ac4e0e4e3118472beeb2ae75827450f1f">DOWN</a> = 0b1111 &lt;&lt; 4
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a684d325a7303f52e64011467ff5c5758">LEFT</a> = 0b1111 &lt;&lt; 8
 , <br />
-&#160;&#160;<a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174a21507b40c80068eda19865706fdc2403">RIGHT</a> = 0b1111 &lt;&lt; 12
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174aae2e66b9468074e7be7ce4156a034a10">SA_ROT4</a> = 1 &lt;&lt; 16
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174a31614ac10d702a6652935fd63239cce5">SA_ROT2</a> = 1 &lt;&lt; 17
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174a5a37c2851cd8c4df3d82ae1ebd99729e">SA_MIRX</a> = 1 &lt;&lt; 18
+&#160;&#160;<a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a21507b40c80068eda19865706fdc2403">RIGHT</a> = 0b1111 &lt;&lt; 12
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8aae2e66b9468074e7be7ce4156a034a10">SA_ROT4</a> = 1 &lt;&lt; 16
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a31614ac10d702a6652935fd63239cce5">SA_ROT2</a> = 1 &lt;&lt; 17
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a5a37c2851cd8c4df3d82ae1ebd99729e">SA_MIRX</a> = 1 &lt;&lt; 18
 , <br />
-&#160;&#160;<a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174a4b62e0629aad3c34ae4cef0e0024f582">SA_MIRY</a> = 1 &lt;&lt; 19
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174af42c8c61471362e47cc181fe3c3672a5">CT_ROT4U</a> = 1 &lt;&lt; 20
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174afa28665745850ab47ee2cbbb8ca61f02">CT_ROT4D</a> = 1 &lt;&lt; 21
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174acaf9572918bf7a9dc9b96f33872e9928">CT_ROT4L</a> = 1 &lt;&lt; 22
+&#160;&#160;<a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a4b62e0629aad3c34ae4cef0e0024f582">SA_MIRY</a> = 1 &lt;&lt; 19
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8af42c8c61471362e47cc181fe3c3672a5">CT_ROT4U</a> = 1 &lt;&lt; 20
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8afa28665745850ab47ee2cbbb8ca61f02">CT_ROT4D</a> = 1 &lt;&lt; 21
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8acaf9572918bf7a9dc9b96f33872e9928">CT_ROT4L</a> = 1 &lt;&lt; 22
 , <br />
-&#160;&#160;<a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174aa7d8f2f8e395339365a5f0f321ec78d2">CT_ROT4R</a> = 1 &lt;&lt; 23
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174ac04a8b57166d87410842c6898dc0ff00">CT_ROT2U</a> = 1 &lt;&lt; 24
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174a7aa74f8d1969f250f1c75eb4d76c1469">CT_ROT2D</a> = 1 &lt;&lt; 25
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174ad61c717aadb305b1f79f37cb74d27f48">CT_ROT2L</a> = 1 &lt;&lt; 26
+&#160;&#160;<a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8aa7d8f2f8e395339365a5f0f321ec78d2">CT_ROT4R</a> = 1 &lt;&lt; 23
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8ac04a8b57166d87410842c6898dc0ff00">CT_ROT2U</a> = 1 &lt;&lt; 24
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a7aa74f8d1969f250f1c75eb4d76c1469">CT_ROT2D</a> = 1 &lt;&lt; 25
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8ad61c717aadb305b1f79f37cb74d27f48">CT_ROT2L</a> = 1 &lt;&lt; 26
 , <br />
-&#160;&#160;<a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174a38abc8f82c26488e82b8d6e4fb826263">CT_ROT2R</a> = 1 &lt;&lt; 27
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174aee166531e0216fec60d158c4c5a3f415">CT_MIRU</a> = 1 &lt;&lt; 28
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174a386299b5033c4da2f9854b3633d87a7d">CT_MIRD</a> = 1 &lt;&lt; 29
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174a069c188c62861f4803313a47a7b8d84c">CT_MIRL</a> = 1 &lt;&lt; 30
+&#160;&#160;<a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a38abc8f82c26488e82b8d6e4fb826263">CT_ROT2R</a> = 1 &lt;&lt; 27
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8aee166531e0216fec60d158c4c5a3f415">CT_MIRU</a> = 1 &lt;&lt; 28
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a386299b5033c4da2f9854b3633d87a7d">CT_MIRD</a> = 1 &lt;&lt; 29
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a069c188c62861f4803313a47a7b8d84c">CT_MIRL</a> = 1 &lt;&lt; 30
 , <br />
-&#160;&#160;<a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174a8cbb93090d2fa3df959e038674062062">CT_MIRR</a> = static_cast&lt;unsigned int&gt;(1 &lt;&lt; 31)
-, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174acdb3c7d5cbfac16864f3e22783f2f09a">COND_MASK</a> = 0b11111111111111110000000000000000
+&#160;&#160;<a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a8cbb93090d2fa3df959e038674062062">CT_MIRR</a> = 1LL &lt;&lt; 31
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a6d2e7254e8bd9f8a8e3181280ad38fb9">SA_MIRFD</a> = 1LL &lt;&lt; 32
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8aa578f5559c27b5bbd73cb31c82105af1">SA_MIRBD</a> = 1LL &lt;&lt; 33
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a3b7df4ec8b9f4146d8dd5140ff41db5a">CT_SELFU</a> = 1LL &lt;&lt; 34
+, <br />
+&#160;&#160;<a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a3c7bf7cb44a52aaf07def8dc15a4ab07">CT_SELFD</a> = 1LL &lt;&lt; 35
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8ad18ab626baf877133c69e41cb7cfee0b">CT_SELFL</a> = 1LL &lt;&lt; 36
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8a44f416e77a9679d9728aff1998c29103">CT_SELFR</a> = 1LL &lt;&lt; 37
+, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8acdb3c7d5cbfac16864f3e22783f2f09a">COND_MASK</a> = 0b1111111111111111111111LL &lt;&lt; 16
 <br />
  }</td></tr>
-<tr class="memdesc:af98d1403e4d5e9c6708d46be391e8174"><td class="mdescLeft">&#160;</td><td class="mdescRight">The bit flag for each of the properties of a <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> object.  <a href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">More...</a><br /></td></tr>
-<tr class="separator:af98d1403e4d5e9c6708d46be391e8174"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a13a5bd18bbef428ccc52ab93179506f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The bit flag for each of the properties of a <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> object.  <a href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">More...</a><br /></td></tr>
+<tr class="separator:a13a5bd18bbef428ccc52ab93179506f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -158,28 +165,40 @@ constexpr <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">
 constexpr <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#aeda453a8695f1c26e232c06c390010f3">mirYConnection</a> (<a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> input)</td></tr>
 <tr class="memdesc:aeda453a8695f1c26e232c06c390010f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function takes a Connection to its counterpart after being mirrored across the vertical line. <br /></td></tr>
 <tr class="separator:aeda453a8695f1c26e232c06c390010f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a420570f2eb4b2598bd2b2cd78307ae3c"><td class="memItemLeft" align="right" valign="top"><a id="a420570f2eb4b2598bd2b2cd78307ae3c"></a>
+constexpr <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#a420570f2eb4b2598bd2b2cd78307ae3c">mirFDConnection</a> (<a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> input)</td></tr>
+<tr class="memdesc:a420570f2eb4b2598bd2b2cd78307ae3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function takes a Connection to its counterpart after being mirrored across the forward diagonal line. <br /></td></tr>
+<tr class="separator:a420570f2eb4b2598bd2b2cd78307ae3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade9284e4e28621abd3e47340e04709cd"><td class="memItemLeft" align="right" valign="top"><a id="ade9284e4e28621abd3e47340e04709cd"></a>
+constexpr <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#ade9284e4e28621abd3e47340e04709cd">mirBDConnection</a> (<a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> input)</td></tr>
+<tr class="memdesc:ade9284e4e28621abd3e47340e04709cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function takes a Connection to its counterpart after being mirrored across the backward diagonal line. <br /></td></tr>
+<tr class="separator:ade9284e4e28621abd3e47340e04709cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad78a664cc190802172db559ae391bb83"><td class="memItemLeft" align="right" valign="top"><a id="ad78a664cc190802172db559ae391bb83"></a>
-constexpr <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#ad78a664cc190802172db559ae391bb83">operator|</a> (<a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a> flag1, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a> flag2)</td></tr>
+constexpr <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#ad78a664cc190802172db559ae391bb83">operator|</a> (<a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a> flag1, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a> flag2)</td></tr>
 <tr class="memdesc:ad78a664cc190802172db559ae391bb83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows GlyphFlag values to have <code>operator|</code> used on them, to generate new GlyphFlag values. <br /></td></tr>
 <tr class="separator:ad78a664cc190802172db559ae391bb83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aecbfcd587e51aacc0f1dfe4c9468afdc"><td class="memItemLeft" align="right" valign="top"><a id="aecbfcd587e51aacc0f1dfe4c9468afdc"></a>
-constexpr <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#aecbfcd587e51aacc0f1dfe4c9468afdc">operator&amp;</a> (<a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a> flag1, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a> flag2)</td></tr>
+constexpr <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#aecbfcd587e51aacc0f1dfe4c9468afdc">operator&amp;</a> (<a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a> flag1, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a> flag2)</td></tr>
 <tr class="memdesc:aecbfcd587e51aacc0f1dfe4c9468afdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows GlyphFlag values to have <code>operator&amp;</code> used on them, to generate new GlyphFlag values. <br /></td></tr>
 <tr class="separator:aecbfcd587e51aacc0f1dfe4c9468afdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade3876dea4069a8a4890be2be8bf9988"><td class="memItemLeft" align="right" valign="top"><a id="ade3876dea4069a8a4890be2be8bf9988"></a>
-constexpr <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#ade3876dea4069a8a4890be2be8bf9988">toFlag</a> (<a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> con, <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a> sideFlag)</td></tr>
+constexpr <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#ade3876dea4069a8a4890be2be8bf9988">toFlag</a> (<a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> con, <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a> sideFlag)</td></tr>
 <tr class="memdesc:ade3876dea4069a8a4890be2be8bf9988"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a Connection on a specific side to a GlyphFlag of that specific Connection on the side. <br /></td></tr>
 <tr class="separator:ade3876dea4069a8a4890be2be8bf9988"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07c66574c82c3dff89801d09614610a2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_glyph_8h.html#a78b1aac2cad405fa3a4354de4957a5a1">GlyphVec1</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#a07c66574c82c3dff89801d09614610a2">PossibleGlyphs</a> (const <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> up, const <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> down, const <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> left, const <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> right, const <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a> boolFlags)</td></tr>
-<tr class="memdesc:a07c66574c82c3dff89801d09614610a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function takes in the desired flags and outputs the vector of all glyphs which meet the criteria.  <a href="_glyph_8h.html#a07c66574c82c3dff89801d09614610a2">More...</a><br /></td></tr>
-<tr class="separator:a07c66574c82c3dff89801d09614610a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7795d67dfd613c28368e52927d357c27"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_glyph.html">Glyph</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#a7795d67dfd613c28368e52927d357c27">RandomGlyph</a> (const <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> up, const <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> down, const <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> left, const <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a> right, const <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a> boolFlags)</td></tr>
+<tr class="memdesc:a7795d67dfd613c28368e52927d357c27"><td class="mdescLeft">&#160;</td><td class="mdescRight">This function takes in the desired flags and outputs the vector of all glyphs which meet the criteria.  <a href="_glyph_8h.html#a7795d67dfd613c28368e52927d357c27">More...</a><br /></td></tr>
+<tr class="separator:a7795d67dfd613c28368e52927d357c27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a82f247a84be21f6dae66d93856e80cb1"><td class="memItemLeft" align="right" valign="top"><a id="a82f247a84be21f6dae66d93856e80cb1"></a>
 const std::array&lt; <a class="el" href="struct_glyph.html">Glyph</a>, <a class="el" href="struct_glyph.html#ada7b75d96f65ac892d5bcfef24afa921">Glyph::TOTAL</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#a82f247a84be21f6dae66d93856e80cb1">AllGlyphs</a></td></tr>
-<tr class="memdesc:a82f247a84be21f6dae66d93856e80cb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The array of every <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> in the program (generated in Excel), the only place where a <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> object is initialized; every other place a <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> is referenced in the whole codebase is actually a pointer to one of the Glyphs in AllGlyphs. <br /></td></tr>
+<tr class="memdesc:a82f247a84be21f6dae66d93856e80cb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The array of every <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> in the program (generated in Excel), the only place where a <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> object is initialized; every other place a <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> is referenced in the whole codebase is actually a pointer to one of the Glyphs in <code>AllGlyphs</code>. <br /></td></tr>
 <tr class="separator:a82f247a84be21f6dae66d93856e80cb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ba48f7e6993a9571e2ad2341ed5aeb9"><td class="memItemLeft" align="right" valign="top"><a id="a6ba48f7e6993a9571e2ad2341ed5aeb9"></a>
+const std::map&lt; wxUniChar, const <a class="el" href="struct_glyph.html">Glyph</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#a6ba48f7e6993a9571e2ad2341ed5aeb9">UnicharToGlyph</a></td></tr>
+<tr class="memdesc:a6ba48f7e6993a9571e2ad2341ed5aeb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The mapping from the unicode character to the <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> that uses that character, used for reading knots. <br /></td></tr>
+<tr class="separator:a6ba48f7e6993a9571e2ad2341ed5aeb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d2a46e206b86371192833462ba4f5ee"><td class="memItemLeft" align="right" valign="top"><a id="a1d2a46e206b86371192833462ba4f5ee"></a>
 const <a class="el" href="struct_glyph.html">Glyph</a> *const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_glyph_8h.html#a1d2a46e206b86371192833462ba4f5ee">DefaultGlyph</a> = &amp;<a class="el" href="_glyph_8h.html#a82f247a84be21f6dae66d93856e80cb1">AllGlyphs</a>[0]</td></tr>
 <tr class="memdesc:a1d2a46e206b86371192833462ba4f5ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> to fill the <a class="el" href="class_knot.html" title="This class represents a knot object as a grid of glyphs, with corresponding public functions to gener...">Knot</a> upon initialization, which is set as the <code>space</code> character, <code>\x20</code> . <br /></td></tr>
@@ -264,8 +283,8 @@ const <a class="el" href="struct_glyph.html">Glyph</a> *const&#160;</td><td clas
 
 </div>
 </div>
-<a id="af98d1403e4d5e9c6708d46be391e8174"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af98d1403e4d5e9c6708d46be391e8174">&#9670;&nbsp;</a></span>GlyphFlag</h2>
+<a id="a13a5bd18bbef428ccc52ab93179506f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13a5bd18bbef428ccc52ab93179506f8">&#9670;&nbsp;</a></span>GlyphFlag</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -274,7 +293,7 @@ const <a class="el" href="struct_glyph.html">Glyph</a> *const&#160;</td><td clas
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a> : unsigned int</td>
+          <td class="memname">enum <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a> : ull</td>
         </tr>
       </table>
   </td>
@@ -284,57 +303,69 @@ const <a class="el" href="struct_glyph.html">Glyph</a> *const&#160;</td><td clas
 </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174ab50339a10e1de285ac99d4c3990b8693"></a>NONE&#160;</td><td class="fielddoc"><p>No flag. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8ab50339a10e1de285ac99d4c3990b8693"></a>NONE&#160;</td><td class="fielddoc"><p>No flag. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174afbaedde498cdead4f2780217646e9ba1"></a>UP&#160;</td><td class="fielddoc"><p>The upper side 4-bit mask. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8afbaedde498cdead4f2780217646e9ba1"></a>UP&#160;</td><td class="fielddoc"><p>The upper side 4-bit mask. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174ac4e0e4e3118472beeb2ae75827450f1f"></a>DOWN&#160;</td><td class="fielddoc"><p>The lower side 4-bit mask. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8ac4e0e4e3118472beeb2ae75827450f1f"></a>DOWN&#160;</td><td class="fielddoc"><p>The lower side 4-bit mask. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174a684d325a7303f52e64011467ff5c5758"></a>LEFT&#160;</td><td class="fielddoc"><p>The left side 4-bit mask. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a684d325a7303f52e64011467ff5c5758"></a>LEFT&#160;</td><td class="fielddoc"><p>The left side 4-bit mask. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174a21507b40c80068eda19865706fdc2403"></a>RIGHT&#160;</td><td class="fielddoc"><p>The right side 4-bit mask. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a21507b40c80068eda19865706fdc2403"></a>RIGHT&#160;</td><td class="fielddoc"><p>The right side 4-bit mask. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174aae2e66b9468074e7be7ce4156a034a10"></a>SA_ROT4&#160;</td><td class="fielddoc"><p>Is this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> the same after rotating by 90 degrees. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8aae2e66b9468074e7be7ce4156a034a10"></a>SA_ROT4&#160;</td><td class="fielddoc"><p>Is this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> the same after rotating by 90 degrees. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174a31614ac10d702a6652935fd63239cce5"></a>SA_ROT2&#160;</td><td class="fielddoc"><p>Is this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> the same after rotating by 180 degrees. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a31614ac10d702a6652935fd63239cce5"></a>SA_ROT2&#160;</td><td class="fielddoc"><p>Is this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> the same after rotating by 180 degrees. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174a5a37c2851cd8c4df3d82ae1ebd99729e"></a>SA_MIRX&#160;</td><td class="fielddoc"><p>Is this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> the same after mirroring across the horizontal line. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a5a37c2851cd8c4df3d82ae1ebd99729e"></a>SA_MIRX&#160;</td><td class="fielddoc"><p>Is this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> the same after mirroring across the horizontal line. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174a4b62e0629aad3c34ae4cef0e0024f582"></a>SA_MIRY&#160;</td><td class="fielddoc"><p>Is this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> the same after mirroring across the vertical line. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a4b62e0629aad3c34ae4cef0e0024f582"></a>SA_MIRY&#160;</td><td class="fielddoc"><p>Is this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> the same after mirroring across the vertical line. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174af42c8c61471362e47cc181fe3c3672a5"></a>CT_ROT4U&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 90-degree-rotated counterpart on its own upper side. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8af42c8c61471362e47cc181fe3c3672a5"></a>CT_ROT4U&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 90-degree-rotated counterpart on its own upper side. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174afa28665745850ab47ee2cbbb8ca61f02"></a>CT_ROT4D&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 90-degree-rotated counterpart on its own lower side. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8afa28665745850ab47ee2cbbb8ca61f02"></a>CT_ROT4D&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 90-degree-rotated counterpart on its own lower side. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174acaf9572918bf7a9dc9b96f33872e9928"></a>CT_ROT4L&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 90-degree-rotated counterpart on its own left side. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8acaf9572918bf7a9dc9b96f33872e9928"></a>CT_ROT4L&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 90-degree-rotated counterpart on its own left side. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174aa7d8f2f8e395339365a5f0f321ec78d2"></a>CT_ROT4R&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 90-degree-rotated counterpart on its own right side. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8aa7d8f2f8e395339365a5f0f321ec78d2"></a>CT_ROT4R&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 90-degree-rotated counterpart on its own right side. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174ac04a8b57166d87410842c6898dc0ff00"></a>CT_ROT2U&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 180-degree-rotated counterpart on its own upper side. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8ac04a8b57166d87410842c6898dc0ff00"></a>CT_ROT2U&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 180-degree-rotated counterpart on its own upper side. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174a7aa74f8d1969f250f1c75eb4d76c1469"></a>CT_ROT2D&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 180-degree-rotated counterpart on its own lower side. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a7aa74f8d1969f250f1c75eb4d76c1469"></a>CT_ROT2D&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 180-degree-rotated counterpart on its own lower side. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174ad61c717aadb305b1f79f37cb74d27f48"></a>CT_ROT2L&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 180-degree-rotated counterpart on its own left side. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8ad61c717aadb305b1f79f37cb74d27f48"></a>CT_ROT2L&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 180-degree-rotated counterpart on its own left side. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174a38abc8f82c26488e82b8d6e4fb826263"></a>CT_ROT2R&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 180-degree-rotated counterpart on its own right side. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a38abc8f82c26488e82b8d6e4fb826263"></a>CT_ROT2R&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its 180-degree-rotated counterpart on its own right side. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174aee166531e0216fec60d158c4c5a3f415"></a>CT_MIRU&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its mirrored counterpart if it is mirrored across its upper side. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8aee166531e0216fec60d158c4c5a3f415"></a>CT_MIRU&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its mirrored counterpart if it is mirrored across its upper side. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174a386299b5033c4da2f9854b3633d87a7d"></a>CT_MIRD&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its mirrored counterpart if it is mirrored across its lower side. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a386299b5033c4da2f9854b3633d87a7d"></a>CT_MIRD&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its mirrored counterpart if it is mirrored across its lower side. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174a069c188c62861f4803313a47a7b8d84c"></a>CT_MIRL&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its mirrored counterpart if it is mirrored across its left side. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a069c188c62861f4803313a47a7b8d84c"></a>CT_MIRL&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its mirrored counterpart if it is mirrored across its left side. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174a8cbb93090d2fa3df959e038674062062"></a>CT_MIRR&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its mirrored counterpart if it is mirrored across its right side. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a8cbb93090d2fa3df959e038674062062"></a>CT_MIRR&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to its mirrored counterpart if it is mirrored across its right side. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="af98d1403e4d5e9c6708d46be391e8174acdb3c7d5cbfac16864f3e22783f2f09a"></a>COND_MASK&#160;</td><td class="fielddoc"><p>The mask of all the non-Side flags. </p>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a6d2e7254e8bd9f8a8e3181280ad38fb9"></a>SA_MIRFD&#160;</td><td class="fielddoc"><p>Is this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> the same after mirroring across the forward diagonal. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8aa578f5559c27b5bbd73cb31c82105af1"></a>SA_MIRBD&#160;</td><td class="fielddoc"><p>Is this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> the same after mirroring across the backward diagonal. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a3b7df4ec8b9f4146d8dd5140ff41db5a"></a>CT_SELFU&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to itself on the upper side of the <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a>. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a3c7bf7cb44a52aaf07def8dc15a4ab07"></a>CT_SELFD&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to itself on the lower side of the <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a>. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8ad18ab626baf877133c69e41cb7cfee0b"></a>CT_SELFL&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to itself on the left side of the <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a>. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8a44f416e77a9679d9728aff1998c29103"></a>CT_SELFR&#160;</td><td class="fielddoc"><p>Can this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> connect to itself on the right side of the <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a>. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a13a5bd18bbef428ccc52ab93179506f8acdb3c7d5cbfac16864f3e22783f2f09a"></a>COND_MASK&#160;</td><td class="fielddoc"><p>The mask of all the non-Side flags. </p>
 </td></tr>
 </table>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a07c66574c82c3dff89801d09614610a2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07c66574c82c3dff89801d09614610a2">&#9670;&nbsp;</a></span>PossibleGlyphs()</h2>
+<a id="a7795d67dfd613c28368e52927d357c27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7795d67dfd613c28368e52927d357c27">&#9670;&nbsp;</a></span>RandomGlyph()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -343,7 +374,7 @@ const <a class="el" href="struct_glyph.html">Glyph</a> *const&#160;</td><td clas
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="_glyph_8h.html#a78b1aac2cad405fa3a4354de4957a5a1">GlyphVec1</a> PossibleGlyphs </td>
+          <td class="memname">const <a class="el" href="struct_glyph.html">Glyph</a>* RandomGlyph </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7b">Connection</a>&#160;</td>
           <td class="paramname"><em>up</em>, </td>
@@ -369,7 +400,7 @@ const <a class="el" href="struct_glyph.html">Glyph</a> *const&#160;</td><td clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174">GlyphFlag</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8">GlyphFlag</a>&#160;</td>
           <td class="paramname"><em>boolFlags</em>&#160;</td>
         </tr>
         <tr>
@@ -386,19 +417,19 @@ const <a class="el" href="struct_glyph.html">Glyph</a> *const&#160;</td><td clas
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">up</td><td>The Connection desired for the upper side. If this does not matter, then pass <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960" title="The connection is irrelevant (no Glyph objects should ever be assigned this value,...">Connection::DO_NOT_CARE</a> </td></tr>
-    <tr><td class="paramname">down</td><td>The Connection desired for the lower side. If this does not matter, then pass <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960" title="The connection is irrelevant (no Glyph objects should ever be assigned this value,...">Connection::DO_NOT_CARE</a> </td></tr>
-    <tr><td class="paramname">left</td><td>The Connection desired for the left side. If this does not matter, then pass <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960" title="The connection is irrelevant (no Glyph objects should ever be assigned this value,...">Connection::DO_NOT_CARE</a> </td></tr>
-    <tr><td class="paramname">right</td><td>The Connection desired for the right side. If this does not matter, then pass <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960" title="The connection is irrelevant (no Glyph objects should ever be assigned this value,...">Connection::DO_NOT_CARE</a> </td></tr>
-    <tr><td class="paramname">boolFlag</td><td>The other condition flags to check for the glyphs, passed by using <code>operator|</code> on GlyphFlag values. Any bits with a value of <code>0</code> are ignored</td></tr>
+    <tr><td class="paramname">up</td><td>The <code>Connection</code> desired for the upper side. If this does not matter, then pass <code><a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960" title="The connection is irrelevant (no Glyph objects should ever be assigned this value,...">Connection::DO_NOT_CARE</a></code> </td></tr>
+    <tr><td class="paramname">down</td><td>The <code>Connection</code> desired for the lower side. If this does not matter, then pass <code><a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960" title="The connection is irrelevant (no Glyph objects should ever be assigned this value,...">Connection::DO_NOT_CARE</a></code> </td></tr>
+    <tr><td class="paramname">left</td><td>The <code>Connection</code> desired for the left side. If this does not matter, then pass <code><a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960" title="The connection is irrelevant (no Glyph objects should ever be assigned this value,...">Connection::DO_NOT_CARE</a></code> </td></tr>
+    <tr><td class="paramname">right</td><td>The <code>Connection</code> desired for the right side. If this does not matter, then pass <code><a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960" title="The connection is irrelevant (no Glyph objects should ever be assigned this value,...">Connection::DO_NOT_CARE</a></code> </td></tr>
+    <tr><td class="paramname">boolFlag</td><td>The other condition flags to check for the glyphs, passed by using <code>operator|</code> on <code>GlyphFlag</code> values. Any bits with a value of <code>0</code> are ignored</td></tr>
   </table>
   </dd>
 </dl>
 <p><b>Method</b> </p>
-<p>This function allows all properties of the Glyphs to be checked at once, instead of checking multiple properties in order. Using this function, as opposed to the previous methods, sped up the knot generating by a large factor.</p>
-<p>First a bit mask is created. If the <code>up</code> Connection is anything other than <a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960" title="The connection is irrelevant (no Glyph objects should ever be assigned this value,...">Connection::DO_NOT_CARE</a>, then use <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174afbaedde498cdead4f2780217646e9ba1" title="The upper side 4-bit mask.">GlyphFlag::UP</a> in the mask. Do this same process for the other 3 Connection values. As well, add the <code>boolFlags</code> to the mask with the <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174acdb3c7d5cbfac16864f3e22783f2f09a" title="The mask of all the non-Side flags.">GlyphFlag::COND_MASK</a> applied. It is assumed that if a flag is nonzero, it is in use. If it is zero, it is ignored.</p>
-<p>Next, determine which value needs to be checked against. For the 4 sides, use the <a class="el" href="_glyph_8h.html#ade3876dea4069a8a4890be2be8bf9988" title="Converts a Connection on a specific side to a GlyphFlag of that specific Connection on the side.">toFlag()</a> function. Add the boolFlags, with the <a class="el" href="_glyph_8h.html#af98d1403e4d5e9c6708d46be391e8174acdb3c7d5cbfac16864f3e22783f2f09a" title="The mask of all the non-Side flags.">GlyphFlag::COND_MASK</a> applied.</p>
-<p>Once all that is done, loop through AllGlyphs. If the <code>flags</code> member of the <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> with the mask applied from above is equal to the value which needs to be checked, then add the pointer to this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> to the output vector.</p>
+<p>This function allows all properties of the Glyphs to be checked at once, instead of checking multiple properties in order. Using this function allows for high speed <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> selection, since all attributes are assessed simultaneously.</p>
+<p>First a bit mask is created. If the <code>up</code> Connection is anything other than <code><a class="el" href="_glyph_8h.html#a32899c246f578f1d729ea03e9493ab7ba2ec1cf0b202854255f0bdd4b11ac7960" title="The connection is irrelevant (no Glyph objects should ever be assigned this value,...">Connection::DO_NOT_CARE</a></code>, then use <code><a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8afbaedde498cdead4f2780217646e9ba1" title="The upper side 4-bit mask.">GlyphFlag::UP</a></code> in the mask. Do this same process for the other 3 Connection values. As well, add the <code>boolFlags</code> to the mask with the <code><a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8acdb3c7d5cbfac16864f3e22783f2f09a" title="The mask of all the non-Side flags.">GlyphFlag::COND_MASK</a></code> applied. It is assumed that if a flag is nonzero, it is in use. If it is zero, it is ignored.</p>
+<p>Next, determine which value needs to be checked against. For the 4 sides, use the <a class="el" href="_glyph_8h.html#ade3876dea4069a8a4890be2be8bf9988" title="Converts a Connection on a specific side to a GlyphFlag of that specific Connection on the side.">toFlag()</a> function. Add the boolFlags, with the <code><a class="el" href="_glyph_8h.html#a13a5bd18bbef428ccc52ab93179506f8acdb3c7d5cbfac16864f3e22783f2f09a" title="The mask of all the non-Side flags.">GlyphFlag::COND_MASK</a></code> applied.</p>
+<p>Once all that is done, loop through <code>AllGlyphs</code>. If the <code>flags</code> member of the <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> with the mask applied from above is equal to the value which needs to be checked, then add the pointer to this <a class="el" href="struct_glyph.html" title="A struct to store the information for all the possible glyphs in the Celtic Knots font,...">Glyph</a> to the output vector.</p>
 
 </div>
 </div>

@@ -2,354 +2,266 @@
 
 Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar), glyphs(GlyphVec2(h, GlyphVec1(w, DefaultGlyph))) {}
 Knot::Knot(GlyphVec2 glyphs, wxStatusBar* statusBar) : h(glyphs.size()), w(glyphs[0].size()), statusBar(statusBar), glyphs(glyphs) {}
-wxString Knot::get(const int i, const int j) const {
-	return glyphs[i][j]->chr;
-}
+wxString Knot::get(const int i, const int j) const { return glyphs[i][j]->chr; }
 
-bool Knot::generateNoSym(ijSignature) {
+bool Knot::generate(Symmetry sym, ijSignature)
+/** Generate a knot with the given symmetry in the given selection.
+ *
+ * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
+ * This function assumes \c iMin \c <= \c iMax and \c jMin \c <= \c jMax, and does not check the values.
+ * The boundary conditions around the selection are maintained.
+ * This function does not check the boundary symmetries to determine whether the specified symmetry is allowed.
+ * The knot will generate with undefined behaviour if the proper symmetry conditions are not met in the first place.
+ *
+ * \param sym The symmetry of the knot to be generated
+ * \param iMin The zero-indexed upper row of the selection visually(lower numerically)
+ * \param jMin The zero-indexed leftmost column of the selection
+ * \param iMax The zero-indexed lower row of the selection visually(higher numerically)
+ * \param jMax The zero-indexed rightmost column of the selection
+ * \return A boolean value denoting whether or not the generating was successful
+ * 
+ * \b Method
+ */
+{
+	/// First, instantiate a \c wxString to show in the status bar,
+	/// then add to it in a \c switch statement for the specific symmetry used.
+	/// If the value for \c sym is not valid, this \c switch statement will cause the function to return \c false.
+	wxString statusBeginning = "Generating ";
+	switch (sym) {
+		case Symmetry::NoSym:		{ statusBeginning += "no symmetry... ";						break; }
+		case Symmetry::HoriSym:		{ statusBeginning += "horizontal symmetry... ";				break; }
+		case Symmetry::VertSym:		{ statusBeginning += "vertical symmetry... ";				break; }
+		case Symmetry::HoriVertSym: { statusBeginning += "horizontal + vertical symmetry... ";	break; }
+		case Symmetry::Rot2Sym:		{ statusBeginning += "2-way rotational symmetry... ";		break; }
+		case Symmetry::Rot4Sym:		{ statusBeginning += "4-way rotational symmetry... ";		break; }
+		case Symmetry::FwdDiag:		{ statusBeginning += "forward diagonal symmetry... ";		break; }
+		case Symmetry::BackDiag:	{ statusBeginning += "backward diagonal symmetry... ";		break; }
+		case Symmetry::FullSym:		{ statusBeginning += "full symmetry... ";					break; }
+		default:
+			return false;
+	}
+
+	/// Then, make a copy of \c glyphs, and set all members in the selection to \c nullptr to denote that they are unassigned.
+	GlyphVec2 baseGlyphs = glyphs;
+	for (int i = iMin; i <= iMax; i++)
+		for (int j = jMin; j <= jMax; j++)
+			baseGlyphs[i][j] = nullptr;
+
+	/// Next, enter a loop, counting the number of attempts made at generating this knot. The steps are as follows.
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
+		/// \b (1) At certain intervals of numbers of attempts, update the status bar with the number of attempts made.
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText("Generating no symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
+			statusBar->SetStatusText(statusBeginning + "Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
-		
-		tryGenerating(newGlyphs, iMin, jMin, iMax, jMax);
+		/// \b (2) Call Knot::tryGenerating() using the copy of \c glyphs created above.
+		///		If it fails, \c continue the loop and try again.
+		std::optional<GlyphVec2> newGlyphs = tryGenerating(baseGlyphs, sym, iMin, jMin, iMax, jMax);
 		if (!newGlyphs) continue;
-		
+
+		/// \b (3) If the knot has been successfully generated, set \c glyphs equal to this generated version and return \c true.
 		glyphs = *newGlyphs;
 		return true;
 	}
+	/// \b (4) If this loop has been completed, then the maximum number of attempts have been tried. Therefore return \c false.
 	return false;
 }
-bool Knot::generateHoriSym(ijSignature) {
-	const int iMid = (iMin + iMax) / 2;
-	const GlyphFlag rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
-	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
-		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText("Generating horizontal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
+std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, ijSignature) const
+/** Called only from Knot::generate(), try generating a knot with the given symmetry for the given selection.
+ * 
+ * This function pulls the required logic in Knot::generate() in order to generate the Knot selection once, and places it into its own function. 
+ *
+ * The same conditions apply as in the first paragraph of Knot::generate().
+ *
+ * The \c glyphGrid variable is supplied from Knot::generate(), already initialized with \c nullptr entries for the selection.
+ *
+ * \b Method
+ */
+{
+	/// First, start by creating constant \c bool and \c int values to use in the generating.
+	/// This includes deconstructing the \c Symmetry into its component bit flags,
+	/// storing whether the selection compasses all rows or columns in the Knot,
+	/// storing the middle \c i and \c j indices of the selection,
+	/// and storing the wrapping conditions.
+	const bool bitHori = static_cast<bool>(sym & 0x01);
+	const bool bitVert = static_cast<bool>(sym & 0x02);
+	const bool bitRot2 = static_cast<bool>(sym & 0x04);
+	const bool bitRot4 = static_cast<bool>(sym & 0x08);
+	const bool bitFwDi = static_cast<bool>(sym & 0x10);
+	const bool bitBkDi = static_cast<bool>(sym & 0x20);
 
-		tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMax, Side::DOWN);
-		if (!newGlyphs) continue;
-
-		tryGenerating(newGlyphs, iMid, jMin, iMid, jMax, Side::DOWN, rowFlag);
-		if (!newGlyphs) continue;
-
-		mirrorUpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
-
-		glyphs = *newGlyphs;
-		return true;
-	}
-	return false;
-}
-bool Knot::generateVertSym(ijSignature) {
-	const int jMid = (jMin + jMax) / 2;
-	const GlyphFlag colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
-	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
-		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText("Generating vertical symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
-
-		std::optional<GlyphVec2> newGlyphs = glyphs;
-
-		tryGenerating(newGlyphs, iMin, jMin, iMax, jMid - 1, Side::RIGHT);
-		if (!newGlyphs) continue;
-
-		tryGenerating(newGlyphs, iMin, jMid, iMax, jMid, Side::RIGHT, colFlag);
-		if (!newGlyphs) continue;
-		
-		mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
-
-		glyphs = *newGlyphs;
-		return true;
-	}
-	return false;
-}
-bool Knot::generateHoriVertSym(ijSignature) {
-	const int iMid = (iMin + iMax) / 2;
-	const int jMid = (jMin + jMax) / 2;
-	const GlyphFlag rowFlag = isEvenSegments(iMin, iMax) ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
-	const GlyphFlag colFlag = isEvenSegments(jMin, jMax) ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
-	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
-		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText("Generating vertical and horizontal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
-
-		std::optional<GlyphVec2> newGlyphs = glyphs;
-
-		tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, Side::DOWN | Side::RIGHT);
-		if (!newGlyphs) continue;
-
-		tryGenerating(newGlyphs, iMid, jMin, iMid, jMid - 1, Side::DOWN | Side::RIGHT, rowFlag);
-		if (!newGlyphs) continue;
-
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, colFlag);
-		if (!newGlyphs) continue;
-
-		tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, rowFlag | colFlag);
-		if (!newGlyphs) continue;
-		
-		mirrorUpToDown(*newGlyphs, iMin, jMin, iMax, jMax);
-		mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
-
-		glyphs = *newGlyphs;
-		return true;
-	}
-	return false;
-}
-bool Knot::generateRot2Sym(ijSignature) {
+	const bool isEvenRows = (iMax - iMin + 1) % 2 == 0;
+	const bool isEvenCols = (jMax - jMin + 1) % 2 == 0;
+	const bool isAllRows = iMin == 0 && iMax == h - 1;
+	const bool isAllCols = jMin == 0 && jMax == w - 1;
 	const int iMid = (iMin + iMax) / 2;
 	const int jMid = (jMin + jMax) / 2;
-	const bool isEvenRows = isEvenSegments(iMin, iMax);
-	const bool isEvenCols = isEvenSegments(jMin, jMax);
-	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
-		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText("Generating 2-way rotational symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
+	const GlyphFlag midHoriFlag = isEvenRows ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
+	const GlyphFlag midVertFlag = isEvenCols ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
+	const GlyphFlag midRot2Flag = isEvenRows ? (isEvenCols ? GlyphFlag::NONE : GlyphFlag::CT_ROT2D) : (isEvenCols ? GlyphFlag::CT_ROT2R : GlyphFlag::SA_ROT2);
+	
+	const bool isSquare = bitRot4 || bitFwDi || bitBkDi;
+	const GlyphFlag midRot4Flag = isSquare ? (isEvenRows ? GlyphFlag::CT_ROT4R : !isEvenRows ? GlyphFlag::SA_ROT4 : GlyphFlag::NONE) : GlyphFlag::NONE;
+	const GlyphFlag selfFlag = (h == 1 ? GlyphFlag::CT_SELFD : GlyphFlag::NONE) | (w == 1 ? GlyphFlag::CT_SELFR : GlyphFlag::NONE); // If this selection is only 1 row in length in either direction, flag appropriately
+	
+	const bool doWrapX = wrapXEnabled && (!isSquare || wrapYEnabled);
+	const bool doWrapY = wrapYEnabled && (!isSquare || wrapXEnabled);
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
+	/// Next, enter a loop over each location in the selection. Do the following.
+	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
+		for (int j = jMin, jOffset = 0; j <= jMax; j++, jOffset++) {
+			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
+			if (glyphGrid[i][j]) continue;
 
-		tryGenerating(newGlyphs, iMin, jMin, iMax, jMid - 1, Side::RIGHT);
-		if (!newGlyphs) continue;
-		rotate180LeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
-		
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid + static_cast<int>(isEvenCols), Side::DOWN);
-		if (!newGlyphs) continue;
-		rotate180UpToDown(*newGlyphs, iMin, jMid, iMax, jMid + static_cast<int>(isEvenCols));
+			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location, with the \c GlyphFlag::NONE flag.
+			///	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation, described below.
+			glyphGrid[i][j] = RandomGlyph(
+				/** (a) If this Glyph location is on the outer edge of the selection on this particular side, branch to condition B, otherwise branch to condition E.
+				 *
+				 *	(b) If wrapping is not enabled in this direction, then the parameter should be \c Connection::EMPTY.
+				 *	(c) If the Glyph directly on the other end of the wrap is not assigned, then the parameter should be \c Connection::DO_NOT_CARE.
+				 *	(d) In the general wrapping case, where none of the other special wrapping cases apply, the parameter should be
+				 *		the connection on the opposite side of the glyph on the other end of the wrap.
+				 *
+				 *	(e) If the next glyph on this particular side is not yet assigned, the parameter should be \c Connection::DO_NOT_CARE.
+				 *	(f) In the general case, where none of the other special cases apply, the parameter should be
+				 *		the connection on the opposite side, from the neighbouring glyph on this particular side.
+				 */
+				i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down)	: (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+				i == h - 1	? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up)		: (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up		) ,
+				j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right	) ,
+				j == w - 1	? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left)		: (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				/** The \c boolFlags argument in RandomGlyph() has different components added, under various conditions. 
+				 *  (a) If this type of symmetry includes horizontal reflection, then add \c GlyphFlag::CT_MIRU, only if the selection encompasses all rows and if the current location is in the uppermost row of the Knot.
+				 *  (b) If this type of symmetry includes horizontal reflection but this time the current operation is in the middle row, then add either \c GlyphFlag::CT_MIRD or \c GlyphFlag::SA_MIRX depending on parity.
+				 *  (c) If this type of symmetry includes vertical reflection, then add \c GlyphFlag::CT_MIRL, only if the selection encompasses all columns and if the current location is in the leftmost column of the Knot.
+				 *  (d) If this type of symmetry includes vertical reflection but this time the current operation is in the middle column, then add either \c GlyphFlag::CT_MIRR or \c GlyphFlag::SA_MIRY depending on parity.
+				 *  (e) If this type of symmetry includes 2-way rotation and the current operation is in the middle row and middle column, then add either \c GlyphFlag::CT_ROT2D, \c GlyphFlag::CT_ROT2R, or \c GlyphFlag::SA_ROT2, depending on the parities.
+				 *  (f) If this type of symmetry includes 4-way rotation and the current operation is in the middle row and middle column, then add either \c GlyphFlag::CT_ROT4R or \c GlyphFlag::SA_ROT4 depending on the parity.
+				 *  (g) If this type of symmetry includes back diagonal reflection, then add \c GlyphFlag::SA_MIRBD, only if the \c i offset and the \c j offset are equal, meaning that the location is along the diagonal.
+				 *  (h) If this selection is only 1 row in height, add GlyphFlag::CT_SELFD.
+				 *  (i) If this selection is only 1 column in width, add GlyphFlag::CT_SELFR.
+				 */
+				(
+					(bitHori && isAllRows && i == 0 ? GlyphFlag::CT_MIRU : GlyphFlag::NONE) | 
+					(bitHori && i == iMid ? midHoriFlag : GlyphFlag::NONE) | 
+					(bitVert && isAllCols && j == 0 ? GlyphFlag::CT_MIRL : GlyphFlag::NONE) |
+					(bitVert && j == jMid ? midVertFlag : GlyphFlag::NONE) |
+					(bitRot2 && i == iMid && j == jMid ? midRot2Flag : GlyphFlag::NONE) |
+					(bitRot4 && i == iMid && j == jMid ? midRot4Flag : GlyphFlag::NONE) |
+					(bitBkDi && isSquare && iOffset == jOffset ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE) |
+					(selfFlag)
+				)
+			);
 
-		if (!isEvenRows && !isEvenCols) {
-			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::NONE, GlyphFlag::SA_ROT2);
-			if (!newGlyphs) continue;
-		}
-		else if (isEvenRows && !isEvenCols) {
-			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN, GlyphFlag::CT_ROT2D);
-			if (!newGlyphs) continue;
-			rotate180UpToDown(*newGlyphs, iMid, jMid, iMid + 1, jMid);
-		}
-		else if (!isEvenRows && isEvenCols) {
-			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::RIGHT, GlyphFlag::CT_ROT2R);
-			if (!newGlyphs) continue;
-			rotate180LeftToRight(*newGlyphs, iMid, jMid, iMid, jMid + 1);
-		}
-		else if (isEvenRows && isEvenCols) {
-			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT);
-			if (!newGlyphs) continue;
-			rotate180UpToDown(*newGlyphs, iMid, jMid, iMid + 1, jMid + 1);
-			tryGenerating(newGlyphs, iMid + 1, jMid, iMid + 1, jMid);
-			if (!newGlyphs) continue;
-			rotate180LeftToRight(*newGlyphs, iMid, jMid, iMid + 1, jMid + 1);
-		}
+			/// \b (3) If this newly generated Glyph turns out to be \c nullptr, then there were no options for this location. Return \c std::nullopt.
+			if (!glyphGrid[i][j]) return std::nullopt;
 
-		glyphs = *newGlyphs;
-		return true;
+			/// \b (4) If the function has made it to this point, then reflect and rotate the newly generated Glyph to the appropriate spots given the symmetry required.
+			if (bitHori) glyphGrid[iMax - iOffset][j] = glyphGrid[i][j]->mirroredX;
+			if (bitVert) glyphGrid[i][jMax - jOffset] = glyphGrid[i][j]->mirroredY;
+			if (bitRot2) glyphGrid[iMax - iOffset][jMax - jOffset] = glyphGrid[i][j]->rotated2;
+			if (bitRot4) { glyphGrid[iMin + jOffset][jMax - iOffset] = glyphGrid[i][j]->rotated4; glyphGrid[iMax - jOffset][jMin + iOffset] = glyphGrid[i][j]->rotated2->rotated4; }
+			if (bitFwDi) glyphGrid[iMax - jOffset][jMax - iOffset] = glyphGrid[i][j]->mirroredFD;
+			if (bitBkDi) glyphGrid[iMin + jOffset][jMin + iOffset] = glyphGrid[i][j]->mirroredBD;
+		}
 	}
-	return false;
-}
-bool Knot::generateRot4Sym(ijSignature) {
-	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
-	const int iMid = (iMin + iMax) / 2;
-	const int jMid = (jMin + jMax) / 2;
-	const bool isEven = isEvenSegments(iMin, iMax);
-	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
-		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText("Generating 2-way rotational symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
 
-		std::optional<GlyphVec2> newGlyphs = glyphs;
-
-		tryGenerating(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, Side::DOWN | Side::RIGHT);
-		if (!newGlyphs) continue;
-		rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
-		
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid + static_cast<int>(isEven), Side::DOWN);
-		if (!newGlyphs) continue;
-		rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
-
-		if (isEven) {
-			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, GlyphFlag::CT_ROT4R);
-			if (!newGlyphs) continue;
-			rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
-		}
-		else {
-			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::NONE, GlyphFlag::SA_ROT4);
-			if (!newGlyphs) continue;
-		}
-
-		glyphs = *newGlyphs;
-		return true;
-	}
-	return false;
-}
-bool Knot::generateFwdDiag(ijSignature) {
-	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
-	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
-		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText("Generating forward diagonal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
-
-		std::optional<GlyphVec2> newGlyphs = glyphs;
-
-		tryGeneratingDiag(newGlyphs, iMin, jMin, iMax, jMax, true);
-		if (!newGlyphs) continue;
-
-		glyphs = *newGlyphs;
-		return true;
-	}
-	return false;
-}
-bool Knot::generateBackDiag(ijSignature) {
-	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
-	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
-		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText("Generating backward diagonal symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
-
-		std::optional<GlyphVec2> newGlyphs = glyphs;
-
-		tryGeneratingDiag(newGlyphs, iMin, jMin, iMax, jMax, false);
-		if (!newGlyphs) continue;
-
-		glyphs = *newGlyphs;
-		return true;
-	}
-	return false;
-}
-bool Knot::generateFullSym(ijSignature) {
-	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
-	const int iMid = (iMin + iMax) / 2;
-	const int jMid = (jMin + jMax) / 2;
-	const bool isEven = isEvenSegments(iMin, iMax);
-	const GlyphFlag colFlag = isEven ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
-	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
-		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText("Generating full symmetry... Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
-
-		std::optional<GlyphVec2> newGlyphs = glyphs;
-
-		tryGeneratingDiag(newGlyphs, iMin, jMin, iMid - 1, jMid - 1, false, Side::DOWN | Side::RIGHT);
-		if (!newGlyphs) continue;
-
-		tryGenerating(newGlyphs, iMin, jMid, iMid - 1, jMid, Side::DOWN | Side::RIGHT, colFlag);
-		if (!newGlyphs) continue;
-		mirrorLeftToRight(*newGlyphs, iMin, jMin, iMax, jMax);
-		rotate90FromUpLeft(*newGlyphs, iMin, jMin, iMax, jMax);
-
-		if (isEven) {
-			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::DOWN | Side::RIGHT, GlyphFlag::SA_MIRBD | GlyphFlag::CT_MIRR | GlyphFlag::CT_MIRD | GlyphFlag::CT_ROT4R);
-			if (!newGlyphs) continue;
-			rotate90FromUpLeft(*newGlyphs, iMid, jMid, iMid + 1, jMid + 1);
-		}
-		else {
-			tryGenerating(newGlyphs, iMid, jMid, iMid, jMid, Side::NONE, GlyphFlag::SA_MIRBD | GlyphFlag::SA_ROT4);
-			if (!newGlyphs) continue;
-		}
-
-		glyphs = *newGlyphs;
-		return true;
-	}
-	return false;
+	/// \b (5) If the loop finishes, then the Knot has been successfully generated. Return \c true.
+	return glyphGrid;
 }
 
 bool Knot::checkHoriSym(ijSignature) const {
+	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)
+		return true;
+
 	Connection upConnection, downConnection;
 
 	// Checking the left and right sides
-	if (!(jMin == 0 && jMax == w - 1)) {
-		for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--) { // for each row
-			// Left side
-			upConnection	= jMin == 0 ? Connection::EMPTY : glyphs[iIncr][jMin - 1]->right;
-			downConnection	= jMin == 0 ? Connection::EMPTY : glyphs[iDecr][jMin - 1]->right;
-			if (upConnection != mirXConnection(downConnection)) return false;
-			// Right side
-			upConnection	= jMax == w - 1 ? Connection::EMPTY : glyphs[iIncr][jMax + 1]->left;
-			downConnection	= jMax == w - 1 ? Connection::EMPTY : glyphs[iDecr][jMax + 1]->left;
-			if (upConnection != mirXConnection(downConnection)) return false;
-		}
-		if (!isEvenSegments(iMin, iMax)) { // checking the middle row, if it exists
-			const int iMid = (iMin + iMax) / 2;
-			// Left side
-			upConnection = jMin == 0 ? Connection::EMPTY : glyphs[iMid][jMin - 1]->right;
-			if (upConnection != mirXConnection(upConnection)) return false;
-			// Right side
-			upConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iMid][jMax + 1]->left;
-			if (upConnection != mirXConnection(upConnection)) return false;
-		}
+	for (int iIncr = iMin, iDecr = iMax; iIncr <= iDecr; iIncr++, iDecr--) { // for each row
+		// Left side
+		upConnection	= glyphs[iIncr][jMin]->left;
+		downConnection	= glyphs[iDecr][jMin]->left;
+		if (upConnection != mirXConnection(downConnection)) return false;
+		// Right side
+		upConnection	= glyphs[iIncr][jMax]->right;
+		downConnection	= glyphs[iDecr][jMax]->right;
+		if (upConnection != mirXConnection(downConnection)) return false;
 	}
 
 	// Checking the up and down sides
-	if (!(iMin == 0 && iMax == h - 1))
-		for (int j = jMin; j <= jMax; j++) { // for each column
-			upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][j]->down;
-			downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][j]->up;
-			if (upConnection != mirXConnection(downConnection)) return false;
-		}
+	for (int j = jMin; j <= jMax; j++) { // for each column
+		upConnection	= glyphs[iMin][j]->up;
+		downConnection	= glyphs[iMax][j]->down;
+		if (upConnection != mirXConnection(downConnection)) return false;
+	}
 
 	return true;
 }
 bool Knot::checkVertSym(ijSignature) const {
+	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)
+		return true;
+
 	Connection leftConnection, rightConnection;
 
 	// Checking the up and down sides
-	if (!(iMin == 0 && iMax == h - 1)) {
-		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--) { // for each column
-			// Up side
-			leftConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jIncr]->down;
-			rightConnection = iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jDecr]->down;
-			if (leftConnection != mirYConnection(rightConnection)) return false;
-			// Down side
-			leftConnection	= iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jIncr]->up;
-			rightConnection = iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jDecr]->up;
-			if (leftConnection != mirYConnection(rightConnection)) return false;
-		}
-		if (!isEvenSegments(jMin, jMax)) { // checking the middle column, if it exists
-			const int jMid = (jMin + jMax) / 2;
-			// Up side
-			leftConnection = iMin == 0 ? Connection::EMPTY : glyphs[iMin - 1][jMid]->down;
-			if (leftConnection != mirYConnection(leftConnection)) return false;
-			// Down side
-			leftConnection = iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jMid]->up;
-			if (leftConnection != mirYConnection(leftConnection)) return false;
-		}
+	for (int jIncr = jMin, jDecr = jMax; jIncr <= jDecr; jIncr++, jDecr--) { // for each column
+		// Up side
+		leftConnection	= glyphs[iMin][jIncr]->up;
+		rightConnection = glyphs[iMin][jDecr]->up;
+		if (leftConnection != mirYConnection(rightConnection)) return false;
+		// Down side
+		leftConnection	= glyphs[iMax][jIncr]->down;
+		rightConnection = glyphs[iMax][jDecr]->down;
+		if (leftConnection != mirYConnection(rightConnection)) return false;
 	}
 
 	// Checking the left and right sides
-	if (!(jMin == 0 && jMax == w - 1))
-		for (int i = iMin; i <= iMax; i++) { // for each row
-			leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[i][jMin - 1]->right;
-			rightConnection = jMax == w - 1	? Connection::EMPTY : glyphs[i][jMax + 1]->left;
-			if (leftConnection != mirYConnection(rightConnection)) return false;
-		}
+	for (int i = iMin; i <= iMax; i++) { // for each row
+		leftConnection	= glyphs[i][jMin]->left;
+		rightConnection = glyphs[i][jMax]->right;
+		if (leftConnection != mirYConnection(rightConnection)) return false;
+	}
 
 	return true;
 }
 bool Knot::checkRot2Sym(ijSignature) const {
+	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)
+		return true;
+
 	Connection upConnection, downConnection;
 	// Checking the up and down sides
-	if (!(iMin == 0 && iMax == h - 1))
-		for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--) { // for each column
-			upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jIncr]->down;
-			downConnection	= iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jDecr]->up;
-			if (upConnection != rot2Connection(downConnection)) return false;
-		}
+	for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--) { // for each column
+		upConnection	= glyphs[iMin][jIncr]->up;
+		downConnection	= glyphs[iMax][jDecr]->down;
+		if (upConnection != rot2Connection(downConnection)) return false;
+	}
 
 	Connection leftConnection, rightConnection;
 	// Checking the left and right sides
-	if (!(jMin == 0 && jMax == w - 1))
-		for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--) { // for each row
-			leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iIncr][jMin - 1]->right;
-			rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iDecr][jMax + 1]->left;
-			if (leftConnection != rot2Connection(rightConnection)) return false;
-		}
+	for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--) { // for each row
+		leftConnection	= glyphs[iIncr][jMin]->left;
+		rightConnection = glyphs[iDecr][jMax]->right;
+		if (leftConnection != rot2Connection(rightConnection)) return false;
+	}
 
 	return true;
 }
 bool Knot::checkRot4Sym(ijSignature) const {
 	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
 
+	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)
+		return true;
+
 	Connection upConnection, downConnection, leftConnection, rightConnection;
 	for (int offset = 0; offset <= iMax - iMin; offset++) {
-		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jMin + offset]->down;	// Top row, from left to right
-		downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][jMax - offset]->up;		// Bottom row, from right to left
-		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iMax - offset][jMin - 1]->right;	// Left column, from bottom to top
-		rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iMin + offset][jMax + 1]->left;	// Right column, from top to bottom
+		upConnection	= glyphs[iMin][jMin + offset]->up;		// Top row, from left to right
+		downConnection	= glyphs[iMax][jMax - offset]->down;	// Bottom row, from right to left
+		leftConnection	= glyphs[iMax - offset][jMin]->left;	// Left column, from bottom to top
+		rightConnection = glyphs[iMin + offset][jMax]->right;	// Right column, from top to bottom
 		if (upConnection != rot4Connection(leftConnection) ||
 			upConnection != rot2Connection(downConnection) ||
-			upConnection != rot2Connection(rot4Connection(rightConnection))) return false;
+			rot4Connection(upConnection) != rightConnection ) return false;
 	}
 
 	return true;
@@ -357,12 +269,15 @@ bool Knot::checkRot4Sym(ijSignature) const {
 bool Knot::checkFwdDiag(ijSignature) const {
 	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
 
+	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)
+		return true;
+
 	Connection upConnection, downConnection, leftConnection, rightConnection;
 	for (int offset = 0; offset <= iMax - iMin; offset++) {
-		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jMin + offset]->down;	// Top row, from left to right
-		downConnection	= iMax == h - 1	? Connection::EMPTY : glyphs[iMax + 1][jMin + offset]->up;		// Bottom row, from left to right
-		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iMax - offset][jMin - 1]->right;	// Left column, from bottom to top
-		rightConnection = jMax == w - 1	? Connection::EMPTY : glyphs[iMax - offset][jMax + 1]->left;	// Right column, from bottom to top
+		upConnection	= glyphs[iMin][jMin + offset]->up;		// Top row, from left to right
+		downConnection	= glyphs[iMax][jMin + offset]->down;	// Bottom row, from left to right
+		leftConnection	= glyphs[iMax - offset][jMin]->left;	// Left column, from bottom to top
+		rightConnection = glyphs[iMax - offset][jMax]->right;	// Right column, from bottom to top
 		if (upConnection != mirFDConnection(rightConnection) || leftConnection != mirFDConnection(downConnection))
 			return false;
 	}
@@ -372,174 +287,51 @@ bool Knot::checkFwdDiag(ijSignature) const {
 bool Knot::checkBackDiag(ijSignature) const {
 	if (iMax - iMin != jMax - jMin) return false; // The selection must be square
 
+	if (iMin == 0 && iMax == h - 1 && jMin == 0 && jMax == w - 1)
+		return true;
+
 	Connection upConnection, downConnection, leftConnection, rightConnection;
 	for (int offset = 0; offset <= iMax - iMin; offset++) {
-		upConnection	= iMin == 0		? Connection::EMPTY : glyphs[iMin - 1][jMin + offset]->down;	// Top row, from left to right
-		downConnection	= iMax == h - 1 ? Connection::EMPTY : glyphs[iMax + 1][jMin + offset]->up;		// Bottom row, from left to right
-		leftConnection	= jMin == 0		? Connection::EMPTY : glyphs[iMin + offset][jMin - 1]->right;	// Left column, from top to bottom
-		rightConnection = jMax == w - 1 ? Connection::EMPTY : glyphs[iMin + offset][jMax + 1]->left;	// Right column, from top to bottom
+		upConnection	= glyphs[iMin][jMin + offset]->up;		// Top row, from left to right
+		downConnection	= glyphs[iMax][jMin + offset]->down;	// Bottom row, from left to right
+		leftConnection	= glyphs[iMin + offset][jMin]->left;	// Left column, from top to bottom
+		rightConnection = glyphs[iMin + offset][jMax]->right;	// Right column, from top to bottom
 		if (upConnection != mirBDConnection(leftConnection) || rightConnection != mirBDConnection(downConnection))
 			return false;
 	}
 
 	return true;
 }
-
-void Knot::mirrorUpToDown(GlyphVec2& glyphGrid, ijSignature) const {
-	for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)
-		for (int j = jMin; j <= jMax; j++)
-			glyphGrid[iDecr][j] = glyphGrid[iIncr][j]->mirroredX;
-}
-void Knot::mirrorLeftToRight(GlyphVec2& glyphGrid, ijSignature) const {
-	for (int i = iMin; i <= iMax; i++)
-		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
-			glyphGrid[i][jDecr] = glyphGrid[i][jIncr]->mirroredY;
-}
-void Knot::rotate180UpToDown(GlyphVec2& glyphGrid, ijSignature) const {
-	for (int iIncr = iMin, iDecr = iMax; iIncr < iDecr; iIncr++, iDecr--)
-		for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--)
-			glyphGrid[iDecr][jDecr] = glyphGrid[iIncr][jIncr]->rotated2;
-}
-void Knot::rotate180LeftToRight(GlyphVec2& glyphGrid, ijSignature) const {
-	for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--)
-		for (int jIncr = jMin, jDecr = jMax; jIncr < jDecr; jIncr++, jDecr--)
-			glyphGrid[iDecr][jDecr] = glyphGrid[iIncr][jIncr]->rotated2;
-}
-void Knot::rotate90FromUpLeft(GlyphVec2& glyphGrid, ijSignature) const {
-	if (iMax - iMin != jMax - jMin) return; // The selection must be square for this to work
-
-	// This function uses the up-half of the middle column(s)
-	const int iMid = (iMin + iMax) / 2;
-	const int jMid = (jMin + jMax) / 2;
-	const bool isEven = isEvenSegments(iMin, iMax);
-
-	for (int iOffset = 0; iOffset <= iMid - iMin - static_cast<int>(isEven); iOffset++)
-		for (int jOffset = 0; jOffset <= jMid - jMin - static_cast<int>(isEven); jOffset++) {
-			glyphGrid[iMin + jOffset][jMax - iOffset] = glyphGrid[iMin + iOffset][jMin + jOffset]->rotated4;
-			glyphGrid[iMax - iOffset][jMax - jOffset] = glyphGrid[iMin + iOffset][jMin + jOffset]->rotated2; // Same as ->rotated4->rotated4
-			glyphGrid[iMax - jOffset][jMin + iOffset] = glyphGrid[iMin + iOffset][jMin + jOffset]->rotated2->rotated4; // Same as ->rotated4->rotated4->rotated4
+bool Knot::checkWrapping(ijSignature) const {
+	// If the wrap in the Y direction is not enabled
+	if (!wrapYEnabled) {
+		// Only do the check if the selection either includes the top or bottom row, but not both
+		if (iMin == 0 && iMax != h - 1) {
+			for (int j = jMin; j <= jMax; j++)
+				if (glyphs[iMin][j]->up != Connection::EMPTY)
+					return false;
 		}
-
-	for (int iOffset = 0; iOffset <= iMid - iMin; iOffset++)
-		for (int jOffset = 0; jOffset <= static_cast<int>(isEven); jOffset++) {
-			glyphGrid[iMid + jOffset][jMax - iOffset] = glyphGrid[iMin + iOffset][jMid + jOffset]->rotated4;
-			glyphGrid[iMax - iOffset][jMid + static_cast<int>(isEven) - jOffset] = glyphGrid[iMin + iOffset][jMid + jOffset]->rotated2; // Same as ->rotated4->rotated4
-			glyphGrid[iMid + static_cast<int>(isEven) - jOffset][jMin + iOffset] = glyphGrid[iMin + iOffset][jMid + jOffset]->rotated2->rotated4; // Same as ->rotated4->rotated4->rotated4
-		}
-}
-
-void Knot::tryGenerating(std::optional<GlyphVec2>& glyphGrid, ijSignature, const Side ignoreSides, const GlyphFlag boolFlags) const {
-	/// First, make a copy of \c glyphGrid to make changes without affecting the input.
-	GlyphVec2 newGlyphs = *glyphGrid;
-	
-	/// Then, set the \c const \c Glyph* pointers of the copy to \c nullptr, if they are within the selection.
-	/// This signifies that these values are not set, since they will be regenerated in this function.
-	for (int i = iMin; i <= iMax; i++)
-		for (int j = jMin; j <= jMax; j++)
-			if (inSelection(iMin, jMin, iMax, jMax, i, j))
-				newGlyphs[i][j] = nullptr;
-
-	// As an intermediary step, turn the \c ignoreSides parameter into its individual 4 \c bool value, one for each side.
-	const bool ignoreUp		= (ignoreSides & Side::UP)		!= Side::NONE;
-	const bool ignoreDown	= (ignoreSides & Side::DOWN)	!= Side::NONE;
-	const bool ignoreLeft	= (ignoreSides & Side::LEFT)	!= Side::NONE;
-	const bool ignoreRight	= (ignoreSides & Side::RIGHT)	!= Side::NONE;
-	
-	/// Next, generate the glyphs by iterating over i,j coordinates within the selection.
-	/// For each i,j pair, do the following 3 steps.
-	for (int i = iMin; i <= iMax; i++) {
-		for (int j = jMin; j <= jMax; j++) {
-			GlyphVec1 possibilities = PossibleGlyphs(
-				/** (1) Generate the \c vector of all possible glyphs that can fit into this spot, using the \c PossibleGlyphs() function,
-				 *	passing on the \c boolFlags parameter directly.
-				 *	For each of the \c Connection parameters, there are 4 possible cases, in order: 
-				 *	(a) The side should be ignored based on \c ignoreSide, therefore the parameter should be \c Connection::DO_NOT_CARE.
-				 *	(b) This glyph is on the outer edge of the selection on this particular side, so the parameter should be \c Connection::EMPTY.
-				 *	(c) The next glyph on this particular side is not yet assigned, therefore the parameter should be \c Connection::DO_NOT_CARE.
-				 *	(d) The general case, where none of the other special cases apply, therefore the parameter should be
-				 *		the connection on the opposite side, from the neighbouring glyph on this particular side.
-				 */
-				ignoreUp	&& i == iMin ? Connection::DO_NOT_CARE : i == 0		? Connection::EMPTY : !newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down,
-				ignoreDown	&& i == iMax ? Connection::DO_NOT_CARE : i == h - 1	? Connection::EMPTY : !newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up,
-				ignoreLeft	&& j == jMin ? Connection::DO_NOT_CARE : j == 0		? Connection::EMPTY : !newGlyphs[i][j - 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j - 1]->right,
-				ignoreRight && j == jMax ? Connection::DO_NOT_CARE : j == w - 1	? Connection::EMPTY : !newGlyphs[i][j + 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j + 1]->left,
-				boolFlags
-			);
-			
-			/// (2) If there are no possible glyphs for this space, set \c glyphGrid to the null \c optional and end the function.
-			if (possibilities.size() == 0) {
-				glyphGrid = std::nullopt;
-				return;
-			}
-			
-			/// (3) If step 2 did not end the function, set the glyph in the copy as a random choice from the generated possibilities.
-			newGlyphs[i][j] = possibilities[rand() % possibilities.size()]; // Pick a random glyph, now that we know it has a nonzero size
+		else if (iMin != 0 && iMax == h - 1) {
+			for (int j = jMin; j <= jMax; j++)
+				if (glyphs[iMax][j]->down != Connection::EMPTY)
+					return false;
 		}
 	}
 
-	/// At the end of the function, set \c glyphGrid equal to the created copy.
-	glyphGrid = newGlyphs;
-}
-void Knot::tryGeneratingDiag(std::optional<GlyphVec2>& glyphGrid, ijSignature, const bool fwdDiag, const Side ignoreSides) const {
-	/// First, make sure that the selection is square. If is it not, end the function immediately.
-	if (iMax - iMin != jMax - jMin) { // The selection must be square
-		glyphGrid = std::nullopt;
-		return;
-	}
-
-	/// Next, make a copy of \c glyphGrid to make changes without affecting the input.
-	GlyphVec2 newGlyphs = *glyphGrid;
-	
-	/// Then, set the \c const \c Glyph* pointers of the copy to \c nullptr, if they are within the selection.
-	/// This signifies that these values are not set, since they will be regenerated in this function.
-	for (int i = iMin; i <= iMax; i++)
-		for (int j = jMin; j <= jMax; j++)
-			if (inSelection(iMin, jMin, iMax, jMax, i, j))
-				newGlyphs[i][j] = nullptr;
-
-	// As an intermediary step, turn the \c ignoreSides parameter into its individual 4 \c bool value, one for each side.
-	const bool ignoreUp		= (ignoreSides & Side::UP)		!= Side::NONE;
-	const bool ignoreDown	= (ignoreSides & Side::DOWN)	!= Side::NONE;
-	const bool ignoreLeft	= (ignoreSides & Side::LEFT)	!= Side::NONE;
-	const bool ignoreRight	= (ignoreSides & Side::RIGHT)	!= Side::NONE;
-
-	/// Next, generate the glyphs by iterating over i,j coordinates within the selection.
-	/// This is done similarly to Knot::tryGenerating(), with a few modifications.
-	/// Every time a glyph is added, its mirror across the diagonal is also added, unless it is along the diagonal itself.
-	/// This requires an extra check at the beginning to see if the current glyph is assigned yet, and a check at the end to see if mirroring should occur.
-	for (int i = (fwdDiag ? iMax : iMin); (fwdDiag ? i >= iMin : i <= iMax); (fwdDiag ? i-- : i++)) {
-		bool firstInRow = true;
-		for (int j = jMin; j <= jMax; j++) {
-			if (newGlyphs[i][j]) continue;
-
-			GlyphVec1 possibilities = PossibleGlyphs(
-				ignoreUp	&& i == iMin ? Connection::DO_NOT_CARE : i == 0		? Connection::EMPTY : !newGlyphs[i - 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i - 1][j]->down,
-				ignoreDown	&& i == iMax ? Connection::DO_NOT_CARE : i == h - 1 ? Connection::EMPTY : !newGlyphs[i + 1][j] ? Connection::DO_NOT_CARE : newGlyphs[i + 1][j]->up,
-				ignoreLeft	&& j == jMin ? Connection::DO_NOT_CARE : j == 0		? Connection::EMPTY : !newGlyphs[i][j - 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j - 1]->right,
-				ignoreRight && j == jMax ? Connection::DO_NOT_CARE : j == w - 1 ? Connection::EMPTY : !newGlyphs[i][j + 1] ? Connection::DO_NOT_CARE : newGlyphs[i][j + 1]->left,
-				firstInRow ? (fwdDiag ? GlyphFlag::SA_MIRFD : GlyphFlag::SA_MIRBD) : GlyphFlag::NONE
-			);
-
-			if (possibilities.size() == 0) {
-				glyphGrid = std::nullopt;
-				return;
-			}
-
-			newGlyphs[i][j] = possibilities[rand() % possibilities.size()]; // Pick a random glyph, now that we know it has a nonzero size
-			if (!firstInRow) {
-				if (fwdDiag) newGlyphs[-j + jMin + iMax][-i + iMax + jMin] = newGlyphs[i][j]->mirroredFD;
-				else		 newGlyphs[ j - jMin + iMin][ i - iMin + jMin] = newGlyphs[i][j]->mirroredBD;
-			}
-			else firstInRow = false;
+	// If the wrap in the X direction is not enabled
+	if (!wrapXEnabled) {
+		// Only do the check if the selection either includes the left or right column, but not both
+		if (jMin == 0 && jMax != w - 1) {
+			for (int i = iMin; i <= iMax; i++)
+				if (glyphs[i][jMin]->left != Connection::EMPTY)
+					return false;
+		}
+		else if (jMin != 0 && jMax == w - 1) {
+			for (int i = iMin; i <= iMax; i++)
+				if (glyphs[i][jMax]->right != Connection::EMPTY)
+					return false;
 		}
 	}
 
-	/// At the end of the function, set \c glyphGrid equal to the created copy.
-	glyphGrid = newGlyphs;
-}
-inline bool Knot::inSelection(ijSignature, const int i, const int j) {
-	return (i >= iMin) && (i <= iMax) && (j >= jMin) && (j <= jMax);
-}
-inline bool Knot::isEvenSegments(const int min, const int max) {
-	return (max - min + 1) % 2 == 0;
+	return true;
 }

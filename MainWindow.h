@@ -33,14 +33,24 @@ private:
 		jMax;	///< The zero-indexed rightmost column of the selection
 
 	void initMenuBar();
+	void menuEventHandler(wxCommandEvent& evt); ///< Handles all events for menu presses
 	wxMenuBar* menuBar;
 	wxMenu* menuFile;
-	//wxMenu* menuGenerate;
-	//	wxMenuItem* menuGenerateNoSym;
+		void openFile();	///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
+		void saveFile();	///< Saves the current knot as a \c .k3knot file or a \c .txt file
+	wxMenu* menuGenerate;
+		wxMenuItem* menuWrapX;
+		wxMenuItem* menuWrapY;
+		void toggleWrap(bool inXDirection);	///< Toggles the knot wrapping in the direction specified
+		void refreshGrid();
 
-	void fileEventHandler(wxCommandEvent& evt); ///< Handles all events for items under the "File" menu
-	void openFile(wxCommandEvent& evt);			///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
-	void saveFile(wxCommandEvent& evt);			///< Saves the current knot as a \c .k3knot file or a \c .txt file
+	enum class MenuID : int {
+		OPEN,
+		SAVE,
+		WRAP_X,
+		WRAP_Y,
+		REFRESH_GRID,
+	};
 
 	void initSizerLayout();
 	void initDispSizer();	///< One of 6 \c init functions which chunk the initializing process, but the only one documented. 
@@ -50,13 +60,6 @@ private:
 	wxBoxSizer* mainSizer;
 	wxBoxSizer* dispSizer;
 	wxBoxSizer* buttonSizer;
-
-	void initGridRegion();
-	wxStaticBoxSizer* gridRegionSizer;
-		wxBoxSizer* gridInputSizer;
-			wxTextCtrl* gridHeight;
-			wxTextCtrl* gridWidth;
-		declareButton(gridRegen); ///< Applies the values in the \c wxTextCtrl boxes to regenerate the DisplayGrid to this new size.
 
 	void initSelectRegion();
 	wxStaticBoxSizer* selectRegionSizer;
@@ -81,6 +84,7 @@ private:
 	wxStaticBoxSizer* exportRegionSizer;
 		wxTextCtrl* exportBox;
 		wxFont exportFont;
+		declareButton(exportCopy);	///< This function copies the current text data in the exportBox into the clipboard, saving it after closing the program.
 
 	static constexpr int GAP_1 = 20; ///< The gap from the outside of the window, and between the grid section and panel section
 	static constexpr int GAP_2 = 10; ///< The gap between the panels in the panel section

@@ -1,8 +1,9 @@
 #pragma once
 #include "wx/wx.h"
+#include "wx/clipbrd.h"
 #include "wx/gbsizer.h"
-#include "wx/wfstream.h"
 #include "wx/textfile.h"
+#include "wx/wfstream.h"
 #include <array>
 #include <map>
 #include <optional>
@@ -23,18 +24,32 @@ using ull = unsigned long long;
 	XX(BackDiag, "Backward Diagonal") \
 	XX(FullSym, "Full Symmetry")
 
-/// All the types of symmetry which can be used in this program
+/** All the types of symmetry which can be used in this program.
+ * The bit flags tell Knot::generate() how to generate.
+ * In order from least-significant to most-significant bit, the bits mean the following.
+ * (1) This symmetry includes horizontal reflection.
+ * (2) This symmetry includes vertical reflection.
+ * (3) This symmetry includes 2-fold rotation.
+ * (4) This symmetry includes 4-fold rotation.
+ * (5) This symmetry includes forward diagonal reflection.
+ * (6) This symmetry includes backward diagonal reflection.
+ */
 enum class Symmetry : unsigned int {
-	NoSym,			///< No symmetry
-	HoriSym,		///< Mirror symmetry across the horizontal axis
-	VertSym,		///< Mirror symmetry across the vertical axis
-	HoriVertSym,	///< Mirror symmetry across both the horizontal and vertical axes
-	Rot2Sym,		///< 2-way rotational symmetry
-	Rot4Sym,		///< 4-way rotational symmetry (square only)
-	FwdDiag,		///< Mirror symmetry across the forward diagonal (square only)
-	BackDiag,		///< Mirror symmetry across the backward diagonal (square only)
-	FullSym,		///< 4-fold dihedral symmetry (square only)
+	NoSym		= 0b000000,	///< No symmetry
+	HoriSym		= 0b000001,	///< Mirror symmetry across the horizontal axis
+	VertSym		= 0b000010,	///< Mirror symmetry across the vertical axis
+	HoriVertSym = 0b000111,	///< Mirror symmetry across both the horizontal and vertical axes
+	Rot2Sym		= 0b000100,	///< 2-way rotational symmetry
+	Rot4Sym		= 0b001100,	///< 4-way rotational symmetry (square only)
+	FwdDiag		= 0b010000,	///< Mirror symmetry across the forward diagonal (square only)
+	BackDiag	= 0b100000,	///< Mirror symmetry across the backward diagonal (square only)
+	FullSym		= 0b111111,	///< 4-fold dihedral symmetry (square only)
 };
+constexpr inline bool operator&(Symmetry sym, unsigned int n)
+/// Logical AND between Symmetry \c sym and the value of \c n
+{
+	return static_cast<unsigned int>(static_cast<unsigned int>(sym) & n);
+}
 
 /// A shortcut for this function signature, which is used often throughout the code
 #define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
@@ -46,8 +61,8 @@ enum class Symmetry : unsigned int {
 const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	///< For future functionality, the screen size in the x direction
 const int SCREEN_Y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);	///< For future functionality, the screen size in the y direction
 const wxSize MAX_SIZE{ SCREEN_X, SCREEN_Y };						///< For future functionality, the maximum size of the app window
-constexpr size_t MAX_H = 100;
-constexpr size_t MAX_W = 100;
+constexpr size_t MAX_H = 100;	///< The maximum height of the grid allowed in the program, in terms of tiles.
+constexpr size_t MAX_W = 100;	///< The maximum width of the grid allowed in the program, in terms of tiles
 
 // Constants for the colours of the program
 const wxColour BACKGROUND_COLOUR{ 240, 240, 240 };	///< The default colour of the background for the program
