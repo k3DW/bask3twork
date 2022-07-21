@@ -1,40 +1,3 @@
-/* TODO for version 0.5 */
-/*
-	~~1) "Copy to clipboard" button with the export box
-		~~1a) Add physical button
-		~~1b) Add functionality
-	~~2) Wrapping around borders
-		~~2a) Add wxMenuItems to toggle wrapping in X and Y respectively
-		~~2b) Add 2 bool member variables to the Knot class to save wrapping state
-		~~2c) Update Knot::tryGenerating() to incorporate wrapping functionality
-		~~2c-1) Fix Knot::generateHoriSym()
-		~~2c-2) Fix Knot::generateVertSym()
-		~~2c-3) Fix Knot::generateHoriVertSym()
-		~~2c-4) Fix Knot::generateRot2Sym()
-		~~2c-5) Fix Knot::generateRot4Sym()
-		~~2d) Update Knot::tryGeneratingDiag() to incorporate wrapping functionality
-		~~2d-1) Fix Knot::generateFwdDiag()
-		~~2d-2) Fix Knot::generateBackDiag()
-		~~2d-3) Fix Knot::generateFullSym()
-		~~2e) Update Knot::checkHoriSym() to incorporate wrapping functionality
-		~~2f) Update Knot::checkVertSym() to incorporate wrapping functionality
-		~~2g) Update Knot::checkRot2Sym() to incorporate wrapping functionality
-		~~2h) Update Knot::checkRot4Sym() to incorporate wrapping functionality
-		~~2i) Update Knot::checkFwdDiag() to incorporate wrapping functionality
-		~~2j) Update Knot::checkBackDiag() to incorporate wrapping functionality
-		~~2k) New function Knot::checkWrapping() to disallow non-wrapped generating if wrapped conditions are in place
-		~~2l) Possibly extract and factor out all common logic in various `Knot::generate___Sym()` functions
-		~~2m) Combine `RandomGlyph()` and `PossibleGlyphs()` into one function
-	~~3) Put grid regeneration into its own wxMenu
-		~~3a) Add menu item
-		~~3b) Make wxDialog pop-up
-		~~3c) Add controls to the pop-up
-		~~3d) Implement logic
-	~~4) FIX BUGS
-		~~4a) Edge case of thin knots with wrapping
-		~~4b) Proper symmetry flags
-*/
-
 /* TODO for later versions */
 /*
 	-> Tile locking
@@ -60,7 +23,7 @@ private:
 
 	static constexpr int MAJOR_VERSION = 0;
 	static constexpr int MINOR_VERSION = 5;
-	static constexpr int PATCH_VERSION = 0;
+	static constexpr int PATCH_VERSION = 1;
 	static const wxString VERSION;
 
 public:
