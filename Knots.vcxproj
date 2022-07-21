@@ -31,6 +31,7 @@
     <ClInclude Include="Knot.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
