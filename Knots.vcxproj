@@ -34,10 +34,10 @@
     <ClInclude Include="header\Version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource.rc" />
+    <ResourceCompile Include="resources\Resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="k3DW.ico" />
+    <Image Include="resources\k3DW.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
