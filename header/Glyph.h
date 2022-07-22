@@ -2,25 +2,6 @@
 #include "Constants.h"
 /// \file
 
-/// The side of a Glyph, as a bitfield enum, which can undergo the \c operator| and \c operator&
-enum class Side : unsigned int {
-	NONE	= 0, ///< No side
-	UP		= 1, ///< Upper side
-	DOWN	= 2, ///< Lower side
-	LEFT	= 4, ///< Left side
-	RIGHT	= 8	 ///< Right side
-};
-constexpr inline Side operator|(Side side1, Side side2)
-/// Allows Side values to have \c operator| used on them, to generate new Side values
-{ 
-	return static_cast<Side>(static_cast<unsigned int>(side1) | static_cast<unsigned int>(side2));
-}
-constexpr inline Side operator&(Side side1, Side side2)
-/// Allows Side values to have \c operator& used on them, to generate new Side values
-{
-	return static_cast<Side>(static_cast<unsigned int>(side1) & static_cast<unsigned int>(side2));
-} 
-
 /// The connection on one side of a Glyph, as an incremental enum, which can undergo the \c operator| and \c operator&
 enum class Connection : unsigned int {
 		DO_NOT_CARE = 0, ///< The connection is irrelevant (no Glyph objects should ever be assigned this value, it is for usage in functions)
