@@ -19,24 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App.cpp" />
-    <ClCompile Include="DisplayGrid.cpp" />
-    <ClCompile Include="Knot.cpp" />
-    <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="src\App.cpp" />
+    <ClCompile Include="src\DisplayGrid.cpp" />
+    <ClCompile Include="src\Knot.cpp" />
+    <ClCompile Include="src\MainWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DisplayGrid.h" />
-    <ClInclude Include="Glyph.h" />
-    <ClInclude Include="Constants.h" />
-    <ClInclude Include="Knot.h" />
-    <ClInclude Include="MainWindow.h" />
-    <ClInclude Include="Tile.h" />
+    <ClInclude Include="header\DisplayGrid.h" />
+    <ClInclude Include="header\Glyph.h" />
+    <ClInclude Include="header\Constants.h" />
+    <ClInclude Include="header\Knot.h" />
+    <ClInclude Include="header\MainWindow.h" />
+    <ClInclude Include="header\Tile.h" />
+    <ClInclude Include="header\Version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource.rc" />
+    <ResourceCompile Include="resources\Resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="k3DW.ico" />
+    <Image Include="resources\k3DW.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -118,7 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir)header</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
@@ -137,7 +138,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir)header</AdditionalIncludeDirectories>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
@@ -155,7 +156,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WXWIN)\include; $(WXWIN)\include\msvc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir)header</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
@@ -178,7 +179,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(WXWIN)\include; $(WXWIN)\include\msvc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir)header</AdditionalIncludeDirectories>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>

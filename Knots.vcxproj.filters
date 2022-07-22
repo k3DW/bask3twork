@@ -15,46 +15,49 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App.cpp">
+    <ClCompile Include="src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DisplayGrid.cpp">
+    <ClCompile Include="src\DisplayGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Knot.cpp">
+    <ClCompile Include="src\Knot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MainWindow.cpp">
+    <ClCompile Include="src\MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DisplayGrid.h">
+    <ClInclude Include="header\DisplayGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Glyph.h">
+    <ClInclude Include="header\Glyph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Knot.h">
+    <ClInclude Include="header\Knot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Constants.h">
+    <ClInclude Include="header\Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MainWindow.h">
+    <ClInclude Include="header\MainWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tile.h">
+    <ClInclude Include="header\Tile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource.rc">
+    <ResourceCompile Include="resources\Resource.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="k3DW.ico">
+    <Image Include="resources\k3DW.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
