@@ -3,16 +3,16 @@
 
 enum class Connection
 {
-	DO_NOT_CARE = 0, ///< The connection is irrelevant (no Glyph objects should ever be assigned this value, it is for usage in functions)
-	EMPTY = 1, ///< The empty connection, where nothing is passing through this edge
-	DIAG_BOTH = 2, ///< There are 2 strands, which pass over each other diagonally, at the the midpoint of the edge
-	ORTHO_BOTH = 3, ///< There are 2 strands, which are parallel to each other and are orthogonal to the edge
-	DIAG_FRONT = 4, ///< Only the strand from \c DIAG_BOTH that is visually "on top" or "in front"
-	DIAG_BACK = 5, ///< Only the strand from \c DIAG_BOTH that is visually "on the bottom" or "behind"
-	ORTHO_UP = 6, ///< Only the strand from \c ORTHO_BOTH that is running horizontally, on the upper half
-	ORTHO_DOWN = 7, ///< Only the strand from \c ORTHO_BOTH that is running horizontally, on the lower half
-	ORTHO_LEFT = 8, ///< Only the strand from \c ORTHO_BOTH that is running vertical, on the left half
-	ORTHO_RIGHT = 9, ///< Only the strand from \c ORTHO_BOTH that is running vertical, on the right half
+	DO_NOT_CARE, ///< The connection is irrelevant (no Glyph objects should ever be assigned this value, it is for usage in functions)
+	EMPTY,       ///< The empty connection, where nothing is passing through this edge
+	DIAG_BOTH,   ///< There are 2 strands, which pass over each other diagonally, at the the midpoint of the edge
+	ORTHO_BOTH,  ///< There are 2 strands, which are parallel to each other and are orthogonal to the edge
+	DIAG_FRONT,  ///< Only the strand from \c DIAG_BOTH that is visually "on top" or "in front"
+	DIAG_BACK,   ///< Only the strand from \c DIAG_BOTH that is visually "on the bottom" or "behind"
+	ORTHO_UP,    ///< Only the strand from \c ORTHO_BOTH that is running horizontally, on the upper half
+	ORTHO_DOWN,  ///< Only the strand from \c ORTHO_BOTH that is running horizontally, on the lower half
+	ORTHO_LEFT,  ///< Only the strand from \c ORTHO_BOTH that is running vertical, on the left half
+	ORTHO_RIGHT, ///< Only the strand from \c ORTHO_BOTH that is running vertical, on the right half
 };
 
 struct ConnectionTransformations
