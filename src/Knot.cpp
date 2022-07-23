@@ -182,18 +182,18 @@ bool Knot::checkHoriSym(ijSignature) const {
 		// Left side
 		upConnection	= glyphs[iIncr][jMin]->left;
 		downConnection	= glyphs[iDecr][jMin]->left;
-		if (upConnection != mirXConnection(downConnection)) return false;
+		if (upConnection != mirror_x(downConnection)) return false;
 		// Right side
 		upConnection	= glyphs[iIncr][jMax]->right;
 		downConnection	= glyphs[iDecr][jMax]->right;
-		if (upConnection != mirXConnection(downConnection)) return false;
+		if (upConnection != mirror_x(downConnection)) return false;
 	}
 
 	// Checking the up and down sides
 	for (int j = jMin; j <= jMax; j++) { // for each column
 		upConnection	= glyphs[iMin][j]->up;
 		downConnection	= glyphs[iMax][j]->down;
-		if (upConnection != mirXConnection(downConnection)) return false;
+		if (upConnection != mirror_x(downConnection)) return false;
 	}
 
 	return true;
@@ -209,18 +209,18 @@ bool Knot::checkVertSym(ijSignature) const {
 		// Up side
 		leftConnection	= glyphs[iMin][jIncr]->up;
 		rightConnection = glyphs[iMin][jDecr]->up;
-		if (leftConnection != mirYConnection(rightConnection)) return false;
+		if (leftConnection != mirror_y(rightConnection)) return false;
 		// Down side
 		leftConnection	= glyphs[iMax][jIncr]->down;
 		rightConnection = glyphs[iMax][jDecr]->down;
-		if (leftConnection != mirYConnection(rightConnection)) return false;
+		if (leftConnection != mirror_y(rightConnection)) return false;
 	}
 
 	// Checking the left and right sides
 	for (int i = iMin; i <= iMax; i++) { // for each row
 		leftConnection	= glyphs[i][jMin]->left;
 		rightConnection = glyphs[i][jMax]->right;
-		if (leftConnection != mirYConnection(rightConnection)) return false;
+		if (leftConnection != mirror_y(rightConnection)) return false;
 	}
 
 	return true;
@@ -234,7 +234,7 @@ bool Knot::checkRot2Sym(ijSignature) const {
 	for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--) { // for each column
 		upConnection	= glyphs[iMin][jIncr]->up;
 		downConnection	= glyphs[iMax][jDecr]->down;
-		if (upConnection != rot2Connection(downConnection)) return false;
+		if (upConnection != rotate_180(downConnection)) return false;
 	}
 
 	Connection leftConnection, rightConnection;
@@ -242,7 +242,7 @@ bool Knot::checkRot2Sym(ijSignature) const {
 	for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--) { // for each row
 		leftConnection	= glyphs[iIncr][jMin]->left;
 		rightConnection = glyphs[iDecr][jMax]->right;
-		if (leftConnection != rot2Connection(rightConnection)) return false;
+		if (leftConnection != rotate_180(rightConnection)) return false;
 	}
 
 	return true;
@@ -259,9 +259,9 @@ bool Knot::checkRot4Sym(ijSignature) const {
 		downConnection	= glyphs[iMax][jMax - offset]->down;	// Bottom row, from right to left
 		leftConnection	= glyphs[iMax - offset][jMin]->left;	// Left column, from bottom to top
 		rightConnection = glyphs[iMin + offset][jMax]->right;	// Right column, from top to bottom
-		if (upConnection != rot4Connection(leftConnection) ||
-			upConnection != rot2Connection(downConnection) ||
-			rot4Connection(upConnection) != rightConnection ) return false;
+		if (upConnection != rotate_90(leftConnection) ||
+			upConnection != rotate_180(downConnection) ||
+			rotate_90(upConnection) != rightConnection ) return false;
 	}
 
 	return true;
@@ -278,7 +278,7 @@ bool Knot::checkFwdDiag(ijSignature) const {
 		downConnection	= glyphs[iMax][jMin + offset]->down;	// Bottom row, from left to right
 		leftConnection	= glyphs[iMax - offset][jMin]->left;	// Left column, from bottom to top
 		rightConnection = glyphs[iMax - offset][jMax]->right;	// Right column, from bottom to top
-		if (upConnection != mirFDConnection(rightConnection) || leftConnection != mirFDConnection(downConnection))
+		if (upConnection != mirror_forward_diagonal(rightConnection) || leftConnection != mirror_forward_diagonal(downConnection))
 			return false;
 	}
 
@@ -296,7 +296,7 @@ bool Knot::checkBackDiag(ijSignature) const {
 		downConnection	= glyphs[iMax][jMin + offset]->down;	// Bottom row, from left to right
 		leftConnection	= glyphs[iMin + offset][jMin]->left;	// Left column, from top to bottom
 		rightConnection = glyphs[iMin + offset][jMax]->right;	// Right column, from top to bottom
-		if (upConnection != mirBDConnection(leftConnection) || rightConnection != mirBDConnection(downConnection))
+		if (upConnection != mirror_backward_diagonal(leftConnection) || rightConnection != mirror_backward_diagonal(downConnection))
 			return false;
 	}
 

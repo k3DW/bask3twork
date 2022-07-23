@@ -2,49 +2,39 @@
 #include "Constants.h"
 /// \file
 
-/// The connection on one side of a Glyph, as an incremental enum, which can undergo the \c operator| and \c operator&
-enum class Connection : unsigned int {
-		DO_NOT_CARE = 0, ///< The connection is irrelevant (no Glyph objects should ever be assigned this value, it is for usage in functions)
-		EMPTY		= 1, ///< The empty connection, where nothing is passing through this edge
-		DIAG_BOTH	= 2, ///< There are 2 strands, which pass over each other diagonally, at the the midpoint of the edge
-		ORTHO_BOTH	= 3, ///< There are 2 strands, which are parallel to each other and are orthogonal to the edge
-		DIAG_FRONT	= 4, ///< Only the strand from \c DIAG_BOTH that is visually "on top" or "in front"
-		DIAG_BACK	= 5, ///< Only the strand from \c DIAG_BOTH that is visually "on the bottom" or "behind"
-		ORTHO_UP	= 6, ///< Only the strand from \c ORTHO_BOTH that is running horizontally, on the upper half
-		ORTHO_DOWN	= 7, ///< Only the strand from \c ORTHO_BOTH that is running horizontally, on the lower half
-		ORTHO_LEFT	= 8, ///< Only the strand from \c ORTHO_BOTH that is running vertical, on the left half
-		ORTHO_RIGHT = 9  ///< Only the strand from \c ORTHO_BOTH that is running vertical, on the right half
+enum class Connection
+{
+	DO_NOT_CARE = 0, ///< The connection is irrelevant (no Glyph objects should ever be assigned this value, it is for usage in functions)
+	EMPTY		= 1, ///< The empty connection, where nothing is passing through this edge
+	DIAG_BOTH	= 2, ///< There are 2 strands, which pass over each other diagonally, at the the midpoint of the edge
+	ORTHO_BOTH	= 3, ///< There are 2 strands, which are parallel to each other and are orthogonal to the edge
+	DIAG_FRONT	= 4, ///< Only the strand from \c DIAG_BOTH that is visually "on top" or "in front"
+	DIAG_BACK	= 5, ///< Only the strand from \c DIAG_BOTH that is visually "on the bottom" or "behind"
+	ORTHO_UP	= 6, ///< Only the strand from \c ORTHO_BOTH that is running horizontally, on the upper half
+	ORTHO_DOWN	= 7, ///< Only the strand from \c ORTHO_BOTH that is running horizontally, on the lower half
+	ORTHO_LEFT	= 8, ///< Only the strand from \c ORTHO_BOTH that is running vertical, on the left half
+	ORTHO_RIGHT = 9, ///< Only the strand from \c ORTHO_BOTH that is running vertical, on the right half
 };
-constexpr inline Connection rot4Connection(Connection input)
-/// This function takes a Connection to its counterpart after a clockwise rotation of 90 degrees
+
+struct ConnectionTransformations
 {
-	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_FRONT, Connection::DIAG_BACK, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT, Connection::ORTHO_UP, Connection::ORTHO_DOWN } [static_cast<unsigned int>(input)];
-}
-constexpr inline Connection rot2Connection(Connection input)
-/// This function takes a Connection to its counterpart after a rotation of 180 degrees
-{
-	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_FRONT, Connection::DIAG_BACK, Connection::ORTHO_DOWN, Connection::ORTHO_UP, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT } [static_cast<unsigned int>(input)];
-}
-constexpr inline Connection mirXConnection(Connection input)
-/// This function takes a Connection to its counterpart after being mirrored across the horizontal line
-{
-	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_DOWN, Connection::ORTHO_UP, Connection::ORTHO_LEFT, Connection::ORTHO_RIGHT } [static_cast<unsigned int>(input)];
-}
-constexpr inline Connection mirYConnection(Connection input)
-/// This function takes a Connection to its counterpart after being mirrored across the vertical line
-{
-	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_UP, Connection::ORTHO_DOWN, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT } [static_cast<unsigned int>(input)];
-}
-constexpr inline Connection mirFDConnection(Connection input)
-/// This function takes a Connection to its counterpart after being mirrored across the forward diagonal line
-{
-	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT, Connection::ORTHO_DOWN, Connection::ORTHO_UP } [static_cast<unsigned int>(input)];
-}
-constexpr inline Connection mirBDConnection(Connection input)
-/// This function takes a Connection to its counterpart after being mirrored across the backward diagonal line
-{
-	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_LEFT, Connection::ORTHO_RIGHT, Connection::ORTHO_UP, Connection::ORTHO_DOWN } [static_cast<unsigned int>(input)];
-}
+	using enum Connection;
+
+	static constexpr std::array rotate_90{ DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_FRONT, DIAG_BACK, ORTHO_RIGHT, ORTHO_LEFT, ORTHO_UP, ORTHO_DOWN };
+	static constexpr std::array rotate_180{ DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_FRONT, DIAG_BACK, ORTHO_DOWN, ORTHO_UP, ORTHO_RIGHT, ORTHO_LEFT };
+
+	static constexpr std::array mirror_x{ DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_BACK, DIAG_FRONT, ORTHO_DOWN, ORTHO_UP, ORTHO_LEFT, ORTHO_RIGHT };
+	static constexpr std::array mirror_y{ DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_BACK, DIAG_FRONT, ORTHO_UP, ORTHO_DOWN, ORTHO_RIGHT, ORTHO_LEFT };
+	static constexpr std::array mirror_forward_diagonal{ DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_BACK, DIAG_FRONT, ORTHO_RIGHT, ORTHO_LEFT, ORTHO_DOWN, ORTHO_UP };
+	static constexpr std::array mirror_backward_diagonal{ DO_NOT_CARE, EMPTY, DIAG_BOTH, ORTHO_BOTH, DIAG_BACK, DIAG_FRONT, ORTHO_LEFT, ORTHO_RIGHT, ORTHO_UP, ORTHO_DOWN };
+};
+
+constexpr Connection rotate_90(Connection input) { return ConnectionTransformations::rotate_90[static_cast<int>(input)]; }
+constexpr Connection rotate_180(Connection input) { return ConnectionTransformations::rotate_180[static_cast<int>(input)]; }
+constexpr Connection mirror_x(Connection input) { return ConnectionTransformations::mirror_x[static_cast<int>(input)]; }
+constexpr Connection mirror_y(Connection input) { return ConnectionTransformations::mirror_y[static_cast<int>(input)]; }
+constexpr Connection mirror_forward_diagonal(Connection input) { return ConnectionTransformations::mirror_forward_diagonal[static_cast<int>(input)]; }
+constexpr Connection mirror_backward_diagonal(Connection input) { return ConnectionTransformations::mirror_backward_diagonal[static_cast<int>(input)]; }
 
 /// The bit flag for each of the properties of a Glyph object
 enum class GlyphFlag : ull {
@@ -146,18 +136,18 @@ struct Glyph {
 		up{ up }, down{ down }, left{ left }, right{ right },
 		sameAfterRotate4{ sameAfterRotate4 }, sameAfterRotate2{ sameAfterRotate2 },
 		sameAfterMirrorX{ sameAfterMirrorX }, sameAfterMirrorY{ sameAfterMirrorY },
-		connectToRotate4Up		{up		== rot4Connection(right)},
-		connectToRotate4Down	{down	== rot4Connection(left)},
-		connectToRotate4Left	{left	== rot4Connection(up)},
-		connectToRotate4Right	{right	== rot4Connection(down)},
-		connectToRotate2Up		{up		== rot2Connection(up)},
-		connectToRotate2Down	{down	== rot2Connection(down)},
-		connectToRotate2Left	{left	== rot2Connection(left)},
-		connectToRotate2Right	{right	== rot2Connection(right)},
-		connectToMirrorUp		{up		== mirXConnection(up)},
-		connectToMirrorDown		{down	== mirXConnection(down)},
-		connectToMirrorLeft		{left	== mirYConnection(left)},
-		connectToMirrorRight	{right	== mirYConnection(right)},
+		connectToRotate4Up		{up		== rotate_90(right)},
+		connectToRotate4Down	{down	== rotate_90(left)},
+		connectToRotate4Left	{left	== rotate_90(up)},
+		connectToRotate4Right	{right	== rotate_90(down)},
+		connectToRotate2Up		{up		== rotate_180(up)},
+		connectToRotate2Down	{down	== rotate_180(down)},
+		connectToRotate2Left	{left	== rotate_180(left)},
+		connectToRotate2Right	{right	== rotate_180(right)},
+		connectToMirrorUp		{up		== mirror_x(up)},
+		connectToMirrorDown		{down	== mirror_x(down)},
+		connectToMirrorLeft		{left	== mirror_y(left)},
+		connectToMirrorRight	{right	== mirror_y(right)},
 		sameAfterMirrorFwdDiag{ sameAfterMirrorFwdDiag }, sameAfterMirrorBackDiag{ sameAfterMirrorBackDiag },
 		connectToSelfUp			{up		== down},
 		connectToSelfDown		{up		== down},
