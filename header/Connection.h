@@ -40,10 +40,8 @@ constexpr Connection mirror_backward_diagonal(Connection input) { return Connect
 
 struct Connections
 {
-	Connection up    : 4;
-	Connection down  : 4;
-	Connection left  : 4;
-	Connection right : 4;
+	Connection up;
+	Connection down;
+	Connection left;
+	Connection right;
 };
-
-static_assert(sizeof(Connections) == 2);
