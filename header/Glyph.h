@@ -519,21 +519,23 @@ inline const Glyph* RandomGlyph(const Connection up, const Connection down, cons
 	/// First a bit mask is created. If the \c up Connection is anything other than \c Connection::DO_NOT_CARE, then use \c GlyphFlag::UP in the mask.
 	/// Do this same process for the other 3 Connection values. As well, add the \c boolFlags to the mask with the \c GlyphFlag::COND_MASK applied.
 	/// It is assumed that if a flag is nonzero, it is in use. If it is zero, it is ignored.
-	const GlyphFlag mask = (up		!= Connection::DO_NOT_CARE ? GlyphFlag::UP		: GlyphFlag::NONE)	// If the UP side is used, add 0x000F to the mask. If not used, it will be \c GlyphFlag::NONE (== 0)
-						 | (down	!= Connection::DO_NOT_CARE ? GlyphFlag::DOWN	: GlyphFlag::NONE)	// If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be \c GlyphFlag::NONE (== 0)
-						 | (left	!= Connection::DO_NOT_CARE ? GlyphFlag::LEFT	: GlyphFlag::NONE)	// etc, for LEFT
-						 | (right	!= Connection::DO_NOT_CARE ? GlyphFlag::RIGHT	: GlyphFlag::NONE)	// etc, for RIGHT
-						 | (boolFlags & GlyphFlag::COND_MASK); // All the other flags are only 1 bit long, so this is acceptable
+	const GlyphFlag con_mask = (up    != Connection::DO_NOT_CARE ? GlyphFlag::UP    : GlyphFlag::NONE)	// If the UP side is used, add 0x000F to the mask. If not used, it will be \c GlyphFlag::NONE (== 0)
+						     | (down  != Connection::DO_NOT_CARE ? GlyphFlag::DOWN  : GlyphFlag::NONE)	// If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be \c GlyphFlag::NONE (== 0)
+						     | (left  != Connection::DO_NOT_CARE ? GlyphFlag::LEFT  : GlyphFlag::NONE)	// etc, for LEFT
+						     | (right != Connection::DO_NOT_CARE ? GlyphFlag::RIGHT : GlyphFlag::NONE);	// etc, for RIGHT
+
+	const GlyphFlag bool_mask = (boolFlags & GlyphFlag::COND_MASK); // All the other flags are only 1 bit long, so this is acceptable
 
 	/// Next, determine which value needs to be checked against. For the 4 sides, use the toFlag() function.
 	/// Add the boolFlags, with the \c GlyphFlag::COND_MASK applied.
-	const GlyphFlag toCheck = toFlag(up, GlyphFlag::UP) | toFlag(down, GlyphFlag::DOWN) | toFlag(left, GlyphFlag::LEFT) | toFlag(right, GlyphFlag::RIGHT) | (boolFlags & GlyphFlag::COND_MASK);
+	const GlyphFlag con_toCheck = toFlag(up, GlyphFlag::UP) | toFlag(down, GlyphFlag::DOWN) | toFlag(left, GlyphFlag::LEFT) | toFlag(right, GlyphFlag::RIGHT);
+	const GlyphFlag bool_toCheck = (boolFlags & GlyphFlag::COND_MASK);
 
 	/// Once all that is done, loop through \c AllGlyphs. If the \c flags member of the Glyph with the mask applied from above
 	/// is equal to the value which needs to be checked, then add the pointer to this Glyph to the output vector.
 	GlyphVec1 glyphList;
 	for (const Glyph& glyph : AllGlyphs)
-		if ((glyph.flags & mask) == toCheck)
+		if ((glyph.flags & con_mask) == con_toCheck && (glyph.flags & bool_mask) == bool_toCheck)
 			glyphList.push_back(&glyph);
 
 	if (glyphList.size() == 0)
