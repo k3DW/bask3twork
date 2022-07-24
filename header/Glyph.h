@@ -59,7 +59,7 @@ struct Glyph {
 	/// All the \c connectTo____ flags are determined from the other parameters, but the other parameters are given explicitly
 	Glyph(wxString chr, const Glyph* rotated4, const Glyph* rotated2, const Glyph* mirroredX, const Glyph* mirroredY, const Glyph* mirroredFD, const Glyph* mirroredBD,
 	const Connection up, const Connection down, const Connection left, const Connection right,
-	unsigned int sameAfterRotate4, unsigned int sameAfterRotate2, unsigned int sameAfterMirrorX, unsigned int sameAfterMirrorY, unsigned int sameAfterMirrorFwdDiag, unsigned int sameAfterMirrorBackDiag) :
+	bool sameAfterRotate4, bool sameAfterRotate2, bool sameAfterMirrorX, bool sameAfterMirrorY, bool sameAfterMirrorFwdDiag, bool sameAfterMirrorBackDiag) :
 		chr{ chr }, rotated4{ rotated4 }, rotated2{ rotated2 }, mirroredX{ mirroredX }, mirroredY{ mirroredY }, mirroredFD{ mirroredFD }, mirroredBD{ mirroredBD },
 		up{ up }, down{ down }, left{ left }, right{ right },
 		flags
