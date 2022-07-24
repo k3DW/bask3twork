@@ -50,6 +50,10 @@ constexpr inline GlyphFlag toFlag(Connection con, GlyphFlag sideFlag)
 {
 	return static_cast<GlyphFlag>((static_cast<ull>(con) * 0b1000100010001) & static_cast<ull>(sideFlag));
 }
+constexpr GlyphFlag operator*(GlyphFlag flag, bool b)
+{
+	return static_cast<GlyphFlag>(static_cast<ull>(flag) * b);
+}
 
 /** A struct to store the information for all the possible glyphs in the Celtic Knots font,
 	where each individual flag contained within corresponds to a GlyphFlag */
@@ -82,28 +86,28 @@ struct Glyph {
 			toFlag(down,  GlyphFlag::DOWN)  | 
 			toFlag(left,  GlyphFlag::LEFT)  | 
 			toFlag(right, GlyphFlag::RIGHT) | 
-			(sameAfterRotate4 ? GlyphFlag::SA_ROT4 : GlyphFlag::NONE) |
-			(sameAfterRotate2 ? GlyphFlag::SA_ROT2 : GlyphFlag::NONE) |
-			(sameAfterMirrorX ? GlyphFlag::SA_MIRX : GlyphFlag::NONE) |
-			(sameAfterMirrorY ? GlyphFlag::SA_MIRY : GlyphFlag::NONE) |
-			(up    == rotate_90(right) ? GlyphFlag::CT_ROT4U : GlyphFlag::NONE) |
-			(down  == rotate_90(left)  ? GlyphFlag::CT_ROT4D : GlyphFlag::NONE) |
-			(left  == rotate_90(up)    ? GlyphFlag::CT_ROT4L : GlyphFlag::NONE) |
-			(right == rotate_90(down)  ? GlyphFlag::CT_ROT4R : GlyphFlag::NONE) |
-			(up    == rotate_180(up)    ? GlyphFlag::CT_ROT2U : GlyphFlag::NONE) |
-			(down  == rotate_180(down)  ? GlyphFlag::CT_ROT2D : GlyphFlag::NONE) |
-			(left  == rotate_180(left)  ? GlyphFlag::CT_ROT2L : GlyphFlag::NONE) |
-			(right == rotate_180(right) ? GlyphFlag::CT_ROT2R : GlyphFlag::NONE) |
-			(up    == mirror_x(up)    ? GlyphFlag::CT_MIRU : GlyphFlag::NONE) |
-			(down  == mirror_x(down)  ? GlyphFlag::CT_MIRD : GlyphFlag::NONE) |
-			(left  == mirror_y(left)  ? GlyphFlag::CT_MIRL : GlyphFlag::NONE) |
-			(right == mirror_y(right) ? GlyphFlag::CT_MIRR : GlyphFlag::NONE) |
-			(sameAfterMirrorFwdDiag  ? GlyphFlag::SA_MIRFD : GlyphFlag::NONE) |
-			(sameAfterMirrorBackDiag ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE) |
-			(up   == down  ? GlyphFlag::CT_SELFU : GlyphFlag::NONE) |
-			(up   == down  ? GlyphFlag::CT_SELFD : GlyphFlag::NONE) |
-			(left == right ? GlyphFlag::CT_SELFL : GlyphFlag::NONE) |
-			(left == right ? GlyphFlag::CT_SELFR : GlyphFlag::NONE)
+			(GlyphFlag::SA_ROT4 * sameAfterRotate4) |
+			(GlyphFlag::SA_ROT2 * sameAfterRotate2) |
+			(GlyphFlag::SA_MIRX * sameAfterMirrorX) |
+			(GlyphFlag::SA_MIRY * sameAfterMirrorY) |
+			(GlyphFlag::CT_ROT4U * (up    == rotate_90(right))) |
+			(GlyphFlag::CT_ROT4D * (down  == rotate_90(left)))  |
+			(GlyphFlag::CT_ROT4L * (left  == rotate_90(up)))    |
+			(GlyphFlag::CT_ROT4R * (right == rotate_90(down)))  |
+			(GlyphFlag::CT_ROT2U * (up    == rotate_180(up)))    |
+			(GlyphFlag::CT_ROT2D * (down  == rotate_180(down)))  |
+			(GlyphFlag::CT_ROT2L * (left  == rotate_180(left)))  |
+			(GlyphFlag::CT_ROT2R * (right == rotate_180(right))) |
+			(GlyphFlag::CT_MIRU * (up    == mirror_x(up)))    |
+			(GlyphFlag::CT_MIRD * (down  == mirror_x(down)))  |
+			(GlyphFlag::CT_MIRL * (left  == mirror_y(left)))  |
+			(GlyphFlag::CT_MIRR * (right == mirror_y(right))) |
+			(GlyphFlag::SA_MIRFD * sameAfterMirrorFwdDiag)  |
+			(GlyphFlag::SA_MIRBD * sameAfterMirrorBackDiag) |
+			(GlyphFlag::CT_SELFU * (up == down))    |
+			(GlyphFlag::CT_SELFD * (up == down))    |
+			(GlyphFlag::CT_SELFL * (left == right)) |
+			(GlyphFlag::CT_SELFR * (left == right))
 		}
 	{}
 
@@ -519,10 +523,10 @@ inline const Glyph* RandomGlyph(const Connection up, const Connection down, cons
 	/// First a bit mask is created. If the \c up Connection is anything other than \c Connection::DO_NOT_CARE, then use \c GlyphFlag::UP in the mask.
 	/// Do this same process for the other 3 Connection values. As well, add the \c boolFlags to the mask with the \c GlyphFlag::COND_MASK applied.
 	/// It is assumed that if a flag is nonzero, it is in use. If it is zero, it is ignored.
-	const GlyphFlag con_mask = (up    != Connection::DO_NOT_CARE ? GlyphFlag::UP    : GlyphFlag::NONE)	// If the UP side is used, add 0x000F to the mask. If not used, it will be \c GlyphFlag::NONE (== 0)
-						     | (down  != Connection::DO_NOT_CARE ? GlyphFlag::DOWN  : GlyphFlag::NONE)	// If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be \c GlyphFlag::NONE (== 0)
-						     | (left  != Connection::DO_NOT_CARE ? GlyphFlag::LEFT  : GlyphFlag::NONE)	// etc, for LEFT
-						     | (right != Connection::DO_NOT_CARE ? GlyphFlag::RIGHT : GlyphFlag::NONE);	// etc, for RIGHT
+	const GlyphFlag con_mask = (GlyphFlag::UP    * (up    != Connection::DO_NOT_CARE))   // If the UP side is used, add 0x000F to the mask. If not used, it will be \c GlyphFlag::NONE (== 0)
+						     | (GlyphFlag::DOWN  * (down  != Connection::DO_NOT_CARE))   // If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be \c GlyphFlag::NONE (== 0)
+						     | (GlyphFlag::LEFT  * (left  != Connection::DO_NOT_CARE))   // etc, for LEFT
+						     | (GlyphFlag::RIGHT * (right != Connection::DO_NOT_CARE));  // etc, for RIGHT
 
 	const GlyphFlag bool_mask = (boolFlags & GlyphFlag::COND_MASK); // All the other flags are only 1 bit long, so this is acceptable
 

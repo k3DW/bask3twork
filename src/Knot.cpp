@@ -102,7 +102,7 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 	
 	const bool isSquare = bitRot4 || bitFwDi || bitBkDi;
 	const GlyphFlag midRot4Flag = isSquare ? (isEvenRows ? GlyphFlag::CT_ROT4R : !isEvenRows ? GlyphFlag::SA_ROT4 : GlyphFlag::NONE) : GlyphFlag::NONE;
-	const GlyphFlag selfFlag = (h == 1 ? GlyphFlag::CT_SELFD : GlyphFlag::NONE) | (w == 1 ? GlyphFlag::CT_SELFR : GlyphFlag::NONE); // If this selection is only 1 row in length in either direction, flag appropriately
+	const GlyphFlag selfFlag = (GlyphFlag::CT_SELFD * (h == 1)) | (GlyphFlag::CT_SELFR * (w == 1)); // If this selection is only 1 row in length in either direction, flag appropriately
 	
 	const bool doWrapX = wrapXEnabled && (!isSquare || wrapYEnabled);
 	const bool doWrapY = wrapYEnabled && (!isSquare || wrapXEnabled);
@@ -143,13 +143,13 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 				 *  (i) If this selection is only 1 column in width, add GlyphFlag::CT_SELFR.
 				 */
 				(
-					(bitHori && isAllRows && i == 0 ? GlyphFlag::CT_MIRU : GlyphFlag::NONE) | 
-					(bitHori && i == iMid ? midHoriFlag : GlyphFlag::NONE) | 
-					(bitVert && isAllCols && j == 0 ? GlyphFlag::CT_MIRL : GlyphFlag::NONE) |
-					(bitVert && j == jMid ? midVertFlag : GlyphFlag::NONE) |
-					(bitRot2 && i == iMid && j == jMid ? midRot2Flag : GlyphFlag::NONE) |
-					(bitRot4 && i == iMid && j == jMid ? midRot4Flag : GlyphFlag::NONE) |
-					(bitBkDi && isSquare && iOffset == jOffset ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE) |
+					(GlyphFlag::CT_MIRU  * (bitHori && isAllRows && i == 0)) | 
+					(midHoriFlag         * (bitHori && i == iMid)) | 
+					(GlyphFlag::CT_MIRL  * (bitVert && isAllCols && j == 0)) |
+					(midVertFlag         * (bitVert && j == jMid)) |
+					(midRot2Flag         * (bitRot2 && i == iMid && j == jMid)) |
+					(midRot4Flag         * (bitRot4 && i == iMid && j == jMid)) |
+					(GlyphFlag::SA_MIRBD * (bitBkDi && isSquare && iOffset == jOffset)) |
 					(selfFlag)
 				)
 			);
