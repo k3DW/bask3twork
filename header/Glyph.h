@@ -5,35 +5,29 @@
 
 /// The bit flag for each of the properties of a Glyph object
 enum class GlyphFlag : ull {
-	NONE	= 0,			///< No flag
-	UP		= 0b1111 <<  0,	///< The upper side 4-bit mask
-	DOWN	= 0b1111 <<  4, ///< The lower side 4-bit mask
-	LEFT	= 0b1111 <<  8, ///< The left side 4-bit mask
-	RIGHT	= 0b1111 << 12, ///< The right side 4-bit mask
-	SA_ROT4  = 1LL << 16, ///< Is this Glyph the same after rotating by 90 degrees
-	SA_ROT2  = 1LL << 17, ///< Is this Glyph the same after rotating by 180 degrees
-	SA_MIRX  = 1LL << 18, ///< Is this Glyph the same after mirroring across the horizontal line
-	SA_MIRY  = 1LL << 19, ///< Is this Glyph the same after mirroring across the vertical line
-	CT_ROT4U = 1LL << 20, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own upper side
-	CT_ROT4D = 1LL << 21, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own lower side
-	CT_ROT4L = 1LL << 22, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own left side
-	CT_ROT4R = 1LL << 23, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own right side
-	CT_ROT2U = 1LL << 24, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own upper side
-	CT_ROT2D = 1LL << 25, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own lower side
-	CT_ROT2L = 1LL << 26, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own left side
-	CT_ROT2R = 1LL << 27, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own right side
-	CT_MIRU  = 1LL << 28, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its upper side
-	CT_MIRD  = 1LL << 29, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its lower side
-	CT_MIRL  = 1LL << 30, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its left side
-	CT_MIRR  = 1LL << 31, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its right side
-	SA_MIRFD = 1LL << 32, ///< Is this Glyph the same after mirroring across the forward diagonal
-	SA_MIRBD = 1LL << 33, ///< Is this Glyph the same after mirroring across the backward diagonal
-	CT_SELFU = 1LL << 34, ///< Can this Glyph connect to itself on the upper side of the Glyph
-	CT_SELFD = 1LL << 35, ///< Can this Glyph connect to itself on the lower side of the Glyph
-	CT_SELFL = 1LL << 36, ///< Can this Glyph connect to itself on the left side of the Glyph
-	CT_SELFR = 1LL << 37, ///< Can this Glyph connect to itself on the right side of the Glyph
-
-	COND_MASK = 0b1111111111111111111111LL << 16, ///< The mask of all the non-Side flags
+	NONE	 = 0,       ///< No flag
+	SA_ROT4  = 1 <<  0, ///< Is this Glyph the same after rotating by 90 degrees
+	SA_ROT2  = 1 <<  1, ///< Is this Glyph the same after rotating by 180 degrees
+	SA_MIRX  = 1 <<  2, ///< Is this Glyph the same after mirroring across the horizontal line
+	SA_MIRY  = 1 <<  3, ///< Is this Glyph the same after mirroring across the vertical line
+	CT_ROT4U = 1 <<  4, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own upper side
+	CT_ROT4D = 1 <<  5, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own lower side
+	CT_ROT4L = 1 <<  6, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own left side
+	CT_ROT4R = 1 <<  7, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own right side
+	CT_ROT2U = 1 <<  8, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own upper side
+	CT_ROT2D = 1 <<  9, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own lower side
+	CT_ROT2L = 1 << 10, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own left side
+	CT_ROT2R = 1 << 11, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own right side
+	CT_MIRU  = 1 << 12, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its upper side
+	CT_MIRD  = 1 << 13, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its lower side
+	CT_MIRL  = 1 << 14, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its left side
+	CT_MIRR  = 1 << 15, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its right side
+	SA_MIRFD = 1 << 16, ///< Is this Glyph the same after mirroring across the forward diagonal
+	SA_MIRBD = 1 << 17, ///< Is this Glyph the same after mirroring across the backward diagonal
+	CT_SELFU = 1 << 18, ///< Can this Glyph connect to itself on the upper side of the Glyph
+	CT_SELFD = 1 << 19, ///< Can this Glyph connect to itself on the lower side of the Glyph
+	CT_SELFL = 1 << 20, ///< Can this Glyph connect to itself on the left side of the Glyph
+	CT_SELFR = 1 << 21, ///< Can this Glyph connect to itself on the right side of the Glyph
 };
 constexpr inline GlyphFlag operator|(GlyphFlag flag1, GlyphFlag flag2)
 /// Allows GlyphFlag values to have \c operator| used on them, to generate new GlyphFlag values
@@ -510,7 +504,7 @@ inline bool compatible(Connections known, Connections checking)
 	    && (known.right == Connection::DO_NOT_CARE || known.right == checking.right);
 }
 
-inline const Glyph* RandomGlyph(const Connection up, const Connection down, const Connection left, const Connection right, const GlyphFlag boolFlags)
+inline const Glyph* RandomGlyph(const Connection up, const Connection down, const Connection left, const Connection right, const GlyphFlag flags)
 /// This function takes in the desired flags and outputs the vector of all glyphs which meet the criteria.
 {
 	/// \param up The \c Connection desired for the upper side. If this does not matter, then pass \c Connection::DO_NOT_CARE
@@ -524,20 +518,11 @@ inline const Glyph* RandomGlyph(const Connection up, const Connection down, cons
 	/// This function allows all properties of the Glyphs to be checked at once, instead of checking multiple properties in order.
 	/// Using this function allows for high speed Glyph selection, since all attributes are assessed simultaneously.
 
-	/// First a bit mask is created. If the \c up Connection is anything other than \c Connection::DO_NOT_CARE, then use \c GlyphFlag::UP in the mask.
-	/// Do this same process for the other 3 Connection values. As well, add the \c boolFlags to the mask with the \c GlyphFlag::COND_MASK applied.
-	/// It is assumed that if a flag is nonzero, it is in use. If it is zero, it is ignored.
-	const GlyphFlag bool_mask = (boolFlags & GlyphFlag::COND_MASK); // All the other flags are only 1 bit long, so this is acceptable
-
-	/// Next, determine which value needs to be checked against. For the 4 sides, use the toFlag() function.
-	/// Add the boolFlags, with the \c GlyphFlag::COND_MASK applied.
-	const GlyphFlag bool_toCheck = (boolFlags & GlyphFlag::COND_MASK);
-
-	/// Once all that is done, loop through \c AllGlyphs. If the \c flags member of the Glyph with the mask applied from above
-	/// is equal to the value which needs to be checked, then add the pointer to this Glyph to the output vector.
+	/// Loop through \c AllGlyphs.
+	/// If the Glyph has compatible connections and it has all the needed flags, then add the pointer to this Glyph to the output vector.
 	GlyphVec1 glyphList;
 	for (const Glyph& glyph : AllGlyphs)
-		if (compatible({up, down, left, right}, {glyph.up, glyph.down, glyph.left, glyph.right}) && (glyph.flags & bool_mask) == bool_toCheck)
+		if (compatible({up, down, left, right}, {glyph.up, glyph.down, glyph.left, glyph.right}) && (glyph.flags & flags) == flags)
 			glyphList.push_back(&glyph);
 
 	if (glyphList.size() == 0)
