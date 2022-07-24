@@ -39,11 +39,6 @@ constexpr inline GlyphFlag operator&(GlyphFlag flag1, GlyphFlag flag2)
 {
 	return static_cast<GlyphFlag>(static_cast<ull>(flag1) & static_cast<ull>(flag2));
 }
-constexpr inline GlyphFlag toFlag(Connection con, GlyphFlag sideFlag)
-/// Converts a Connection on a specific side to a GlyphFlag of that specific Connection on the side
-{
-	return static_cast<GlyphFlag>((static_cast<ull>(con) * 0b1000100010001) & static_cast<ull>(sideFlag));
-}
 constexpr GlyphFlag operator*(GlyphFlag flag, bool b)
 {
 	return static_cast<GlyphFlag>(static_cast<ull>(flag) * b);
