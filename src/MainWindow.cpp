@@ -244,7 +244,7 @@ void MainWindow::toggleWrap(bool inXDirection) {
 		enableGenerateButtons();
 }
 void MainWindow::refreshGrid() {
-	wxDialog* dlg = new wxDialog(nullptr, 54321, "Grid");
+	wxDialog* dlg = new wxDialog(nullptr, 4321, "Grid");
 	dlg->SetIcon(wxICON(AppIcon));
 
 	wxTextCtrl* heightText = new wxTextCtrl(dlg, wxID_ANY, intWX(h), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);

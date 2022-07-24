@@ -102,7 +102,7 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 	
 	const bool isSquare = bitRot4 || bitFwDi || bitBkDi;
 	const GlyphFlag midRot4Flag = isSquare ? (isEvenRows ? GlyphFlag::CT_ROT4R : !isEvenRows ? GlyphFlag::SA_ROT4 : GlyphFlag::NONE) : GlyphFlag::NONE;
-	const GlyphFlag selfFlag = (h == 1 ? GlyphFlag::CT_SELFD : GlyphFlag::NONE) | (w == 1 ? GlyphFlag::CT_SELFR : GlyphFlag::NONE); // If this selection is only 1 row in length in either direction, flag appropriately
+	const GlyphFlag selfFlag = (GlyphFlag::CT_SELFD * (h == 1)) | (GlyphFlag::CT_SELFR * (w == 1)); // If this selection is only 1 row in length in either direction, flag appropriately
 	
 	const bool doWrapX = wrapXEnabled && (!isSquare || wrapYEnabled);
 	const bool doWrapY = wrapYEnabled && (!isSquare || wrapXEnabled);
@@ -127,10 +127,12 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 				 *	(f) In the general case, where none of the other special cases apply, the parameter should be
 				 *		the connection on the opposite side, from the neighbouring glyph on this particular side.
 				 */
-				i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down)	: (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
-				i == h - 1	? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up)		: (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up		) ,
-				j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right	) ,
-				j == w - 1	? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left)		: (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				{
+					i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down)	: (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+					i == h - 1	? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up)		: (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up		) ,
+					j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right	) ,
+					j == w - 1	? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left)		: (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	)
+				},
 				/** The \c boolFlags argument in RandomGlyph() has different components added, under various conditions. 
 				 *  (a) If this type of symmetry includes horizontal reflection, then add \c GlyphFlag::CT_MIRU, only if the selection encompasses all rows and if the current location is in the uppermost row of the Knot.
 				 *  (b) If this type of symmetry includes horizontal reflection but this time the current operation is in the middle row, then add either \c GlyphFlag::CT_MIRD or \c GlyphFlag::SA_MIRX depending on parity.
@@ -143,13 +145,13 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 				 *  (i) If this selection is only 1 column in width, add GlyphFlag::CT_SELFR.
 				 */
 				(
-					(bitHori && isAllRows && i == 0 ? GlyphFlag::CT_MIRU : GlyphFlag::NONE) | 
-					(bitHori && i == iMid ? midHoriFlag : GlyphFlag::NONE) | 
-					(bitVert && isAllCols && j == 0 ? GlyphFlag::CT_MIRL : GlyphFlag::NONE) |
-					(bitVert && j == jMid ? midVertFlag : GlyphFlag::NONE) |
-					(bitRot2 && i == iMid && j == jMid ? midRot2Flag : GlyphFlag::NONE) |
-					(bitRot4 && i == iMid && j == jMid ? midRot4Flag : GlyphFlag::NONE) |
-					(bitBkDi && isSquare && iOffset == jOffset ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE) |
+					(GlyphFlag::CT_MIRU  * (bitHori && isAllRows && i == 0)) | 
+					(midHoriFlag         * (bitHori && i == iMid)) | 
+					(GlyphFlag::CT_MIRL  * (bitVert && isAllCols && j == 0)) |
+					(midVertFlag         * (bitVert && j == jMid)) |
+					(midRot2Flag         * (bitRot2 && i == iMid && j == jMid)) |
+					(midRot4Flag         * (bitRot4 && i == iMid && j == jMid)) |
+					(GlyphFlag::SA_MIRBD * (bitBkDi && isSquare && iOffset == jOffset)) |
 					(selfFlag)
 				)
 			);
@@ -182,18 +184,18 @@ bool Knot::checkHoriSym(ijSignature) const {
 		// Left side
 		upConnection	= glyphs[iIncr][jMin]->left;
 		downConnection	= glyphs[iDecr][jMin]->left;
-		if (upConnection != mirXConnection(downConnection)) return false;
+		if (upConnection != mirror_x(downConnection)) return false;
 		// Right side
 		upConnection	= glyphs[iIncr][jMax]->right;
 		downConnection	= glyphs[iDecr][jMax]->right;
-		if (upConnection != mirXConnection(downConnection)) return false;
+		if (upConnection != mirror_x(downConnection)) return false;
 	}
 
 	// Checking the up and down sides
 	for (int j = jMin; j <= jMax; j++) { // for each column
 		upConnection	= glyphs[iMin][j]->up;
 		downConnection	= glyphs[iMax][j]->down;
-		if (upConnection != mirXConnection(downConnection)) return false;
+		if (upConnection != mirror_x(downConnection)) return false;
 	}
 
 	return true;
@@ -209,18 +211,18 @@ bool Knot::checkVertSym(ijSignature) const {
 		// Up side
 		leftConnection	= glyphs[iMin][jIncr]->up;
 		rightConnection = glyphs[iMin][jDecr]->up;
-		if (leftConnection != mirYConnection(rightConnection)) return false;
+		if (leftConnection != mirror_y(rightConnection)) return false;
 		// Down side
 		leftConnection	= glyphs[iMax][jIncr]->down;
 		rightConnection = glyphs[iMax][jDecr]->down;
-		if (leftConnection != mirYConnection(rightConnection)) return false;
+		if (leftConnection != mirror_y(rightConnection)) return false;
 	}
 
 	// Checking the left and right sides
 	for (int i = iMin; i <= iMax; i++) { // for each row
 		leftConnection	= glyphs[i][jMin]->left;
 		rightConnection = glyphs[i][jMax]->right;
-		if (leftConnection != mirYConnection(rightConnection)) return false;
+		if (leftConnection != mirror_y(rightConnection)) return false;
 	}
 
 	return true;
@@ -234,7 +236,7 @@ bool Knot::checkRot2Sym(ijSignature) const {
 	for (int jIncr = jMin, jDecr = jMax; jIncr <= jMax; jIncr++, jDecr--) { // for each column
 		upConnection	= glyphs[iMin][jIncr]->up;
 		downConnection	= glyphs[iMax][jDecr]->down;
-		if (upConnection != rot2Connection(downConnection)) return false;
+		if (upConnection != rotate_180(downConnection)) return false;
 	}
 
 	Connection leftConnection, rightConnection;
@@ -242,7 +244,7 @@ bool Knot::checkRot2Sym(ijSignature) const {
 	for (int iIncr = iMin, iDecr = iMax; iIncr <= iMax; iIncr++, iDecr--) { // for each row
 		leftConnection	= glyphs[iIncr][jMin]->left;
 		rightConnection = glyphs[iDecr][jMax]->right;
-		if (leftConnection != rot2Connection(rightConnection)) return false;
+		if (leftConnection != rotate_180(rightConnection)) return false;
 	}
 
 	return true;
@@ -259,9 +261,9 @@ bool Knot::checkRot4Sym(ijSignature) const {
 		downConnection	= glyphs[iMax][jMax - offset]->down;	// Bottom row, from right to left
 		leftConnection	= glyphs[iMax - offset][jMin]->left;	// Left column, from bottom to top
 		rightConnection = glyphs[iMin + offset][jMax]->right;	// Right column, from top to bottom
-		if (upConnection != rot4Connection(leftConnection) ||
-			upConnection != rot2Connection(downConnection) ||
-			rot4Connection(upConnection) != rightConnection ) return false;
+		if (upConnection != rotate_90(leftConnection) ||
+			upConnection != rotate_180(downConnection) ||
+			rotate_90(upConnection) != rightConnection ) return false;
 	}
 
 	return true;
@@ -278,7 +280,7 @@ bool Knot::checkFwdDiag(ijSignature) const {
 		downConnection	= glyphs[iMax][jMin + offset]->down;	// Bottom row, from left to right
 		leftConnection	= glyphs[iMax - offset][jMin]->left;	// Left column, from bottom to top
 		rightConnection = glyphs[iMax - offset][jMax]->right;	// Right column, from bottom to top
-		if (upConnection != mirFDConnection(rightConnection) || leftConnection != mirFDConnection(downConnection))
+		if (upConnection != mirror_forward_diagonal(rightConnection) || leftConnection != mirror_forward_diagonal(downConnection))
 			return false;
 	}
 
@@ -296,7 +298,7 @@ bool Knot::checkBackDiag(ijSignature) const {
 		downConnection	= glyphs[iMax][jMin + offset]->down;	// Bottom row, from left to right
 		leftConnection	= glyphs[iMin + offset][jMin]->left;	// Left column, from top to bottom
 		rightConnection = glyphs[iMin + offset][jMax]->right;	// Right column, from top to bottom
-		if (upConnection != mirBDConnection(leftConnection) || rightConnection != mirBDConnection(downConnection))
+		if (upConnection != mirror_backward_diagonal(leftConnection) || rightConnection != mirror_backward_diagonal(downConnection))
 			return false;
 	}
 

@@ -1,117 +1,40 @@
 #pragma once
 #include "Constants.h"
+#include "Connection.h"
 /// \file
 
-/// The side of a Glyph, as a bitfield enum, which can undergo the \c operator| and \c operator&
-enum class Side : unsigned int {
-	NONE	= 0, ///< No side
-	UP		= 1, ///< Upper side
-	DOWN	= 2, ///< Lower side
-	LEFT	= 4, ///< Left side
-	RIGHT	= 8	 ///< Right side
-};
-constexpr inline Side operator|(Side side1, Side side2)
-/// Allows Side values to have \c operator| used on them, to generate new Side values
-{ 
-	return static_cast<Side>(static_cast<unsigned int>(side1) | static_cast<unsigned int>(side2));
-}
-constexpr inline Side operator&(Side side1, Side side2)
-/// Allows Side values to have \c operator& used on them, to generate new Side values
-{
-	return static_cast<Side>(static_cast<unsigned int>(side1) & static_cast<unsigned int>(side2));
-} 
-
-/// The connection on one side of a Glyph, as an incremental enum, which can undergo the \c operator| and \c operator&
-enum class Connection : unsigned int {
-		DO_NOT_CARE = 0, ///< The connection is irrelevant (no Glyph objects should ever be assigned this value, it is for usage in functions)
-		EMPTY		= 1, ///< The empty connection, where nothing is passing through this edge
-		DIAG_BOTH	= 2, ///< There are 2 strands, which pass over each other diagonally, at the the midpoint of the edge
-		ORTHO_BOTH	= 3, ///< There are 2 strands, which are parallel to each other and are orthogonal to the edge
-		DIAG_FRONT	= 4, ///< Only the strand from \c DIAG_BOTH that is visually "on top" or "in front"
-		DIAG_BACK	= 5, ///< Only the strand from \c DIAG_BOTH that is visually "on the bottom" or "behind"
-		ORTHO_UP	= 6, ///< Only the strand from \c ORTHO_BOTH that is running horizontally, on the upper half
-		ORTHO_DOWN	= 7, ///< Only the strand from \c ORTHO_BOTH that is running horizontally, on the lower half
-		ORTHO_LEFT	= 8, ///< Only the strand from \c ORTHO_BOTH that is running vertical, on the left half
-		ORTHO_RIGHT = 9  ///< Only the strand from \c ORTHO_BOTH that is running vertical, on the right half
-};
-constexpr inline Connection rot4Connection(Connection input)
-/// This function takes a Connection to its counterpart after a clockwise rotation of 90 degrees
-{
-	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_FRONT, Connection::DIAG_BACK, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT, Connection::ORTHO_UP, Connection::ORTHO_DOWN } [static_cast<unsigned int>(input)];
-}
-constexpr inline Connection rot2Connection(Connection input)
-/// This function takes a Connection to its counterpart after a rotation of 180 degrees
-{
-	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_FRONT, Connection::DIAG_BACK, Connection::ORTHO_DOWN, Connection::ORTHO_UP, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT } [static_cast<unsigned int>(input)];
-}
-constexpr inline Connection mirXConnection(Connection input)
-/// This function takes a Connection to its counterpart after being mirrored across the horizontal line
-{
-	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_DOWN, Connection::ORTHO_UP, Connection::ORTHO_LEFT, Connection::ORTHO_RIGHT } [static_cast<unsigned int>(input)];
-}
-constexpr inline Connection mirYConnection(Connection input)
-/// This function takes a Connection to its counterpart after being mirrored across the vertical line
-{
-	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_UP, Connection::ORTHO_DOWN, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT } [static_cast<unsigned int>(input)];
-}
-constexpr inline Connection mirFDConnection(Connection input)
-/// This function takes a Connection to its counterpart after being mirrored across the forward diagonal line
-{
-	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_RIGHT, Connection::ORTHO_LEFT, Connection::ORTHO_DOWN, Connection::ORTHO_UP } [static_cast<unsigned int>(input)];
-}
-constexpr inline Connection mirBDConnection(Connection input)
-/// This function takes a Connection to its counterpart after being mirrored across the backward diagonal line
-{
-	return std::array<Connection, 10>{ Connection::DO_NOT_CARE, Connection::EMPTY, Connection::DIAG_BOTH, Connection::ORTHO_BOTH, Connection::DIAG_BACK, Connection::DIAG_FRONT, Connection::ORTHO_LEFT, Connection::ORTHO_RIGHT, Connection::ORTHO_UP, Connection::ORTHO_DOWN } [static_cast<unsigned int>(input)];
-}
-
 /// The bit flag for each of the properties of a Glyph object
-enum class GlyphFlag : ull {
-	NONE	= 0,			///< No flag
-	UP		= 0b1111 <<  0,	///< The upper side 4-bit mask
-	DOWN	= 0b1111 <<  4, ///< The lower side 4-bit mask
-	LEFT	= 0b1111 <<  8, ///< The left side 4-bit mask
-	RIGHT	= 0b1111 << 12, ///< The right side 4-bit mask
-	SA_ROT4	 = 1 << 16,		///< Is this Glyph the same after rotating by 90 degrees
-	SA_ROT2  = 1 << 17,		///< Is this Glyph the same after rotating by 180 degrees
-	SA_MIRX  = 1 << 18,		///< Is this Glyph the same after mirroring across the horizontal line
-	SA_MIRY  = 1 << 19,		///< Is this Glyph the same after mirroring across the vertical line
-	CT_ROT4U = 1 << 20,		///< Can this Glyph connect to its 90-degree-rotated counterpart on its own upper side
-	CT_ROT4D = 1 << 21,		///< Can this Glyph connect to its 90-degree-rotated counterpart on its own lower side
-	CT_ROT4L = 1 << 22,		///< Can this Glyph connect to its 90-degree-rotated counterpart on its own left side
-	CT_ROT4R = 1 << 23,		///< Can this Glyph connect to its 90-degree-rotated counterpart on its own right side
-	CT_ROT2U = 1 << 24,		///< Can this Glyph connect to its 180-degree-rotated counterpart on its own upper side
-	CT_ROT2D = 1 << 25,		///< Can this Glyph connect to its 180-degree-rotated counterpart on its own lower side
-	CT_ROT2L = 1 << 26,		///< Can this Glyph connect to its 180-degree-rotated counterpart on its own left side
-	CT_ROT2R = 1 << 27,		///< Can this Glyph connect to its 180-degree-rotated counterpart on its own right side
-	CT_MIRU  = 1 << 28,		///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its upper side
-	CT_MIRD  = 1 << 29,		///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its lower side
-	CT_MIRL  = 1 << 30,		///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its left side
-	CT_MIRR  = 1LL << 31,	///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its right side
-	SA_MIRFD = 1LL << 32,	///< Is this Glyph the same after mirroring across the forward diagonal
-	SA_MIRBD = 1LL << 33,	///< Is this Glyph the same after mirroring across the backward diagonal
-	CT_SELFU = 1LL << 34,	///< Can this Glyph connect to itself on the upper side of the Glyph
-	CT_SELFD = 1LL << 35,	///< Can this Glyph connect to itself on the lower side of the Glyph
-	CT_SELFL = 1LL << 36,	///< Can this Glyph connect to itself on the left side of the Glyph
-	CT_SELFR = 1LL << 37,	///< Can this Glyph connect to itself on the right side of the Glyph
-
-	COND_MASK = 0b1111111111111111111111LL << 16, ///< The mask of all the non-Side flags
+enum class GlyphFlag : uint32_t
+{
+	NONE	 = 0,       ///< No flag
+	SA_ROT4  = 1 <<  0, ///< Is this Glyph the same after rotating by 90 degrees
+	SA_ROT2  = 1 <<  1, ///< Is this Glyph the same after rotating by 180 degrees
+	SA_MIRX  = 1 <<  2, ///< Is this Glyph the same after mirroring across the horizontal line
+	SA_MIRY  = 1 <<  3, ///< Is this Glyph the same after mirroring across the vertical line
+	CT_ROT4U = 1 <<  4, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own upper side
+	CT_ROT4D = 1 <<  5, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own lower side
+	CT_ROT4L = 1 <<  6, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own left side
+	CT_ROT4R = 1 <<  7, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own right side
+	CT_ROT2U = 1 <<  8, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own upper side
+	CT_ROT2D = 1 <<  9, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own lower side
+	CT_ROT2L = 1 << 10, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own left side
+	CT_ROT2R = 1 << 11, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own right side
+	CT_MIRU  = 1 << 12, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its upper side
+	CT_MIRD  = 1 << 13, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its lower side
+	CT_MIRL  = 1 << 14, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its left side
+	CT_MIRR  = 1 << 15, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its right side
+	SA_MIRFD = 1 << 16, ///< Is this Glyph the same after mirroring across the forward diagonal
+	SA_MIRBD = 1 << 17, ///< Is this Glyph the same after mirroring across the backward diagonal
+	CT_SELFU = 1 << 18, ///< Can this Glyph connect to itself on the upper side of the Glyph
+	CT_SELFD = 1 << 19, ///< Can this Glyph connect to itself on the lower side of the Glyph
+	CT_SELFL = 1 << 20, ///< Can this Glyph connect to itself on the left side of the Glyph
+	CT_SELFR = 1 << 21, ///< Can this Glyph connect to itself on the right side of the Glyph
 };
-constexpr inline GlyphFlag operator|(GlyphFlag flag1, GlyphFlag flag2)
-/// Allows GlyphFlag values to have \c operator| used on them, to generate new GlyphFlag values
-{
-	return static_cast<GlyphFlag>(static_cast<ull>(flag1) | static_cast<ull>(flag2));
-}
-constexpr inline GlyphFlag operator&(GlyphFlag flag1, GlyphFlag flag2)
-/// Allows GlyphFlag values to have \c operator& used on them, to generate new GlyphFlag values
-{
-	return static_cast<GlyphFlag>(static_cast<ull>(flag1) & static_cast<ull>(flag2));
-}
-constexpr inline GlyphFlag toFlag(Connection con, GlyphFlag sideFlag)
-/// Converts a Connection on a specific side to a GlyphFlag of that specific Connection on the side
-{
-	return static_cast<GlyphFlag>((static_cast<ull>(con) * 0b1000100010001) & static_cast<ull>(sideFlag));
-}
+
+constexpr GlyphFlag operator|(GlyphFlag lhs, GlyphFlag rhs) { return static_cast<GlyphFlag>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs)); }
+constexpr GlyphFlag operator&(GlyphFlag lhs, GlyphFlag rhs) { return static_cast<GlyphFlag>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs)); }
+
+constexpr GlyphFlag operator*(GlyphFlag flag, bool b) { return static_cast<GlyphFlag>(static_cast<uint32_t>(flag) * b); }
 
 /** A struct to store the information for all the possible glyphs in the Celtic Knots font,
 	where each individual flag contained within corresponds to a GlyphFlag */
@@ -125,63 +48,46 @@ struct Glyph {
 	const Glyph* const mirroredFD;	///< The pointer to the Glyph, of this Glyph mirrored across the forward diagonal line
 	const Glyph* const mirroredBD;	///< The pointer to the Glyph, of this Glyph mirrored across the backward diagonal line
 
-	union {
-		struct {
-			Connection up : 4;						///< The connection on the upper side of the Glyph
-			Connection down : 4;					///< The connection on the lower side of the Glyph
-			Connection left : 4;					///< The connection on the left side of the Glyph
-			Connection right : 4;					///< The connection on the right side of the Glyph
-			unsigned int sameAfterRotate4 : 1;		///< Is this Glyph the same after rotating by 90 degrees
-			unsigned int sameAfterRotate2 : 1;		///< Is this Glyph the same after rotating by 180 degrees
-			unsigned int sameAfterMirrorX : 1;		///< Is this Glyph the same after mirroring across the horizontal line
-			unsigned int sameAfterMirrorY : 1;		///< Is this Glyph the same after mirroring across the vertical line
-			unsigned int connectToRotate4Up : 1;	///< Can this Glyph connect to its 90-degree-rotated counterpart on its own upper side
-			unsigned int connectToRotate4Down : 1;	///< Can this Glyph connect to its 90-degree-rotated counterpart on its own lower side
-			unsigned int connectToRotate4Left : 1;	///< Can this Glyph connect to its 90-degree-rotated counterpart on its own left side
-			unsigned int connectToRotate4Right : 1;	///< Can this Glyph connect to its 90-degree-rotated counterpart on its own right side
-			unsigned int connectToRotate2Up : 1;	///< Can this Glyph connect to its 180-degree-rotated counterpart on its own upper side
-			unsigned int connectToRotate2Down : 1;	///< Can this Glyph connect to its 180-degree-rotated counterpart on its own lower side
-			unsigned int connectToRotate2Left : 1;	///< Can this Glyph connect to its 180-degree-rotated counterpart on its own left side
-			unsigned int connectToRotate2Right : 1;	///< Can this Glyph connect to its 180-degree-rotated counterpart on its own right side
-			unsigned int connectToMirrorUp : 1;		///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its upper side
-			unsigned int connectToMirrorDown : 1;	///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its lower side
-			unsigned int connectToMirrorLeft : 1;	///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its left side
-			unsigned int connectToMirrorRight : 1;	///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its right side
-			unsigned int sameAfterMirrorFwdDiag : 1;	///< Is this Glyph the same after mirroring across the horizontal line
-			unsigned int sameAfterMirrorBackDiag : 1;	///< Is this Glyph the same after mirroring across the vertical line
-			unsigned int connectToSelfUp	: 1;	///< Can this Glyph connect to itself on the upper side of the Glyph
-			unsigned int connectToSelfDown	: 1;	///< Can this Glyph connect to itself on the lower side of the Glyph
-			unsigned int connectToSelfLeft	: 1;	///< Can this Glyph connect to itself on the left side of the Glyph
-			unsigned int connectToSelfRight	: 1;	///< Can this Glyph connect to itself on the right side of the Glyph
-		};
-		GlyphFlag flags;	///< The total signature of this glyph, in a union with all the other flags to access the individual flags simultaneously
-	};
+	Connection up;
+	Connection down;
+	Connection left;
+	Connection right;
+	operator Connections() const { return { up, down, left, right }; }
+
+	GlyphFlag flags;	///< The total signature of this glyph, in a union with all the other flags to access the individual flags simultaneously
 
 	/// All the \c connectTo____ flags are determined from the other parameters, but the other parameters are given explicitly
 	Glyph(wxString chr, const Glyph* rotated4, const Glyph* rotated2, const Glyph* mirroredX, const Glyph* mirroredY, const Glyph* mirroredFD, const Glyph* mirroredBD,
 	const Connection up, const Connection down, const Connection left, const Connection right,
-	unsigned int sameAfterRotate4, unsigned int sameAfterRotate2, unsigned int sameAfterMirrorX, unsigned int sameAfterMirrorY, unsigned int sameAfterMirrorFwdDiag, unsigned int sameAfterMirrorBackDiag) :
+	bool sameAfterRotate4, bool sameAfterRotate2, bool sameAfterMirrorX, bool sameAfterMirrorY, bool sameAfterMirrorFwdDiag, bool sameAfterMirrorBackDiag) :
 		chr{ chr }, rotated4{ rotated4 }, rotated2{ rotated2 }, mirroredX{ mirroredX }, mirroredY{ mirroredY }, mirroredFD{ mirroredFD }, mirroredBD{ mirroredBD },
 		up{ up }, down{ down }, left{ left }, right{ right },
-		sameAfterRotate4{ sameAfterRotate4 }, sameAfterRotate2{ sameAfterRotate2 },
-		sameAfterMirrorX{ sameAfterMirrorX }, sameAfterMirrorY{ sameAfterMirrorY },
-		connectToRotate4Up		{up		== rot4Connection(right)},
-		connectToRotate4Down	{down	== rot4Connection(left)},
-		connectToRotate4Left	{left	== rot4Connection(up)},
-		connectToRotate4Right	{right	== rot4Connection(down)},
-		connectToRotate2Up		{up		== rot2Connection(up)},
-		connectToRotate2Down	{down	== rot2Connection(down)},
-		connectToRotate2Left	{left	== rot2Connection(left)},
-		connectToRotate2Right	{right	== rot2Connection(right)},
-		connectToMirrorUp		{up		== mirXConnection(up)},
-		connectToMirrorDown		{down	== mirXConnection(down)},
-		connectToMirrorLeft		{left	== mirYConnection(left)},
-		connectToMirrorRight	{right	== mirYConnection(right)},
-		sameAfterMirrorFwdDiag{ sameAfterMirrorFwdDiag }, sameAfterMirrorBackDiag{ sameAfterMirrorBackDiag },
-		connectToSelfUp			{up		== down},
-		connectToSelfDown		{up		== down},
-		connectToSelfLeft		{left	== right},
-		connectToSelfRight		{left	== right}	{}
+		flags
+		{
+			(GlyphFlag::SA_ROT4 * sameAfterRotate4) |
+			(GlyphFlag::SA_ROT2 * sameAfterRotate2) |
+			(GlyphFlag::SA_MIRX * sameAfterMirrorX) |
+			(GlyphFlag::SA_MIRY * sameAfterMirrorY) |
+			(GlyphFlag::CT_ROT4U * (up    == rotate_90(right))) |
+			(GlyphFlag::CT_ROT4D * (down  == rotate_90(left)))  |
+			(GlyphFlag::CT_ROT4L * (left  == rotate_90(up)))    |
+			(GlyphFlag::CT_ROT4R * (right == rotate_90(down)))  |
+			(GlyphFlag::CT_ROT2U * (up    == rotate_180(up)))    |
+			(GlyphFlag::CT_ROT2D * (down  == rotate_180(down)))  |
+			(GlyphFlag::CT_ROT2L * (left  == rotate_180(left)))  |
+			(GlyphFlag::CT_ROT2R * (right == rotate_180(right))) |
+			(GlyphFlag::CT_MIRU * (up    == mirror_x(up)))    |
+			(GlyphFlag::CT_MIRD * (down  == mirror_x(down)))  |
+			(GlyphFlag::CT_MIRL * (left  == mirror_y(left)))  |
+			(GlyphFlag::CT_MIRR * (right == mirror_y(right))) |
+			(GlyphFlag::SA_MIRFD * sameAfterMirrorFwdDiag)  |
+			(GlyphFlag::SA_MIRBD * sameAfterMirrorBackDiag) |
+			(GlyphFlag::CT_SELFU * (up == down))    |
+			(GlyphFlag::CT_SELFD * (up == down))    |
+			(GlyphFlag::CT_SELFL * (left == right)) |
+			(GlyphFlag::CT_SELFR * (left == right))
+		}
+	{}
 
 	static constexpr int TOTAL = 190; ///< The total number of glyphs used
 };
@@ -578,38 +484,30 @@ const inline std::map<wxUniChar, const Glyph*> UnicharToGlyph = {
 /// The default Glyph to fill the Knot upon initialization, which is set as the \c space character, \c \x20
 const Glyph* const DefaultGlyph = &AllGlyphs[0];
 
-inline const Glyph* RandomGlyph(const Connection up, const Connection down, const Connection left, const Connection right, const GlyphFlag boolFlags)
+constexpr bool compatible(Connections known, Connections checking)
+{
+	return (known.up    == Connection::DO_NOT_CARE || known.up    == checking.up)
+	    && (known.down  == Connection::DO_NOT_CARE || known.down  == checking.down)
+	    && (known.left  == Connection::DO_NOT_CARE || known.left  == checking.left)
+	    && (known.right == Connection::DO_NOT_CARE || known.right == checking.right);
+}
+
+inline const Glyph* RandomGlyph(const Connections connections, const GlyphFlag flags)
 /// This function takes in the desired flags and outputs the vector of all glyphs which meet the criteria.
 {
-	/// \param up The \c Connection desired for the upper side. If this does not matter, then pass \c Connection::DO_NOT_CARE
-	/// \param down The \c Connection desired for the lower side. If this does not matter, then pass \c Connection::DO_NOT_CARE
-	/// \param left The \c Connection desired for the left side. If this does not matter, then pass \c Connection::DO_NOT_CARE
-	/// \param right The \c Connection desired for the right side. If this does not matter, then pass \c Connection::DO_NOT_CARE
-	/// \param boolFlag The other condition flags to check for the glyphs, passed by using \c operator| on \c GlyphFlag values. Any bits with a value of \c 0 are ignored
+	/// \param connections The \c Connections desired. If any connection does not matter, then pass \c Connection::DO_NOT_CARE.
+	/// \param flags The other condition flags to check for the glyphs, passed by using \c operator| on \c GlyphFlag values. Any bits with a value of \c 0 are ignored
 
 	/// \b Method
 
 	/// This function allows all properties of the Glyphs to be checked at once, instead of checking multiple properties in order.
 	/// Using this function allows for high speed Glyph selection, since all attributes are assessed simultaneously.
 
-	/// First a bit mask is created. If the \c up Connection is anything other than \c Connection::DO_NOT_CARE, then use \c GlyphFlag::UP in the mask.
-	/// Do this same process for the other 3 Connection values. As well, add the \c boolFlags to the mask with the \c GlyphFlag::COND_MASK applied.
-	/// It is assumed that if a flag is nonzero, it is in use. If it is zero, it is ignored.
-	const GlyphFlag mask = (up		!= Connection::DO_NOT_CARE ? GlyphFlag::UP		: GlyphFlag::NONE)	// If the UP side is used, add 0x000F to the mask. If not used, it will be \c GlyphFlag::NONE (== 0)
-						 | (down	!= Connection::DO_NOT_CARE ? GlyphFlag::DOWN	: GlyphFlag::NONE)	// If the DOWN side is used, add 0x00F0 to the mask. If not used, it will be \c GlyphFlag::NONE (== 0)
-						 | (left	!= Connection::DO_NOT_CARE ? GlyphFlag::LEFT	: GlyphFlag::NONE)	// etc, for LEFT
-						 | (right	!= Connection::DO_NOT_CARE ? GlyphFlag::RIGHT	: GlyphFlag::NONE)	// etc, for RIGHT
-						 | (boolFlags & GlyphFlag::COND_MASK); // All the other flags are only 1 bit long, so this is acceptable
-
-	/// Next, determine which value needs to be checked against. For the 4 sides, use the toFlag() function.
-	/// Add the boolFlags, with the \c GlyphFlag::COND_MASK applied.
-	const GlyphFlag toCheck = toFlag(up, GlyphFlag::UP) | toFlag(down, GlyphFlag::DOWN) | toFlag(left, GlyphFlag::LEFT) | toFlag(right, GlyphFlag::RIGHT) | (boolFlags & GlyphFlag::COND_MASK);
-
-	/// Once all that is done, loop through \c AllGlyphs. If the \c flags member of the Glyph with the mask applied from above
-	/// is equal to the value which needs to be checked, then add the pointer to this Glyph to the output vector.
+	/// Loop through \c AllGlyphs.
+	/// If the Glyph has compatible connections and it has all the needed flags, then add the pointer to this Glyph to the output vector.
 	GlyphVec1 glyphList;
 	for (const Glyph& glyph : AllGlyphs)
-		if ((glyph.flags & mask) == toCheck)
+		if (compatible(connections, glyph) && (glyph.flags & flags) == flags)
 			glyphList.push_back(&glyph);
 
 	if (glyphList.size() == 0)

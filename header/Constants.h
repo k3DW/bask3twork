@@ -10,8 +10,6 @@
 #include <vector>
 /// \file
 
-using ull = unsigned long long;
-
 /// The X macro used on the symmetries, to make the code simpler
 #define SYMMETRIES \
 	XX(NoSym, "No Symmetry") \

@@ -25,6 +25,7 @@
     <ClCompile Include="src\MainWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\Connection.h" />
     <ClInclude Include="header\DisplayGrid.h" />
     <ClInclude Include="header\Glyph.h" />
     <ClInclude Include="header\Constants.h" />
