@@ -52,6 +52,7 @@ struct Glyph {
 	Connection down;
 	Connection left;
 	Connection right;
+	operator Connections() const { return { up, down, left, right }; }
 
 	GlyphFlag flags;	///< The total signature of this glyph, in a union with all the other flags to access the individual flags simultaneously
 
@@ -491,14 +492,11 @@ constexpr bool compatible(Connections known, Connections checking)
 	    && (known.right == Connection::DO_NOT_CARE || known.right == checking.right);
 }
 
-inline const Glyph* RandomGlyph(const Connection up, const Connection down, const Connection left, const Connection right, const GlyphFlag flags)
+inline const Glyph* RandomGlyph(const Connections connections, const GlyphFlag flags)
 /// This function takes in the desired flags and outputs the vector of all glyphs which meet the criteria.
 {
-	/// \param up The \c Connection desired for the upper side. If this does not matter, then pass \c Connection::DO_NOT_CARE
-	/// \param down The \c Connection desired for the lower side. If this does not matter, then pass \c Connection::DO_NOT_CARE
-	/// \param left The \c Connection desired for the left side. If this does not matter, then pass \c Connection::DO_NOT_CARE
-	/// \param right The \c Connection desired for the right side. If this does not matter, then pass \c Connection::DO_NOT_CARE
-	/// \param boolFlag The other condition flags to check for the glyphs, passed by using \c operator| on \c GlyphFlag values. Any bits with a value of \c 0 are ignored
+	/// \param connections The \c Connections desired. If any connection does not matter, then pass \c Connection::DO_NOT_CARE.
+	/// \param flags The other condition flags to check for the glyphs, passed by using \c operator| on \c GlyphFlag values. Any bits with a value of \c 0 are ignored
 
 	/// \b Method
 
@@ -509,7 +507,7 @@ inline const Glyph* RandomGlyph(const Connection up, const Connection down, cons
 	/// If the Glyph has compatible connections and it has all the needed flags, then add the pointer to this Glyph to the output vector.
 	GlyphVec1 glyphList;
 	for (const Glyph& glyph : AllGlyphs)
-		if (compatible({up, down, left, right}, {glyph.up, glyph.down, glyph.left, glyph.right}) && (glyph.flags & flags) == flags)
+		if (compatible(connections, glyph) && (glyph.flags & flags) == flags)
 			glyphList.push_back(&glyph);
 
 	if (glyphList.size() == 0)

@@ -127,10 +127,12 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 				 *	(f) In the general case, where none of the other special cases apply, the parameter should be
 				 *		the connection on the opposite side, from the neighbouring glyph on this particular side.
 				 */
-				i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down)	: (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
-				i == h - 1	? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up)		: (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up		) ,
-				j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right	) ,
-				j == w - 1	? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left)		: (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	) ,
+				{
+					i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down)	: (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+					i == h - 1	? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up)		: (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up		) ,
+					j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right	) ,
+					j == w - 1	? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left)		: (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	)
+				},
 				/** The \c boolFlags argument in RandomGlyph() has different components added, under various conditions. 
 				 *  (a) If this type of symmetry includes horizontal reflection, then add \c GlyphFlag::CT_MIRU, only if the selection encompasses all rows and if the current location is in the uppermost row of the Knot.
 				 *  (b) If this type of symmetry includes horizontal reflection but this time the current operation is in the middle row, then add either \c GlyphFlag::CT_MIRD or \c GlyphFlag::SA_MIRX depending on parity.
