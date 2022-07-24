@@ -1,7 +1,7 @@
 #pragma once
 #include <array>
 
-enum class Connection
+enum class Connection : uint8_t
 {
 	DO_NOT_CARE, ///< The connection is irrelevant (no Glyph objects should ever be assigned this value, it is for usage in functions)
 	EMPTY,       ///< The empty connection, where nothing is passing through this edge
@@ -37,3 +37,13 @@ constexpr Connection mirror_y(Connection input) { return ConnectionTransformatio
 
 constexpr Connection mirror_forward_diagonal(Connection input) { return ConnectionTransformations::mirror_forward_diagonal[static_cast<int>(input)]; }
 constexpr Connection mirror_backward_diagonal(Connection input) { return ConnectionTransformations::mirror_backward_diagonal[static_cast<int>(input)]; }
+
+struct Connections
+{
+	Connection up    : 4;
+	Connection down  : 4;
+	Connection left  : 4;
+	Connection right : 4;
+};
+
+static_assert(sizeof(Connections) == 2);
