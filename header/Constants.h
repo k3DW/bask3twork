@@ -64,7 +64,6 @@ constexpr size_t MAX_W = 100;	///< The maximum width of the grid allowed in the 
 
 // Constants for the colours of the program
 const wxColour BACKGROUND_COLOUR{ 240, 240, 240 };	///< The default colour of the background for the program
-const wxColour HL_COLOUR{ 150, 200, 255 };			///< The colour that denotes a "highlighted" tile
 
 // Constants for the fonts of the program, only used in DisplayGrid
 // For future functionality, the sizes of these fonts might need to be parametrized

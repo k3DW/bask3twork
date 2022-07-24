@@ -4,20 +4,20 @@
 /** As a more specialized \c wxStaticText object, this class represents a tile within a DisplayGrid object. */
 class Tile : public wxStaticText {
 public:
-	Tile(wxWindow* parent, wxWindowID id, const wxString& label, int grey, wxFont tileFont) : wxStaticText(parent, id, label), baseColour(grey, grey, grey) {
-		SetBackgroundColour(baseColour);
+	Tile(wxWindow* parent, wxWindowID id, const wxString& label, int grey, wxFont tileFont) : wxStaticText(parent, id, label), base(grey, grey, grey) {
+		SetBackgroundColour(base);
 		SetFont(tileFont);
 	}
 	Tile(wxWindow* parent, wxWindowID id, int label, int grey, wxFont tileFont) :
 		Tile(parent, id, wxString::Format(wxT("%i"), label), grey, tileFont) {}
 	
 	/// This function turns the background colour to the highlighted colour or back to the base colour, depending on the value of \c enable.
-	inline void highlight(bool enable = true) {
-		SetBackgroundColour(enable ? HL_COLOUR : baseColour);
-	}
+	void highlight(bool enable) { SetBackgroundColour(enable ? highlighted : base); }
 
 private:
-	const wxColour baseColour; ///< The background colour of the tile, without highlight
+	wxColour base; ///< The background colour of the tile, without highlight
+	
+	static const inline wxColour highlighted{ 150, 200, 255 };
 };
 
 /* Tile constructors */
