@@ -10,8 +10,6 @@ public:
 	}
 	Tile(wxWindow* parent, wxWindowID id, int label, int grey, wxFont tileFont) :
 		Tile(parent, id, wxString::Format(wxT("%i"), label), grey, tileFont) {}
-	Tile(wxWindow* parent, wxWindowID id, int grey, wxFont tileFont) :
-		Tile(parent, id, "", grey, tileFont) {}
 	
 	/// This function turns the background colour to the highlighted colour or back to the base colour, depending on the value of \c enable.
 	inline void highlight(bool enable = true) {
