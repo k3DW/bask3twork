@@ -4,7 +4,8 @@
 /// \file
 
 /// The bit flag for each of the properties of a Glyph object
-enum class GlyphFlag : ull {
+enum class GlyphFlag : uint32_t
+{
 	NONE	 = 0,       ///< No flag
 	SA_ROT4  = 1 <<  0, ///< Is this Glyph the same after rotating by 90 degrees
 	SA_ROT2  = 1 <<  1, ///< Is this Glyph the same after rotating by 180 degrees
@@ -29,20 +30,11 @@ enum class GlyphFlag : ull {
 	CT_SELFL = 1 << 20, ///< Can this Glyph connect to itself on the left side of the Glyph
 	CT_SELFR = 1 << 21, ///< Can this Glyph connect to itself on the right side of the Glyph
 };
-constexpr inline GlyphFlag operator|(GlyphFlag flag1, GlyphFlag flag2)
-/// Allows GlyphFlag values to have \c operator| used on them, to generate new GlyphFlag values
-{
-	return static_cast<GlyphFlag>(static_cast<ull>(flag1) | static_cast<ull>(flag2));
-}
-constexpr inline GlyphFlag operator&(GlyphFlag flag1, GlyphFlag flag2)
-/// Allows GlyphFlag values to have \c operator& used on them, to generate new GlyphFlag values
-{
-	return static_cast<GlyphFlag>(static_cast<ull>(flag1) & static_cast<ull>(flag2));
-}
-constexpr GlyphFlag operator*(GlyphFlag flag, bool b)
-{
-	return static_cast<GlyphFlag>(static_cast<ull>(flag) * b);
-}
+
+constexpr GlyphFlag operator|(GlyphFlag lhs, GlyphFlag rhs) { return static_cast<GlyphFlag>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs)); }
+constexpr GlyphFlag operator&(GlyphFlag lhs, GlyphFlag rhs) { return static_cast<GlyphFlag>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs)); }
+
+constexpr GlyphFlag operator*(GlyphFlag flag, bool b) { return static_cast<GlyphFlag>(static_cast<uint32_t>(flag) * b); }
 
 /** A struct to store the information for all the possible glyphs in the Celtic Knots font,
 	where each individual flag contained within corresponds to a GlyphFlag */
@@ -491,7 +483,7 @@ const inline std::map<wxUniChar, const Glyph*> UnicharToGlyph = {
 /// The default Glyph to fill the Knot upon initialization, which is set as the \c space character, \c \x20
 const Glyph* const DefaultGlyph = &AllGlyphs[0];
 
-inline bool compatible(Connections known, Connections checking)
+constexpr bool compatible(Connections known, Connections checking)
 {
 	return (known.up    == Connection::DO_NOT_CARE || known.up    == checking.up)
 	    && (known.down  == Connection::DO_NOT_CARE || known.down  == checking.down)
