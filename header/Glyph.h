@@ -10,30 +10,30 @@ enum class GlyphFlag : ull {
 	DOWN	= 0b1111 <<  4, ///< The lower side 4-bit mask
 	LEFT	= 0b1111 <<  8, ///< The left side 4-bit mask
 	RIGHT	= 0b1111 << 12, ///< The right side 4-bit mask
-	SA_ROT4  = 1LL << (16 + 16), ///< Is this Glyph the same after rotating by 90 degrees
-	SA_ROT2  = 1LL << (17 + 16), ///< Is this Glyph the same after rotating by 180 degrees
-	SA_MIRX  = 1LL << (18 + 16), ///< Is this Glyph the same after mirroring across the horizontal line
-	SA_MIRY  = 1LL << (19 + 16), ///< Is this Glyph the same after mirroring across the vertical line
-	CT_ROT4U = 1LL << (20 + 16), ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own upper side
-	CT_ROT4D = 1LL << (21 + 16), ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own lower side
-	CT_ROT4L = 1LL << (22 + 16), ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own left side
-	CT_ROT4R = 1LL << (23 + 16), ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own right side
-	CT_ROT2U = 1LL << (24 + 16), ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own upper side
-	CT_ROT2D = 1LL << (25 + 16), ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own lower side
-	CT_ROT2L = 1LL << (26 + 16), ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own left side
-	CT_ROT2R = 1LL << (27 + 16), ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own right side
-	CT_MIRU  = 1LL << (28 + 16), ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its upper side
-	CT_MIRD  = 1LL << (29 + 16), ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its lower side
-	CT_MIRL  = 1LL << (30 + 16), ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its left side
-	CT_MIRR  = 1LL << (31 + 16), ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its right side
-	SA_MIRFD = 1LL << (32 + 16), ///< Is this Glyph the same after mirroring across the forward diagonal
-	SA_MIRBD = 1LL << (33 + 16), ///< Is this Glyph the same after mirroring across the backward diagonal
-	CT_SELFU = 1LL << (34 + 16), ///< Can this Glyph connect to itself on the upper side of the Glyph
-	CT_SELFD = 1LL << (35 + 16), ///< Can this Glyph connect to itself on the lower side of the Glyph
-	CT_SELFL = 1LL << (36 + 16), ///< Can this Glyph connect to itself on the left side of the Glyph
-	CT_SELFR = 1LL << (37 + 16), ///< Can this Glyph connect to itself on the right side of the Glyph
+	SA_ROT4  = 1LL << 16, ///< Is this Glyph the same after rotating by 90 degrees
+	SA_ROT2  = 1LL << 17, ///< Is this Glyph the same after rotating by 180 degrees
+	SA_MIRX  = 1LL << 18, ///< Is this Glyph the same after mirroring across the horizontal line
+	SA_MIRY  = 1LL << 19, ///< Is this Glyph the same after mirroring across the vertical line
+	CT_ROT4U = 1LL << 20, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own upper side
+	CT_ROT4D = 1LL << 21, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own lower side
+	CT_ROT4L = 1LL << 22, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own left side
+	CT_ROT4R = 1LL << 23, ///< Can this Glyph connect to its 90-degree-rotated counterpart on its own right side
+	CT_ROT2U = 1LL << 24, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own upper side
+	CT_ROT2D = 1LL << 25, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own lower side
+	CT_ROT2L = 1LL << 26, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own left side
+	CT_ROT2R = 1LL << 27, ///< Can this Glyph connect to its 180-degree-rotated counterpart on its own right side
+	CT_MIRU  = 1LL << 28, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its upper side
+	CT_MIRD  = 1LL << 29, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its lower side
+	CT_MIRL  = 1LL << 30, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its left side
+	CT_MIRR  = 1LL << 31, ///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its right side
+	SA_MIRFD = 1LL << 32, ///< Is this Glyph the same after mirroring across the forward diagonal
+	SA_MIRBD = 1LL << 33, ///< Is this Glyph the same after mirroring across the backward diagonal
+	CT_SELFU = 1LL << 34, ///< Can this Glyph connect to itself on the upper side of the Glyph
+	CT_SELFD = 1LL << 35, ///< Can this Glyph connect to itself on the lower side of the Glyph
+	CT_SELFL = 1LL << 36, ///< Can this Glyph connect to itself on the left side of the Glyph
+	CT_SELFR = 1LL << 37, ///< Can this Glyph connect to itself on the right side of the Glyph
 
-	COND_MASK = 0b1111111111111111111111LL << (16 + 16), ///< The mask of all the non-Side flags
+	COND_MASK = 0b1111111111111111111111LL << 16, ///< The mask of all the non-Side flags
 };
 constexpr inline GlyphFlag operator|(GlyphFlag flag1, GlyphFlag flag2)
 /// Allows GlyphFlag values to have \c operator| used on them, to generate new GlyphFlag values
@@ -63,37 +63,12 @@ struct Glyph {
 	const Glyph* const mirroredFD;	///< The pointer to the Glyph, of this Glyph mirrored across the forward diagonal line
 	const Glyph* const mirroredBD;	///< The pointer to the Glyph, of this Glyph mirrored across the backward diagonal line
 
-	union {
-		struct {
-			Connection up : 4;						///< The connection on the upper side of the Glyph
-			Connection down : 4;					///< The connection on the lower side of the Glyph
-			Connection left : 4;					///< The connection on the left side of the Glyph
-			Connection right : 4;					///< The connection on the right side of the Glyph
-			unsigned int sameAfterRotate4 : 1;		///< Is this Glyph the same after rotating by 90 degrees
-			unsigned int sameAfterRotate2 : 1;		///< Is this Glyph the same after rotating by 180 degrees
-			unsigned int sameAfterMirrorX : 1;		///< Is this Glyph the same after mirroring across the horizontal line
-			unsigned int sameAfterMirrorY : 1;		///< Is this Glyph the same after mirroring across the vertical line
-			unsigned int connectToRotate4Up : 1;	///< Can this Glyph connect to its 90-degree-rotated counterpart on its own upper side
-			unsigned int connectToRotate4Down : 1;	///< Can this Glyph connect to its 90-degree-rotated counterpart on its own lower side
-			unsigned int connectToRotate4Left : 1;	///< Can this Glyph connect to its 90-degree-rotated counterpart on its own left side
-			unsigned int connectToRotate4Right : 1;	///< Can this Glyph connect to its 90-degree-rotated counterpart on its own right side
-			unsigned int connectToRotate2Up : 1;	///< Can this Glyph connect to its 180-degree-rotated counterpart on its own upper side
-			unsigned int connectToRotate2Down : 1;	///< Can this Glyph connect to its 180-degree-rotated counterpart on its own lower side
-			unsigned int connectToRotate2Left : 1;	///< Can this Glyph connect to its 180-degree-rotated counterpart on its own left side
-			unsigned int connectToRotate2Right : 1;	///< Can this Glyph connect to its 180-degree-rotated counterpart on its own right side
-			unsigned int connectToMirrorUp : 1;		///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its upper side
-			unsigned int connectToMirrorDown : 1;	///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its lower side
-			unsigned int connectToMirrorLeft : 1;	///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its left side
-			unsigned int connectToMirrorRight : 1;	///< Can this Glyph connect to its mirrored counterpart if it is mirrored across its right side
-			unsigned int sameAfterMirrorFwdDiag : 1;	///< Is this Glyph the same after mirroring across the horizontal line
-			unsigned int sameAfterMirrorBackDiag : 1;	///< Is this Glyph the same after mirroring across the vertical line
-			unsigned int connectToSelfUp	: 1;	///< Can this Glyph connect to itself on the upper side of the Glyph
-			unsigned int connectToSelfDown	: 1;	///< Can this Glyph connect to itself on the lower side of the Glyph
-			unsigned int connectToSelfLeft	: 1;	///< Can this Glyph connect to itself on the left side of the Glyph
-			unsigned int connectToSelfRight	: 1;	///< Can this Glyph connect to itself on the right side of the Glyph
-		};
-		GlyphFlag flags;	///< The total signature of this glyph, in a union with all the other flags to access the individual flags simultaneously
-	};
+	Connection up;
+	Connection down;
+	Connection left;
+	Connection right;
+
+	GlyphFlag flags;	///< The total signature of this glyph, in a union with all the other flags to access the individual flags simultaneously
 
 	/// All the \c connectTo____ flags are determined from the other parameters, but the other parameters are given explicitly
 	Glyph(wxString chr, const Glyph* rotated4, const Glyph* rotated2, const Glyph* mirroredX, const Glyph* mirroredY, const Glyph* mirroredFD, const Glyph* mirroredBD,
@@ -101,25 +76,36 @@ struct Glyph {
 	unsigned int sameAfterRotate4, unsigned int sameAfterRotate2, unsigned int sameAfterMirrorX, unsigned int sameAfterMirrorY, unsigned int sameAfterMirrorFwdDiag, unsigned int sameAfterMirrorBackDiag) :
 		chr{ chr }, rotated4{ rotated4 }, rotated2{ rotated2 }, mirroredX{ mirroredX }, mirroredY{ mirroredY }, mirroredFD{ mirroredFD }, mirroredBD{ mirroredBD },
 		up{ up }, down{ down }, left{ left }, right{ right },
-		sameAfterRotate4{ sameAfterRotate4 }, sameAfterRotate2{ sameAfterRotate2 },
-		sameAfterMirrorX{ sameAfterMirrorX }, sameAfterMirrorY{ sameAfterMirrorY },
-		connectToRotate4Up		{up		== rotate_90(right)},
-		connectToRotate4Down	{down	== rotate_90(left)},
-		connectToRotate4Left	{left	== rotate_90(up)},
-		connectToRotate4Right	{right	== rotate_90(down)},
-		connectToRotate2Up		{up		== rotate_180(up)},
-		connectToRotate2Down	{down	== rotate_180(down)},
-		connectToRotate2Left	{left	== rotate_180(left)},
-		connectToRotate2Right	{right	== rotate_180(right)},
-		connectToMirrorUp		{up		== mirror_x(up)},
-		connectToMirrorDown		{down	== mirror_x(down)},
-		connectToMirrorLeft		{left	== mirror_y(left)},
-		connectToMirrorRight	{right	== mirror_y(right)},
-		sameAfterMirrorFwdDiag{ sameAfterMirrorFwdDiag }, sameAfterMirrorBackDiag{ sameAfterMirrorBackDiag },
-		connectToSelfUp			{up		== down},
-		connectToSelfDown		{up		== down},
-		connectToSelfLeft		{left	== right},
-		connectToSelfRight		{left	== right}	{}
+		flags
+		{
+			toFlag(up,    GlyphFlag::UP)    | 
+			toFlag(down,  GlyphFlag::DOWN)  | 
+			toFlag(left,  GlyphFlag::LEFT)  | 
+			toFlag(right, GlyphFlag::RIGHT) | 
+			(sameAfterRotate4 ? GlyphFlag::SA_ROT4 : GlyphFlag::NONE) |
+			(sameAfterRotate2 ? GlyphFlag::SA_ROT2 : GlyphFlag::NONE) |
+			(sameAfterMirrorX ? GlyphFlag::SA_MIRX : GlyphFlag::NONE) |
+			(sameAfterMirrorY ? GlyphFlag::SA_MIRY : GlyphFlag::NONE) |
+			(up    == rotate_90(right) ? GlyphFlag::CT_ROT4U : GlyphFlag::NONE) |
+			(down  == rotate_90(left)  ? GlyphFlag::CT_ROT4D : GlyphFlag::NONE) |
+			(left  == rotate_90(up)    ? GlyphFlag::CT_ROT4L : GlyphFlag::NONE) |
+			(right == rotate_90(down)  ? GlyphFlag::CT_ROT4R : GlyphFlag::NONE) |
+			(up    == rotate_180(up)    ? GlyphFlag::CT_ROT2U : GlyphFlag::NONE) |
+			(down  == rotate_180(down)  ? GlyphFlag::CT_ROT2D : GlyphFlag::NONE) |
+			(left  == rotate_180(left)  ? GlyphFlag::CT_ROT2L : GlyphFlag::NONE) |
+			(right == rotate_180(right) ? GlyphFlag::CT_ROT2R : GlyphFlag::NONE) |
+			(up    == mirror_x(up)    ? GlyphFlag::CT_MIRU : GlyphFlag::NONE) |
+			(down  == mirror_x(down)  ? GlyphFlag::CT_MIRD : GlyphFlag::NONE) |
+			(left  == mirror_y(left)  ? GlyphFlag::CT_MIRL : GlyphFlag::NONE) |
+			(right == mirror_y(right) ? GlyphFlag::CT_MIRR : GlyphFlag::NONE) |
+			(sameAfterMirrorFwdDiag  ? GlyphFlag::SA_MIRFD : GlyphFlag::NONE) |
+			(sameAfterMirrorBackDiag ? GlyphFlag::SA_MIRBD : GlyphFlag::NONE) |
+			(up   == down  ? GlyphFlag::CT_SELFU : GlyphFlag::NONE) |
+			(up   == down  ? GlyphFlag::CT_SELFD : GlyphFlag::NONE) |
+			(left == right ? GlyphFlag::CT_SELFL : GlyphFlag::NONE) |
+			(left == right ? GlyphFlag::CT_SELFR : GlyphFlag::NONE)
+		}
+	{}
 
 	static constexpr int TOTAL = 190; ///< The total number of glyphs used
 };
