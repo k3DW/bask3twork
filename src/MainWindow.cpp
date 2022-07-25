@@ -94,7 +94,7 @@ void MainWindow::initSelectRegion() {
 	selectRegionSizer->Add(selectCoord, 0, wxALIGN_CENTER | wxDOWN, GAP_3);
 	selectRegionSizer->Add(selectButtonSizer, 0, wxEXPAND);
 
-	resetSelectCoord();
+	reset_selection();
 }
 void MainWindow::initGenerateRegion() {
 	generateRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Generate");
@@ -192,9 +192,9 @@ void MainWindow::openFile() {
 	disp = new DisplayGrid(this, knot);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
 
-	// Then, reset the select coordinates with MainWindow::resetSelectCoord()
+	// Then, reset the select coordinates with MainWindow::reset_selection()
 	// and regenerate and export textbox with MainWindow::regenExportBox() and MainWindow::showExportBox().
-	resetSelectCoord();
+	reset_selection();
 	regenExportBox();
 	showExportBox();
 
@@ -302,10 +302,10 @@ void MainWindow::refreshGrid() {
 			w = widthNum;
 			initDispSizer();
 
-			// / Then, reset the select coordinates with MainWindow::resetSelectCoord(),
+			// / Then, reset the select coordinates with MainWindow::reset_selection(),
 			// / regenerate and export textbox with MainWindow::regenExportBox(),
 			// / and reset the knot wrapping \c wxMenuItem objects.
-			resetSelectCoord();
+			reset_selection();
 			regenExportBox();
 			menuWrapX->Check(false);
 			menuWrapY->Check(false);
@@ -340,45 +340,45 @@ void MainWindow::RefreshMinSize() {
 	Layout();
 }
 
-void MainWindow::updateSelectCoord() {
-	/// This function uses the stored values of \c iMin, \c jMin, \c iMax, and \c jMax to update the displayed coordinates.
-	/// Each of these stored values is zero - indexed, so the displayed value is incremented by 1.
+void MainWindow::update_selection_display() {
+	/// Updates the displayed selection coordinates, also has other effects.
+	/// Each of these stored values is zero-indexed, so the displayed value is incremented by 1.
 	selectCoord->SetLabelText(wxString::Format("(%i,%i) to (%i,%i)", selection.min.i + 1, selection.min.j + 1, selection.max.i + 1, selection.max.j + 1));
 	selectRegionSizer->Layout();
 	/// This function also
-	/// (1) calls DisplayGrid::clearHighlight() to remove all possible highlighting in the grid,
-	/// (2) sets the \c show/hide button to "Show", and
-	/// (3) calls MainWindow::enableGenerateButtons() with parameter \c false to disable all of the generating buttons
+	/// (1) removes all highlighting in the grid,
+	/// (2) disables all of the generating buttons, and
+	/// (3) sets the \c show/hide button to "Show"
 	disp->clearHighlight();
-	selectToggleButton->SetLabelText("Show");
 	enableGenerateButtons(false);
+	selectToggleButton->SetLabelText("Show");
 }
-void MainWindow::changeSelectCoord(Selection selection) {
-	if (selection.min.i > -1) this->selection.min.i = selection.min.i;
-	if (selection.min.j > -1) this->selection.min.j = selection.min.j;
-	if (selection.max.i > -1) this->selection.max.i = selection.max.i;
-	if (selection.max.j > -1) this->selection.max.j = selection.max.j;
-
-	updateSelectCoord();
+void MainWindow::set_selection_min(Point point) {
+	selection.min = point;
 }
-void MainWindow::fixSelectCoord() { // This function "fixes" the selection coordinates, such that the left coordinate is to the upper-left of the right coordinate.
+void MainWindow::set_selection_max(Point point) {
+	selection.max = point;
+}
+void MainWindow::fix_selection() {
 	if (selection.min.i > selection.max.i) std::swap(selection.min.i, selection.max.i);
 	if (selection.min.j > selection.max.j) std::swap(selection.min.j, selection.max.j);
-	updateSelectCoord();
 }
-void MainWindow::resetSelectCoord() {
-	changeSelectCoord({ .min{ 0, 0 }, .max{ h - 1, w - 1 } });
+void MainWindow::reset_selection() {
+	set_selection_min({ 0, 0 });
+	set_selection_max({ h - 1, w - 1 });
+	update_selection_display();
 }
 void MainWindow::selectToggleFunction(wxCommandEvent& evt) {
 	/// \b Method
 
 	/// If the text in the \c show/hide button is "Show",
-	/// then first fix the selection coordinates with MainWindow::fixSelectCoords(),
+	/// then first fix the selection coordinates with MainWindow::fix_selections(),
 	/// call DisplayGrid::highlightSelection() with the index member variables,
 	/// set the button text to be "Hide",
 	/// and call MainWindow::enableGenerateButtons() to enable the buttons.
 	if (selectToggleButton->GetLabelText() == wxString("Show")) {
-		fixSelectCoord();
+		fix_selection();
+		update_selection_display();
 		disp->highlightSelection(selection);
 		selectToggleButton->SetLabelText("Hide");
 		enableGenerateButtons(true);
@@ -396,7 +396,7 @@ void MainWindow::selectToggleFunction(wxCommandEvent& evt) {
 	evt.Skip();
 }
 void MainWindow::selectResetFunction(wxCommandEvent& evt) {
-	resetSelectCoord();
+	reset_selection();
 	evt.Skip();
 }
 
