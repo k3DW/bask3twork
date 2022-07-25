@@ -49,9 +49,6 @@ constexpr inline bool operator&(Symmetry sym, unsigned int n)
 	return static_cast<unsigned int>(static_cast<unsigned int>(sym) & n);
 }
 
-/// A shortcut for this function signature, which is used often throughout the code
-#define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
-
 // Constants for future functionality, changing the sizing of things depending on the screen size
 const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	///< For future functionality, the screen size in the x direction
 const int SCREEN_Y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);	///< For future functionality, the screen size in the y direction
