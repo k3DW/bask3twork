@@ -353,11 +353,11 @@ void MainWindow::updateSelectCoord() {
 	selectToggleButton->SetLabelText("Show");
 	enableGenerateButtons(false);
 }
-void MainWindow::changeSelectCoord(ijSignature) {
-	if (iMin > -1) this->selection.min.i = iMin;
-	if (jMin > -1) this->selection.min.j = jMin;
-	if (iMax > -1) this->selection.max.i = iMax;
-	if (jMax > -1) this->selection.max.j = jMax;
+void MainWindow::changeSelectCoord(Selection selection) {
+	if (selection.min.i > -1) this->selection.min.i = selection.min.i;
+	if (selection.min.j > -1) this->selection.min.j = selection.min.j;
+	if (selection.max.i > -1) this->selection.max.i = selection.max.i;
+	if (selection.max.j > -1) this->selection.max.j = selection.max.j;
 
 	updateSelectCoord();
 }
@@ -367,7 +367,7 @@ void MainWindow::fixSelectCoord() { // This function "fixes" the selection coord
 	updateSelectCoord();
 }
 void MainWindow::resetSelectCoord() {
-	changeSelectCoord(0, 0, h - 1, w - 1);
+	changeSelectCoord({ .min{ 0, 0 }, .max{ h - 1, w - 1 } });
 }
 void MainWindow::selectToggleFunction(wxCommandEvent& evt) {
 	/// \b Method

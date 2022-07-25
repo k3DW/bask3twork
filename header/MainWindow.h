@@ -20,7 +20,7 @@ public:
 	~MainWindow(); ///< Hides this MainWindow object automatically, so the destruction is not visible
 
 	void updateSelectCoord();				///< Updates the displayed selection coordinates, also has other effects.
-	void changeSelectCoord(ijSignature);
+	void changeSelectCoord(Selection selection);
 	void fixSelectCoord();
 	void resetSelectCoord();				///< Resets the values of \c iMin, \c jMin, \c iMax, and \c jMax to the default values, by calling MainWindow::changeSelectCoord()
 
@@ -101,17 +101,14 @@ private:
  */
 
 /* Select Coord functions */
-/** \fn MainWindow::changeSelectCoord(ijSignature)
- * Changes the stored values of \c iMin, \c jMin, \c iMax, and \c jMax to the supplied values
+/** \fn MainWindow::changeSelectCoord(Selection selection)
+ * Changes the stored \c selection to the supplied selection.
  * 
- * Changes the stored values of \c iMin, \c jMin, \c iMax, and \c jMax to the supplied values,
- * unless the supplied value to any of these is \c -1.
+ * Changes the stored \c selection to the supplied selection,
+ * unless any supplied value to any of these is \c -1, in which case it's ignored.
  * This function then calls MainWindow::updateSelectionCoord() to automatically update the display every time the values change.
  *
- * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
- * \param jMin The zero-indexed leftmost column of the selection
- * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
- * \param jMax The zero-indexed rightmost column of the selection
+ * \param selection The pair of zero-indexed coordinates representing the top left (lower numerically) and bottom right (higher numerically) of the current selection
  */
 /** \fn MainWindow::fixSelectCoord()
  * Swaps the stored values of \c iMin, \c jMin, \c iMax, and \c jMax such that \c iMin \c <= \c iMax and \c jMin \c <= \c jMax.

@@ -37,12 +37,12 @@ void DisplayGrid::initTiles() {
 
 void DisplayGrid::leftClick(wxMouseEvent& evt) {
 	int id = evt.GetId();
-	static_cast<MainWindow*>(parent)->changeSelectCoord(id / w, id % w, -1, -1);
+	static_cast<MainWindow*>(parent)->changeSelectCoord({ .min{ id / w, id % w }, .max{ -1, -1 } });
 	evt.Skip();
 }
 void DisplayGrid::rightClick(wxMouseEvent& evt) {
 	int id = evt.GetId();
-	static_cast<MainWindow*>(parent)->changeSelectCoord(-1, -1, id / w, id % w);
+	static_cast<MainWindow*>(parent)->changeSelectCoord({ .min{ -1, -1 }, .max{ id / w, id % w } });
 	evt.Skip();
 }
 
