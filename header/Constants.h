@@ -52,9 +52,6 @@ constexpr inline bool operator&(Symmetry sym, unsigned int n)
 /// A shortcut for this function signature, which is used often throughout the code
 #define ijSignature const int iMin, const int jMin, const int iMax, const int jMax
 
-/// Converts integer to wxString
-#define intWX(x) wxString::Format(wxT("%i"),x)
-
 // Constants for future functionality, changing the sizing of things depending on the screen size
 const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	///< For future functionality, the screen size in the x direction
 const int SCREEN_Y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);	///< For future functionality, the screen size in the y direction
@@ -64,12 +61,9 @@ constexpr size_t MAX_W = 100;	///< The maximum width of the grid allowed in the 
 
 // Constants for the colours of the program
 const wxColour BACKGROUND_COLOUR{ 240, 240, 240 };	///< The default colour of the background for the program
-const wxColour HL_COLOUR{ 150, 200, 255 };			///< The colour that denotes a "highlighted" tile
 
 // Constants for the fonts of the program, only used in DisplayGrid
 // For future functionality, the sizes of these fonts might need to be parametrized
-const wxFont AXIS_FONT{ 12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas" };					///< The font for the axis labels of the DisplayGrid
-const wxFont TILE_FONT{ wxSize(48, 48), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Celtic Knots" };	///< The font for the min Tile objects of the DisplayGrid
 const wxFont TEXT_FONT{ 12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL };									///< The font for the \c selectCoords and the \c grid text boxes
 
 // Constants for the iterations of knot generating

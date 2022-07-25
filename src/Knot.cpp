@@ -51,7 +51,7 @@ bool Knot::generate(Symmetry sym, ijSignature)
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		/// \b (1) At certain intervals of numbers of attempts, update the status bar with the number of attempts made.
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText(statusBeginning + "Attempt " + intWX(attempts) + "/" + intWX(MAX_ATTEMPTS));
+			statusBar->SetStatusText(wxString::Format("%sAttempt %i/%i", statusBeginning, attempts, MAX_ATTEMPTS));
 
 		/// \b (2) Call Knot::tryGenerating() using the copy of \c glyphs created above.
 		///		If it fails, \c continue the loop and try again.

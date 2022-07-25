@@ -141,7 +141,7 @@ void MainWindow::openFile() {
 	const size_t rowCount = file.GetLineCount();
 	const size_t colCount = file.GetFirstLine().size();
 	if (rowCount > MAX_H || colCount > MAX_W) {
-		wxMessageBox("Please choose a smaller file. The file can only be " + intWX(MAX_H) + " rows by " + intWX(MAX_W) + " columns.", "Error: File is too large");
+		wxMessageBox(wxString::Format("Please choose a smaller file. The file can only be %i rows by %i columns.", MAX_H, MAX_W), "Error: File is too large");
 		return;
 	}
 	if (rowCount < 1) {
@@ -247,10 +247,10 @@ void MainWindow::refreshGrid() {
 	wxDialog* dlg = new wxDialog(nullptr, 4321, "Grid");
 	dlg->SetIcon(wxICON(AppIcon));
 
-	wxTextCtrl* heightText = new wxTextCtrl(dlg, wxID_ANY, intWX(h), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
+	wxTextCtrl* heightText = new wxTextCtrl(dlg, wxID_ANY, wxString::Format("%i", h), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
 	heightText->SetMaxLength(2);
 	heightText->SetFont(TEXT_FONT);
-	wxTextCtrl* widthText = new wxTextCtrl(dlg, wxID_ANY, intWX(w), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
+	wxTextCtrl* widthText = new wxTextCtrl(dlg, wxID_ANY, wxString::Format("%i", w), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
 	widthText->SetMaxLength(2);
 	widthText->SetFont(TEXT_FONT);
 
@@ -290,7 +290,7 @@ void MainWindow::refreshGrid() {
 				return;
 			}
 			if (heightNum > MAX_H || widthNum > MAX_W) {
-				wxMessageBox("Please enter sizes that are, at most, " + intWX(MAX_H) + " by " + intWX(MAX_W) + ".", "Error: Knot size too large");
+				wxMessageBox(wxString::Format("Please enter sizes that are, at most, %i by %i.", MAX_H, MAX_W), "Error: Knot size too large");
 				return;
 			}
 
@@ -340,7 +340,7 @@ void MainWindow::RefreshMinSize() {
 void MainWindow::updateSelectCoord() {
 	/// This function uses the stored values of \c iMin, \c jMin, \c iMax, and \c jMax to update the displayed coordinates.
 	/// Each of these stored values is zero - indexed, so the displayed value is incremented by 1.
-	selectCoord->SetLabelText("(" + intWX(iMin + 1) + "," + intWX(jMin + 1) + ") to (" + intWX(iMax + 1) + "," << intWX(jMax + 1) + ")");
+	selectCoord->SetLabelText(wxString::Format("(%i,%i) to (%i,%i)", iMin + 1, jMin + 1, iMax + 1, jMax + 1));
 	selectRegionSizer->Layout();
 	/// This function also
 	/// (1) calls DisplayGrid::clearHighlight() to remove all possible highlighting in the grid,
@@ -452,7 +452,7 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 		showExportBox();
 	}
 	else
-		wxMessageBox("The specified knot was not able to be generated in " + intWX(MAX_ATTEMPTS) + " attempts.", "Error: Knot failed");
+		wxMessageBox(wxString::Format("The specified knot was not able to be generated in %i attempts.", MAX_ATTEMPTS), "Error: Knot failed");
 
 	/// At the end, set the status bar back to the message which was displayed at the beginning of the function,
 	/// and re-enable the generate buttons.
