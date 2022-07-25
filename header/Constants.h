@@ -67,8 +67,6 @@ const wxColour BACKGROUND_COLOUR{ 240, 240, 240 };	///< The default colour of th
 
 // Constants for the fonts of the program, only used in DisplayGrid
 // For future functionality, the sizes of these fonts might need to be parametrized
-const wxFont AXIS_FONT{ 12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas" };					///< The font for the axis labels of the DisplayGrid
-const wxFont TILE_FONT{ wxSize(48, 48), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Celtic Knots" };	///< The font for the min Tile objects of the DisplayGrid
 const wxFont TEXT_FONT{ 12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL };									///< The font for the \c selectCoords and the \c grid text boxes
 
 // Constants for the iterations of knot generating

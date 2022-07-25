@@ -17,9 +17,9 @@ DisplayGrid::~DisplayGrid() {
 }
 void DisplayGrid::initAxisLabels() {
 	for (int i = 1; i <= w; i++)
-		sizer->Add(new Tile(this, wxID_ANY, i, 240, AXIS_FONT), wxGBPosition(0, i), wxDefaultSpan, wxALIGN_CENTER);
+		sizer->Add(new AxisLabel(this, i), wxGBPosition(0, i), wxDefaultSpan, wxALIGN_CENTER);
 	for (int i = 1; i <= h; i++)
-		sizer->Add(new Tile(this, wxID_ANY, i, 240, AXIS_FONT), wxGBPosition(i, 0), wxDefaultSpan, wxALIGN_CENTER);
+		sizer->Add(new AxisLabel(this, i), wxGBPosition(i, 0), wxDefaultSpan, wxALIGN_CENTER);
 }
 void DisplayGrid::initTiles() {
 	tiles = std::vector<std::vector<Tile*>>(h, std::vector<Tile*>(w, nullptr));
@@ -27,7 +27,7 @@ void DisplayGrid::initTiles() {
 		for (int j = 0; j < w; j++) {
 			int id = (i * w) + j;
 			int grey = 255 - 10 * (i % 2 + j % 2);
-			tiles[i][j] = new Tile(this, id, knot->get(i, j), grey, TILE_FONT);
+			tiles[i][j] = new Tile(this, id, knot->get(i, j), grey);
 			tiles[i][j]->Bind(wxEVT_LEFT_DOWN, &DisplayGrid::leftClick, this);
 			tiles[i][j]->Bind(wxEVT_RIGHT_DOWN, &DisplayGrid::rightClick, this);
 			sizer->Add(tiles[i][j], wxGBPosition(i + 1, j + 1)/*, wxDefaultSpan, wxALIGN_CENTER*/);
