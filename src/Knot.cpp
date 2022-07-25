@@ -55,7 +55,7 @@ bool Knot::generate(Symmetry sym, ijSignature)
 
 		/// \b (2) Call Knot::tryGenerating() using the copy of \c glyphs created above.
 		///		If it fails, \c continue the loop and try again.
-		std::optional<GlyphVec2> newGlyphs = tryGenerating(baseGlyphs, sym, iMin, jMin, iMax, jMax);
+		std::optional<GlyphVec2> newGlyphs = tryGenerating(baseGlyphs, sym, { .min{ iMin, jMin }, .max{ iMax, jMax } });
 		if (!newGlyphs) continue;
 
 		/// \b (3) If the knot has been successfully generated, set \c glyphs equal to this generated version and return \c true.
@@ -66,7 +66,7 @@ bool Knot::generate(Symmetry sym, ijSignature)
 	return false;
 }
 
-std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, ijSignature) const
+std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, Selection selection) const
 /** Called only from Knot::generate(), try generating a knot with the given symmetry for the given selection.
  * 
  * This function pulls the required logic in Knot::generate() in order to generate the Knot selection once, and places it into its own function. 
@@ -90,12 +90,12 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 	const bool bitFwDi = static_cast<bool>(sym & 0x10);
 	const bool bitBkDi = static_cast<bool>(sym & 0x20);
 
-	const bool isEvenRows = (iMax - iMin + 1) % 2 == 0;
-	const bool isEvenCols = (jMax - jMin + 1) % 2 == 0;
-	const bool isAllRows = iMin == 0 && iMax == h - 1;
-	const bool isAllCols = jMin == 0 && jMax == w - 1;
-	const int iMid = (iMin + iMax) / 2;
-	const int jMid = (jMin + jMax) / 2;
+	const bool isEvenRows = (selection.max.i - selection.min.i + 1) % 2 == 0;
+	const bool isEvenCols = (selection.max.j - selection.min.j + 1) % 2 == 0;
+	const bool isAllRows = selection.min.i == 0 && selection.max.i == h - 1;
+	const bool isAllCols = selection.min.j == 0 && selection.max.j == w - 1;
+	const int iMid = (selection.min.i + selection.max.i) / 2;
+	const int jMid = (selection.min.j + selection.max.j) / 2;
 	const GlyphFlag midHoriFlag = isEvenRows ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
 	const GlyphFlag midVertFlag = isEvenCols ? GlyphFlag::CT_MIRR : GlyphFlag::SA_MIRY;
 	const GlyphFlag midRot2Flag = isEvenRows ? (isEvenCols ? GlyphFlag::NONE : GlyphFlag::CT_ROT2D) : (isEvenCols ? GlyphFlag::CT_ROT2R : GlyphFlag::SA_ROT2);
@@ -108,8 +108,8 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 	const bool doWrapY = wrapYEnabled && (!isSquare || wrapXEnabled);
 
 	/// Next, enter a loop over each location in the selection. Do the following.
-	for (int i = iMin, iOffset = 0; i <= iMax; i++, iOffset++) {
-		for (int j = jMin, jOffset = 0; j <= jMax; j++, jOffset++) {
+	for (int i = selection.min.i, iOffset = 0; i <= selection.max.i; i++, iOffset++) {
+		for (int j = selection.min.j, jOffset = 0; j <= selection.max.j; j++, jOffset++) {
 			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
 			if (glyphGrid[i][j]) continue;
 
@@ -160,12 +160,12 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 			if (!glyphGrid[i][j]) return std::nullopt;
 
 			/// \b (4) If the function has made it to this point, then reflect and rotate the newly generated Glyph to the appropriate spots given the symmetry required.
-			if (bitHori) glyphGrid[iMax - iOffset][j] = glyphGrid[i][j]->mirroredX;
-			if (bitVert) glyphGrid[i][jMax - jOffset] = glyphGrid[i][j]->mirroredY;
-			if (bitRot2) glyphGrid[iMax - iOffset][jMax - jOffset] = glyphGrid[i][j]->rotated2;
-			if (bitRot4) { glyphGrid[iMin + jOffset][jMax - iOffset] = glyphGrid[i][j]->rotated4; glyphGrid[iMax - jOffset][jMin + iOffset] = glyphGrid[i][j]->rotated2->rotated4; }
-			if (bitFwDi) glyphGrid[iMax - jOffset][jMax - iOffset] = glyphGrid[i][j]->mirroredFD;
-			if (bitBkDi) glyphGrid[iMin + jOffset][jMin + iOffset] = glyphGrid[i][j]->mirroredBD;
+			if (bitHori) glyphGrid[selection.max.i - iOffset][j] = glyphGrid[i][j]->mirroredX;
+			if (bitVert) glyphGrid[i][selection.max.j - jOffset] = glyphGrid[i][j]->mirroredY;
+			if (bitRot2) glyphGrid[selection.max.i - iOffset][selection.max.j - jOffset] = glyphGrid[i][j]->rotated2;
+			if (bitRot4) { glyphGrid[selection.min.i + jOffset][selection.max.j - iOffset] = glyphGrid[i][j]->rotated4; glyphGrid[selection.max.i - jOffset][selection.min.j + iOffset] = glyphGrid[i][j]->rotated2->rotated4; }
+			if (bitFwDi) glyphGrid[selection.max.i - jOffset][selection.max.j - iOffset] = glyphGrid[i][j]->mirroredFD;
+			if (bitBkDi) glyphGrid[selection.min.i + jOffset][selection.min.j + iOffset] = glyphGrid[i][j]->mirroredBD;
 		}
 	}
 
