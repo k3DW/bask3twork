@@ -19,18 +19,17 @@ public:
 	MainWindow(int h, int w, wxString title);
 	~MainWindow(); ///< Hides this MainWindow object automatically, so the destruction is not visible
 
-	void updateSelectCoord();				///< Updates the displayed selection coordinates, also has other effects.
-	void changeSelectCoord(ijSignature);
-	void fixSelectCoord();
-	void resetSelectCoord();				///< Resets the values of \c iMin, \c jMin, \c iMax, and \c jMax to the default values, by calling MainWindow::changeSelectCoord()
+	void update_selection_display();     ///< Updates the displayed selection coordinates, also has other effects.
+	void set_selection_min(Point point); ///< Sets the \c min portion of MainWindow::selection
+	void set_selection_max(Point point); ///< Sets the \c max portion of MainWindow::selection
+	void fix_selection();                ///< Fixes the selection such that \c min is the top left point and \c max is the bottom right point
+	void reset_selection();              ///< Resets the value of \c selection to the default
 
 private:
 	int h,		///< The height of the knot, i.e. the number of rows.
 		w;		///< The width of the knot, i.e. the number of columns.
-	int iMin,	///< The zero-indexed upper row of the selection visually (lower numerically)
-		jMin,	///< The zero-indexed leftmost column of the selection
-		iMax,	///< The zero-indexed lower row of the selection visually (higher numerically)
-		jMax;	///< The zero-indexed rightmost column of the selection
+	
+	Selection selection; ///< The pair of zero-indexed coordinates representing the top left (lower numerically) and bottom right (higher numerically) of the current selection
 
 	void initMenuBar();
 	void menuEventHandler(wxCommandEvent& evt); ///< Handles all events for menu presses
@@ -67,7 +66,7 @@ private:
 		wxBoxSizer* selectButtonSizer;	// The selection buttons
 			declareButton(selectToggle);	///< This function is bound to the \c show/hide button, so it highlights and unhighlights the selection
 				// This button is a show/hide button, which highlights the selection
-			declareButton(selectReset);		///< This function resets the selection coordinates by calling MainWindow::resetSelectCoord(), but this function takes in a button event so it can be bound to the \c reset button.
+			declareButton(selectReset);		///< This function resets the selection coordinates by calling MainWindow::reset_selection(), but this function takes in a button event so it can be bound to the \c reset button.
 				// This button resets the selection coordinates
 
 	void initGenerateRegion();
@@ -100,24 +99,4 @@ private:
  * \param h The initial height of the grid, but can be changed later when MainWindow::gridRegenFunction() is called
  * \param w The initial width of the grid, but can be changed later when MainWindow::gridRegenFunction() is called
  * \param title The title of the whole window
- */
-
-/* Select Coord functions */
-/** \fn MainWindow::changeSelectCoord(ijSignature)
- * Changes the stored values of \c iMin, \c jMin, \c iMax, and \c jMax to the supplied values
- * 
- * Changes the stored values of \c iMin, \c jMin, \c iMax, and \c jMax to the supplied values,
- * unless the supplied value to any of these is \c -1.
- * This function then calls MainWindow::updateSelectionCoord() to automatically update the display every time the values change.
- *
- * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
- * \param jMin The zero-indexed leftmost column of the selection
- * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
- * \param jMax The zero-indexed rightmost column of the selection
- */
-/** \fn MainWindow::fixSelectCoord()
- * Swaps the stored values of \c iMin, \c jMin, \c iMax, and \c jMax such that \c iMin \c <= \c iMax and \c jMin \c <= \c jMax.
- * 
- * Swaps the stored values of \c iMin, \c jMin, \c iMax, and \c jMax such that \c iMin \c <= \c iMax and \c jMin \c <= \c jMax.
- * This function then calls MainWindow::updateSelectionCoord() to automatically update the display every time the values change.
  */

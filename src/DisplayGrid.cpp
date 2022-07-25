@@ -37,19 +37,21 @@ void DisplayGrid::initTiles() {
 
 void DisplayGrid::leftClick(wxMouseEvent& evt) {
 	int id = evt.GetId();
-	static_cast<MainWindow*>(parent)->changeSelectCoord(id / w, id % w, -1, -1);
+	static_cast<MainWindow*>(parent)->set_selection_min({ id / w, id % w });
+	static_cast<MainWindow*>(parent)->update_selection_display();
 	evt.Skip();
 }
 void DisplayGrid::rightClick(wxMouseEvent& evt) {
 	int id = evt.GetId();
-	static_cast<MainWindow*>(parent)->changeSelectCoord(-1, -1, id / w, id % w);
+	static_cast<MainWindow*>(parent)->set_selection_max({ id / w, id % w });
+	static_cast<MainWindow*>(parent)->update_selection_display();
 	evt.Skip();
 }
 
-void DisplayGrid::highlightSelection(ijSignature) { // This function highlights the selected area.
+void DisplayGrid::highlightSelection(Selection selection) { // This function highlights the selected area.
 	clearHighlight(false);
-	for (int i = iMin; i <= iMax; i++)
-		for (int j = jMin; j <= jMax; j++)
+	for (int i = selection.min.i; i <= selection.max.i; i++)
+		for (int j = selection.min.j; j <= selection.max.j; j++)
 			tiles[i][j]->highlight(true);
 	isAnythingHighlighted = true;
 	Refresh();

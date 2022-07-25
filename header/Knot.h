@@ -2,6 +2,18 @@
 #include "Constants.h"
 #include "Glyph.h"
 
+struct Point
+{
+	int i;
+	int j;
+};
+
+struct Selection
+{
+	Point min;
+	Point max;
+};
+
 /** This class represents a knot object as a grid of glyphs, with corresponding public functions to generate various symmetries. */
 class Knot {
 public:
@@ -15,20 +27,20 @@ public:
 	bool wrapXEnabled = false;		///< Is wrapping enabled in the X direction
 	bool wrapYEnabled = false;		///< Is wrapping enabled in the Y direction
 
-	bool generate(Symmetry sym, ijSignature);
+	bool generate(Symmetry sym, Selection selection);
 
-	bool checkHoriSym(ijSignature) const;
-	bool checkVertSym(ijSignature) const;
-	bool checkRot2Sym(ijSignature) const;
-	bool checkRot4Sym(ijSignature) const;
-	bool checkFwdDiag(ijSignature) const;
-	bool checkBackDiag(ijSignature) const;
-	bool checkWrapping(ijSignature) const;
+	bool checkHoriSym(Selection selection) const;
+	bool checkVertSym(Selection selection) const;
+	bool checkRot2Sym(Selection selection) const;
+	bool checkRot4Sym(Selection selection) const;
+	bool checkFwdDiag(Selection selection) const;
+	bool checkBackDiag(Selection selection) const;
+	bool checkWrapping(Selection selection) const;
 
 private:
 	GlyphVec2 glyphs;	///< The current state of the Knot, as a 2D std::vector of Glyph pointers
 
-	std::optional<GlyphVec2> tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, ijSignature) const;
+	std::optional<GlyphVec2> tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, Selection selection) const;
 };
 
 /* Knot::Knot */
@@ -54,7 +66,7 @@ private:
  */
 
 /* Knot::check____Sym */
-/** \fn Knot::checkHoriSym(ijsignature)
+/** \fn Knot::checkHoriSym(Selection selection)
  * Check if the boundary around the selection is symmetric about the horizontal axis of the selection.
  * 
  * Only checks from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
@@ -66,7 +78,7 @@ private:
  * \param jMax The zero-indexed rightmost column of the selection
  * \return Returns \c true if boundaries have this symmetry.
  */
-/** \fn Knot::checkVertSym(ijsignature)
+/** \fn Knot::checkVertSym(Selection selection)
  * Check if the boundary around the selection is symmetric about the vertical axis of the selection.
  * 
  * Only checks from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
@@ -74,7 +86,7 @@ private:
  *
  * See Knot::checkHoriSym() for parameters.
  */
-/** \fn Knot::checkRot2Sym(ijsignature)
+/** \fn Knot::checkRot2Sym(Selection selection)
  * Check if the boundary around the selection is 2-way rotationally symmetric about the central point of the selection.
  * 
  * Only checks from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
@@ -82,7 +94,7 @@ private:
  *
  * See Knot::checkHoriSym() for parameters.
  */
-/** \fn Knot::checkRot4Sym(ijsignature)
+/** \fn Knot::checkRot4Sym(Selection selection)
  * Check if the boundary around the selection is 4-way rotationally symmetric about the central point of the selection.
  * 
  * Only checks from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
@@ -90,7 +102,7 @@ private:
  *
  * See Knot::checkHoriSym() for parameters.
  */
-/** \fn Knot::checkFwdDiag(ijsignature)
+/** \fn Knot::checkFwdDiag(Selection selection)
  * Check if the boundary around the selection is symmetric about the forward diagonal of the selection, meaning it must be square.
  * 
  * Only checks from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
@@ -98,7 +110,7 @@ private:
  *
  * See Knot::checkHoriSym() for parameters.
  */
-/** \fn Knot::checkBackDiag(ijsignature)
+/** \fn Knot::checkBackDiag(Selection selection)
  * Check if the boundary around the selection is symmetric about the backward diagonal of the selection, meaning it must be square.
  * 
  * Only checks from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
@@ -106,7 +118,7 @@ private:
  *
  * See Knot::checkHoriSym() for parameters.
  */
-/** \fn Knot::checkWrapping(ijSignature)
+/** \fn Knot::checkWrapping(Selection selection)
  * Check if any of the previous wrapping conditions made it so that non wrapped knots cannot be generated.
  * 
  * This function is different from the other \c check functions, since this function returning \c false skips evaluation of the others.
