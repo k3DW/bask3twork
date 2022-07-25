@@ -410,13 +410,13 @@ void MainWindow::enableGenerateButtons(bool enable) {
 
 	/// To conditionally enable the buttons, first call the \c Knot::check____Sym() functions on the current selection and store the outputs.
 	/// Then enable each of the buttons is the proper symmetry condition has been met.
-	if (enable && knot->checkWrapping(selection.min.i, selection.min.j, selection.max.i, selection.max.j)) {
-		bool hasHoriSym = knot->checkHoriSym(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
-		bool hasVertSym = knot->checkVertSym(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
-		bool hasRot2Sym = knot->checkRot2Sym(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
-		bool hasRot4Sym = knot->checkRot4Sym(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
-		bool hasFwdDiag = knot->checkFwdDiag(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
-		bool hasBackDiag = knot->checkBackDiag(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
+	if (enable && knot->checkWrapping(selection)) {
+		bool hasHoriSym = knot->checkHoriSym(selection);
+		bool hasVertSym = knot->checkVertSym(selection);
+		bool hasRot2Sym = knot->checkRot2Sym(selection);
+		bool hasRot4Sym = knot->checkRot4Sym(selection);
+		bool hasFwdDiag = knot->checkFwdDiag(selection);
+		bool hasBackDiag = knot->checkBackDiag(selection);
 		generateNoSymButton->Enable();
 		generateHoriSymButton->Enable(hasHoriSym);
 		generateVertSymButton->Enable(hasVertSym);

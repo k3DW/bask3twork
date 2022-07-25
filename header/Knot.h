@@ -29,13 +29,13 @@ public:
 
 	bool generate(Symmetry sym, Selection selection);
 
-	bool checkHoriSym(ijSignature) const;
-	bool checkVertSym(ijSignature) const;
-	bool checkRot2Sym(ijSignature) const;
-	bool checkRot4Sym(ijSignature) const;
-	bool checkFwdDiag(ijSignature) const;
-	bool checkBackDiag(ijSignature) const;
-	bool checkWrapping(ijSignature) const;
+	bool checkHoriSym(Selection selection) const;
+	bool checkVertSym(Selection selection) const;
+	bool checkRot2Sym(Selection selection) const;
+	bool checkRot4Sym(Selection selection) const;
+	bool checkFwdDiag(Selection selection) const;
+	bool checkBackDiag(Selection selection) const;
+	bool checkWrapping(Selection selection) const;
 
 private:
 	GlyphVec2 glyphs;	///< The current state of the Knot, as a 2D std::vector of Glyph pointers
