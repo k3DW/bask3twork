@@ -46,10 +46,10 @@ void DisplayGrid::rightClick(wxMouseEvent& evt) {
 	evt.Skip();
 }
 
-void DisplayGrid::highlightSelection(ijSignature) { // This function highlights the selected area.
+void DisplayGrid::highlightSelection(Selection selection) { // This function highlights the selected area.
 	clearHighlight(false);
-	for (int i = iMin; i <= iMax; i++)
-		for (int j = jMin; j <= jMax; j++)
+	for (int i = selection.min.i; i <= selection.max.i; i++)
+		for (int j = selection.min.j; j <= selection.max.j; j++)
 			tiles[i][j]->highlight(true);
 	isAnythingHighlighted = true;
 	Refresh();

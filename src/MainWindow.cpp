@@ -379,7 +379,7 @@ void MainWindow::selectToggleFunction(wxCommandEvent& evt) {
 	/// and call MainWindow::enableGenerateButtons() to enable the buttons.
 	if (selectToggleButton->GetLabelText() == wxString("Show")) {
 		fixSelectCoord();
-		disp->highlightSelection(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
+		disp->highlightSelection(selection);
 		selectToggleButton->SetLabelText("Hide");
 		enableGenerateButtons(true);
 	}

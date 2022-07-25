@@ -13,7 +13,7 @@ public:
 	void leftClick(wxMouseEvent& evt);	///< Sets the left displayed coordinate in the parent MainWindow object, based on which Tile the left click takes place
 	void rightClick(wxMouseEvent& evt);	///< Sets the right displayed coordinate in the parent MainWindow object, based on which Tile the right click takes place
 
-	void highlightSelection(ijSignature);
+	void highlightSelection(Selection selection);
 	void clearHighlight(bool refresh = true);
 
 	void drawKnot();	///< Pulls data from the Knot object and displays it in the Tile grid
@@ -41,7 +41,7 @@ private:
  */
 
 /* Highlight functions */
-/** \fn DisplayGrid::highlightSelection(ijSignature)
+/** \fn DisplayGrid::highlightSelection(Selection selection)
  * Highlights the Tile objects within the given selection
  * 
  * Only highlights from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
@@ -50,10 +50,7 @@ private:
  * This function first calls DisplayGrid::clearHighlight() to ensure that there is only one highlighted selection at once.
  * Then it sets \c isAnythingHighlighted to \c true, before calling \c Refresh() on the DisplayGrid object.
  * 
- * \param iMin The zero-indexed upper row of the selection visually (lower numerically)
- * \param iMax The zero-indexed lower row of the selection visually (higher numerically)
- * \param jMin The zero-indexed leftmost column of the selection
- * \param jMax The zero-indexed rightmost column of the selection
+ * \param selection The pair of zero-indexed coordinates representing the top left (lower numerically) and bottom right (higher numerically) of the current selection
  */
 /** \fn DisplayGrid::clearHighlight(bool refresh = true)
  * Clears all highlighting of the Tile objects in the whole grid
