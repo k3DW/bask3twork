@@ -27,7 +27,7 @@ public:
 	bool wrapXEnabled = false;		///< Is wrapping enabled in the X direction
 	bool wrapYEnabled = false;		///< Is wrapping enabled in the Y direction
 
-	bool generate(Symmetry sym, ijSignature);
+	bool generate(Symmetry sym, Selection selection);
 
 	bool checkHoriSym(ijSignature) const;
 	bool checkVertSym(ijSignature) const;

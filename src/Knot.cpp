@@ -4,7 +4,7 @@ Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusB
 Knot::Knot(GlyphVec2 glyphs, wxStatusBar* statusBar) : h(glyphs.size()), w(glyphs[0].size()), statusBar(statusBar), glyphs(glyphs) {}
 wxString Knot::get(const int i, const int j) const { return glyphs[i][j]->chr; }
 
-bool Knot::generate(Symmetry sym, ijSignature)
+bool Knot::generate(Symmetry sym, Selection selection)
 /** Generate a knot with the given symmetry in the given selection.
  *
  * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
@@ -43,8 +43,8 @@ bool Knot::generate(Symmetry sym, ijSignature)
 
 	/// Then, make a copy of \c glyphs, and set all members in the selection to \c nullptr to denote that they are unassigned.
 	GlyphVec2 baseGlyphs = glyphs;
-	for (int i = iMin; i <= iMax; i++)
-		for (int j = jMin; j <= jMax; j++)
+	for (int i = selection.min.i; i <= selection.max.i; i++)
+		for (int j = selection.min.j; j <= selection.max.j; j++)
 			baseGlyphs[i][j] = nullptr;
 
 	/// Next, enter a loop, counting the number of attempts made at generating this knot. The steps are as follows.
@@ -55,7 +55,7 @@ bool Knot::generate(Symmetry sym, ijSignature)
 
 		/// \b (2) Call Knot::tryGenerating() using the copy of \c glyphs created above.
 		///		If it fails, \c continue the loop and try again.
-		std::optional<GlyphVec2> newGlyphs = tryGenerating(baseGlyphs, sym, { .min{ iMin, jMin }, .max{ iMax, jMax } });
+		std::optional<GlyphVec2> newGlyphs = tryGenerating(baseGlyphs, sym, selection);
 		if (!newGlyphs) continue;
 
 		/// \b (3) If the knot has been successfully generated, set \c glyphs equal to this generated version and return \c true.
