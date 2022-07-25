@@ -1,6 +1,9 @@
 #include "MainWindow.h"
 
-MainWindow::MainWindow(int h, int w, wxString title) : wxFrame(nullptr, wxID_ANY, title), h(h), w(w), iMin(0), jMin(0), iMax(h - 1), jMax(w - 1) {
+MainWindow::MainWindow(int h, int w, wxString title)
+	: wxFrame(nullptr, wxID_ANY, title), h(h), w(w)
+	, selection{ .min{ 0, 0 }, .max{ h - 1, w - 1 } }
+{
 	CreateStatusBar();
 	SetBackgroundColour(BACKGROUND_COLOUR);
 	initMenuBar();
@@ -340,7 +343,7 @@ void MainWindow::RefreshMinSize() {
 void MainWindow::updateSelectCoord() {
 	/// This function uses the stored values of \c iMin, \c jMin, \c iMax, and \c jMax to update the displayed coordinates.
 	/// Each of these stored values is zero - indexed, so the displayed value is incremented by 1.
-	selectCoord->SetLabelText(wxString::Format("(%i,%i) to (%i,%i)", iMin + 1, jMin + 1, iMax + 1, jMax + 1));
+	selectCoord->SetLabelText(wxString::Format("(%i,%i) to (%i,%i)", selection.min.i + 1, selection.min.j + 1, selection.max.i + 1, selection.max.j + 1));
 	selectRegionSizer->Layout();
 	/// This function also
 	/// (1) calls DisplayGrid::clearHighlight() to remove all possible highlighting in the grid,
@@ -351,16 +354,16 @@ void MainWindow::updateSelectCoord() {
 	enableGenerateButtons(false);
 }
 void MainWindow::changeSelectCoord(ijSignature) {
-	if (iMin > -1) this->iMin = iMin;
-	if (jMin > -1) this->jMin = jMin;
-	if (iMax > -1) this->iMax = iMax;
-	if (jMax > -1) this->jMax = jMax;
+	if (iMin > -1) this->selection.min.i = iMin;
+	if (jMin > -1) this->selection.min.j = jMin;
+	if (iMax > -1) this->selection.max.i = iMax;
+	if (jMax > -1) this->selection.max.j = jMax;
 
 	updateSelectCoord();
 }
 void MainWindow::fixSelectCoord() { // This function "fixes" the selection coordinates, such that the left coordinate is to the upper-left of the right coordinate.
-	if (iMin > iMax) std::swap(iMin, iMax);
-	if (jMin > jMax) std::swap(jMin, jMax);
+	if (selection.min.i > selection.max.i) std::swap(selection.min.i, selection.max.i);
+	if (selection.min.j > selection.max.j) std::swap(selection.min.j, selection.max.j);
 	updateSelectCoord();
 }
 void MainWindow::resetSelectCoord() {
@@ -376,7 +379,7 @@ void MainWindow::selectToggleFunction(wxCommandEvent& evt) {
 	/// and call MainWindow::enableGenerateButtons() to enable the buttons.
 	if (selectToggleButton->GetLabelText() == wxString("Show")) {
 		fixSelectCoord();
-		disp->highlightSelection(iMin, jMin, iMax, jMax);
+		disp->highlightSelection(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
 		selectToggleButton->SetLabelText("Hide");
 		enableGenerateButtons(true);
 	}
@@ -407,13 +410,13 @@ void MainWindow::enableGenerateButtons(bool enable) {
 
 	/// To conditionally enable the buttons, first call the \c Knot::check____Sym() functions on the current selection and store the outputs.
 	/// Then enable each of the buttons is the proper symmetry condition has been met.
-	if (enable && knot->checkWrapping(iMin, jMin, iMax, jMax)) {
-		bool hasHoriSym = knot->checkHoriSym(iMin, jMin, iMax, jMax);
-		bool hasVertSym = knot->checkVertSym(iMin, jMin, iMax, jMax);
-		bool hasRot2Sym = knot->checkRot2Sym(iMin, jMin, iMax, jMax);
-		bool hasRot4Sym = knot->checkRot4Sym(iMin, jMin, iMax, jMax);
-		bool hasFwdDiag = knot->checkFwdDiag(iMin, jMin, iMax, jMax);
-		bool hasBackDiag = knot->checkBackDiag(iMin, jMin, iMax, jMax);
+	if (enable && knot->checkWrapping(selection.min.i, selection.min.j, selection.max.i, selection.max.j)) {
+		bool hasHoriSym = knot->checkHoriSym(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
+		bool hasVertSym = knot->checkVertSym(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
+		bool hasRot2Sym = knot->checkRot2Sym(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
+		bool hasRot4Sym = knot->checkRot4Sym(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
+		bool hasFwdDiag = knot->checkFwdDiag(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
+		bool hasBackDiag = knot->checkBackDiag(selection.min.i, selection.min.j, selection.max.i, selection.max.j);
 		generateNoSymButton->Enable();
 		generateHoriSymButton->Enable(hasHoriSym);
 		generateVertSymButton->Enable(hasVertSym);
@@ -447,7 +450,7 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// so update the DisplayGrid with DisplayGrid::drawKnot() and update the export text box with MainWindow::showExportBox().
 	/// If the generate function returns \c false, then display an error message as a \c wxMessageBox.
 	Symmetry sym = static_cast<Symmetry>(evt.GetId());
-	if (knot->generate(sym, iMin, jMin, iMax, jMax)) {
+	if (knot->generate(sym, selection.min.i, selection.min.j, selection.max.i, selection.max.j)) {
 		disp->drawKnot();
 		showExportBox();
 	}

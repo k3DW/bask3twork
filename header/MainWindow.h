@@ -27,10 +27,8 @@ public:
 private:
 	int h,		///< The height of the knot, i.e. the number of rows.
 		w;		///< The width of the knot, i.e. the number of columns.
-	int iMin,	///< The zero-indexed upper row of the selection visually (lower numerically)
-		jMin,	///< The zero-indexed leftmost column of the selection
-		iMax,	///< The zero-indexed lower row of the selection visually (higher numerically)
-		jMax;	///< The zero-indexed rightmost column of the selection
+	
+	Selection selection; ///< The pair of zero-indexed coordinates representing the top left (lower numerically) and bottom right (higher numerically) of the current selection
 
 	void initMenuBar();
 	void menuEventHandler(wxCommandEvent& evt); ///< Handles all events for menu presses
