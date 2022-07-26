@@ -32,7 +32,6 @@ public:
 	std::pair<GlyphIterator, GlyphIterator> right_side_bounds(Selection selection) const;
 	std::pair<GlyphIterator, GlyphIterator> forward_diagonal (Selection selection) const;
 	std::pair<GlyphIterator, GlyphIterator> backward_diagonal(Selection selection) const;
-	std::array<GlyphIterator, 4>            four_corners     (Selection selection) const;
 
 	const Glyph*  at(int i, int j) const { return data[i][j]; }
 	const Glyph*& at(int i, int j)       { return data[i][j]; }
@@ -76,4 +75,3 @@ inline std::pair<GlyphIterator, GlyphIterator> Glyphs::left_side_bounds (Selecti
 inline std::pair<GlyphIterator, GlyphIterator> Glyphs::right_side_bounds(Selection selection) const { return { upper_right(selection), lower_right(selection) }; }
 inline std::pair<GlyphIterator, GlyphIterator> Glyphs::forward_diagonal (Selection selection) const { return { upper_right(selection), lower_left(selection) }; }
 inline std::pair<GlyphIterator, GlyphIterator> Glyphs::backward_diagonal(Selection selection) const { return { upper_left(selection), lower_right(selection) }; }
-inline std::array<GlyphIterator, 4>            Glyphs::four_corners     (Selection selection) const { return { upper_left(selection), upper_right(selection), lower_left(selection), lower_right(selection) }; }
