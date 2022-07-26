@@ -7,7 +7,7 @@
 class Knot {
 public:
 	Knot(int h, int w, wxStatusBar* statusBar);
-	Knot(GlyphVec2 glyphs, wxStatusBar* statusBar);
+	Knot(Glyphs&& glyphs, wxStatusBar* statusBar);
 	wxString get(const int i, const int j) const;
 
 	const int h, ///< The height of the knot, i.e. the number of rows. This is publicly accessible but not mutable
@@ -27,9 +27,9 @@ public:
 	bool checkWrapping(Selection selection) const;
 
 private:
-	GlyphVec2 glyphs;	///< The current state of the Knot, as a 2D std::vector of Glyph pointers
+	Glyphs glyphs;	///< The current state of the Knot
 
-	std::optional<GlyphVec2> tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, Selection selection) const;
+	std::optional<Glyphs> tryGenerating(Glyphs glyphGrid, Symmetry sym, Selection selection) const;
 };
 
 /* Knot::Knot */
@@ -40,7 +40,7 @@ private:
  * \param w The width of the knot, i.e. the number of columns.
  * \param statusBar The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot. This will usually be passed as GetStatusBar() when called.
  */
-/** \fn Knot::Knot(GlyphVec2 glyphs, wxStatusBar* statusBar)
+/** \fn Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar)
  * Constructor for a Knot object with provided data.
  * 
  * \param glyphs The data with which to construct the Knot, not checking if any of the values are \c nullptr.

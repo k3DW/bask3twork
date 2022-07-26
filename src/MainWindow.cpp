@@ -157,7 +157,7 @@ void MainWindow::openFile() {
 	}
 
 	// Make a 2D vector of Glyphs, to be later written to the new Knot
-	GlyphVec2 glyphs;
+	std::vector<std::vector<const Glyph*>> glyphs;
 	glyphs.reserve(rowCount);
 
 	// For each line in the file
@@ -169,7 +169,7 @@ void MainWindow::openFile() {
 		}
 
 		// Make a 1D vector of Glyphs, to be written to the 2D vector
-		GlyphVec1 glyphRow;
+		std::vector<const Glyph*> glyphRow;
 		glyphRow.reserve(colCount);
 
 		// Take each character from the line, and push the corresponding Glyph to the vector
@@ -188,7 +188,7 @@ void MainWindow::openFile() {
 
 	// Next, initialize the Knot with the variable \c glyphs and the status bar.
 	// Initialize the DisplayGrid with the newly generated Knot, and insert it between the stretch spacers in its sizer.
-	knot = new Knot(glyphs, GetStatusBar());
+	knot = new Knot(Glyphs(glyphs), GetStatusBar());
 	disp = new DisplayGrid(this, knot);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
 

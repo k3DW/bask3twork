@@ -18,6 +18,7 @@ class GlyphIterator;
 class Glyphs
 {
 public:
+	Glyphs(std::size_t rows, std::size_t columns) : data(rows, std::vector<const Glyph*>(columns, DefaultGlyph)) {}
 	Glyphs(std::vector<std::vector<const Glyph*>> data) : data(data) {}
 
 	GlyphIterator upper_left (Selection selection) const;
@@ -29,8 +30,15 @@ public:
 	std::pair<GlyphIterator, GlyphIterator> lower_side_bounds(Selection selection) const;
 	std::pair<GlyphIterator, GlyphIterator> left_side_bounds (Selection selection) const;
 	std::pair<GlyphIterator, GlyphIterator> right_side_bounds(Selection selection) const;
+	std::pair<GlyphIterator, GlyphIterator> forward_diagonal (Selection selection) const;
+	std::pair<GlyphIterator, GlyphIterator> backward_diagonal(Selection selection) const;
+	std::array<GlyphIterator, 4>            four_corners     (Selection selection) const;
 
-	const Glyph* at(Point p) const { return data[p.i][p.j]; }
+	const Glyph*  at(int i, int j) const { return data[i][j]; }
+	const Glyph*& at(int i, int j)       { return data[i][j]; }
+
+	std::size_t rows()    const { return data.size(); }
+	std::size_t columns() const { return data[0].size(); }
 
 private:
 	std::vector<std::vector<const Glyph*>> data;
@@ -41,10 +49,10 @@ class GlyphIterator
 public:
 	GlyphIterator(const Glyphs* glyphs, Point index) : glyphs(glyphs), index(index) {}
 
-	bool is_above   (const GlyphIterator& other) const { return index.i < other.index.i; }
-	bool is_below   (const GlyphIterator& other) const { return index.i > other.index.i; }
-	bool is_left_of (const GlyphIterator& other) const { return index.j < other.index.j; }
-	bool is_right_of(const GlyphIterator& other) const { return index.j > other.index.j; }
+	bool is_above_or_parallel   (const GlyphIterator& other) const { return index.i <= other.index.i; }
+	bool is_below_or_parallel   (const GlyphIterator& other) const { return index.i >= other.index.i; }
+	bool is_left_of_or_parallel (const GlyphIterator& other) const { return index.j <= other.index.j; }
+	bool is_right_of_or_parallel(const GlyphIterator& other) const { return index.j >= other.index.j; }
 
 	bool is_within(Selection selection) const { return index.i >= selection.min.i && index.i <= selection.max.i && index.j >= selection.min.j && index.j <= selection.max.j; }
 
@@ -53,7 +61,9 @@ public:
 	GlyphIterator& move_left () { index.j--; return *this; }
 	GlyphIterator& move_right() { index.j++; return *this; }
 
-	const Glyph* operator->() const { return glyphs->at(index); }
+	const Glyph* operator->() const { return glyphs->at(index.i, index.j); }
+
+	friend bool operator==(const GlyphIterator& lhs, const GlyphIterator& rhs) { return lhs.index.i == rhs.index.i && lhs.index.j == rhs.index.j; }
 
 private:
 	const Glyphs* glyphs;
@@ -69,3 +79,6 @@ inline std::pair<GlyphIterator, GlyphIterator> Glyphs::upper_side_bounds(Selecti
 inline std::pair<GlyphIterator, GlyphIterator> Glyphs::lower_side_bounds(Selection selection) const { return { lower_left(selection), lower_right(selection) }; }
 inline std::pair<GlyphIterator, GlyphIterator> Glyphs::left_side_bounds (Selection selection) const { return { upper_left(selection), lower_left(selection) }; }
 inline std::pair<GlyphIterator, GlyphIterator> Glyphs::right_side_bounds(Selection selection) const { return { upper_right(selection), lower_right(selection) }; }
+inline std::pair<GlyphIterator, GlyphIterator> Glyphs::forward_diagonal (Selection selection) const { return { upper_right(selection), lower_left(selection) }; }
+inline std::pair<GlyphIterator, GlyphIterator> Glyphs::backward_diagonal(Selection selection) const { return { upper_left(selection), lower_right(selection) }; }
+inline std::array<GlyphIterator, 4>            Glyphs::four_corners     (Selection selection) const { return { upper_left(selection), upper_right(selection), lower_left(selection), lower_right(selection) }; }

@@ -91,8 +91,6 @@ struct Glyph {
 
 	static constexpr int TOTAL = 190; ///< The total number of glyphs used
 };
-using GlyphVec1 = std::vector<const Glyph*>;	///< Syntactic sugar for a 1D vector of pointers to \c const \c Glyph
-using GlyphVec2 = std::vector<GlyphVec1>;		///< Syntactic sugar for a 2D vector of pointers to \c const \c Glyph
 
 /// The array of every Glyph in the program (generated in Excel), the only place where a Glyph object is initialized;
 /// every other place a Glyph is referenced in the whole codebase is actually a pointer to one of the Glyphs in \c AllGlyphs.
@@ -505,7 +503,7 @@ inline const Glyph* RandomGlyph(const Connections connections, const GlyphFlag f
 
 	/// Loop through \c AllGlyphs.
 	/// If the Glyph has compatible connections and it has all the needed flags, then add the pointer to this Glyph to the output vector.
-	GlyphVec1 glyphList;
+	std::vector<const Glyph*> glyphList;
 	for (const Glyph& glyph : AllGlyphs)
 		if (compatible(connections, glyph) && (glyph.flags & flags) == flags)
 			glyphList.push_back(&glyph);
