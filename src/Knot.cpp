@@ -177,119 +177,64 @@ bool Knot::checkHoriSym(Selection selection) const
 {
 	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
 		return true;
-	
-	for (auto [first, second] = glyphs.left_side_bounds(selection); first.is_within(selection) && second.is_within(selection); first.move_down(), second.move_up())
-	{
-		if (first->left != mirror_x(second->left))
-			return false;
-	}
-	for (auto [first, second] = glyphs.right_side_bounds(selection); first.is_within(selection) && second.is_within(selection); first.move_down(), second.move_up())
-	{
-		if (first->right != mirror_x(second->right))
-			return false;
-	}
-	for (auto [first, second] = glyphs.left_side_bounds(selection); first.is_within(selection) && second.is_within(selection); first.move_right(), second.move_right())
-	{
-		if (first->up != mirror_x(second->down))
-			return false;
-	}
 
-	return true;
+	return check_glyph_pair(&Glyphs::left_side_bounds, { &GlyphIterator::move_down, &GlyphIterator::move_up }, { &Glyph::left, &Glyph::left }, mirror_x, selection)
+	    && check_glyph_pair(&Glyphs::right_side_bounds, { &GlyphIterator::move_down, &GlyphIterator::move_up }, { &Glyph::right, &Glyph::right }, mirror_x, selection)
+	    && check_glyph_pair(&Glyphs::left_side_bounds, { &GlyphIterator::move_right, &GlyphIterator::move_right }, { &Glyph::up, &Glyph::down }, mirror_x, selection)
+	;
 }
-bool Knot::checkVertSym(Selection selection) const {
+bool Knot::checkVertSym(Selection selection) const
+{
 	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
 		return true;
 
-	for (auto [first, second] = glyphs.upper_side_bounds(selection); first.is_within(selection) && second.is_within(selection); first.move_right(), second.move_left())
-	{
-		if (first->up != mirror_y(second->up))
-			return false;
-	}
-	for (auto [first, second] = glyphs.lower_side_bounds(selection); first.is_within(selection) && second.is_within(selection); first.move_right(), second.move_left())
-	{
-		if (first->down != mirror_y(second->down))
-			return false;
-	}
-	for (auto [first, second] = glyphs.upper_side_bounds(selection); first.is_within(selection) && second.is_within(selection); first.move_down(), second.move_down())
-	{
-		if (first->left != mirror_y(second->right))
-			return false;
-	}
-
-	return true;
+	return check_glyph_pair(&Glyphs::upper_side_bounds, { &GlyphIterator::move_right, &GlyphIterator::move_left }, { &Glyph::up, &Glyph::up }, mirror_y, selection)
+	    && check_glyph_pair(&Glyphs::lower_side_bounds, { &GlyphIterator::move_right, &GlyphIterator::move_left }, { &Glyph::down, &Glyph::down }, mirror_y, selection)
+	    && check_glyph_pair(&Glyphs::upper_side_bounds, { &GlyphIterator::move_down, &GlyphIterator::move_down }, { &Glyph::left, &Glyph::right }, mirror_y, selection)
+	;
 }
-bool Knot::checkRot2Sym(Selection selection) const {
+bool Knot::checkRot2Sym(Selection selection) const
+{
 	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
 		return true;
 
-	for (auto [first, second] = glyphs.backward_diagonal(selection); first.is_within(selection) && second.is_within(selection); first.move_right(), second.move_left())
-	{
-		if (first->up != rotate_180(second->down))
-			return false;
-	}
-	for (auto [first, second] = glyphs.backward_diagonal(selection); first.is_within(selection) && second.is_within(selection); first.move_down(), second.move_up())
-	{
-		if (first->left != rotate_180(second->right))
-			return false;
-	}
-
-	return true;
+	return check_glyph_pair(&Glyphs::backward_diagonal, { &GlyphIterator::move_right, &GlyphIterator::move_left }, { &Glyph::up, &Glyph::down }, rotate_180, selection)
+	    && check_glyph_pair(&Glyphs::backward_diagonal, { &GlyphIterator::move_down, &GlyphIterator::move_up }, { &Glyph::left, &Glyph::right }, rotate_180, selection)
+	;
 }
-bool Knot::checkRot4Sym(Selection selection) const {
+bool Knot::checkRot4Sym(Selection selection) const
+{
 	if (selection.max.i - selection.min.i != selection.max.j - selection.min.j) return false; // The selection must be square
 
 	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
 		return true;
 
-	for (auto [first, second, third, fourth] = glyphs.four_corners(selection); first.is_within(selection) && second.is_within(selection) && third.is_within(selection) && fourth.is_within(selection); first.move_right(), second.move_down(), third.move_up(), fourth.move_left())
-	{
-		if (first->up != rotate_90(third->left))
-			return false;
-		if (third->left != rotate_90(fourth->down))
-			return false;
-		if (fourth->down != rotate_90(second->right))
-			return false;
-	}
-
-	return true;
+	return check_glyph_pair(&Glyphs::left_side_bounds, { &GlyphIterator::move_right, &GlyphIterator::move_up }, { &Glyph::up, &Glyph::left }, rotate_90, selection)
+	    && check_glyph_pair(&Glyphs::lower_side_bounds, { &GlyphIterator::move_up, &GlyphIterator::move_left }, { &Glyph::left, &Glyph::down }, rotate_90, selection)
+	    && check_glyph_pair(&Glyphs::backward_diagonal, { &GlyphIterator::move_down, &GlyphIterator::move_up }, { &Glyph::left, &Glyph::right }, rotate_180, selection)
+	;
 }
-bool Knot::checkFwdDiag(Selection selection) const {
+bool Knot::checkFwdDiag(Selection selection) const
+{
 	if (selection.max.i - selection.min.i != selection.max.j - selection.min.j) return false; // The selection must be square
 
 	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
 		return true;
 
-	for (auto [first, second] = glyphs.backward_diagonal(selection); first.is_within(selection) && second.is_within(selection); first.move_right(), second.move_up())
-	{
-		if (first->up != mirror_forward_diagonal(second->right))
-			return false;
-	}
-	for (auto [first, second] = glyphs.backward_diagonal(selection); first.is_within(selection) && second.is_within(selection); first.move_down(), second.move_left())
-	{
-		if (first->left != mirror_forward_diagonal(second->down))
-			return false;
-	}
-
-	return true;
+	return check_glyph_pair(&Glyphs::backward_diagonal, { &GlyphIterator::move_right, &GlyphIterator::move_up }, { &Glyph::up, &Glyph::right }, mirror_forward_diagonal, selection)
+	    && check_glyph_pair(&Glyphs::backward_diagonal, { &GlyphIterator::move_down, &GlyphIterator::move_left }, { &Glyph::left, &Glyph::down }, mirror_forward_diagonal, selection)
+	;
 }
-bool Knot::checkBackDiag(Selection selection) const {
+bool Knot::checkBackDiag(Selection selection) const
+{
 	if (selection.max.i - selection.min.i != selection.max.j - selection.min.j) return false; // The selection must be square
 
 	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
 		return true;
 
-	for (auto [first, second] = glyphs.forward_diagonal(selection); first.is_within(selection) && second.is_within(selection); first.move_left(), second.move_up())
-	{
-		if (first->up != mirror_backward_diagonal(second->left))
-			return false;
-	}
-	for (auto [first, second] = glyphs.forward_diagonal(selection); first.is_within(selection) && second.is_within(selection); first.move_down(), second.move_right())
-	{
-		if (first->right != mirror_backward_diagonal(second->down))
-			return false;
-	}
-
-	return true;
+	return check_glyph_pair(&Glyphs::forward_diagonal, { &GlyphIterator::move_left, &GlyphIterator::move_up }, { &Glyph::up, &Glyph::left }, mirror_backward_diagonal, selection)
+	    && check_glyph_pair(&Glyphs::forward_diagonal, { &GlyphIterator::move_down, &GlyphIterator::move_right }, { &Glyph::right, &Glyph::down }, mirror_backward_diagonal, selection)
+	;
 }
 bool Knot::checkWrapping(Selection selection) const {
 	// If the wrap in the Y direction is not enabled
@@ -325,7 +270,7 @@ bool Knot::checkWrapping(Selection selection) const {
 	return true;
 }
 
-bool Knot::check_algorithm(iterator_pair_fn starting_pair, move_fn_pair moves, connection_pair connections, transform_fn transform, Selection selection) const
+bool Knot::check_glyph_pair(iterator_pair_fn starting_pair, move_fn_pair moves, connection_pair connections, transform_fn transform, Selection selection) const
 {
 	const auto [move_first, move_second] = moves;
 	const auto [first_connection, second_connection] = connections;
