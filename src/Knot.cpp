@@ -178,12 +178,12 @@ bool Knot::checkHoriSym(Selection selection) const
 	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
 		return true;
 	
-	for (auto [first, second] = glyphs.left_side_bounds(selection); first.is_above_or_parallel(second); first.move_down(), second.move_up())
+	for (auto [first, second] = glyphs.left_side_bounds(selection); first.is_within(selection) && second.is_within(selection); first.move_down(), second.move_up())
 	{
 		if (first->left != mirror_x(second->left))
 			return false;
 	}
-	for (auto [first, second] = glyphs.right_side_bounds(selection); first.is_above_or_parallel(second); first.move_down(), second.move_up())
+	for (auto [first, second] = glyphs.right_side_bounds(selection); first.is_within(selection) && second.is_within(selection); first.move_down(), second.move_up())
 	{
 		if (first->right != mirror_x(second->right))
 			return false;
@@ -200,12 +200,12 @@ bool Knot::checkVertSym(Selection selection) const {
 	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
 		return true;
 
-	for (auto [first, second] = glyphs.upper_side_bounds(selection); first.is_left_of_or_parallel(second); first.move_right(), second.move_left())
+	for (auto [first, second] = glyphs.upper_side_bounds(selection); first.is_within(selection) && second.is_within(selection); first.move_right(), second.move_left())
 	{
 		if (first->up != mirror_y(second->up))
 			return false;
 	}
-	for (auto [first, second] = glyphs.lower_side_bounds(selection); first.is_left_of_or_parallel(second); first.move_right(), second.move_left())
+	for (auto [first, second] = glyphs.lower_side_bounds(selection); first.is_within(selection) && second.is_within(selection); first.move_right(), second.move_left())
 	{
 		if (first->down != mirror_y(second->down))
 			return false;

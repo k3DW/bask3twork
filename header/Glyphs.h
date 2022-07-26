@@ -49,11 +49,6 @@ class GlyphIterator
 public:
 	GlyphIterator(const Glyphs* glyphs, Point index) : glyphs(glyphs), index(index) {}
 
-	bool is_above_or_parallel   (const GlyphIterator& other) const { return index.i <= other.index.i; }
-	bool is_below_or_parallel   (const GlyphIterator& other) const { return index.i >= other.index.i; }
-	bool is_left_of_or_parallel (const GlyphIterator& other) const { return index.j <= other.index.j; }
-	bool is_right_of_or_parallel(const GlyphIterator& other) const { return index.j >= other.index.j; }
-
 	bool is_within(Selection selection) const { return index.i >= selection.min.i && index.i <= selection.max.i && index.j >= selection.min.j && index.j <= selection.max.j; }
 
 	GlyphIterator& move_up   () { index.i--; return *this; }
