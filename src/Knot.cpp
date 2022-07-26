@@ -175,7 +175,7 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 
 bool Knot::checkHoriSym(Selection selection) const
 {
-	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
+	if (selection.is_full_selection(h, w))
 		return true;
 
 	return check_glyph_pair(&Glyphs::left_side_bounds, { &GlyphIterator::move_down, &GlyphIterator::move_up }, { &Glyph::left, &Glyph::left }, mirror_x, selection)
@@ -185,7 +185,7 @@ bool Knot::checkHoriSym(Selection selection) const
 }
 bool Knot::checkVertSym(Selection selection) const
 {
-	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
+	if (selection.is_full_selection(h, w))
 		return true;
 
 	return check_glyph_pair(&Glyphs::upper_side_bounds, { &GlyphIterator::move_right, &GlyphIterator::move_left }, { &Glyph::up, &Glyph::up }, mirror_y, selection)
@@ -195,7 +195,7 @@ bool Knot::checkVertSym(Selection selection) const
 }
 bool Knot::checkRot2Sym(Selection selection) const
 {
-	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
+	if (selection.is_full_selection(h, w))
 		return true;
 
 	return check_glyph_pair(&Glyphs::backward_diagonal, { &GlyphIterator::move_right, &GlyphIterator::move_left }, { &Glyph::up, &Glyph::down }, rotate_180, selection)
@@ -204,9 +204,10 @@ bool Knot::checkRot2Sym(Selection selection) const
 }
 bool Knot::checkRot4Sym(Selection selection) const
 {
-	if (selection.max.i - selection.min.i != selection.max.j - selection.min.j) return false; // The selection must be square
+	if (not selection.is_square())
+		return false;
 
-	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
+	if (selection.is_full_selection(h, w))
 		return true;
 
 	return check_glyph_pair(&Glyphs::left_side_bounds, { &GlyphIterator::move_right, &GlyphIterator::move_up }, { &Glyph::up, &Glyph::left }, rotate_90, selection)
@@ -216,9 +217,10 @@ bool Knot::checkRot4Sym(Selection selection) const
 }
 bool Knot::checkFwdDiag(Selection selection) const
 {
-	if (selection.max.i - selection.min.i != selection.max.j - selection.min.j) return false; // The selection must be square
+	if (not selection.is_square())
+		return false;
 
-	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
+	if (selection.is_full_selection(h, w))
 		return true;
 
 	return check_glyph_pair(&Glyphs::backward_diagonal, { &GlyphIterator::move_right, &GlyphIterator::move_up }, { &Glyph::up, &Glyph::right }, mirror_forward_diagonal, selection)
@@ -227,9 +229,10 @@ bool Knot::checkFwdDiag(Selection selection) const
 }
 bool Knot::checkBackDiag(Selection selection) const
 {
-	if (selection.max.i - selection.min.i != selection.max.j - selection.min.j) return false; // The selection must be square
+	if (not selection.is_square())
+		return false;
 
-	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
+	if (selection.is_full_selection(h, w))
 		return true;
 
 	return check_glyph_pair(&Glyphs::forward_diagonal, { &GlyphIterator::move_left, &GlyphIterator::move_up }, { &Glyph::up, &Glyph::left }, mirror_backward_diagonal, selection)
