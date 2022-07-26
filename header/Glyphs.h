@@ -60,8 +60,6 @@ public:
 
 	const Glyph* operator->() const { return glyphs->at(index.i, index.j); }
 
-	friend bool operator==(const GlyphIterator& lhs, const GlyphIterator& rhs) { return lhs.index.i == rhs.index.i && lhs.index.j == rhs.index.j; }
-
 private:
 	const Glyphs* glyphs;
 	Point index;
