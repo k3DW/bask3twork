@@ -30,7 +30,7 @@ public:
 	GlyphIterator& move_left() { index.j--; return *this; }
 	GlyphIterator& move_right() { index.j++; return *this; }
 
-	const Glyph* operator->() const;
+	template <class T> const T& operator()(T Glyph::* prop) const;
 
 private:
 	const Glyphs* glyphs;
@@ -65,4 +65,5 @@ private:
 	std::vector<std::vector<const Glyph*>> data;
 };
 
-inline const Glyph* GlyphIterator::operator->() const { return glyphs->at(index.i, index.j); }
+template <class T>
+const T& GlyphIterator::operator()(T Glyph::* prop) const { return glyphs->at(index.i, index.j)->*prop; }

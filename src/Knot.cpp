@@ -280,7 +280,7 @@ bool Knot::check_glyph_pair(iterator_pair_fn starting_pair, move_fn_pair moves, 
 
 	for (auto [first, second] = (glyphs.*starting_pair)(selection); first.is_within(selection) && second.is_within(selection); (first.*move_first)(), (second.*move_second)())
 	{
-		if ((first.operator->()->*first_connection) != transform((second.operator->()->*second_connection)))
+		if (first(first_connection) != transform(second(second_connection)))
 			return false;
 	}
 	return true;
