@@ -29,6 +29,7 @@
     <ClInclude Include="header\DisplayGrid.h" />
     <ClInclude Include="header\Glyph.h" />
     <ClInclude Include="header\Constants.h" />
+    <ClInclude Include="header\Glyphs.h" />
     <ClInclude Include="header\Knot.h" />
     <ClInclude Include="header\MainWindow.h" />
     <ClInclude Include="header\Tile.h" />

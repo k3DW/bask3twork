@@ -53,6 +53,9 @@
     <ClInclude Include="header\Connection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\Glyphs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\Resource.rc">

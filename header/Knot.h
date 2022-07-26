@@ -1,18 +1,7 @@
 #pragma once
 #include "Constants.h"
 #include "Glyph.h"
-
-struct Point
-{
-	int i;
-	int j;
-};
-
-struct Selection
-{
-	Point min;
-	Point max;
-};
+#include "Glyphs.h"
 
 /** This class represents a knot object as a grid of glyphs, with corresponding public functions to generate various symmetries. */
 class Knot {

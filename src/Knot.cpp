@@ -192,9 +192,13 @@ bool Knot::checkHoriSym(Selection selection) const {
 	}
 
 	// Checking the up and down sides
-	for (int j = selection.min.j; j <= selection.max.j; j++) { // for each column
-		upConnection	= glyphs[selection.min.i][j]->up;
-		downConnection	= glyphs[selection.max.i][j]->down;
+
+	Glyphs glyphs_ = Glyphs(glyphs);
+
+	for (auto [first, second] = glyphs_.left_side_bounds(selection); first.is_within(selection) && second.is_within(selection); first.move_right(), second.move_right())
+	{
+		upConnection = first->up;
+		downConnection = second->down;
 		if (upConnection != mirror_x(downConnection)) return false;
 	}
 
