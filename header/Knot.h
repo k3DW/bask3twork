@@ -27,6 +27,12 @@ public:
 	bool checkWrapping(Selection selection) const;
 
 private:
+	using iterator_pair_fn = std::pair<GlyphIterator, GlyphIterator>(Glyphs::*)(Selection) const;
+	using move_fn_pair = std::pair<GlyphIterator& (GlyphIterator::*)(), GlyphIterator& (GlyphIterator::*)()>;
+	using connection_pair = std::pair<Connection Glyph::*, Connection Glyph::*>;
+	using transform_fn = Connection(*)(Connection);
+	bool check_glyph_pair(iterator_pair_fn starting_pair, move_fn_pair moves, connection_pair connections, transform_fn transform, Selection selection) const;
+
 	Glyphs glyphs;	///< The current state of the Knot
 
 	std::optional<Glyphs> tryGenerating(Glyphs glyphGrid, Symmetry sym, Selection selection) const;

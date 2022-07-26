@@ -324,3 +324,16 @@ bool Knot::checkWrapping(Selection selection) const {
 
 	return true;
 }
+
+bool Knot::check_algorithm(iterator_pair_fn starting_pair, move_fn_pair moves, connection_pair connections, transform_fn transform, Selection selection) const
+{
+	const auto [move_first, move_second] = moves;
+	const auto [first_connection, second_connection] = connections;
+
+	for (auto [first, second] = (glyphs.*starting_pair)(selection); first.is_within(selection) && second.is_within(selection); (first.*move_first)(), (second.*move_second)())
+	{
+		if ((first.operator->()->*first_connection) != transform((second.operator->()->*second_connection)))
+			return false;
+	}
+	return true;
+}
