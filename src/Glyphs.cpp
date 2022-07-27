@@ -2,7 +2,8 @@
 
 Symmetry Glyphs::symmetry_of(Selection selection) const
 {
-	return (Symmetry::HoriSym * has_mirror_x_symmetry(selection))
+	return Symmetry::NoSym
+	     | (Symmetry::HoriSym * has_mirror_x_symmetry(selection))
 	     | (Symmetry::VertSym * has_mirror_y_symmetry(selection))
 	     | (Symmetry::Rot4Sym * has_rotate_90_symmetry(selection))
 	     | (Symmetry::Rot2Sym * has_rotate_180_symmetry(selection))

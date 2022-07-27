@@ -83,12 +83,12 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 	/// storing whether the selection compasses all rows or columns in the Knot,
 	/// storing the middle \c i and \c j indices of the selection,
 	/// and storing the wrapping conditions.
-	const bool bitHori = static_cast<bool>(sym & 0x01);
-	const bool bitVert = static_cast<bool>(sym & 0x02);
-	const bool bitRot2 = static_cast<bool>(sym & 0x04);
-	const bool bitRot4 = static_cast<bool>(sym & 0x08);
-	const bool bitFwDi = static_cast<bool>(sym & 0x10);
-	const bool bitBkDi = static_cast<bool>(sym & 0x20);
+	const bool bitHori = (sym & Symmetry::HoriSym) == Symmetry::HoriSym;
+	const bool bitVert = (sym & Symmetry::VertSym) == Symmetry::VertSym;
+	const bool bitRot2 = (sym & Symmetry::Rot2Sym) == Symmetry::Rot2Sym;
+	const bool bitRot4 = (sym & Symmetry::Rot4Sym) == Symmetry::Rot4Sym;
+	const bool bitFwDi = (sym & Symmetry::FwdDiag) == Symmetry::FwdDiag;
+	const bool bitBkDi = (sym & Symmetry::BackDiag) == Symmetry::BackDiag;
 
 	const bool isEvenRows = (selection.max.i - selection.min.i + 1) % 2 == 0;
 	const bool isEvenCols = (selection.max.j - selection.min.j + 1) % 2 == 0;
@@ -173,58 +173,6 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 	return glyphGrid;
 }
 
-bool Knot::checkHoriSym(Selection selection) const
-{
-	if (selection.is_full_selection(h, w))
-		return true;
-
-	return glyphs.has_mirror_x_symmetry(selection);
-}
-bool Knot::checkVertSym(Selection selection) const
-{
-	if (selection.is_full_selection(h, w))
-		return true;
-
-	return glyphs.has_mirror_y_symmetry(selection);
-
-}
-bool Knot::checkRot2Sym(Selection selection) const
-{
-	if (selection.is_full_selection(h, w))
-		return true;
-
-	return glyphs.has_rotate_180_symmetry(selection);
-}
-bool Knot::checkRot4Sym(Selection selection) const
-{
-	if (not selection.is_square())
-		return false;
-
-	if (selection.is_full_selection(h, w))
-		return true;
-
-	return glyphs.has_rotate_90_symmetry(selection);
-}
-bool Knot::checkFwdDiag(Selection selection) const
-{
-	if (not selection.is_square())
-		return false;
-
-	if (selection.is_full_selection(h, w))
-		return true;
-
-	return glyphs.has_forward_diagonal_symmetry(selection);
-}
-bool Knot::checkBackDiag(Selection selection) const
-{
-	if (not selection.is_square())
-		return false;
-
-	if (selection.is_full_selection(h, w))
-		return true;
-
-	return glyphs.has_backward_diagonal_symmetry(selection);
-}
 bool Knot::checkWrapping(Selection selection) const {
 	// If the wrap in the Y direction is not enabled
 	if (!wrapYEnabled) {

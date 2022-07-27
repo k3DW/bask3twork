@@ -33,29 +33,22 @@
  * (6) This symmetry includes backward diagonal reflection.
  */
 enum class Symmetry : unsigned int {
-	NoSym		= 0b000000,	///< No symmetry
-	HoriSym		= 0b000001,	///< Mirror symmetry across the horizontal axis
-	VertSym		= 0b000010,	///< Mirror symmetry across the vertical axis
-	HoriVertSym = 0b000111,	///< Mirror symmetry across both the horizontal and vertical axes
-	Rot2Sym		= 0b000100,	///< 2-way rotational symmetry
-	Rot4Sym		= 0b001100,	///< 4-way rotational symmetry (square only)
-	FwdDiag		= 0b010000,	///< Mirror symmetry across the forward diagonal (square only)
-	BackDiag	= 0b100000,	///< Mirror symmetry across the backward diagonal (square only)
-	FullSym		= 0b111111,	///< 4-fold dihedral symmetry (square only)
+	Off			= 0b0000000,	///< Different from "no symmetry", because this is when there should be nothing at all
+	NoSym		= 0b0000001,	///< No symmetry
+	HoriSym		= 0b0000011,	///< Mirror symmetry across the horizontal axis
+	VertSym		= 0b0000101,	///< Mirror symmetry across the vertical axis
+	HoriVertSym = 0b0001111,	///< Mirror symmetry across both the horizontal and vertical axes
+	Rot2Sym		= 0b0001001,	///< 2-way rotational symmetry
+	Rot4Sym		= 0b0011001,	///< 4-way rotational symmetry (square only)
+	FwdDiag		= 0b0100001,	///< Mirror symmetry across the forward diagonal (square only)
+	BackDiag	= 0b1000001,	///< Mirror symmetry across the backward diagonal (square only)
+	FullSym		= 0b1111111,	///< 4-fold dihedral symmetry (square only)
 };
-constexpr inline bool operator&(Symmetry sym, unsigned int n)
-/// Logical AND between Symmetry \c sym and the value of \c n
-{
-	return static_cast<unsigned int>(static_cast<unsigned int>(sym) & n);
-}
-constexpr inline Symmetry operator|(Symmetry lhs, Symmetry rhs)
-{
-	return static_cast<Symmetry>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
-}
-constexpr inline Symmetry operator*(Symmetry sym, bool b)
-{
-	return static_cast<Symmetry>(static_cast<unsigned int>(sym) * b);
-}
+
+constexpr inline Symmetry operator&(Symmetry lhs, Symmetry rhs) { return static_cast<Symmetry>(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs)); }
+constexpr inline Symmetry operator|(Symmetry lhs, Symmetry rhs) { return static_cast<Symmetry>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs)); }
+
+constexpr inline Symmetry operator*(Symmetry sym, bool b) { return static_cast<Symmetry>(static_cast<unsigned int>(sym) * b); }
 
 // Constants for future functionality, changing the sizing of things depending on the screen size
 const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	///< For future functionality, the screen size in the x direction
