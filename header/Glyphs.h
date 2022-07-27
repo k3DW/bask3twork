@@ -55,6 +55,15 @@ public:
 	std::pair<GlyphIterator, GlyphIterator> forward_diagonal (Selection selection) const { return { upper_right(selection), lower_left(selection) }; }
 	std::pair<GlyphIterator, GlyphIterator> backward_diagonal(Selection selection) const { return { upper_left(selection), lower_right(selection) }; }
 
+	Symmetry symmetry_of(Selection selection) const;
+
+	bool has_mirror_x_symmetry         (Selection selection) const;
+	bool has_mirror_y_symmetry         (Selection selection) const;
+	bool has_rotate_90_symmetry        (Selection selection) const;
+	bool has_rotate_180_symmetry       (Selection selection) const;
+	bool has_forward_diagonal_symmetry (Selection selection) const;
+	bool has_backward_diagonal_symmetry(Selection selection) const;
+
 	const Glyph*  at(int i, int j) const { return data[i][j]; }
 	const Glyph*& at(int i, int j)       { return data[i][j]; }
 

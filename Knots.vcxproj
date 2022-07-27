@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\DisplayGrid.cpp" />
+    <ClCompile Include="src\Glyphs.cpp" />
     <ClCompile Include="src\Knot.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
   </ItemGroup>

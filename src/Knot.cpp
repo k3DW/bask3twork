@@ -178,29 +178,22 @@ bool Knot::checkHoriSym(Selection selection) const
 	if (selection.is_full_selection(h, w))
 		return true;
 
-	return check_glyph_pair(&Glyphs::left_side_bounds, { &GlyphIterator::move_down, &GlyphIterator::move_up }, { &Glyph::left, &Glyph::left }, mirror_x, selection)
-	    && check_glyph_pair(&Glyphs::right_side_bounds, { &GlyphIterator::move_down, &GlyphIterator::move_up }, { &Glyph::right, &Glyph::right }, mirror_x, selection)
-	    && check_glyph_pair(&Glyphs::left_side_bounds, { &GlyphIterator::move_right, &GlyphIterator::move_right }, { &Glyph::up, &Glyph::down }, mirror_x, selection)
-	;
+	return glyphs.has_mirror_x_symmetry(selection);
 }
 bool Knot::checkVertSym(Selection selection) const
 {
 	if (selection.is_full_selection(h, w))
 		return true;
 
-	return check_glyph_pair(&Glyphs::upper_side_bounds, { &GlyphIterator::move_right, &GlyphIterator::move_left }, { &Glyph::up, &Glyph::up }, mirror_y, selection)
-	    && check_glyph_pair(&Glyphs::lower_side_bounds, { &GlyphIterator::move_right, &GlyphIterator::move_left }, { &Glyph::down, &Glyph::down }, mirror_y, selection)
-	    && check_glyph_pair(&Glyphs::upper_side_bounds, { &GlyphIterator::move_down, &GlyphIterator::move_down }, { &Glyph::left, &Glyph::right }, mirror_y, selection)
-	;
+	return glyphs.has_mirror_y_symmetry(selection);
+
 }
 bool Knot::checkRot2Sym(Selection selection) const
 {
 	if (selection.is_full_selection(h, w))
 		return true;
 
-	return check_glyph_pair(&Glyphs::backward_diagonal, { &GlyphIterator::move_right, &GlyphIterator::move_left }, { &Glyph::up, &Glyph::down }, rotate_180, selection)
-	    && check_glyph_pair(&Glyphs::backward_diagonal, { &GlyphIterator::move_down, &GlyphIterator::move_up }, { &Glyph::left, &Glyph::right }, rotate_180, selection)
-	;
+	return glyphs.has_rotate_180_symmetry(selection);
 }
 bool Knot::checkRot4Sym(Selection selection) const
 {
@@ -210,10 +203,7 @@ bool Knot::checkRot4Sym(Selection selection) const
 	if (selection.is_full_selection(h, w))
 		return true;
 
-	return check_glyph_pair(&Glyphs::left_side_bounds, { &GlyphIterator::move_right, &GlyphIterator::move_up }, { &Glyph::up, &Glyph::left }, rotate_90, selection)
-	    && check_glyph_pair(&Glyphs::lower_side_bounds, { &GlyphIterator::move_up, &GlyphIterator::move_left }, { &Glyph::left, &Glyph::down }, rotate_90, selection)
-	    && check_glyph_pair(&Glyphs::backward_diagonal, { &GlyphIterator::move_down, &GlyphIterator::move_up }, { &Glyph::left, &Glyph::right }, rotate_180, selection)
-	;
+	return glyphs.has_rotate_90_symmetry(selection);
 }
 bool Knot::checkFwdDiag(Selection selection) const
 {
@@ -223,9 +213,7 @@ bool Knot::checkFwdDiag(Selection selection) const
 	if (selection.is_full_selection(h, w))
 		return true;
 
-	return check_glyph_pair(&Glyphs::backward_diagonal, { &GlyphIterator::move_right, &GlyphIterator::move_up }, { &Glyph::up, &Glyph::right }, mirror_forward_diagonal, selection)
-	    && check_glyph_pair(&Glyphs::backward_diagonal, { &GlyphIterator::move_down, &GlyphIterator::move_left }, { &Glyph::left, &Glyph::down }, mirror_forward_diagonal, selection)
-	;
+	return glyphs.has_forward_diagonal_symmetry(selection);
 }
 bool Knot::checkBackDiag(Selection selection) const
 {
@@ -235,9 +223,7 @@ bool Knot::checkBackDiag(Selection selection) const
 	if (selection.is_full_selection(h, w))
 		return true;
 
-	return check_glyph_pair(&Glyphs::forward_diagonal, { &GlyphIterator::move_left, &GlyphIterator::move_up }, { &Glyph::up, &Glyph::left }, mirror_backward_diagonal, selection)
-	    && check_glyph_pair(&Glyphs::forward_diagonal, { &GlyphIterator::move_down, &GlyphIterator::move_right }, { &Glyph::right, &Glyph::down }, mirror_backward_diagonal, selection)
-	;
+	return glyphs.has_backward_diagonal_symmetry(selection);
 }
 bool Knot::checkWrapping(Selection selection) const {
 	// If the wrap in the Y direction is not enabled
@@ -270,18 +256,5 @@ bool Knot::checkWrapping(Selection selection) const {
 		}
 	}
 
-	return true;
-}
-
-bool Knot::check_glyph_pair(iterator_pair_fn starting_pair, move_fn_pair moves, connection_pair connections, transform_fn transform, Selection selection) const
-{
-	const auto [move_first, move_second] = moves;
-	const auto [first_connection, second_connection] = connections;
-
-	for (auto [first, second] = (glyphs.*starting_pair)(selection); first.is_within(selection) && second.is_within(selection); (first.*move_first)(), (second.*move_second)())
-	{
-		if (first(first_connection) != transform(second(second_connection)))
-			return false;
-	}
 	return true;
 }

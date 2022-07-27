@@ -48,6 +48,14 @@ constexpr inline bool operator&(Symmetry sym, unsigned int n)
 {
 	return static_cast<unsigned int>(static_cast<unsigned int>(sym) & n);
 }
+constexpr inline Symmetry operator|(Symmetry lhs, Symmetry rhs)
+{
+	return static_cast<Symmetry>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
+}
+constexpr inline Symmetry operator*(Symmetry sym, bool b)
+{
+	return static_cast<Symmetry>(static_cast<unsigned int>(sym) * b);
+}
 
 // Constants for future functionality, changing the sizing of things depending on the screen size
 const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	///< For future functionality, the screen size in the x direction
