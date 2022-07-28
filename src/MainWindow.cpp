@@ -188,7 +188,7 @@ void MainWindow::openFile() {
 
 	// Next, initialize the Knot with the variable \c glyphs and the status bar.
 	// Initialize the DisplayGrid with the newly generated Knot, and insert it between the stretch spacers in its sizer.
-	knot = new Knot(Glyphs(glyphs), GetStatusBar());
+	knot = new Knot(std::move(glyphs), GetStatusBar());
 	disp = new DisplayGrid(this, knot);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
 

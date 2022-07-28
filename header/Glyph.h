@@ -92,6 +92,8 @@ struct Glyph {
 	static constexpr int TOTAL = 190; ///< The total number of glyphs used
 };
 
+using Glyphs = std::vector<std::vector<const Glyph*>>;
+
 /// The array of every Glyph in the program (generated in Excel), the only place where a Glyph object is initialized;
 /// every other place a Glyph is referenced in the whole codebase is actually a pointer to one of the Glyphs in \c AllGlyphs.
 const inline std::array<Glyph, Glyph::TOTAL> AllGlyphs{ {

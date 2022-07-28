@@ -1,23 +1,9 @@
 #include "Glyphs.h"
 
-Symmetry Glyphs::symmetry_of(Selection selection) const
-{
-	SymmetryChecker checker(this, selection);
-
-	return Symmetry::NoSym
-	     | (Symmetry::HoriSym * checker.has_mirror_x_symmetry())
-	     | (Symmetry::VertSym * checker.has_mirror_y_symmetry())
-	     | (Symmetry::Rot2Sym * checker.has_rotate_180_symmetry())
-	     | (Symmetry::Rot4Sym * checker.has_rotate_90_symmetry())
-	     | (Symmetry::FwdDiag * checker.has_forward_diagonal_symmetry())
-	     | (Symmetry::BackDiag * checker.has_backward_diagonal_symmetry())
-	;
-}
-
 template <ConnectionFn transform>
 bool SymmetryChecker::glyph_range_compatible(Iterator lhs, Iterator rhs) const
 {
-	for (; selection.contains(lhs, rhs); ++lhs, ++rhs)
+	for (; selection.contains(lhs) && selection.contains(rhs); ++lhs, ++rhs)
 	{
 		if (lhs.get_connection() != transform(rhs.get_connection()))
 			return false;

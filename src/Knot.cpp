@@ -1,8 +1,8 @@
 #include "Knot.h"
 
-Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar), glyphs(h, w) {}
-Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : h(glyphs.rows()), w(glyphs.columns()), statusBar(statusBar), glyphs(glyphs) {}
-wxString Knot::get(const int i, const int j) const { return glyphs.at(i, j)->chr; }
+Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar), glyphs(h, std::vector<const Glyph*>(w, DefaultGlyph)) {}
+Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : h(glyphs.size()), w(glyphs[0].size()), statusBar(statusBar), glyphs(glyphs) {}
+wxString Knot::get(const int i, const int j) const { return glyphs[i][j]->chr; }
 
 bool Knot::generate(Symmetry sym, Selection selection)
 /** Generate a knot with the given symmetry in the given selection.
@@ -45,7 +45,7 @@ bool Knot::generate(Symmetry sym, Selection selection)
 	Glyphs baseGlyphs = glyphs;
 	for (int i = selection.min.i; i <= selection.max.i; i++)
 		for (int j = selection.min.j; j <= selection.max.j; j++)
-			baseGlyphs.at(i, j) = nullptr;
+			baseGlyphs[i][j] = nullptr;
 
 	/// Next, enter a loop, counting the number of attempts made at generating this knot. The steps are as follows.
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
@@ -111,11 +111,11 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 	for (int i = selection.min.i, iOffset = 0; i <= selection.max.i; i++, iOffset++) {
 		for (int j = selection.min.j, jOffset = 0; j <= selection.max.j; j++, jOffset++) {
 			/// \b (1) If the Glyph in this location is already set, \c continue the loop.
-			if (glyphGrid.at(i, j)) continue;
+			if (glyphGrid[i][j]) continue;
 
 			/// \b (2) If the Glyph has yet to be set, generate a RandomGlyph() for this location, with the \c GlyphFlag::NONE flag.
 			///	For each of the 4 \c Connection parameters, there are many possible cases, implemented in a large nested ternary operation, described below.
-			glyphGrid.at(i, j) = RandomGlyph(
+			glyphGrid[i][j] = RandomGlyph(
 				/** (a) If this Glyph location is on the outer edge of the selection on this particular side, branch to condition B, otherwise branch to condition E.
 				 *
 				 *	(b) If wrapping is not enabled in this direction, then the parameter should be \c Connection::EMPTY.
@@ -128,10 +128,10 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 				 *		the connection on the opposite side, from the neighbouring glyph on this particular side.
 				 */
 				{
-					i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid.at(h - 1, j)	? Connection::DO_NOT_CARE : glyphGrid.at(h - 1, j)->down)	: (!glyphGrid.at(i - 1, j) ? Connection::DO_NOT_CARE : glyphGrid.at(i - 1, j)->down	) ,
-					i == h - 1	? (!doWrapY ? Connection::EMPTY : !glyphGrid.at(0, j)		? Connection::DO_NOT_CARE : glyphGrid.at(0, j)->up)		: (!glyphGrid.at(i + 1, j) ? Connection::DO_NOT_CARE : glyphGrid.at(i + 1, j)->up		) ,
-					j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid.at(i, w - 1)	? Connection::DO_NOT_CARE : glyphGrid.at(i, w - 1)->right) : (!glyphGrid.at(i, j - 1) ? Connection::DO_NOT_CARE : glyphGrid.at(i, j - 1)->right	) ,
-					j == w - 1	? (!doWrapX ? Connection::EMPTY : !glyphGrid.at(i, 0)		? Connection::DO_NOT_CARE : glyphGrid.at(i, 0)->left)		: (!glyphGrid.at(i, j + 1) ? Connection::DO_NOT_CARE : glyphGrid.at(i, j + 1)->left	)
+					i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down)	: (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+					i == h - 1	? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up)		: (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up		) ,
+					j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right	) ,
+					j == w - 1	? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left)		: (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	)
 				},
 				/** The \c boolFlags argument in RandomGlyph() has different components added, under various conditions. 
 				 *  (a) If this type of symmetry includes horizontal reflection, then add \c GlyphFlag::CT_MIRU, only if the selection encompasses all rows and if the current location is in the uppermost row of the Knot.
@@ -157,15 +157,15 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 			);
 
 			/// \b (3) If this newly generated Glyph turns out to be \c nullptr, then there were no options for this location. Return \c std::nullopt.
-			if (!glyphGrid.at(i, j)) return std::nullopt;
+			if (!glyphGrid[i][j]) return std::nullopt;
 
 			/// \b (4) If the function has made it to this point, then reflect and rotate the newly generated Glyph to the appropriate spots given the symmetry required.
-			if (bitHori) glyphGrid.at(selection.max.i - iOffset, j) = glyphGrid.at(i, j)->mirroredX;
-			if (bitVert) glyphGrid.at(i, selection.max.j - jOffset) = glyphGrid.at(i, j)->mirroredY;
-			if (bitRot2) glyphGrid.at(selection.max.i - iOffset, selection.max.j - jOffset) = glyphGrid.at(i, j)->rotated2;
-			if (bitRot4) { glyphGrid.at(selection.min.i + jOffset, selection.max.j - iOffset) = glyphGrid.at(i, j)->rotated4; glyphGrid.at(selection.max.i - jOffset, selection.min.j + iOffset) = glyphGrid.at(i, j)->rotated2->rotated4; }
-			if (bitFwDi) glyphGrid.at(selection.max.i - jOffset, selection.max.j - iOffset) = glyphGrid.at(i, j)->mirroredFD;
-			if (bitBkDi) glyphGrid.at(selection.min.i + jOffset, selection.min.j + iOffset) = glyphGrid.at(i, j)->mirroredBD;
+			if (bitHori) glyphGrid[selection.max.i - iOffset][j] = glyphGrid[i][j]->mirroredX;
+			if (bitVert) glyphGrid[i][selection.max.j - jOffset] = glyphGrid[i][j]->mirroredY;
+			if (bitRot2) glyphGrid[selection.max.i - iOffset][selection.max.j - jOffset] = glyphGrid[i][j]->rotated2;
+			if (bitRot4) { glyphGrid[selection.min.i + jOffset][selection.max.j - iOffset] = glyphGrid[i][j]->rotated4; glyphGrid[selection.max.i - jOffset][selection.min.j + iOffset] = glyphGrid[i][j]->rotated2->rotated4; }
+			if (bitFwDi) glyphGrid[selection.max.i - jOffset][selection.max.j - iOffset] = glyphGrid[i][j]->mirroredFD;
+			if (bitBkDi) glyphGrid[selection.min.i + jOffset][selection.min.j + iOffset] = glyphGrid[i][j]->mirroredBD;
 		}
 	}
 
@@ -179,12 +179,12 @@ bool Knot::checkWrapping(Selection selection) const {
 		// Only do the check if the selection either includes the top or bottom row, but not both
 		if (selection.min.i == 0 && selection.max.i != h - 1) {
 			for (int j = selection.min.j; j <= selection.max.j; j++)
-				if (glyphs.at(selection.min.i, j)->up != Connection::EMPTY)
+				if (glyphs[selection.min.i][j]->up != Connection::EMPTY)
 					return false;
 		}
 		else if (selection.min.i != 0 && selection.max.i == h - 1) {
 			for (int j = selection.min.j; j <= selection.max.j; j++)
-				if (glyphs.at(selection.max.i, j)->down != Connection::EMPTY)
+				if (glyphs[selection.max.i][j]->down != Connection::EMPTY)
 					return false;
 		}
 	}
@@ -194,15 +194,29 @@ bool Knot::checkWrapping(Selection selection) const {
 		// Only do the check if the selection either includes the left or right column, but not both
 		if (selection.min.j == 0 && selection.max.j != w - 1) {
 			for (int i = selection.min.i; i <= selection.max.i; i++)
-				if (glyphs.at(i, selection.min.j)->left != Connection::EMPTY)
+				if (glyphs[i][selection.min.j]->left != Connection::EMPTY)
 					return false;
 		}
 		else if (selection.min.j != 0 && selection.max.j == w - 1) {
 			for (int i = selection.min.i; i <= selection.max.i; i++)
-				if (glyphs.at(i, selection.max.j)->right != Connection::EMPTY)
+				if (glyphs[i][selection.max.j]->right != Connection::EMPTY)
 					return false;
 		}
 	}
 
 	return true;
+}
+
+Symmetry Knot::symmetry_of(Selection selection) const
+{
+	SymmetryChecker checker(glyphs, selection);
+
+	return Symmetry::NoSym
+	     | (Symmetry::HoriSym * checker.has_mirror_x_symmetry())
+	     | (Symmetry::VertSym * checker.has_mirror_y_symmetry())
+	     | (Symmetry::Rot2Sym * checker.has_rotate_180_symmetry())
+	     | (Symmetry::Rot4Sym * checker.has_rotate_90_symmetry())
+	     | (Symmetry::FwdDiag * checker.has_forward_diagonal_symmetry())
+	     | (Symmetry::BackDiag * checker.has_backward_diagonal_symmetry())
+	;
 }
