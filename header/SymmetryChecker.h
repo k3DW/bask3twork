@@ -67,12 +67,12 @@ public:
 	template <ConnectionFn transform>
 	bool glyph_range_compatible(Iterator lhs, Iterator rhs) const;
 
-	bool has_mirror_x_symmetry() const;
-	bool has_mirror_y_symmetry() const;
-	bool has_rotate_180_symmetry() const;
-	bool has_rotate_90_symmetry() const;
-	bool has_forward_diagonal_symmetry() const;
-	bool has_backward_diagonal_symmetry() const;
+	Symmetry has_mirror_x_symmetry() const;
+	Symmetry has_mirror_y_symmetry() const;
+	Symmetry has_rotate_180_symmetry() const;
+	Symmetry has_rotate_90_symmetry() const;
+	Symmetry has_forward_diagonal_symmetry() const;
+	Symmetry has_backward_diagonal_symmetry() const;
 
 private:
 	const Glyphs* glyphs;

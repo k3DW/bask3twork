@@ -211,12 +211,15 @@ Symmetry Knot::symmetry_of(Selection selection) const
 {
 	SymmetryChecker checker(glyphs, selection);
 
-	return Symmetry::NoSym
-	     | (Symmetry::HoriSym * checker.has_mirror_x_symmetry())
-	     | (Symmetry::VertSym * checker.has_mirror_y_symmetry())
-	     | (Symmetry::Rot2Sym * checker.has_rotate_180_symmetry())
-	     | (Symmetry::Rot4Sym * checker.has_rotate_90_symmetry())
-	     | (Symmetry::FwdDiag * checker.has_forward_diagonal_symmetry())
-	     | (Symmetry::BackDiag * checker.has_backward_diagonal_symmetry())
-	;
+	Symmetry non_square = checker.has_mirror_x_symmetry()
+	                    | checker.has_mirror_y_symmetry()
+						| checker.has_rotate_180_symmetry();
+
+	Symmetry square = selection.is_square()
+	    ? checker.has_rotate_90_symmetry()
+	    | checker.has_forward_diagonal_symmetry()
+	    | checker.has_backward_diagonal_symmetry()
+	: Symmetry::Off;
+
+	return Symmetry::NoSym | non_square | square;
 }
