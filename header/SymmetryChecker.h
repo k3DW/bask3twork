@@ -43,7 +43,7 @@ private:
 		Iterator&  move()        { position.i += movement.i; position.j += movement.j; return *this; }
 	};
 
-	class IteratorBuilder : public IteratorArgs
+	class IteratorBuilder : private IteratorArgs
 	{
 	public:
 		IteratorBuilder(Point start, const Glyphs* glyphs) : IteratorArgs{ .position = start, .glyphs = glyphs } {}
