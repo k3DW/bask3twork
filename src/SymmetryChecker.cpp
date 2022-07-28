@@ -1,4 +1,4 @@
-#include "Glyphs.h"
+#include "SymmetryChecker.h"
 
 template <ConnectionFn transform>
 bool SymmetryChecker::glyph_range_compatible(Iterator lhs, Iterator rhs) const
