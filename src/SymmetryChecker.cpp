@@ -18,9 +18,9 @@ Symmetry SymmetryChecker::get() const
 template <ConnectionFn transform>
 bool SymmetryChecker::glyph_range_compatible(Iterator lhs, Iterator rhs) const
 {
-	for (; selection.contains(lhs) && selection.contains(rhs); ++lhs, ++rhs)
+	for (; selection.contains(lhs.point()) && selection.contains(rhs.point()); lhs.move(), rhs.move())
 	{
-		if (lhs.get_connection() != transform(rhs.get_connection()))
+		if (lhs.get() != transform(rhs.get()))
 			return false;
 	}
 	return true;

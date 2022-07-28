@@ -25,41 +25,33 @@ private:
 	static constexpr std::array connections{ &Glyph::up, &Glyph::down, &Glyph::left, &Glyph::right, };
 	static constexpr std::array movements{ Point{ -1, 0 }, Point{ 1, 0 }, Point{ 0, -1 }, Point{ 0, 1 }, };
 
-	class Iterator
+	struct IteratorArgs
 	{
-	public:
-		Iterator(Point position, Point movement, Connection Glyph::* connection, const Glyphs* glyphs)
-			: position(position), movement(movement), connection(connection), glyphs(glyphs) {}
-
-		operator Point() const { return position; }
-
-		Iterator& operator++() { position.i += movement.i; position.j += movement.j; return *this; }
-
-		Connection get_connection() { return (*glyphs)[position.i][position.j]->*connection; }
-
-	private:
 		Point position;
-		Point movement;
-		Connection Glyph::* connection;
+		Point movement = Point{ 0, 0 };
+		Connection Glyph::* connection = nullptr;
 		const Glyphs* glyphs;
 	};
 
-	class IteratorBuilder
+	class Iterator : private IteratorArgs
 	{
 	public:
-		IteratorBuilder(Point start, const Glyphs* glyphs)
-			: start(start), movement{ 0, 0 }, connection(nullptr), glyphs(glyphs) {}
+		Iterator(const IteratorArgs& args) : IteratorArgs(args) {}
 
-		operator Iterator() const { return Iterator(start, movement, connection, glyphs); }
+		Point      point() const { return position; }
+		Connection get() const   { return (*glyphs)[position.i][position.j]->*connection; }
+		Iterator&  move()        { position.i += movement.i; position.j += movement.j; return *this; }
+	};
+
+	class IteratorBuilder : public IteratorArgs
+	{
+	public:
+		IteratorBuilder(Point start, const Glyphs* glyphs) : IteratorArgs{ .position = start, .glyphs = glyphs } {}
+
+		operator Iterator() const { return Iterator(*this); }
 
 		IteratorBuilder& checking_the(ConnectionType con) { connection = connections[static_cast<int>(con)]; return *this; }
 		IteratorBuilder& moving(MovementType move)        { movement = movements[static_cast<int>(move)]; return *this; }
-
-	private:
-		Point start;
-		Point movement;
-		Connection Glyph::* connection;
-		const Glyphs* glyphs;
 	};
 
 	IteratorBuilder starting_from_the(CornerType corner) const
