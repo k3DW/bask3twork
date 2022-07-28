@@ -38,6 +38,8 @@ constexpr Connection mirror_y(Connection input) { return ConnectionTransformatio
 constexpr Connection mirror_forward_diagonal(Connection input) { return ConnectionTransformations::mirror_forward_diagonal[static_cast<int>(input)]; }
 constexpr Connection mirror_backward_diagonal(Connection input) { return ConnectionTransformations::mirror_backward_diagonal[static_cast<int>(input)]; }
 
+using ConnectionFn = Connection(*)(Connection);
+
 struct Connections
 {
 	Connection up;

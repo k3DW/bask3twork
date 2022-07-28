@@ -14,27 +14,9 @@ struct Selection
 
 	bool is_square() const { return max.i - min.i == max.j - min.j; }
 	bool is_full_selection(int rows, int columns) const { return min.i == 0 && min.j == 0 && max.i == rows - 1 && max.j == columns - 1; }
-};
 
-class Glyphs;
-
-class GlyphIterator
-{
-public:
-	GlyphIterator(const Glyphs* glyphs, Point index) : glyphs(glyphs), index(index) {}
-
-	bool is_within(Selection selection) const { return index.i >= selection.min.i && index.i <= selection.max.i && index.j >= selection.min.j && index.j <= selection.max.j; }
-
-	GlyphIterator& move_up() { index.i--; return *this; }
-	GlyphIterator& move_down() { index.i++; return *this; }
-	GlyphIterator& move_left() { index.j--; return *this; }
-	GlyphIterator& move_right() { index.j++; return *this; }
-
-	template <class T> const T& operator()(T Glyph::* prop) const;
-
-private:
-	const Glyphs* glyphs;
-	Point index;
+	bool contains(Point point) const { return point.i >= min.i && point.i <= max.i && point.j >= min.j && point.j <= max.j; }
+	bool contains(Point p1, Point p2) const { return contains(p1) && contains(p2); }
 };
 
 class Glyphs
@@ -43,26 +25,10 @@ public:
 	Glyphs(std::size_t rows, std::size_t columns) : data(rows, std::vector<const Glyph*>(columns, DefaultGlyph)) {}
 	Glyphs(std::vector<std::vector<const Glyph*>> data) : data(data) {}
 
-	GlyphIterator upper_left (Selection selection) const { return { this, { selection.min.i, selection.min.j } }; }
-	GlyphIterator lower_left (Selection selection) const { return { this, { selection.max.i, selection.min.j } }; }
-	GlyphIterator upper_right(Selection selection) const { return { this, { selection.min.i, selection.max.j } }; }
-	GlyphIterator lower_right(Selection selection) const { return { this, { selection.max.i, selection.max.j } }; }
-
-	std::pair<GlyphIterator, GlyphIterator> upper_side_bounds(Selection selection) const { return { upper_left(selection), upper_right(selection) }; }
-	std::pair<GlyphIterator, GlyphIterator> lower_side_bounds(Selection selection) const { return { lower_left(selection), lower_right(selection) }; }
-	std::pair<GlyphIterator, GlyphIterator> left_side_bounds (Selection selection) const { return { upper_left(selection), lower_left(selection) }; }
-	std::pair<GlyphIterator, GlyphIterator> right_side_bounds(Selection selection) const { return { upper_right(selection), lower_right(selection) }; }
-	std::pair<GlyphIterator, GlyphIterator> forward_diagonal (Selection selection) const { return { upper_right(selection), lower_left(selection) }; }
-	std::pair<GlyphIterator, GlyphIterator> backward_diagonal(Selection selection) const { return { upper_left(selection), lower_right(selection) }; }
-
 	Symmetry symmetry_of(Selection selection) const;
 
-	bool has_mirror_x_symmetry         (Selection selection) const;
-	bool has_mirror_y_symmetry         (Selection selection) const;
-	bool has_rotate_90_symmetry        (Selection selection) const;
-	bool has_rotate_180_symmetry       (Selection selection) const;
-	bool has_forward_diagonal_symmetry (Selection selection) const;
-	bool has_backward_diagonal_symmetry(Selection selection) const;
+	const auto& operator[](size_t pos) const { return data[pos]; }
+	auto&       operator[](size_t pos)       { return data[pos]; }
 
 	const Glyph*  at(int i, int j) const { return data[i][j]; }
 	const Glyph*& at(int i, int j)       { return data[i][j]; }
@@ -74,5 +40,80 @@ private:
 	std::vector<std::vector<const Glyph*>> data;
 };
 
-template <class T>
-const T& GlyphIterator::operator()(T Glyph::* prop) const { return glyphs->at(index.i, index.j)->*prop; }
+class SymmetryChecker
+{
+public:
+	SymmetryChecker(const Glyphs* glyphs, Selection selection)
+		: glyphs(glyphs), selection(selection)
+		, corners{ IteratorBuilder(selection.min, glyphs), IteratorBuilder(Point{ selection.min.i, selection.max.j }, glyphs), IteratorBuilder(Point{ selection.max.i, selection.min.j }, glyphs), IteratorBuilder(selection.max, glyphs), }
+	{}
+
+	enum class CornerType { upper_left, upper_right, lower_left, lower_right, };
+	using enum CornerType;
+
+	enum class ConnectionType { up_connection, down_connection, left_connection, right_connection, };
+	using enum ConnectionType;
+
+	enum class MovementType { up, down, left, right, };
+	using enum MovementType;
+
+	static constexpr std::array connections{ &Glyph::up, &Glyph::down, &Glyph::left, &Glyph::right, };
+	static constexpr std::array movements{ Point{ -1, 0 }, Point{ 1, 0 }, Point{ 0, -1 }, Point{ 0, 1 }, };
+
+	class Iterator
+	{
+	public:
+		Iterator(Point position, Point movement, Connection Glyph::* connection, const Glyphs* glyphs)
+			: position(position), movement(movement), connection(connection), glyphs(glyphs) {}
+
+		operator Point() const { return position; }
+
+		Iterator& operator++() { position.i += movement.i; position.j += movement.j; return *this; }
+
+		Connection get_connection() { return glyphs->at(position.i, position.j)->*connection; }
+
+	private:
+		Point position;
+		Point movement;
+		Connection Glyph::* connection;
+		const Glyphs* glyphs;
+	};
+
+	class IteratorBuilder
+	{
+	public:
+		IteratorBuilder(Point start, const Glyphs* glyphs)
+			: start(start), movement{ 0, 0 }, connection(nullptr), glyphs(glyphs) {}
+
+		operator Iterator() const { return Iterator(start, movement, connection, glyphs); }
+
+		IteratorBuilder& checking_the(ConnectionType con) { connection = connections[static_cast<int>(con)]; return *this; }
+		IteratorBuilder& moving(MovementType move)        { movement = movements[static_cast<int>(move)]; return *this; }
+
+	private:
+		Point start;
+		Point movement;
+		Connection Glyph::* connection;
+		const Glyphs* glyphs;
+	};
+
+	IteratorBuilder starting_from_the(CornerType corner) const
+	{
+		return corners[static_cast<int>(corner)];
+	}
+
+	template <ConnectionFn transform>
+	bool glyph_range_compatible(Iterator lhs, Iterator rhs) const;
+
+	bool has_mirror_x_symmetry() const;
+	bool has_mirror_y_symmetry() const;
+	bool has_rotate_180_symmetry() const;
+	bool has_rotate_90_symmetry() const;
+	bool has_forward_diagonal_symmetry() const;
+	bool has_backward_diagonal_symmetry() const;
+
+private:
+	const Glyphs* glyphs;
+	Selection selection;
+	std::array<IteratorBuilder, 4> corners;
+};
