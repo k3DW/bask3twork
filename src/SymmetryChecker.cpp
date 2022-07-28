@@ -1,5 +1,20 @@
 #include "SymmetryChecker.h"
 
+Symmetry SymmetryChecker::get() const
+{
+	Symmetry non_square = has_mirror_x_symmetry()
+	                    | has_mirror_y_symmetry()
+	                    | has_rotate_180_symmetry();
+
+	Symmetry square = selection.is_square()
+	    ? has_rotate_90_symmetry()
+	    | has_forward_diagonal_symmetry()
+	    | has_backward_diagonal_symmetry()
+	: Symmetry::Off;
+
+	return Symmetry::NoSym | non_square | square;
+}
+
 template <ConnectionFn transform>
 bool SymmetryChecker::glyph_range_compatible(Iterator lhs, Iterator rhs) const
 {

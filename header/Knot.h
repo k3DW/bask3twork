@@ -20,7 +20,7 @@ public:
 
 	bool checkWrapping(Selection selection) const;
 
-	Symmetry symmetry_of(Selection selection) const;
+	Symmetry symmetry_of(Selection selection) const { return SymmetryChecker(glyphs, selection).get(); }
 
 private:
 	Glyphs glyphs;	///< The current state of the Knot
