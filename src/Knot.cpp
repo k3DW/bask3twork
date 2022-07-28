@@ -1,7 +1,7 @@
 #include "Knot.h"
 
-Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar), glyphs(GlyphVec2(h, GlyphVec1(w, DefaultGlyph))) {}
-Knot::Knot(GlyphVec2 glyphs, wxStatusBar* statusBar) : h(glyphs.size()), w(glyphs[0].size()), statusBar(statusBar), glyphs(glyphs) {}
+Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar), glyphs(h, std::vector<const Glyph*>(w, DefaultGlyph)) {}
+Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : h(glyphs.size()), w(glyphs[0].size()), statusBar(statusBar), glyphs(glyphs) {}
 wxString Knot::get(const int i, const int j) const { return glyphs[i][j]->chr; }
 
 bool Knot::generate(Symmetry sym, Selection selection)
@@ -42,7 +42,7 @@ bool Knot::generate(Symmetry sym, Selection selection)
 	}
 
 	/// Then, make a copy of \c glyphs, and set all members in the selection to \c nullptr to denote that they are unassigned.
-	GlyphVec2 baseGlyphs = glyphs;
+	Glyphs baseGlyphs = glyphs;
 	for (int i = selection.min.i; i <= selection.max.i; i++)
 		for (int j = selection.min.j; j <= selection.max.j; j++)
 			baseGlyphs[i][j] = nullptr;
@@ -55,7 +55,7 @@ bool Knot::generate(Symmetry sym, Selection selection)
 
 		/// \b (2) Call Knot::tryGenerating() using the copy of \c glyphs created above.
 		///		If it fails, \c continue the loop and try again.
-		std::optional<GlyphVec2> newGlyphs = tryGenerating(baseGlyphs, sym, selection);
+		std::optional<Glyphs> newGlyphs = tryGenerating(baseGlyphs, sym, selection);
 		if (!newGlyphs) continue;
 
 		/// \b (3) If the knot has been successfully generated, set \c glyphs equal to this generated version and return \c true.
@@ -66,7 +66,7 @@ bool Knot::generate(Symmetry sym, Selection selection)
 	return false;
 }
 
-std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, Selection selection) const
+std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Selection selection) const
 /** Called only from Knot::generate(), try generating a knot with the given symmetry for the given selection.
  * 
  * This function pulls the required logic in Knot::generate() in order to generate the Knot selection once, and places it into its own function. 
@@ -83,12 +83,12 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 	/// storing whether the selection compasses all rows or columns in the Knot,
 	/// storing the middle \c i and \c j indices of the selection,
 	/// and storing the wrapping conditions.
-	const bool bitHori = static_cast<bool>(sym & 0x01);
-	const bool bitVert = static_cast<bool>(sym & 0x02);
-	const bool bitRot2 = static_cast<bool>(sym & 0x04);
-	const bool bitRot4 = static_cast<bool>(sym & 0x08);
-	const bool bitFwDi = static_cast<bool>(sym & 0x10);
-	const bool bitBkDi = static_cast<bool>(sym & 0x20);
+	const bool bitHori = (sym & Symmetry::HoriSym) == Symmetry::HoriSym;
+	const bool bitVert = (sym & Symmetry::VertSym) == Symmetry::VertSym;
+	const bool bitRot2 = (sym & Symmetry::Rot2Sym) == Symmetry::Rot2Sym;
+	const bool bitRot4 = (sym & Symmetry::Rot4Sym) == Symmetry::Rot4Sym;
+	const bool bitFwDi = (sym & Symmetry::FwdDiag) == Symmetry::FwdDiag;
+	const bool bitBkDi = (sym & Symmetry::BackDiag) == Symmetry::BackDiag;
 
 	const bool isEvenRows = (selection.max.i - selection.min.i + 1) % 2 == 0;
 	const bool isEvenCols = (selection.max.j - selection.min.j + 1) % 2 == 0;
@@ -173,137 +173,6 @@ std::optional<GlyphVec2> Knot::tryGenerating(GlyphVec2 glyphGrid, Symmetry sym, 
 	return glyphGrid;
 }
 
-bool Knot::checkHoriSym(Selection selection) const {
-	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
-		return true;
-
-	Connection upConnection, downConnection;
-
-	// Checking the left and right sides
-	for (int iIncr = selection.min.i, iDecr = selection.max.i; iIncr <= iDecr; iIncr++, iDecr--) { // for each row
-		// Left side
-		upConnection	= glyphs[iIncr][selection.min.j]->left;
-		downConnection	= glyphs[iDecr][selection.min.j]->left;
-		if (upConnection != mirror_x(downConnection)) return false;
-		// Right side
-		upConnection	= glyphs[iIncr][selection.max.j]->right;
-		downConnection	= glyphs[iDecr][selection.max.j]->right;
-		if (upConnection != mirror_x(downConnection)) return false;
-	}
-
-	// Checking the up and down sides
-	for (int j = selection.min.j; j <= selection.max.j; j++) { // for each column
-		upConnection	= glyphs[selection.min.i][j]->up;
-		downConnection	= glyphs[selection.max.i][j]->down;
-		if (upConnection != mirror_x(downConnection)) return false;
-	}
-
-	return true;
-}
-bool Knot::checkVertSym(Selection selection) const {
-	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
-		return true;
-
-	Connection leftConnection, rightConnection;
-
-	// Checking the up and down sides
-	for (int jIncr = selection.min.j, jDecr = selection.max.j; jIncr <= jDecr; jIncr++, jDecr--) { // for each column
-		// Up side
-		leftConnection	= glyphs[selection.min.i][jIncr]->up;
-		rightConnection = glyphs[selection.min.i][jDecr]->up;
-		if (leftConnection != mirror_y(rightConnection)) return false;
-		// Down side
-		leftConnection	= glyphs[selection.max.i][jIncr]->down;
-		rightConnection = glyphs[selection.max.i][jDecr]->down;
-		if (leftConnection != mirror_y(rightConnection)) return false;
-	}
-
-	// Checking the left and right sides
-	for (int i = selection.min.i; i <= selection.max.i; i++) { // for each row
-		leftConnection	= glyphs[i][selection.min.j]->left;
-		rightConnection = glyphs[i][selection.max.j]->right;
-		if (leftConnection != mirror_y(rightConnection)) return false;
-	}
-
-	return true;
-}
-bool Knot::checkRot2Sym(Selection selection) const {
-	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
-		return true;
-
-	Connection upConnection, downConnection;
-	// Checking the up and down sides
-	for (int jIncr = selection.min.j, jDecr = selection.max.j; jIncr <= selection.max.j; jIncr++, jDecr--) { // for each column
-		upConnection	= glyphs[selection.min.i][jIncr]->up;
-		downConnection	= glyphs[selection.max.i][jDecr]->down;
-		if (upConnection != rotate_180(downConnection)) return false;
-	}
-
-	Connection leftConnection, rightConnection;
-	// Checking the left and right sides
-	for (int iIncr = selection.min.i, iDecr = selection.max.i; iIncr <= selection.max.i; iIncr++, iDecr--) { // for each row
-		leftConnection	= glyphs[iIncr][selection.min.j]->left;
-		rightConnection = glyphs[iDecr][selection.max.j]->right;
-		if (leftConnection != rotate_180(rightConnection)) return false;
-	}
-
-	return true;
-}
-bool Knot::checkRot4Sym(Selection selection) const {
-	if (selection.max.i - selection.min.i != selection.max.j - selection.min.j) return false; // The selection must be square
-
-	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
-		return true;
-
-	Connection upConnection, downConnection, leftConnection, rightConnection;
-	for (int offset = 0; offset <= selection.max.i - selection.min.i; offset++) {
-		upConnection	= glyphs[selection.min.i][selection.min.j + offset]->up;		// Top row, from left to right
-		downConnection	= glyphs[selection.max.i][selection.max.j - offset]->down;	// Bottom row, from right to left
-		leftConnection	= glyphs[selection.max.i - offset][selection.min.j]->left;	// Left column, from bottom to top
-		rightConnection = glyphs[selection.min.i + offset][selection.max.j]->right;	// Right column, from top to bottom
-		if (upConnection != rotate_90(leftConnection) ||
-			upConnection != rotate_180(downConnection) ||
-			rotate_90(upConnection) != rightConnection ) return false;
-	}
-
-	return true;
-}
-bool Knot::checkFwdDiag(Selection selection) const {
-	if (selection.max.i - selection.min.i != selection.max.j - selection.min.j) return false; // The selection must be square
-
-	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
-		return true;
-
-	Connection upConnection, downConnection, leftConnection, rightConnection;
-	for (int offset = 0; offset <= selection.max.i - selection.min.i; offset++) {
-		upConnection	= glyphs[selection.min.i][selection.min.j + offset]->up;		// Top row, from left to right
-		downConnection	= glyphs[selection.max.i][selection.min.j + offset]->down;	// Bottom row, from left to right
-		leftConnection	= glyphs[selection.max.i - offset][selection.min.j]->left;	// Left column, from bottom to top
-		rightConnection = glyphs[selection.max.i - offset][selection.max.j]->right;	// Right column, from bottom to top
-		if (upConnection != mirror_forward_diagonal(rightConnection) || leftConnection != mirror_forward_diagonal(downConnection))
-			return false;
-	}
-
-	return true;
-}
-bool Knot::checkBackDiag(Selection selection) const {
-	if (selection.max.i - selection.min.i != selection.max.j - selection.min.j) return false; // The selection must be square
-
-	if (selection.min.i == 0 && selection.max.i == h - 1 && selection.min.j == 0 && selection.max.j == w - 1)
-		return true;
-
-	Connection upConnection, downConnection, leftConnection, rightConnection;
-	for (int offset = 0; offset <= selection.max.i - selection.min.i; offset++) {
-		upConnection	= glyphs[selection.min.i][selection.min.j + offset]->up;		// Top row, from left to right
-		downConnection	= glyphs[selection.max.i][selection.min.j + offset]->down;	// Bottom row, from left to right
-		leftConnection	= glyphs[selection.min.i + offset][selection.min.j]->left;	// Left column, from top to bottom
-		rightConnection = glyphs[selection.min.i + offset][selection.max.j]->right;	// Right column, from top to bottom
-		if (upConnection != mirror_backward_diagonal(leftConnection) || rightConnection != mirror_backward_diagonal(downConnection))
-			return false;
-	}
-
-	return true;
-}
 bool Knot::checkWrapping(Selection selection) const {
 	// If the wrap in the Y direction is not enabled
 	if (!wrapYEnabled) {

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\DisplayGrid.cpp" />
+    <ClCompile Include="src\SymmetryChecker.cpp" />
     <ClCompile Include="src\Knot.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
   </ItemGroup>
@@ -29,8 +30,10 @@
     <ClInclude Include="header\DisplayGrid.h" />
     <ClInclude Include="header\Glyph.h" />
     <ClInclude Include="header\Constants.h" />
+    <ClInclude Include="header\SymmetryChecker.h" />
     <ClInclude Include="header\Knot.h" />
     <ClInclude Include="header\MainWindow.h" />
+    <ClInclude Include="header\Selection.h" />
     <ClInclude Include="header\Tile.h" />
     <ClInclude Include="header\Version.h" />
   </ItemGroup>

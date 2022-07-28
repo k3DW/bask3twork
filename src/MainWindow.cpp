@@ -157,7 +157,7 @@ void MainWindow::openFile() {
 	}
 
 	// Make a 2D vector of Glyphs, to be later written to the new Knot
-	GlyphVec2 glyphs;
+	std::vector<std::vector<const Glyph*>> glyphs;
 	glyphs.reserve(rowCount);
 
 	// For each line in the file
@@ -169,7 +169,7 @@ void MainWindow::openFile() {
 		}
 
 		// Make a 1D vector of Glyphs, to be written to the 2D vector
-		GlyphVec1 glyphRow;
+		std::vector<const Glyph*> glyphRow;
 		glyphRow.reserve(colCount);
 
 		// Take each character from the line, and push the corresponding Glyph to the vector
@@ -188,7 +188,7 @@ void MainWindow::openFile() {
 
 	// Next, initialize the Knot with the variable \c glyphs and the status bar.
 	// Initialize the DisplayGrid with the newly generated Knot, and insert it between the stretch spacers in its sizer.
-	knot = new Knot(glyphs, GetStatusBar());
+	knot = new Knot(std::move(glyphs), GetStatusBar());
 	disp = new DisplayGrid(this, knot);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
 
@@ -400,45 +400,24 @@ void MainWindow::selectResetFunction(wxCommandEvent& evt) {
 	evt.Skip();
 }
 
-void MainWindow::enableGenerateButtons(bool enable) {
+void MainWindow::enableGenerateButtons(bool enable)
+{
 	/// This function allows the Knot \c generate functions to have no conditional operation, and just assume that the parameters are valid.
 	/// Instead of checking for symmetry conditions within the generating function itself, the user is disallowed from pressing the button.
 
 	/// \param enable Tells the function whether to enable (conditionally) or disable (fully) the generating buttons, has a default value of \c true
 
-	/// \b Method
+	Symmetry sym = !enable ? Symmetry::Off : knot->symmetry_of(selection) * knot->checkWrapping(selection);
 
-	/// To conditionally enable the buttons, first call the \c Knot::check____Sym() functions on the current selection and store the outputs.
-	/// Then enable each of the buttons is the proper symmetry condition has been met.
-	if (enable && knot->checkWrapping(selection)) {
-		bool hasHoriSym = knot->checkHoriSym(selection);
-		bool hasVertSym = knot->checkVertSym(selection);
-		bool hasRot2Sym = knot->checkRot2Sym(selection);
-		bool hasRot4Sym = knot->checkRot4Sym(selection);
-		bool hasFwdDiag = knot->checkFwdDiag(selection);
-		bool hasBackDiag = knot->checkBackDiag(selection);
-		generateNoSymButton->Enable();
-		generateHoriSymButton->Enable(hasHoriSym);
-		generateVertSymButton->Enable(hasVertSym);
-		generateHoriVertSymButton->Enable(hasHoriSym && hasVertSym);
-		generateRot2SymButton->Enable(hasRot2Sym);
-		generateRot4SymButton->Enable(hasRot4Sym);
-		generateFwdDiagButton->Enable(hasFwdDiag);
-		generateBackDiagButton->Enable(hasBackDiag);
-		generateFullSymButton->Enable(hasHoriSym && hasVertSym && hasRot4Sym);
-	}
-	/// If \c enable is \c false, then disable each of the buttons.
-	else {
-		generateNoSymButton->Disable();
-		generateHoriSymButton->Disable();
-		generateVertSymButton->Disable();
-		generateHoriVertSymButton->Disable();
-		generateRot2SymButton->Disable();
-		generateRot4SymButton->Disable();
-		generateFwdDiagButton->Disable();
-		generateBackDiagButton->Disable();
-		generateFullSymButton->Disable();
-	}
+	generateNoSymButton      ->Enable((sym & Symmetry::NoSym) == Symmetry::NoSym);
+	generateHoriSymButton    ->Enable((sym & Symmetry::HoriSym) == Symmetry::HoriSym);
+	generateVertSymButton    ->Enable((sym & Symmetry::VertSym) == Symmetry::VertSym);
+	generateHoriVertSymButton->Enable((sym & Symmetry::HoriVertSym) == Symmetry::HoriVertSym);
+	generateRot2SymButton    ->Enable((sym & Symmetry::Rot2Sym) == Symmetry::Rot2Sym);
+	generateRot4SymButton    ->Enable((sym & Symmetry::Rot4Sym) == Symmetry::Rot4Sym);
+	generateFwdDiagButton    ->Enable((sym & Symmetry::FwdDiag) == Symmetry::FwdDiag);
+	generateBackDiagButton   ->Enable((sym & Symmetry::BackDiag) == Symmetry::BackDiag);
+	generateFullSymButton    ->Enable((sym & Symmetry::FullSym) == Symmetry::FullSym);
 }
 void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// The Knot::generate() function uses the status bar, so first store the current displayed message.
