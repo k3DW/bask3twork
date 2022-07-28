@@ -33,6 +33,7 @@
     <ClInclude Include="header\Glyphs.h" />
     <ClInclude Include="header\Knot.h" />
     <ClInclude Include="header\MainWindow.h" />
+    <ClInclude Include="header\Selection.h" />
     <ClInclude Include="header\Tile.h" />
     <ClInclude Include="header\Version.h" />
   </ItemGroup>
