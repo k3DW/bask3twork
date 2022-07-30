@@ -5,7 +5,7 @@ MainWindow::MainWindow(int h, int w, wxString title)
 	, selection{ .min{ 0, 0 }, .max{ h - 1, w - 1 } }
 {
 	CreateStatusBar();
-	SetBackgroundColour(BACKGROUND_COLOUR);
+	SetBackgroundColour(Colours::background);
 	initMenuBar();
 	initSizerLayout();
 	RefreshMinSize();
@@ -84,7 +84,7 @@ void MainWindow::initSelectRegion() {
 	selectToggleButton->SetSize(wxSize(200, 200));
 
 	selectCoord = new wxStaticText(this, wxID_ANY, "");
-	selectCoord->SetFont(TEXT_FONT);
+	selectCoord->SetFont(Fonts::select);
 
 	selectButtonSizer = new wxBoxSizer(wxHORIZONTAL);
 	selectButtonSizer->Add(selectToggleButton);
@@ -252,10 +252,10 @@ void MainWindow::refreshGrid() {
 
 	wxTextCtrl* heightText = new wxTextCtrl(dlg, wxID_ANY, wxString::Format("%i", h), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
 	heightText->SetMaxLength(2);
-	heightText->SetFont(TEXT_FONT);
+	heightText->SetFont(Fonts::refresh);
 	wxTextCtrl* widthText = new wxTextCtrl(dlg, wxID_ANY, wxString::Format("%i", w), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
 	widthText->SetMaxLength(2);
-	widthText->SetFont(TEXT_FONT);
+	widthText->SetFont(Fonts::refresh);
 
 	wxBoxSizer* textSizer = new wxBoxSizer(wxHORIZONTAL);
 	textSizer->Add(heightText, 0, wxEXPAND);
@@ -407,9 +407,9 @@ void MainWindow::enableGenerateButtons(bool enable)
 
 	/// \param enable Tells the function whether to enable (conditionally) or disable (fully) the generating buttons, has a default value of \c true
 
-	Symmetry sym = !enable ? Symmetry::Off : knot->symmetry_of(selection) * knot->checkWrapping(selection);
+	Symmetry sym = !enable ? Symmetry::Nothing : knot->symmetry_of(selection) * knot->checkWrapping(selection);
 
-	generateNoSymButton      ->Enable((sym & Symmetry::NoSym) == Symmetry::NoSym);
+	generateAnySymButton     ->Enable((sym & Symmetry::AnySym) == Symmetry::AnySym);
 	generateHoriSymButton    ->Enable((sym & Symmetry::HoriSym) == Symmetry::HoriSym);
 	generateVertSymButton    ->Enable((sym & Symmetry::VertSym) == Symmetry::VertSym);
 	generateHoriVertSymButton->Enable((sym & Symmetry::HoriVertSym) == Symmetry::HoriVertSym);

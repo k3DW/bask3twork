@@ -4,8 +4,8 @@
 struct Version
 {
 	static constexpr int major = 0;
-	static constexpr int minor = 5;
-	static constexpr int patch = 6;
+	static constexpr int minor = 6;
+	static constexpr int patch = 0;
 
 	static const inline wxString string = (patch == 0)
 		? wxString::Format("%d.%d", major, minor)
