@@ -11,8 +11,6 @@ public:
 	
 	void highlight();
 	void unhighlight();
-
-	static const inline wxFont font{ wxSize(48, 48), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Celtic Knots" };
 	
 private:
 	wxColour base;
@@ -23,7 +21,5 @@ class AxisLabel : public wxStaticText
 {
 public:
 	AxisLabel(DisplayGrid* parent, int value);
-
-	static const inline wxFont font{ 12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas" };
 };
 

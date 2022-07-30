@@ -70,9 +70,13 @@ namespace Colours
 	};
 }
 
-// Constants for the fonts of the program, only used in DisplayGrid
-// For future functionality, the sizes of these fonts might need to be parametrized
-const wxFont TEXT_FONT{ 12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL };									///< The font for the \c selectCoords and the \c grid text boxes
+namespace Fonts
+{
+	const wxFont select  = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL); ///< The font for the Select box "(a,b) to (c,d)"
+	const wxFont refresh = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL); ///< The font for the Refresh pop-up text boxes
+	const wxFont glyph   = wxFont(wxSize(48, 48), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Celtic Knots"); ///< The font for the glyphs in the \c Tile objects
+	const wxFont axis    = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas"); ///< The font for the \c AxisLabel objects
+}
 
 // Constants for the iterations of knot generating
 constexpr int MAX_ATTEMPTS = 10000;				///< The maximum number of attempts for the Knot to try generating

@@ -5,7 +5,7 @@ Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxCo
 	: wxStaticText(parent, id, label)
 	, base(base)
 {
-	SetFont(font);
+	SetFont(Fonts::glyph);
 	unhighlight();
 }
 
@@ -31,7 +31,7 @@ void Tile::unhighlight() { SetBackgroundColour(base); }
 AxisLabel::AxisLabel(DisplayGrid* parent, int value)
 	: wxStaticText(parent, wxID_ANY, wxString::Format("%i", value))
 {
-	SetFont(font);
+	SetFont(Fonts::axis);
 }
 
 /** \fn AxisLabel::AxisLabel(DisplayGrid* parent, int value)
