@@ -28,7 +28,7 @@ bool Knot::generate(Symmetry sym, Selection selection)
 	/// If the value for \c sym is not valid, this \c switch statement will cause the function to return \c false.
 	wxString statusBeginning = "Generating ";
 	switch (sym) {
-		case Symmetry::NoSym:		{ statusBeginning += "no symmetry... ";						break; }
+		case Symmetry::AnySym:		{ statusBeginning += "no symmetry... ";						break; }
 		case Symmetry::HoriSym:		{ statusBeginning += "horizontal symmetry... ";				break; }
 		case Symmetry::VertSym:		{ statusBeginning += "vertical symmetry... ";				break; }
 		case Symmetry::HoriVertSym: { statusBeginning += "horizontal + vertical symmetry... ";	break; }

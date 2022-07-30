@@ -12,7 +12,7 @@
 
 /// The X macro used on the symmetries, to make the code simpler
 #define SYMMETRIES \
-	XX(NoSym, "No Symmetry") \
+	XX(AnySym, "No Symmetry") \
 	XX(HoriSym, "Horizontal Reflection") \
 	XX(VertSym, "Vertical Reflection") \
 	XX(HoriVertSym, "Horizontal + Vertical") \
@@ -21,34 +21,6 @@
 	XX(FwdDiag, "Forward Diagonal") \
 	XX(BackDiag, "Backward Diagonal") \
 	XX(FullSym, "Full Symmetry")
-
-/** All the types of symmetry which can be used in this program.
- * The bit flags tell Knot::generate() how to generate.
- * In order from least-significant to most-significant bit, the bits mean the following.
- * (1) This symmetry includes horizontal reflection.
- * (2) This symmetry includes vertical reflection.
- * (3) This symmetry includes 2-fold rotation.
- * (4) This symmetry includes 4-fold rotation.
- * (5) This symmetry includes forward diagonal reflection.
- * (6) This symmetry includes backward diagonal reflection.
- */
-enum class Symmetry : unsigned int {
-	Off			= 0b0000000,	///< Different from "no symmetry", because this is when there should be nothing at all
-	NoSym		= 0b0000001,	///< No symmetry
-	HoriSym		= 0b0000011,	///< Mirror symmetry across the horizontal axis
-	VertSym		= 0b0000101,	///< Mirror symmetry across the vertical axis
-	HoriVertSym = 0b0001111,	///< Mirror symmetry across both the horizontal and vertical axes
-	Rot2Sym		= 0b0001001,	///< 2-way rotational symmetry
-	Rot4Sym		= 0b0011001,	///< 4-way rotational symmetry (square only)
-	FwdDiag		= 0b0100001,	///< Mirror symmetry across the forward diagonal (square only)
-	BackDiag	= 0b1000001,	///< Mirror symmetry across the backward diagonal (square only)
-	FullSym		= 0b1111111,	///< 4-fold dihedral symmetry (square only)
-};
-
-constexpr inline Symmetry operator&(Symmetry lhs, Symmetry rhs) { return static_cast<Symmetry>(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs)); }
-constexpr inline Symmetry operator|(Symmetry lhs, Symmetry rhs) { return static_cast<Symmetry>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs)); }
-
-constexpr inline Symmetry operator*(Symmetry sym, bool b) { return static_cast<Symmetry>(static_cast<unsigned int>(sym) * b); }
 
 // Constants for future functionality, changing the sizing of things depending on the screen size
 const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	///< For future functionality, the screen size in the x direction

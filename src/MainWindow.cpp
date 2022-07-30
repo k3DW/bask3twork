@@ -407,9 +407,9 @@ void MainWindow::enableGenerateButtons(bool enable)
 
 	/// \param enable Tells the function whether to enable (conditionally) or disable (fully) the generating buttons, has a default value of \c true
 
-	Symmetry sym = !enable ? Symmetry::Off : knot->symmetry_of(selection) * knot->checkWrapping(selection);
+	Symmetry sym = !enable ? Symmetry::Nothing : knot->symmetry_of(selection) * knot->checkWrapping(selection);
 
-	generateNoSymButton      ->Enable((sym & Symmetry::NoSym) == Symmetry::NoSym);
+	generateAnySymButton     ->Enable((sym & Symmetry::AnySym) == Symmetry::AnySym);
 	generateHoriSymButton    ->Enable((sym & Symmetry::HoriSym) == Symmetry::HoriSym);
 	generateVertSymButton    ->Enable((sym & Symmetry::VertSym) == Symmetry::VertSym);
 	generateHoriVertSymButton->Enable((sym & Symmetry::HoriVertSym) == Symmetry::HoriVertSym);
