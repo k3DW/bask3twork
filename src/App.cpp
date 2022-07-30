@@ -21,7 +21,7 @@ class App : public wxApp
 public:
 	bool OnInit() override
 	{
-		auto main = new MainWindow(8, 8, "Celtic Knot Editor v" + Version::string);
+		auto main = new MainWindow(8, 8, "Bask3twork v" + Version::string);
 		main->SetIcon(wxIcon("AppIcon"));
 		main->Show();
 

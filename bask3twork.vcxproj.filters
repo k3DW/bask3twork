@@ -27,7 +27,10 @@
     <ClCompile Include="src\MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SymmetryChecker.cpp">
+    <ClCompile Include="src\Symmetry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,7 +59,7 @@
     <ClInclude Include="header\Connection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\SymmetryChecker.h">
+    <ClInclude Include="header\Symmetry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\Selection.h">
