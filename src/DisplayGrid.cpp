@@ -52,7 +52,7 @@ void DisplayGrid::highlightSelection(Selection selection) { // This function hig
 	clearHighlight(false);
 	for (int i = selection.min.i; i <= selection.max.i; i++)
 		for (int j = selection.min.j; j <= selection.max.j; j++)
-			tiles[i][j]->highlight(true);
+			tiles[i][j]->highlight();
 	isAnythingHighlighted = true;
 	Refresh();
 }
@@ -60,7 +60,7 @@ void DisplayGrid::clearHighlight(bool refresh) {// This function clears all tile
 	if (isAnythingHighlighted) {
 		for (int i = 0; i < h; i++)
 			for (int j = 0; j < w; j++)
-				tiles[i][j]->highlight(false);
+				tiles[i][j]->unhighlight();
 		if (refresh)
 			Refresh();
 		isAnythingHighlighted = false;
