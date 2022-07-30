@@ -7,12 +7,11 @@ class DisplayGrid;
 class Tile : public wxStaticText
 {
 public:
-	Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, int grey);
+	Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxColour& base);
 	
 	void highlight();
 	void unhighlight();
 
-	static const inline wxColour highlighted{ 150, 200, 255 };
 	static const inline wxFont font{ wxSize(48, 48), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Celtic Knots" };
 	
 private:

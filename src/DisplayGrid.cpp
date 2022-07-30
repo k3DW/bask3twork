@@ -26,8 +26,8 @@ void DisplayGrid::initTiles() {
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
 			int id = (i * w) + j;
-			int grey = 255 - 10 * (i % 2 + j % 2);
-			tiles[i][j] = new Tile(this, id, knot->get(i, j), grey);
+			const wxColour& colour = Colours::tile[i % 2][j % 2];
+			tiles[i][j] = new Tile(this, id, knot->get(i, j), colour);
 			tiles[i][j]->Bind(wxEVT_LEFT_DOWN, &DisplayGrid::leftClick, this);
 			tiles[i][j]->Bind(wxEVT_RIGHT_DOWN, &DisplayGrid::rightClick, this);
 			sizer->Add(tiles[i][j], wxGBPosition(i + 1, j + 1)/*, wxDefaultSpan, wxALIGN_CENTER*/);

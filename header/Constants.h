@@ -57,8 +57,18 @@ const wxSize MAX_SIZE{ SCREEN_X, SCREEN_Y };						///< For future functionality,
 constexpr size_t MAX_H = 100;	///< The maximum height of the grid allowed in the program, in terms of tiles.
 constexpr size_t MAX_W = 100;	///< The maximum width of the grid allowed in the program, in terms of tiles
 
-// Constants for the colours of the program
-const wxColour BACKGROUND_COLOUR{ 240, 240, 240 };	///< The default colour of the background for the program
+namespace Colours
+{
+	const wxColour background = wxColour(240, 240, 240); ///< The default background colour of the whole program
+	const wxColour highlight  = wxColour(150, 200, 255); ///< The highlighted colour of a \c Tile
+
+	/// The colours of the Tile objects in the DisplayGrid, in a repeating 2x2 pattern
+	const std::array tile =
+	{
+		std::array{ wxColour(255, 255, 255), wxColour(245, 245, 245) },
+		std::array{ wxColour(245, 245, 245), wxColour(235, 235, 235) },
+	};
+}
 
 // Constants for the fonts of the program, only used in DisplayGrid
 // For future functionality, the sizes of these fonts might need to be parametrized

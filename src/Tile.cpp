@@ -1,24 +1,24 @@
 #include "Tile.h"
 #include "DisplayGrid.h"
 
-Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, int grey)
+Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxColour& base)
 	: wxStaticText(parent, id, label)
-	, base(grey, grey, grey)
+	, base(base)
 {
 	SetFont(font);
 	unhighlight();
 }
 
-void Tile::highlight()   { SetBackgroundColour(highlighted); }
+void Tile::highlight()   { SetBackgroundColour(Colours::highlight); }
 void Tile::unhighlight() { SetBackgroundColour(base); }
 
-/** \fn Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, int grey)
+/** \fn Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxColour& base)
  * Sets the \c wxStaticText base object, the \c base colour, and the font.
  *
  * \param parent The parent \c DisplayGrid object
  * \param id The id value, used for identifying which tile is clicked with mouse events
  * \param label The displayed text in the \c wxStaticText object
- * \param grey The greyscale value (0-255) for the background colour
+ * \param base The colour for the background, when not highlighted
  */
 
 /** \fn Tile::highlight(bool enable)

@@ -5,7 +5,7 @@ MainWindow::MainWindow(int h, int w, wxString title)
 	, selection{ .min{ 0, 0 }, .max{ h - 1, w - 1 } }
 {
 	CreateStatusBar();
-	SetBackgroundColour(BACKGROUND_COLOUR);
+	SetBackgroundColour(Colours::background);
 	initMenuBar();
 	initSizerLayout();
 	RefreshMinSize();
