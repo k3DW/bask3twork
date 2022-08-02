@@ -370,6 +370,5 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// At the end, set the status bar back to the message which was displayed at the beginning of the function,
 	/// and re-enable the generate buttons.
 	GetStatusBar()->SetStatusText(oldStatus);
-	generate_region->enable_buttons(current_symmetry());
 	evt.Skip();
 }
