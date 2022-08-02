@@ -4,6 +4,7 @@ MainWindow::MainWindow(int h, int w, wxString title)
 	: wxFrame(nullptr, wxID_ANY, title), h(h), w(w)
 	, select_region(new SelectRegion(this, h, w))
 	, generate_region(new GenerateRegion(this))
+	, export_region(new ExportRegion(this, h, w))
 {
 	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
@@ -35,14 +36,11 @@ void MainWindow::initMenuBar() {
 void MainWindow::initSizerLayout() {
 	initDispSizer();
 
-	// These are in a weird order to avoid dereferencing `nullptr`s
-	initExportRegion();
-
 	buttonSizer = new wxBoxSizer(wxVERTICAL);
 	buttonSizer->AddStretchSpacer();
 	buttonSizer->Add(select_region, 0, wxDOWN, GAP_2);
 	buttonSizer->Add(generate_region, 0, wxDOWN, GAP_2);
-	buttonSizer->Add(exportRegionSizer);
+	buttonSizer->Add(export_region);
 	buttonSizer->AddStretchSpacer();
 
 	mainSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -73,16 +71,6 @@ void MainWindow::initDispSizer() {
 	knot = new Knot(h, w, GetStatusBar());
 	disp = new DisplayGrid(this, knot);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
-}
-void MainWindow::initExportRegion() {
-	exportRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Export");
-	exportFont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas");
-
-	regenExportBox();
-
-	exportCopyButton = new wxButton(this, wxID_ANY, "Copy", wxDefaultPosition, wxSize(54, 23));
-	exportCopyButton->Bind(wxEVT_BUTTON, &MainWindow::exportCopyFunction, this);
-	exportRegionSizer->Add(exportCopyButton, 0, wxEXPAND);
 }
 
 void MainWindow::show_selection()
@@ -215,10 +203,10 @@ void MainWindow::openFile() {
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
 
 	// Then, reset the select coordinates with MainWindow::reset_selection()
-	// and regenerate and export textbox with MainWindow::regenExportBox() and MainWindow::showExportBox().
+	// and regenerate and export textbox.
 	do_reset();
-	regenExportBox();
-	showExportBox();
+	export_region->regenerate(this, h, w);
+	export_region->display(knot);
 
 	// Reset the wrapping checkboxes
 	menuWrapX->Check(false);
@@ -325,10 +313,10 @@ void MainWindow::refreshGrid() {
 			initDispSizer();
 
 			// / Then, reset the select coordinates with MainWindow::reset_selection(),
-			// / regenerate and export textbox with MainWindow::regenExportBox(),
+			// / regenerate and export textbox,
 			// / and reset the knot wrapping \c wxMenuItem objects.
 			do_reset();
-			regenExportBox();
+			export_region->regenerate(this, h, w);
 			menuWrapX->Check(false);
 			menuWrapY->Check(false);
 
@@ -374,7 +362,7 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	Symmetry sym = static_cast<Symmetry>(evt.GetId());
 	if (knot->generate(sym, select_region->get_selection())) {
 		disp->drawKnot();
-		showExportBox();
+		export_region->display(knot);
 	}
 	else
 		wxMessageBox(wxString::Format("The specified knot was not able to be generated in %i attempts.", MAX_ATTEMPTS), "Error: Knot failed");
@@ -383,32 +371,5 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// and re-enable the generate buttons.
 	GetStatusBar()->SetStatusText(oldStatus);
 	generate_region->enable_buttons(current_symmetry());
-	evt.Skip();
-}
-
-void MainWindow::showExportBox() {
-	wxString toExport;
-	for (int i = 0; i < h; i++) {
-		for (int j = 0; j < w; j++)
-			toExport << knot->get(i, j);
-		if (i < h - 1)
-			toExport << "\r\n";
-	}
-	exportBox->SetLabel(toExport);
-}
-void MainWindow::regenExportBox() {
-	if (exportBox)
-		exportBox->Destroy();
-	exportBox = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(9 * w + 14, 19 * h + 7), wxTE_MULTILINE | wxTE_NO_VSCROLL | wxTE_READONLY);
-	exportBox->SetFont(exportFont);
-	exportRegionSizer->Prepend(exportBox, 0, wxALIGN_CENTER | wxUP | wxDOWN, GAP_3);
-}
-void MainWindow::exportCopyFunction(wxCommandEvent& evt) {
-	// Open the clipboard
-	if (wxTheClipboard->Open())	{
-		wxTheClipboard->SetData(new wxTextDataObject(exportBox->GetLabel()));	// Copy the knot into the clipboard
-		wxTheClipboard->Flush();												// Keep the knot in the clipboard after closing the program
-		wxTheClipboard->Close();												// Close the clipboard
-	}
 	evt.Skip();
 }

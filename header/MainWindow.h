@@ -4,11 +4,7 @@
 #include "Knot.h"
 #include "SelectRegion.h"
 #include "GenerateRegion.h"
-
-// Declare and initialize a button with its corresponding function
-#define declareButton(buttonName) \
-	wxButton* buttonName##Button; \
-	void buttonName##Function(wxCommandEvent& evt)
+#include "ExportRegion.h"
 
 /** As a more specialized \c wxFrame object, this class represents main window of the application;
 	most of the WX object member variables are not documented here. */
@@ -36,6 +32,8 @@ public:
 	bool showing_selection;
 
 	GenerateRegion* generate_region;
+
+	ExportRegion* export_region;
 
 private:
 	void initMenuBar();
@@ -71,15 +69,6 @@ private:
 
 public:
 	void generateKnot(wxCommandEvent& evt);			///< This function checks which of the generating buttons was pressed and calls the appropriate Knot function.
-
-private:
-	void initExportRegion();
-	void showExportBox();		///< Loops through the Knot and grabs each character, then outputs the contents into the export textbox
-	void regenExportBox();		///< Defines the export textbox with a size dependent on the height and width of the knot
-	wxStaticBoxSizer* exportRegionSizer;
-		wxTextCtrl* exportBox;
-		wxFont exportFont;
-		declareButton(exportCopy);	///< This function copies the current text data in the exportBox into the clipboard, saving it after closing the program.
 };
 
 /* MainWindow constructor */

@@ -22,6 +22,8 @@ public:
 
 	Symmetry symmetry_of(Selection selection) const { return SymmetryChecker(glyphs, selection).get(); }
 
+	wxString plaintext() const;
+
 private:
 	Glyphs glyphs;	///< The current state of the Knot
 
