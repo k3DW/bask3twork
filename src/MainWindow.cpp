@@ -95,6 +95,60 @@ void MainWindow::initExportRegion() {
 	exportRegionSizer->Add(exportCopyButton, 0, wxEXPAND);
 }
 
+void MainWindow::show_selection()
+{
+	select_region->normalize();
+	select_region->set_toggle_hide();
+	disp->highlightSelection(select_region->get_selection());
+	enableGenerateButtons(true);
+	showing_selection = true;
+}
+void MainWindow::hide_selection()
+{
+	select_region->set_toggle_show();
+	disp->clearHighlight();
+	enableGenerateButtons(false);
+	showing_selection = false;
+}
+void MainWindow::toggle_selection(wxCommandEvent& evt)
+{
+	if (showing_selection)
+		hide_selection();
+	else
+		show_selection();
+
+	evt.Skip();
+}
+void MainWindow::do_reset()
+{
+	select_region->set_min({ 0, 0 });
+	select_region->set_max({ h - 1, w - 1 });
+	select_region->update_display();
+	hide_selection();
+}
+void MainWindow::reset_selection(wxCommandEvent& evt)
+{
+	do_reset();
+	evt.Skip();
+}
+
+void MainWindow::left_click_tile(wxMouseEvent& evt)
+{
+	wxWindowID id = evt.GetId();
+	select_region->set_min({ id / w, id % w });
+	select_region->update_display();
+	hide_selection();
+	evt.Skip();
+}
+void MainWindow::right_click_tile(wxMouseEvent& evt)
+{
+	wxWindowID id = evt.GetId();
+	select_region->set_max({ id / w, id % w });
+	select_region->update_display();
+	hide_selection();
+	evt.Skip();
+}
+
 void MainWindow::menuEventHandler(wxCommandEvent& evt) {
 	switch (static_cast<MenuID>(evt.GetId())) {
 		case MenuID::OPEN:			{ openFile();			break; }

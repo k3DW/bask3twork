@@ -17,63 +17,14 @@ public:
 	MainWindow(int h, int w, wxString title);
 	~MainWindow(); ///< Hides this MainWindow object automatically, so the destruction is not visible
 
-	void show_selection()
-	{
-		select_region->normalize();
-		select_region->set_toggle_hide();
-		disp->highlightSelection(select_region->get_selection());
-		enableGenerateButtons(true);
-		showing_selection = true;
-	}
-	void hide_selection()
-	{
-		select_region->set_toggle_show();
-		disp->clearHighlight();
-		enableGenerateButtons(false);
-		showing_selection = false;
-	}
+	void show_selection();
+	void hide_selection();
+	void toggle_selection(wxCommandEvent& evt);
+	void do_reset();
+	void reset_selection(wxCommandEvent& evt);
 
-	void toggle_selection(wxCommandEvent& evt)
-	{
-		if (showing_selection)
-			hide_selection();
-		else
-			show_selection();
-
-		evt.Skip();
-	}
-
-	void do_reset()
-	{
-		select_region->set_min({ 0, 0 });
-		select_region->set_max({ h - 1, w - 1 });
-		select_region->update_display();
-		hide_selection();
-	}
-	void reset_selection(wxCommandEvent& evt)
-	{
-		do_reset();
-		evt.Skip();
-	}
-
-	void left_click_tile(wxMouseEvent& evt)
-	/// Sets the left displayed coordinate in the parent MainWindow object, based on which Tile the left click takes place
-	{
-		wxWindowID id = evt.GetId();
-		select_region->set_min({ id / w, id % w });
-		select_region->update_display();
-		hide_selection();
-		evt.Skip();
-	}
-	void right_click_tile(wxMouseEvent& evt)
-	/// Sets the right displayed coordinate in the parent MainWindow object, based on which Tile the right click takes place
-	{
-		wxWindowID id = evt.GetId();
-		select_region->set_max({ id / w, id % w });
-		select_region->update_display();
-		hide_selection();
-		evt.Skip();
-	}
+	void left_click_tile(wxMouseEvent& evt);  ///< Sets the left displayed coordinate, based on which Tile the left click takes place
+	void right_click_tile(wxMouseEvent& evt); ///< Sets the right displayed coordinate, based on which Tile the right click takes place
 
 private:
 	int h,		///< The height of the knot, i.e. the number of rows.
