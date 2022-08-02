@@ -2,7 +2,7 @@
 
 MainWindow::MainWindow(int h, int w, wxString title)
 	: wxFrame(nullptr, wxID_ANY, title), h(h), w(w)
-	, selection{ .min{ 0, 0 }, .max{ h - 1, w - 1 } }
+	, select_region(new SelectRegion(this, h, w))
 {
 	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
@@ -36,12 +36,11 @@ void MainWindow::initSizerLayout() {
 
 	// These are in a weird order to avoid dereferencing `nullptr`s
 	initGenerateRegion();
-	initSelectRegion();
 	initExportRegion();
 
 	buttonSizer = new wxBoxSizer(wxVERTICAL);
 	buttonSizer->AddStretchSpacer();
-	buttonSizer->Add(selectRegionSizer, 0, wxDOWN, GAP_2);
+	buttonSizer->Add(select_region, 0, wxDOWN, GAP_2);
 	buttonSizer->Add(generateRegionSizer, 0, wxDOWN, GAP_2);
 	buttonSizer->Add(exportRegionSizer);
 	buttonSizer->AddStretchSpacer();
@@ -74,27 +73,6 @@ void MainWindow::initDispSizer() {
 	knot = new Knot(h, w, GetStatusBar());
 	disp = new DisplayGrid(this, knot);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
-}
-void MainWindow::initSelectRegion() {
-	selectToggleButton = new wxButton(this, wxID_ANY, "Show", wxDefaultPosition, wxSize(65,23));
-	selectToggleButton->Bind(wxEVT_BUTTON, &MainWindow::selectToggleFunction, this);
-	selectResetButton = new wxButton(this, wxID_ANY, "Reset", wxDefaultPosition, wxSize(65,23));
-	selectResetButton->Bind(wxEVT_BUTTON, &MainWindow::selectResetFunction, this);
-
-	selectToggleButton->SetSize(wxSize(200, 200));
-
-	selectCoord = new wxStaticText(this, wxID_ANY, "");
-	selectCoord->SetFont(Fonts::select);
-
-	selectButtonSizer = new wxBoxSizer(wxHORIZONTAL);
-	selectButtonSizer->Add(selectToggleButton);
-	selectButtonSizer->Add(selectResetButton);
-
-	selectRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Select");
-	selectRegionSizer->Add(selectCoord, 0, wxALIGN_CENTER | wxDOWN, GAP_3);
-	selectRegionSizer->Add(selectButtonSizer, 0, wxEXPAND);
-
-	reset_selection();
 }
 void MainWindow::initGenerateRegion() {
 	generateRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Generate");
@@ -194,7 +172,7 @@ void MainWindow::openFile() {
 
 	// Then, reset the select coordinates with MainWindow::reset_selection()
 	// and regenerate and export textbox with MainWindow::regenExportBox() and MainWindow::showExportBox().
-	reset_selection();
+	do_reset();
 	regenExportBox();
 	showExportBox();
 
@@ -243,7 +221,7 @@ void MainWindow::toggleWrap(bool inXDirection) {
 	else
 		knot->wrapYEnabled = menuWrapY->IsChecked();
 
-	if (selectToggleButton->GetLabelText() == wxString("Hide"))
+	if (showing_selection)
 		enableGenerateButtons();
 }
 void MainWindow::refreshGrid() {
@@ -305,7 +283,7 @@ void MainWindow::refreshGrid() {
 			// / Then, reset the select coordinates with MainWindow::reset_selection(),
 			// / regenerate and export textbox with MainWindow::regenExportBox(),
 			// / and reset the knot wrapping \c wxMenuItem objects.
-			reset_selection();
+			do_reset();
 			regenExportBox();
 			menuWrapX->Check(false);
 			menuWrapY->Check(false);
@@ -340,66 +318,6 @@ void MainWindow::RefreshMinSize() {
 	Layout();
 }
 
-void MainWindow::update_selection_display() {
-	/// Updates the displayed selection coordinates, also has other effects.
-	/// Each of these stored values is zero-indexed, so the displayed value is incremented by 1.
-	selectCoord->SetLabelText(wxString::Format("(%i,%i) to (%i,%i)", selection.min.i + 1, selection.min.j + 1, selection.max.i + 1, selection.max.j + 1));
-	selectRegionSizer->Layout();
-	/// This function also
-	/// (1) removes all highlighting in the grid,
-	/// (2) disables all of the generating buttons, and
-	/// (3) sets the \c show/hide button to "Show"
-	disp->clearHighlight();
-	enableGenerateButtons(false);
-	selectToggleButton->SetLabelText("Show");
-}
-void MainWindow::set_selection_min(Point point) {
-	selection.min = point;
-}
-void MainWindow::set_selection_max(Point point) {
-	selection.max = point;
-}
-void MainWindow::fix_selection() {
-	if (selection.min.i > selection.max.i) std::swap(selection.min.i, selection.max.i);
-	if (selection.min.j > selection.max.j) std::swap(selection.min.j, selection.max.j);
-}
-void MainWindow::reset_selection() {
-	set_selection_min({ 0, 0 });
-	set_selection_max({ h - 1, w - 1 });
-	update_selection_display();
-}
-void MainWindow::selectToggleFunction(wxCommandEvent& evt) {
-	/// \b Method
-
-	/// If the text in the \c show/hide button is "Show",
-	/// then first fix the selection coordinates with MainWindow::fix_selections(),
-	/// call DisplayGrid::highlightSelection() with the index member variables,
-	/// set the button text to be "Hide",
-	/// and call MainWindow::enableGenerateButtons() to enable the buttons.
-	if (selectToggleButton->GetLabelText() == wxString("Show")) {
-		fix_selection();
-		update_selection_display();
-		disp->highlightSelection(selection);
-		selectToggleButton->SetLabelText("Hide");
-		enableGenerateButtons(true);
-	}
-	/// If the text in the \c show/hide button is otherwise (which can only be "Hide"),
-	/// then first call DisplayGrid::clearHighlight(),
-	/// set the button text to be "Show",
-	/// and call MainWindow::enableGenerateButtons() with paramater \c false to disable all buttons.
-	else {
-		disp->clearHighlight();
-		selectToggleButton->SetLabelText("Show");
-		enableGenerateButtons(false);
-	}
-
-	evt.Skip();
-}
-void MainWindow::selectResetFunction(wxCommandEvent& evt) {
-	reset_selection();
-	evt.Skip();
-}
-
 void MainWindow::enableGenerateButtons(bool enable)
 {
 	/// This function allows the Knot \c generate functions to have no conditional operation, and just assume that the parameters are valid.
@@ -407,7 +325,7 @@ void MainWindow::enableGenerateButtons(bool enable)
 
 	/// \param enable Tells the function whether to enable (conditionally) or disable (fully) the generating buttons, has a default value of \c true
 
-	Symmetry sym = !enable ? Symmetry::Nothing : knot->symmetry_of(selection) * knot->checkWrapping(selection);
+	Symmetry sym = !enable ? Symmetry::Nothing : knot->symmetry_of(select_region->get_selection()) * knot->checkWrapping(select_region->get_selection());
 
 	generateAnySymButton     ->Enable((sym & Symmetry::AnySym) == Symmetry::AnySym);
 	generateHoriSymButton    ->Enable((sym & Symmetry::HoriSym) == Symmetry::HoriSym);
@@ -429,7 +347,7 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// so update the DisplayGrid with DisplayGrid::drawKnot() and update the export text box with MainWindow::showExportBox().
 	/// If the generate function returns \c false, then display an error message as a \c wxMessageBox.
 	Symmetry sym = static_cast<Symmetry>(evt.GetId());
-	if (knot->generate(sym, selection)) {
+	if (knot->generate(sym, select_region->get_selection())) {
 		disp->drawKnot();
 		showExportBox();
 	}

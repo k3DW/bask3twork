@@ -53,3 +53,7 @@ namespace Fonts
 // Constants for the iterations of knot generating
 constexpr int MAX_ATTEMPTS = 10000;				///< The maximum number of attempts for the Knot to try generating
 constexpr int ATTEMPTS_DISPLAY_INCREMENT = 500;	///< The interval at which the number of iterations is displayed
+
+static constexpr int GAP_1 = 20; ///< The gap from the outside of the window, and between the grid section and panel section
+static constexpr int GAP_2 = 10; ///< The gap between the panels in the panel section
+static constexpr int GAP_3 = 5; ///< The gap between elements within the panels

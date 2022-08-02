@@ -2,35 +2,88 @@
 #include "Constants.h"
 #include "DisplayGrid.h"
 #include "Knot.h"
+#include "SelectRegion.h"
 
 // Declare and initialize a button with its corresponding function
 #define declareButton(buttonName) \
 	wxButton* buttonName##Button; \
 	void buttonName##Function(wxCommandEvent& evt)
-#define initButton(buttonName, displayText) \
-	buttonName##Button = new wxButton(this, wxID_ANY, displayText); \
-	buttonName##Button->Bind(wxEVT_BUTTON, &MainWindow::##buttonName##Function, this)
 
 /** As a more specialized \c wxFrame object, this class represents main window of the application;
 	most of the WX object member variables are not documented here. */
-class MainWindow : public wxFrame {
-
+class MainWindow : public wxFrame
+{
 public:
 	MainWindow(int h, int w, wxString title);
 	~MainWindow(); ///< Hides this MainWindow object automatically, so the destruction is not visible
 
-	void update_selection_display();     ///< Updates the displayed selection coordinates, also has other effects.
-	void set_selection_min(Point point); ///< Sets the \c min portion of MainWindow::selection
-	void set_selection_max(Point point); ///< Sets the \c max portion of MainWindow::selection
-	void fix_selection();                ///< Fixes the selection such that \c min is the top left point and \c max is the bottom right point
-	void reset_selection();              ///< Resets the value of \c selection to the default
+	void show_selection()
+	{
+		select_region->normalize();
+		select_region->set_toggle_hide();
+		disp->highlightSelection(select_region->get_selection());
+		enableGenerateButtons(true);
+		showing_selection = true;
+	}
+	void hide_selection()
+	{
+		select_region->set_toggle_show();
+		disp->clearHighlight();
+		enableGenerateButtons(false);
+		showing_selection = false;
+	}
+
+	void toggle_selection(wxCommandEvent& evt)
+	{
+		if (showing_selection)
+			hide_selection();
+		else
+			show_selection();
+
+		evt.Skip();
+	}
+
+	void do_reset()
+	{
+		select_region->set_min({ 0, 0 });
+		select_region->set_max({ h - 1, w - 1 });
+		select_region->update_display();
+		hide_selection();
+	}
+	void reset_selection(wxCommandEvent& evt)
+	{
+		do_reset();
+		evt.Skip();
+	}
+
+	void left_click_tile(wxMouseEvent& evt)
+	/// Sets the left displayed coordinate in the parent MainWindow object, based on which Tile the left click takes place
+	{
+		wxWindowID id = evt.GetId();
+		select_region->set_min({ id / w, id % w });
+		select_region->update_display();
+		hide_selection();
+		evt.Skip();
+	}
+	void right_click_tile(wxMouseEvent& evt)
+	/// Sets the right displayed coordinate in the parent MainWindow object, based on which Tile the right click takes place
+	{
+		wxWindowID id = evt.GetId();
+		select_region->set_max({ id / w, id % w });
+		select_region->update_display();
+		hide_selection();
+		evt.Skip();
+	}
 
 private:
 	int h,		///< The height of the knot, i.e. the number of rows.
 		w;		///< The width of the knot, i.e. the number of columns.
-	
-	Selection selection; ///< The pair of zero-indexed coordinates representing the top left (lower numerically) and bottom right (higher numerically) of the current selection
 
+public:
+	SelectRegion* select_region;
+	bool showing_selection;
+
+private:
 	void initMenuBar();
 	void menuEventHandler(wxCommandEvent& evt); ///< Handles all events for menu presses
 	wxMenuBar* menuBar;
@@ -60,15 +113,6 @@ private:
 	wxBoxSizer* dispSizer;
 	wxBoxSizer* buttonSizer;
 
-	void initSelectRegion();
-	wxStaticBoxSizer* selectRegionSizer;
-		wxStaticText* selectCoord;		// The display of "selection coordinates", i.e. top-left to bottom-right
-		wxBoxSizer* selectButtonSizer;	// The selection buttons
-			declareButton(selectToggle);	///< This function is bound to the \c show/hide button, so it highlights and unhighlights the selection
-				// This button is a show/hide button, which highlights the selection
-			declareButton(selectReset);		///< This function resets the selection coordinates by calling MainWindow::reset_selection(), but this function takes in a button event so it can be bound to the \c reset button.
-				// This button resets the selection coordinates
-
 	void initGenerateRegion();
 	void enableGenerateButtons(bool enable = true); ///< This function conditionally enables or fully disables the generating buttons.
 	void generateKnot(wxCommandEvent& evt);			///< This function checks which of the generating buttons was pressed and calls the appropriate Knot function.
@@ -84,10 +128,6 @@ private:
 		wxTextCtrl* exportBox;
 		wxFont exportFont;
 		declareButton(exportCopy);	///< This function copies the current text data in the exportBox into the clipboard, saving it after closing the program.
-
-	static constexpr int GAP_1 = 20; ///< The gap from the outside of the window, and between the grid section and panel section
-	static constexpr int GAP_2 = 10; ///< The gap between the panels in the panel section
-	static constexpr int GAP_3 =  5; ///< The gap between elements within the panels
 };
 
 /* MainWindow constructor */
