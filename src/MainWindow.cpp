@@ -3,6 +3,7 @@
 MainWindow::MainWindow(int h, int w, wxString title)
 	: wxFrame(nullptr, wxID_ANY, title), h(h), w(w)
 	, select_region(new SelectRegion(this, h, w))
+	, generate_region(new GenerateRegion(this))
 {
 	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
@@ -35,13 +36,12 @@ void MainWindow::initSizerLayout() {
 	initDispSizer();
 
 	// These are in a weird order to avoid dereferencing `nullptr`s
-	initGenerateRegion();
 	initExportRegion();
 
 	buttonSizer = new wxBoxSizer(wxVERTICAL);
 	buttonSizer->AddStretchSpacer();
 	buttonSizer->Add(select_region, 0, wxDOWN, GAP_2);
-	buttonSizer->Add(generateRegionSizer, 0, wxDOWN, GAP_2);
+	buttonSizer->Add(generate_region, 0, wxDOWN, GAP_2);
 	buttonSizer->Add(exportRegionSizer);
 	buttonSizer->AddStretchSpacer();
 
@@ -74,16 +74,6 @@ void MainWindow::initDispSizer() {
 	disp = new DisplayGrid(this, knot);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
 }
-void MainWindow::initGenerateRegion() {
-	generateRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Generate");
-	#define XX(Sym, desc) \
-		generate##Sym##Button = new wxButton(this, static_cast<unsigned int>(Symmetry::Sym), desc); \
-		generate##Sym##Button->Bind(wxEVT_BUTTON, &MainWindow::generateKnot, this); \
-		generateRegionSizer->Add(generate##Sym##Button);
-	SYMMETRIES
-	#undef XX
-	enableGenerateButtons(false);
-}
 void MainWindow::initExportRegion() {
 	exportRegionSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Export");
 	exportFont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas");
@@ -100,14 +90,14 @@ void MainWindow::show_selection()
 	select_region->normalize();
 	select_region->set_toggle_hide();
 	disp->highlightSelection(select_region->get_selection());
-	enableGenerateButtons(true);
+	generate_region->enable_buttons(current_symmetry());
 	showing_selection = true;
 }
 void MainWindow::hide_selection()
 {
 	select_region->set_toggle_show();
 	disp->clearHighlight();
-	enableGenerateButtons(false);
+	generate_region->disable_buttons();
 	showing_selection = false;
 }
 void MainWindow::toggle_selection(wxCommandEvent& evt)
@@ -276,7 +266,7 @@ void MainWindow::toggleWrap(bool inXDirection) {
 		knot->wrapYEnabled = menuWrapY->IsChecked();
 
 	if (showing_selection)
-		enableGenerateButtons();
+		generate_region->enable_buttons(current_symmetry());
 }
 void MainWindow::refreshGrid() {
 	wxDialog* dlg = new wxDialog(nullptr, wxID_ANY, "Grid");
@@ -372,25 +362,6 @@ void MainWindow::RefreshMinSize() {
 	Layout();
 }
 
-void MainWindow::enableGenerateButtons(bool enable)
-{
-	/// This function allows the Knot \c generate functions to have no conditional operation, and just assume that the parameters are valid.
-	/// Instead of checking for symmetry conditions within the generating function itself, the user is disallowed from pressing the button.
-
-	/// \param enable Tells the function whether to enable (conditionally) or disable (fully) the generating buttons, has a default value of \c true
-
-	Symmetry sym = !enable ? Symmetry::Nothing : knot->symmetry_of(select_region->get_selection()) * knot->checkWrapping(select_region->get_selection());
-
-	generateAnySymButton     ->Enable((sym & Symmetry::AnySym) == Symmetry::AnySym);
-	generateHoriSymButton    ->Enable((sym & Symmetry::HoriSym) == Symmetry::HoriSym);
-	generateVertSymButton    ->Enable((sym & Symmetry::VertSym) == Symmetry::VertSym);
-	generateHoriVertSymButton->Enable((sym & Symmetry::HoriVertSym) == Symmetry::HoriVertSym);
-	generateRot2SymButton    ->Enable((sym & Symmetry::Rot2Sym) == Symmetry::Rot2Sym);
-	generateRot4SymButton    ->Enable((sym & Symmetry::Rot4Sym) == Symmetry::Rot4Sym);
-	generateFwdDiagButton    ->Enable((sym & Symmetry::FwdDiag) == Symmetry::FwdDiag);
-	generateBackDiagButton   ->Enable((sym & Symmetry::BackDiag) == Symmetry::BackDiag);
-	generateFullSymButton    ->Enable((sym & Symmetry::FullSym) == Symmetry::FullSym);
-}
 void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// The Knot::generate() function uses the status bar, so first store the current displayed message.
 	const wxString oldStatus = GetStatusBar()->GetStatusText();
@@ -411,7 +382,7 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// At the end, set the status bar back to the message which was displayed at the beginning of the function,
 	/// and re-enable the generate buttons.
 	GetStatusBar()->SetStatusText(oldStatus);
-	enableGenerateButtons();
+	generate_region->enable_buttons(current_symmetry());
 	evt.Skip();
 }
 

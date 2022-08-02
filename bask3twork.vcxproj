@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\DisplayGrid.cpp" />
+    <ClCompile Include="src\GenerateRegion.cpp" />
     <ClCompile Include="src\SelectRegion.cpp" />
     <ClCompile Include="src\Symmetry.cpp" />
     <ClCompile Include="src\Knot.cpp" />
@@ -30,6 +31,7 @@
   <ItemGroup>
     <ClInclude Include="header\Connection.h" />
     <ClInclude Include="header\DisplayGrid.h" />
+    <ClInclude Include="header\GenerateRegion.h" />
     <ClInclude Include="header\Glyph.h" />
     <ClInclude Include="header\Constants.h" />
     <ClInclude Include="header\SelectRegion.h" />

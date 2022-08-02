@@ -3,6 +3,7 @@
 #include "DisplayGrid.h"
 #include "Knot.h"
 #include "SelectRegion.h"
+#include "GenerateRegion.h"
 
 // Declare and initialize a button with its corresponding function
 #define declareButton(buttonName) \
@@ -34,6 +35,8 @@ public:
 	SelectRegion* select_region;
 	bool showing_selection;
 
+	GenerateRegion* generate_region;
+
 private:
 	void initMenuBar();
 	void menuEventHandler(wxCommandEvent& evt); ///< Handles all events for menu presses
@@ -64,14 +67,12 @@ private:
 	wxBoxSizer* dispSizer;
 	wxBoxSizer* buttonSizer;
 
-	void initGenerateRegion();
-	void enableGenerateButtons(bool enable = true); ///< This function conditionally enables or fully disables the generating buttons.
-	void generateKnot(wxCommandEvent& evt);			///< This function checks which of the generating buttons was pressed and calls the appropriate Knot function.
-	wxStaticBoxSizer* generateRegionSizer;
-		#define XX(Sym, desc) wxButton* generate##Sym##Button;
-		SYMMETRIES
-		#undef XX
+	Symmetry current_symmetry() const { return knot->symmetry_of(select_region->get_selection()) * knot->checkWrapping(select_region->get_selection()); }
 
+public:
+	void generateKnot(wxCommandEvent& evt);			///< This function checks which of the generating buttons was pressed and calls the appropriate Knot function.
+
+private:
 	void initExportRegion();
 	void showExportBox();		///< Loops through the Knot and grabs each character, then outputs the contents into the export textbox
 	void regenExportBox();		///< Defines the export textbox with a size dependent on the height and width of the knot
