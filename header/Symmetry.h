@@ -40,7 +40,7 @@ public:
 		, corners{ IteratorBuilder(selection.min, &glyphs), IteratorBuilder(Point{ selection.min.i, selection.max.j }, &glyphs), IteratorBuilder(Point{ selection.max.i, selection.min.j }, &glyphs), IteratorBuilder(selection.max, &glyphs), }
 	{}
 
-	Symmetry get() const;
+	Symmetry get(int h, int w) const;
 
 private:
 	enum class CornerType { upper_left, upper_right, lower_left, lower_right, };

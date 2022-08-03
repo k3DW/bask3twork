@@ -1,7 +1,16 @@
 #include "Symmetry.h"
 
-Symmetry SymmetryChecker::get() const
+Symmetry SymmetryChecker::get(int h, int w) const
 {
+	if (selection.is_full_selection(h, w))
+	{
+		Symmetry non_square = Symmetry::HoriSym | Symmetry::VertSym | Symmetry::Rot2Sym;
+		Symmetry square = selection.is_square()
+			? Symmetry::Rot4Sym | Symmetry::FwdDiag | Symmetry::BackDiag
+			: Symmetry::Nothing;
+		return non_square | square;
+	}
+
 	Symmetry non_square = has_mirror_x_symmetry()
 	                    | has_mirror_y_symmetry()
 	                    | has_rotate_180_symmetry();
