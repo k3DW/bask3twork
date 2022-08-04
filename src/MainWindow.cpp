@@ -1,37 +1,26 @@
 #include "MainWindow.h"
+#include "DisplayGrid.h"
+#include "Knot.h"
+
+#include "SelectRegion.h"
+#include "GenerateRegion.h"
+#include "ExportRegion.h"
+#include "MenuBar.h"
 
 MainWindow::MainWindow(int h, int w, wxString title)
 	: wxFrame(nullptr, wxID_ANY, title), h(h), w(w)
 	, select_region(new SelectRegion(this, h, w))
 	, generate_region(new GenerateRegion(this))
 	, export_region(new ExportRegion(this, h, w))
+	, menu_bar(new MenuBar(this))
 {
 	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
-	initMenuBar();
 	initSizerLayout();
 	RefreshMinSize();
 }
 MainWindow::~MainWindow() {
 	Hide();
-}
-void MainWindow::initMenuBar() {
-	menuFile = new wxMenu();
-	menuFile->Bind(wxEVT_MENU, &MainWindow::menuEventHandler, this);
-	menuFile->Append(static_cast<int>(MenuID::OPEN), "&Open\tCtrl-O", "Open a knot file.");
-	menuFile->Append(static_cast<int>(MenuID::SAVE), "&Save\tCtrl-S", "Save a knot file.");
-
-	menuGenerate = new wxMenu();
-	menuGenerate->Bind(wxEVT_MENU, &MainWindow::menuEventHandler, this);
-	menuWrapX = menuGenerate->AppendCheckItem(static_cast<int>(MenuID::WRAP_X), "Wrap &X\tCtrl-X", "Toggle wrapping around the grid in the left-right direction.");
-	menuWrapY = menuGenerate->AppendCheckItem(static_cast<int>(MenuID::WRAP_Y), "Wrap &Y\tCtrl-Y", "Toggle wrapping around the grid in the up-down direction.");
-	menuGenerate->AppendSeparator();
-	menuGenerate->Append(static_cast<int>(MenuID::REFRESH_GRID), "&Refresh Grid\tCtrl-R", "Resize and reinitialize the grid.");
-
-	menuBar = new wxMenuBar();
-	menuBar->Append(menuFile, "&File");
-	menuBar->Append(menuGenerate, "&Generate");
-	SetMenuBar(menuBar);
 }
 void MainWindow::initSizerLayout() {
 	initDispSizer();
@@ -127,16 +116,12 @@ void MainWindow::right_click_tile(wxMouseEvent& evt)
 	evt.Skip();
 }
 
-void MainWindow::menuEventHandler(wxCommandEvent& evt) {
-	switch (static_cast<MenuID>(evt.GetId())) {
-		case MenuID::OPEN:			{ openFile();			break; }
-		case MenuID::SAVE:			{ saveFile();			break; }
-		case MenuID::WRAP_X:		{ toggleWrap(true);		break; }
-		case MenuID::WRAP_Y:		{ toggleWrap(false);	break; }
-		case MenuID::REFRESH_GRID:	{ refreshGrid();		break; }
-	}
+void MainWindow::menu_event_handler(wxCommandEvent& evt)
+{
+	std::invoke(MenuBar::functions[evt.GetId()], this);
 	evt.Skip();
 }
+
 void MainWindow::openFile() {
 	// Open a wxFileDialog to get the name of the file.
 	wxFileDialog openFileDialog(this, "Open Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt)|*.txt", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
@@ -209,8 +194,7 @@ void MainWindow::openFile() {
 	export_region->display(knot);
 
 	// Reset the wrapping checkboxes
-	menuWrapX->Check(false);
-	menuWrapY->Check(false);
+	menu_bar->reset_wrapping();
 
 	// Lastly, refresh the minimum size of the window.
 	RefreshMinSize();
@@ -247,12 +231,15 @@ void MainWindow::saveFile() {
 	file.Write();
 	file.Close();
 }
-void MainWindow::toggleWrap(bool inXDirection) {
-	if (inXDirection)
-		knot->wrapXEnabled = menuWrapX->IsChecked();
-	else
-		knot->wrapYEnabled = menuWrapY->IsChecked();
-
+void MainWindow::update_wrap_x()
+{
+	knot->wrapXEnabled = menu_bar->is_wrap_x();
+	if (showing_selection)
+		generate_region->enable_buttons(current_symmetry());
+}
+void MainWindow::update_wrap_y()
+{
+	knot->wrapYEnabled = menu_bar->is_wrap_y();
 	if (showing_selection)
 		generate_region->enable_buttons(current_symmetry());
 }
@@ -317,8 +304,7 @@ void MainWindow::refreshGrid() {
 			// / and reset the knot wrapping \c wxMenuItem objects.
 			do_reset();
 			export_region->regenerate(this, h, w);
-			menuWrapX->Check(false);
-			menuWrapY->Check(false);
+			menu_bar->reset_wrapping();
 
 			// / Lastly, refresh the minimum size of the window.
 			RefreshMinSize();
@@ -348,6 +334,11 @@ void MainWindow::RefreshMinSize() {
 	if (!IsMaximized())
 		SetSize(newSize);
 	Layout();
+}
+
+Symmetry MainWindow::current_symmetry() const
+{
+	return knot->symmetry_of(select_region->get_selection()) * knot->checkWrapping(select_region->get_selection());
 }
 
 void MainWindow::generateKnot(wxCommandEvent& evt) {

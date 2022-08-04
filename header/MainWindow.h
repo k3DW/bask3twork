@@ -1,10 +1,14 @@
 #pragma once
 #include "Constants.h"
-#include "DisplayGrid.h"
-#include "Knot.h"
-#include "SelectRegion.h"
-#include "GenerateRegion.h"
-#include "ExportRegion.h"
+
+class DisplayGrid;
+class Knot;
+enum class Symmetry;
+
+class SelectRegion;
+class GenerateRegion;
+class ExportRegion;
+class MenuBar;
 
 /** As a more specialized \c wxFrame object, this class represents main window of the application;
 	most of the WX object member variables are not documented here. */
@@ -35,27 +39,18 @@ public:
 
 	ExportRegion* export_region;
 
+	MenuBar* menu_bar;
+
+public:
+	void menu_event_handler(wxCommandEvent& evt); ///< Handles all events for menu presses
+	
+	void openFile();      ///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
+	void saveFile();      ///< Saves the current knot as a \c .k3knot file or a \c .txt file
+	void update_wrap_x(); ///< Grab the x wrapping from the menu bar, and refresh the buttons
+	void update_wrap_y(); ///< Grab the y wrapping from the menu bar, and refresh the buttons
+	void refreshGrid();   ///< Open the "Refresh" dialog pop-up, and regenerate the grid if successful
+
 private:
-	void initMenuBar();
-	void menuEventHandler(wxCommandEvent& evt); ///< Handles all events for menu presses
-	wxMenuBar* menuBar;
-	wxMenu* menuFile;
-		void openFile();	///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
-		void saveFile();	///< Saves the current knot as a \c .k3knot file or a \c .txt file
-	wxMenu* menuGenerate;
-		wxMenuItem* menuWrapX;
-		wxMenuItem* menuWrapY;
-		void toggleWrap(bool inXDirection);	///< Toggles the knot wrapping in the direction specified
-		void refreshGrid();
-
-	enum class MenuID : int {
-		OPEN,
-		SAVE,
-		WRAP_X,
-		WRAP_Y,
-		REFRESH_GRID,
-	};
-
 	void initSizerLayout();
 	void initDispSizer();	///< One of 6 \c init functions which chunk the initializing process, but the only one documented. 
 	void RefreshMinSize();	///< Sets the minimum size of the window, and sets the size of the window if not maximized.
@@ -65,7 +60,7 @@ private:
 	wxBoxSizer* dispSizer;
 	wxBoxSizer* buttonSizer;
 
-	Symmetry current_symmetry() const { return knot->symmetry_of(select_region->get_selection()) * knot->checkWrapping(select_region->get_selection()); }
+	Symmetry current_symmetry() const;
 
 public:
 	void generateKnot(wxCommandEvent& evt);			///< This function checks which of the generating buttons was pressed and calls the appropriate Knot function.
