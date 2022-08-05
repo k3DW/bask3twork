@@ -87,7 +87,7 @@ void MainWindow::toggle_selection(wxCommandEvent& evt)
 
 	evt.Skip();
 }
-void MainWindow::do_reset()
+void MainWindow::reset_selection()
 {
 	select_region->set_min({ 0, 0 });
 	select_region->set_max({ h - 1, w - 1 });
@@ -96,7 +96,7 @@ void MainWindow::do_reset()
 }
 void MainWindow::reset_selection(wxCommandEvent& evt)
 {
-	do_reset();
+	reset_selection();
 	evt.Skip();
 }
 
@@ -190,7 +190,7 @@ void MainWindow::openFile() {
 
 	// Then, reset the select coordinates with MainWindow::reset_selection()
 	// and regenerate and export textbox.
-	do_reset();
+	reset_selection();
 	export_region->regenerate(this, h, w);
 	export_region->display(knot);
 
@@ -244,38 +244,39 @@ void MainWindow::update_wrap_y()
 	if (showing_selection)
 		generate_region->enable_buttons(current_symmetry());
 }
+
+auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
+{
+	return [this, regen_dialog](wxCommandEvent& evt)
+	{
+		auto [new_h, new_w] = regen_dialog->get_values();
+		if (new_h == -1 || new_w == -1)
+			return;
+
+		h = new_h;
+		w = new_w;
+
+		initDispSizer();
+
+		// / Then, reset the select coordinates with MainWindow::reset_selection(),
+		// / regenerate and export textbox,
+		// / and reset the knot wrapping \c wxMenuItem objects.
+		reset_selection();
+		export_region->regenerate(this, h, w);
+		menu_bar->reset_wrapping();
+
+		// / Lastly, refresh the minimum size of the window.
+		RefreshMinSize();
+
+		regen_dialog->EndModal(0);
+		evt.Skip();
+	};
+}
+
 void MainWindow::regenerate_grid()
 {
 	RegenDialog* regen_dialog = new RegenDialog(this, h, w);
-
-	regen_dialog->Bind(wxEVT_BUTTON,
-		[this, regen_dialog](wxCommandEvent& evt)
-		{
-			auto [new_h, new_w] = regen_dialog->get_values();
-			if (new_h == -1 || new_w == -1)
-				return;
-
-			h = new_h;
-			w = new_w;
-
-			initDispSizer();
-
-			// / Then, reset the select coordinates with MainWindow::reset_selection(),
-			// / regenerate and export textbox,
-			// / and reset the knot wrapping \c wxMenuItem objects.
-			do_reset();
-			export_region->regenerate(this, h, w);
-			menu_bar->reset_wrapping();
-
-			// / Lastly, refresh the minimum size of the window.
-			RefreshMinSize();
-
-			//dlg->EndModal(0);
-			regen_dialog->EndModal(0);
-
-			evt.Skip();
-		}
-	);
+	regen_dialog->Bind(wxEVT_BUTTON, get_regen_dialog_handler(regen_dialog));
 
 	regen_dialog->ShowModal();
 	regen_dialog->Destroy();

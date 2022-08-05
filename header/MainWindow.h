@@ -9,6 +9,7 @@ class SelectRegion;
 class GenerateRegion;
 class ExportRegion;
 class MenuBar;
+class RegenDialog;
 
 /** As a more specialized \c wxFrame object, this class represents main window of the application;
 	most of the WX object member variables are not documented here. */
@@ -21,7 +22,7 @@ public:
 	void show_selection();
 	void hide_selection();
 	void toggle_selection(wxCommandEvent& evt);
-	void do_reset();
+	void reset_selection();
 	void reset_selection(wxCommandEvent& evt);
 
 	void left_click_tile(wxMouseEvent& evt);  ///< Sets the left displayed coordinate, based on which Tile the left click takes place
@@ -48,6 +49,8 @@ public:
 	void update_wrap_x();   ///< Grab the x wrapping from the menu bar, and refresh the buttons
 	void update_wrap_y();   ///< Grab the y wrapping from the menu bar, and refresh the buttons
 	void regenerate_grid(); ///< Open the "Regenerate" dialog pop-up, and regenerate the grid if successful
+
+	auto get_regen_dialog_handler(RegenDialog* regen_dialog); ///< The function bound to the \c RegenDialog button
 
 private:
 	void initSizerLayout();
