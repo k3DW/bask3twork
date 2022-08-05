@@ -6,6 +6,7 @@
 #include "GenerateRegion.h"
 #include "ExportRegion.h"
 #include "MenuBar.h"
+#include "RegenDialog.h"
 
 MainWindow::MainWindow(int h, int w, wxString title)
 	: wxFrame(nullptr, wxID_ANY, title), h(h), w(w)
@@ -243,60 +244,20 @@ void MainWindow::update_wrap_y()
 	if (showing_selection)
 		generate_region->enable_buttons(current_symmetry());
 }
-void MainWindow::refreshGrid() {
-	wxDialog* dlg = new wxDialog(nullptr, wxID_ANY, "Grid");
-	dlg->SetIcon(wxICON(AppIcon));
+void MainWindow::regenerate_grid()
+{
+	RegenDialog* regen_dialog = new RegenDialog(this, h, w);
 
-	wxTextCtrl* heightText = new wxTextCtrl(dlg, wxID_ANY, wxString::Format("%i", h), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
-	heightText->SetMaxLength(2);
-	heightText->SetFont(Fonts::refresh);
-	wxTextCtrl* widthText = new wxTextCtrl(dlg, wxID_ANY, wxString::Format("%i", w), wxDefaultPosition, wxSize(42, 24), wxTE_CENTER);
-	widthText->SetMaxLength(2);
-	widthText->SetFont(Fonts::refresh);
-
-	wxBoxSizer* textSizer = new wxBoxSizer(wxHORIZONTAL);
-	textSizer->Add(heightText, 0, wxEXPAND);
-	textSizer->Add(new wxStaticText(dlg, wxID_ANY, " by "), 0, wxALIGN_CENTER);
-	textSizer->Add(widthText, 0, wxEXPAND);
-
-	int btnID = static_cast<int>(rand());
-	wxButton* btn = new wxButton(dlg, btnID, "Refresh Grid");
-
-	wxBoxSizer* dlgSizer = new wxBoxSizer(wxVERTICAL);
-	dlgSizer->Add(textSizer, 0, wxEXPAND | wxALL, GAP_3);
-	dlgSizer->Add(btn, 0, wxEXPAND | (wxALL ^ wxUP), GAP_3);
-	dlg->SetSizer(dlgSizer);
-
-	dlg->SetMinSize(wxDefaultSize);
-	dlg->SetMinSize(dlg->GetBestSize());
-	dlg->SetSize(dlg->GetBestSize());
-
-	dlg->Bind(wxEVT_BUTTON, 
-		[this, dlg, heightText, widthText](wxCommandEvent& evt) {
-			// / \b Method
-
-			// / First, check if the values in the boxes are numbers. If not, send a \c mxMessageBox with an error message and return.
-			// / Then check if the numbers in the boxes are positive integers. If not, send a different error message and return.
-			wxString heightString = heightText->GetValue();
-			wxString widthString = widthText->GetValue();
-			if (!(heightString.IsNumber() && widthString.IsNumber())) {
-				wxMessageBox("Please enter only numbers for the new grid size.", "Error: Non-numerical grid size");
+	regen_dialog->Bind(wxEVT_BUTTON,
+		[this, regen_dialog](wxCommandEvent& evt)
+		{
+			auto [new_h, new_w] = regen_dialog->get_values();
+			if (new_h == -1 || new_w == -1)
 				return;
-			}
-			int heightNum = wxAtoi(heightString);
-			int widthNum = wxAtoi(widthString);
-			if (!(heightNum > 0 && widthNum > 0)) {
-				wxMessageBox("Please enter positive whole numbers for the new grid size.", "Error: Non-integer grid size");
-				return;
-			}
-			if (heightNum > MAX_H || widthNum > MAX_W) {
-				wxMessageBox(wxString::Format("Please enter sizes that are, at most, %i by %i.", MAX_H, MAX_W), "Error: Knot size too large");
-				return;
-			}
 
-			// / Next, update \c h and \c w member variables, then reinitialize the DisplayGrid using MainWindow::initDispSizer().
-			h = heightNum;
-			w = widthNum;
+			h = new_h;
+			w = new_w;
+
 			initDispSizer();
 
 			// / Then, reset the select coordinates with MainWindow::reset_selection(),
@@ -309,17 +270,15 @@ void MainWindow::refreshGrid() {
 			// / Lastly, refresh the minimum size of the window.
 			RefreshMinSize();
 
-			dlg->EndModal(0);
-			
+			//dlg->EndModal(0);
+			regen_dialog->EndModal(0);
+
 			evt.Skip();
-		}, 
-	btnID);
+		}
+	);
 
-	if (dlg->ShowModal() == wxID_OK) {
-		
-	}
-
-	dlg->Destroy();
+	regen_dialog->ShowModal();
+	regen_dialog->Destroy();
 }
 
 void MainWindow::RefreshMinSize() {

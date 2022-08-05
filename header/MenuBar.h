@@ -18,7 +18,7 @@ public:
 		SAVE,
 		WRAP_X,
 		WRAP_Y,
-		REFRESH_GRID,
+		REGEN_GRID,
 	};
 
 	static constexpr std::array functions =
@@ -27,7 +27,7 @@ public:
 		&MainWindow::saveFile,
 		&MainWindow::update_wrap_x,
 		&MainWindow::update_wrap_y,
-		&MainWindow::refreshGrid,
+		&MainWindow::regenerate_grid,
 	};
 
 private:

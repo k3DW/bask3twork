@@ -43,11 +43,11 @@ public:
 public:
 	void menu_event_handler(wxCommandEvent& evt); ///< Handles all events for menu presses
 	
-	void openFile();      ///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
-	void saveFile();      ///< Saves the current knot as a \c .k3knot file or a \c .txt file
-	void update_wrap_x(); ///< Grab the x wrapping from the menu bar, and refresh the buttons
-	void update_wrap_y(); ///< Grab the y wrapping from the menu bar, and refresh the buttons
-	void refreshGrid();   ///< Open the "Refresh" dialog pop-up, and regenerate the grid if successful
+	void openFile();        ///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
+	void saveFile();        ///< Saves the current knot as a \c .k3knot file or a \c .txt file
+	void update_wrap_x();   ///< Grab the x wrapping from the menu bar, and refresh the buttons
+	void update_wrap_y();   ///< Grab the y wrapping from the menu bar, and refresh the buttons
+	void regenerate_grid(); ///< Open the "Regenerate" dialog pop-up, and regenerate the grid if successful
 
 private:
 	void initSizerLayout();

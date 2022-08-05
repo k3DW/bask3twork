@@ -14,7 +14,7 @@ MenuBar::MenuBar(MainWindow* parent)
 	wrap_x = generate_menu->AppendCheckItem(static_cast<int>(MenuID::WRAP_X), "Wrap &X\tCtrl-X", "Toggle wrapping around the grid in the left-right direction.");
 	wrap_y = generate_menu->AppendCheckItem(static_cast<int>(MenuID::WRAP_Y), "Wrap &Y\tCtrl-Y", "Toggle wrapping around the grid in the up-down direction.");
 	generate_menu->AppendSeparator();
-	generate_menu->Append(static_cast<int>(MenuID::REFRESH_GRID), "&Refresh Grid\tCtrl-R", "Resize and reinitialize the grid.");
+	generate_menu->Append(static_cast<int>(MenuID::REGEN_GRID), "&Regenerate\tCtrl-R", "Resize and reinitialize the grid.");
 
 	Append(file_menu, "&File");
 	Append(generate_menu, "&Generate");
