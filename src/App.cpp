@@ -25,7 +25,6 @@ public:
 		main->SetIcon(wxIcon("AppIcon"));
 		main->Show();
 
-		srand(time(nullptr));
 		return true;
 	}
 };

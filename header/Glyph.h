@@ -510,8 +510,13 @@ inline const Glyph* RandomGlyph(const Connections connections, const GlyphFlag f
 		if (compatible(connections, glyph) && (glyph.flags & flags) == flags)
 			glyphList.push_back(&glyph);
 
-	if (glyphList.size() == 0)
+	if (glyphList.empty())
 		return nullptr;
 	else
-		return glyphList[rand() % glyphList.size()];
+	{
+		static std::mt19937 twister{ std::random_device{}() };
+		static const Glyph* glyph = nullptr;
+		std::sample(glyphList.begin(), glyphList.end(), &glyph, 1, twister);
+		return glyph;
+	}
 }
