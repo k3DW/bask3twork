@@ -206,3 +206,16 @@ bool Knot::checkWrapping(Selection selection) const {
 
 	return true;
 }
+
+wxString Knot::plaintext() const
+{
+	wxString output;
+	for (int i = 0; i < h; i++)
+	{
+		for (int j = 0; j < w; j++)
+			output << get(i, j);
+		if (i != h - 1)
+			output << "\r\n";
+	}
+	return output;
+}

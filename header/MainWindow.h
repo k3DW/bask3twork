@@ -1,56 +1,58 @@
 #pragma once
 #include "Constants.h"
-#include "DisplayGrid.h"
-#include "Knot.h"
 
-// Declare and initialize a button with its corresponding function
-#define declareButton(buttonName) \
-	wxButton* buttonName##Button; \
-	void buttonName##Function(wxCommandEvent& evt)
-#define initButton(buttonName, displayText) \
-	buttonName##Button = new wxButton(this, wxID_ANY, displayText); \
-	buttonName##Button->Bind(wxEVT_BUTTON, &MainWindow::##buttonName##Function, this)
+class DisplayGrid;
+class Knot;
+enum class Symmetry;
+
+class SelectRegion;
+class GenerateRegion;
+class ExportRegion;
+class MenuBar;
+class RegenDialog;
 
 /** As a more specialized \c wxFrame object, this class represents main window of the application;
 	most of the WX object member variables are not documented here. */
-class MainWindow : public wxFrame {
-
+class MainWindow : public wxFrame
+{
 public:
 	MainWindow(int h, int w, wxString title);
 	~MainWindow(); ///< Hides this MainWindow object automatically, so the destruction is not visible
 
-	void update_selection_display();     ///< Updates the displayed selection coordinates, also has other effects.
-	void set_selection_min(Point point); ///< Sets the \c min portion of MainWindow::selection
-	void set_selection_max(Point point); ///< Sets the \c max portion of MainWindow::selection
-	void fix_selection();                ///< Fixes the selection such that \c min is the top left point and \c max is the bottom right point
-	void reset_selection();              ///< Resets the value of \c selection to the default
+	void show_selection();
+	void hide_selection();
+	void toggle_selection(wxCommandEvent& evt);
+	void reset_selection();
+	void reset_selection(wxCommandEvent& evt);
 
-private:
+	void left_click_tile(wxMouseEvent& evt);  ///< Sets the left displayed coordinate, based on which Tile the left click takes place
+	void right_click_tile(wxMouseEvent& evt); ///< Sets the right displayed coordinate, based on which Tile the right click takes place
+
 	int h,		///< The height of the knot, i.e. the number of rows.
 		w;		///< The width of the knot, i.e. the number of columns.
+
+public:
+	SelectRegion* select_region;
+	bool showing_selection;
+
+	GenerateRegion* generate_region;
+
+	ExportRegion* export_region;
+
+	MenuBar* menu_bar;
+
+public:
+	void menu_event_handler(wxCommandEvent& evt); ///< Handles all events for menu presses
 	
-	Selection selection; ///< The pair of zero-indexed coordinates representing the top left (lower numerically) and bottom right (higher numerically) of the current selection
+	void openFile();        ///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
+	void saveFile();        ///< Saves the current knot as a \c .k3knot file or a \c .txt file
+	void update_wrap_x();   ///< Grab the x wrapping from the menu bar, and refresh the buttons
+	void update_wrap_y();   ///< Grab the y wrapping from the menu bar, and refresh the buttons
+	void regenerate_grid(); ///< Open the "Regenerate" dialog pop-up, and regenerate the grid if successful
 
-	void initMenuBar();
-	void menuEventHandler(wxCommandEvent& evt); ///< Handles all events for menu presses
-	wxMenuBar* menuBar;
-	wxMenu* menuFile;
-		void openFile();	///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
-		void saveFile();	///< Saves the current knot as a \c .k3knot file or a \c .txt file
-	wxMenu* menuGenerate;
-		wxMenuItem* menuWrapX;
-		wxMenuItem* menuWrapY;
-		void toggleWrap(bool inXDirection);	///< Toggles the knot wrapping in the direction specified
-		void refreshGrid();
+	auto get_regen_dialog_handler(RegenDialog* regen_dialog); ///< The function bound to the \c RegenDialog button
 
-	enum class MenuID : int {
-		OPEN,
-		SAVE,
-		WRAP_X,
-		WRAP_Y,
-		REFRESH_GRID,
-	};
-
+private:
 	void initSizerLayout();
 	void initDispSizer();	///< One of 6 \c init functions which chunk the initializing process, but the only one documented. 
 	void RefreshMinSize();	///< Sets the minimum size of the window, and sets the size of the window if not maximized.
@@ -60,34 +62,10 @@ private:
 	wxBoxSizer* dispSizer;
 	wxBoxSizer* buttonSizer;
 
-	void initSelectRegion();
-	wxStaticBoxSizer* selectRegionSizer;
-		wxStaticText* selectCoord;		// The display of "selection coordinates", i.e. top-left to bottom-right
-		wxBoxSizer* selectButtonSizer;	// The selection buttons
-			declareButton(selectToggle);	///< This function is bound to the \c show/hide button, so it highlights and unhighlights the selection
-				// This button is a show/hide button, which highlights the selection
-			declareButton(selectReset);		///< This function resets the selection coordinates by calling MainWindow::reset_selection(), but this function takes in a button event so it can be bound to the \c reset button.
-				// This button resets the selection coordinates
+	Symmetry current_symmetry() const;
 
-	void initGenerateRegion();
-	void enableGenerateButtons(bool enable = true); ///< This function conditionally enables or fully disables the generating buttons.
+public:
 	void generateKnot(wxCommandEvent& evt);			///< This function checks which of the generating buttons was pressed and calls the appropriate Knot function.
-	wxStaticBoxSizer* generateRegionSizer;
-		#define XX(Sym, desc) wxButton* generate##Sym##Button;
-		SYMMETRIES
-		#undef XX
-
-	void initExportRegion();
-	void showExportBox();		///< Loops through the Knot and grabs each character, then outputs the contents into the export textbox
-	void regenExportBox();		///< Defines the export textbox with a size dependent on the height and width of the knot
-	wxStaticBoxSizer* exportRegionSizer;
-		wxTextCtrl* exportBox;
-		wxFont exportFont;
-		declareButton(exportCopy);	///< This function copies the current text data in the exportBox into the clipboard, saving it after closing the program.
-
-	static constexpr int GAP_1 = 20; ///< The gap from the outside of the window, and between the grid section and panel section
-	static constexpr int GAP_2 = 10; ///< The gap between the panels in the panel section
-	static constexpr int GAP_3 =  5; ///< The gap between elements within the panels
 };
 
 /* MainWindow constructor */

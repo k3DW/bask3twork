@@ -20,7 +20,9 @@ public:
 
 	bool checkWrapping(Selection selection) const;
 
-	Symmetry symmetry_of(Selection selection) const { return SymmetryChecker(glyphs, selection).get(); }
+	Symmetry symmetry_of(Selection selection) const { return SymmetryChecker(glyphs, selection).get(h, w); }
+
+	wxString plaintext() const;
 
 private:
 	Glyphs glyphs;	///< The current state of the Knot
