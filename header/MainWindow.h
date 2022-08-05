@@ -27,7 +27,6 @@ public:
 	void left_click_tile(wxMouseEvent& evt);  ///< Sets the left displayed coordinate, based on which Tile the left click takes place
 	void right_click_tile(wxMouseEvent& evt); ///< Sets the right displayed coordinate, based on which Tile the right click takes place
 
-private:
 	int h,		///< The height of the knot, i.e. the number of rows.
 		w;		///< The width of the knot, i.e. the number of columns.
 

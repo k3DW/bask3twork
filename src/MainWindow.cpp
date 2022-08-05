@@ -58,7 +58,7 @@ void MainWindow::initDispSizer() {
 	/// Regardless of the above, initialize the Knot with the member variables \c h and \c w and the status bar.
 	/// Then initialize the DisplayGrid with the newly generated Knot, and insert it between the stretch spacers in its sizer.
 	knot = new Knot(h, w, GetStatusBar());
-	disp = new DisplayGrid(this, knot);
+	disp = new DisplayGrid(this, h, w);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
 }
 
@@ -66,14 +66,14 @@ void MainWindow::show_selection()
 {
 	select_region->normalize();
 	select_region->set_toggle_hide();
-	disp->highlightSelection(select_region->get_selection());
+	disp->highlight(select_region->get_selection());
 	generate_region->enable_buttons(current_symmetry());
 	showing_selection = true;
 }
 void MainWindow::hide_selection()
 {
 	select_region->set_toggle_show();
-	disp->clearHighlight();
+	disp->unhighlight(true);
 	generate_region->disable_buttons();
 	showing_selection = false;
 }
@@ -184,7 +184,7 @@ void MainWindow::openFile() {
 	// Next, initialize the Knot with the variable \c glyphs and the status bar.
 	// Initialize the DisplayGrid with the newly generated Knot, and insert it between the stretch spacers in its sizer.
 	knot = new Knot(std::move(glyphs), GetStatusBar());
-	disp = new DisplayGrid(this, knot);
+	disp = new DisplayGrid(this, h, w);
 	dispSizer->Insert(1, disp, 0, wxEXPAND);
 
 	// Then, reset the select coordinates with MainWindow::reset_selection()
@@ -348,11 +348,11 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// Each of the generating buttons has its symmetry type as its ID value. Get this symmetry from the event call.
 	/// Then, forward on this symmetry to Knot::generate() with the selection coordinates to be generated.
 	/// If this function returns \c true, then the Knot has been generated successfully,
-	/// so update the DisplayGrid with DisplayGrid::drawKnot() and update the export text box with MainWindow::showExportBox().
+	/// so update the DisplayGrid with DisplayGrid::draw() and update the export text box with MainWindow::showExportBox().
 	/// If the generate function returns \c false, then display an error message as a \c wxMessageBox.
 	Symmetry sym = static_cast<Symmetry>(evt.GetId());
 	if (knot->generate(sym, select_region->get_selection())) {
-		disp->drawKnot();
+		disp->draw(knot);
 		export_region->display(knot);
 	}
 	else
