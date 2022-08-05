@@ -27,10 +27,10 @@ enum class Symmetry
 	FullSym     = 0b1111111, ///< 4-fold dihedral symmetry (square only)
 };
 
-constexpr inline Symmetry operator&(Symmetry lhs, Symmetry rhs) { return static_cast<Symmetry>(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs)); }
-constexpr inline Symmetry operator|(Symmetry lhs, Symmetry rhs) { return static_cast<Symmetry>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs)); }
+constexpr inline Symmetry operator&(Symmetry lhs, Symmetry rhs) { return static_cast<Symmetry>(static_cast<int>(lhs) & static_cast<int>(rhs)); }
+constexpr inline Symmetry operator|(Symmetry lhs, Symmetry rhs) { return static_cast<Symmetry>(static_cast<int>(lhs) | static_cast<int>(rhs)); }
 
-constexpr inline Symmetry operator*(Symmetry sym, bool b) { return static_cast<Symmetry>(static_cast<unsigned int>(sym) * b); }
+constexpr inline Symmetry operator*(Symmetry sym, bool b) { return static_cast<Symmetry>(static_cast<int>(sym) * b); }
 
 class SymmetryChecker
 {
