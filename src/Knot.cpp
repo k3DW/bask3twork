@@ -2,7 +2,7 @@
 
 Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar), glyphs(h, std::vector<const Glyph*>(w, DefaultGlyph)) {}
 Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : h(glyphs.size()), w(glyphs[0].size()), statusBar(statusBar), glyphs(glyphs) {}
-wxString Knot::get(const int i, const int j) const { return glyphs[i][j]->chr; }
+wxString Knot::get(const int i, const int j) const { return glyphs[i][j]->get(); }
 
 bool Knot::generate(Symmetry sym, Selection selection)
 /** Generate a knot with the given symmetry in the given selection.
