@@ -1,6 +1,7 @@
 #pragma once
 #include "Glyph.h"
 #include "Selection.h"
+#include "Enum.h"
 
 /** All the types of symmetry which can be used in this program.
  * The bit flags tell \c Knot::generate() how to generate.
@@ -27,10 +28,8 @@ enum class Symmetry
 	FullSym     = 0b1111111, ///< 4-fold dihedral symmetry (square only)
 };
 
-constexpr inline Symmetry operator&(Symmetry lhs, Symmetry rhs) { return static_cast<Symmetry>(static_cast<int>(lhs) & static_cast<int>(rhs)); }
-constexpr inline Symmetry operator|(Symmetry lhs, Symmetry rhs) { return static_cast<Symmetry>(static_cast<int>(lhs) | static_cast<int>(rhs)); }
+template <> struct opt_into_enum_operations<Symmetry> : std::true_type {};
 
-constexpr inline Symmetry operator*(Symmetry sym, bool b) { return static_cast<Symmetry>(static_cast<int>(sym) * b); }
 
 class SymmetryChecker
 {

@@ -95,6 +95,9 @@
     <ClInclude Include="header\RegenDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\Enum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\Resource.rc">
