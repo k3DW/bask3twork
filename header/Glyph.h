@@ -87,6 +87,11 @@ struct Glyph {
 		}
 	{}
 
+	Glyph(const Glyph&) = delete;
+	Glyph(Glyph&&) = delete;
+	Glyph& operator=(const Glyph&) = delete;
+	Glyph& operator=(Glyph&&) = delete;
+
 	static constexpr int TOTAL = 190; ///< The total number of glyphs used
 };
 
