@@ -1,6 +1,7 @@
 #pragma once
 #include "Constants.h"
 #include "Connection.h"
+#include "Enum.h"
 /// \file
 
 /// The bit flag for each of the properties of a Glyph object
@@ -31,10 +32,7 @@ enum class GlyphFlag : uint32_t
 	CT_SELFR = 1 << 21, ///< Can this Glyph connect to itself on the right side of the Glyph
 };
 
-constexpr GlyphFlag operator|(GlyphFlag lhs, GlyphFlag rhs) { return static_cast<GlyphFlag>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs)); }
-constexpr GlyphFlag operator&(GlyphFlag lhs, GlyphFlag rhs) { return static_cast<GlyphFlag>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs)); }
-
-constexpr GlyphFlag operator*(GlyphFlag flag, bool b) { return static_cast<GlyphFlag>(static_cast<uint32_t>(flag) * b); }
+template <> struct opt_into_enum_operations<GlyphFlag> : std::true_type {};
 
 /** A struct to store the information for all the possible glyphs in the Celtic Knots font,
 	where each individual flag contained within corresponds to a GlyphFlag */
