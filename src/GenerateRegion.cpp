@@ -27,7 +27,7 @@ GenerateRegion::GenerateRegion(MainWindow* parent)
 void GenerateRegion::enable_buttons(Symmetry symmetry)
 {
 	for (auto button : buttons)
-		button->Enable((symmetry & button->symmetry) == button->symmetry);
+		button->Enable(symmetry % button->symmetry);
 }
 
 void GenerateRegion::disable_buttons()

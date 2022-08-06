@@ -505,7 +505,7 @@ inline const Glyph* RandomGlyph(const Connections connections, const GlyphFlag f
 	/// If the Glyph has compatible connections and it has all the needed flags, then add the pointer to this Glyph to the output vector.
 	std::vector<const Glyph*> glyphList;
 	for (const Glyph& glyph : AllGlyphs)
-		if (compatible(connections, glyph) && (glyph.flags & flags) == flags)
+		if (compatible(connections, glyph) && (glyph.flags % flags))
 			glyphList.push_back(&glyph);
 
 	if (glyphList.empty())

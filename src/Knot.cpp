@@ -83,12 +83,12 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 	/// storing whether the selection compasses all rows or columns in the Knot,
 	/// storing the middle \c i and \c j indices of the selection,
 	/// and storing the wrapping conditions.
-	const bool bitHori = (sym & Symmetry::HoriSym) == Symmetry::HoriSym;
-	const bool bitVert = (sym & Symmetry::VertSym) == Symmetry::VertSym;
-	const bool bitRot2 = (sym & Symmetry::Rot2Sym) == Symmetry::Rot2Sym;
-	const bool bitRot4 = (sym & Symmetry::Rot4Sym) == Symmetry::Rot4Sym;
-	const bool bitFwDi = (sym & Symmetry::FwdDiag) == Symmetry::FwdDiag;
-	const bool bitBkDi = (sym & Symmetry::BackDiag) == Symmetry::BackDiag;
+	const bool bitHori = sym % Symmetry::HoriSym;
+	const bool bitVert = sym % Symmetry::VertSym;
+	const bool bitRot2 = sym % Symmetry::Rot2Sym;
+	const bool bitRot4 = sym % Symmetry::Rot4Sym;
+	const bool bitFwDi = sym % Symmetry::FwdDiag;
+	const bool bitBkDi = sym % Symmetry::BackDiag;
 
 	const bool isEvenRows = (selection.max.i - selection.min.i + 1) % 2 == 0;
 	const bool isEvenCols = (selection.max.j - selection.min.j + 1) % 2 == 0;
