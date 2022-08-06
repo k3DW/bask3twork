@@ -5,7 +5,7 @@
 /// \file
 
 /// The bit flag for each of the properties of a Glyph object
-enum class GlyphFlag : uint32_t
+enum class GlyphFlag
 {
 	NONE	 = 0,       ///< No flag
 	SA_ROT4  = 1 <<  0, ///< Is this Glyph the same after rotating by 90 degrees
