@@ -1,10 +1,11 @@
 #pragma once
 #include "Constants.h"
 #include "Connection.h"
+#include "Enum.h"
 /// \file
 
 /// The bit flag for each of the properties of a Glyph object
-enum class GlyphFlag : uint32_t
+enum class GlyphFlag
 {
 	NONE	 = 0,       ///< No flag
 	SA_ROT4  = 1 <<  0, ///< Is this Glyph the same after rotating by 90 degrees
@@ -31,10 +32,7 @@ enum class GlyphFlag : uint32_t
 	CT_SELFR = 1 << 21, ///< Can this Glyph connect to itself on the right side of the Glyph
 };
 
-constexpr GlyphFlag operator|(GlyphFlag lhs, GlyphFlag rhs) { return static_cast<GlyphFlag>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs)); }
-constexpr GlyphFlag operator&(GlyphFlag lhs, GlyphFlag rhs) { return static_cast<GlyphFlag>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs)); }
-
-constexpr GlyphFlag operator*(GlyphFlag flag, bool b) { return static_cast<GlyphFlag>(static_cast<uint32_t>(flag) * b); }
+template <> struct opt_into_enum_operations<GlyphFlag> : std::true_type {};
 
 /** A struct to store the information for all the possible glyphs in the Celtic Knots font,
 	where each individual flag contained within corresponds to a GlyphFlag */
@@ -507,11 +505,16 @@ inline const Glyph* RandomGlyph(const Connections connections, const GlyphFlag f
 	/// If the Glyph has compatible connections and it has all the needed flags, then add the pointer to this Glyph to the output vector.
 	std::vector<const Glyph*> glyphList;
 	for (const Glyph& glyph : AllGlyphs)
-		if (compatible(connections, glyph) && (glyph.flags & flags) == flags)
+		if (compatible(connections, glyph) && (glyph.flags % flags))
 			glyphList.push_back(&glyph);
 
-	if (glyphList.size() == 0)
+	if (glyphList.empty())
 		return nullptr;
 	else
-		return glyphList[rand() % glyphList.size()];
+	{
+		static std::mt19937 twister{ std::random_device{}() };
+		static const Glyph* glyph = nullptr;
+		std::sample(glyphList.begin(), glyphList.end(), &glyph, 1, twister);
+		return glyph;
+	}
 }

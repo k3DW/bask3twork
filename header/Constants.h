@@ -7,20 +7,9 @@
 #include <array>
 #include <map>
 #include <optional>
+#include <random>
 #include <vector>
 /// \file
-
-/// The X macro used on the symmetries, to make the code simpler
-#define SYMMETRIES \
-	XX(AnySym, "No Symmetry") \
-	XX(HoriSym, "Horizontal Reflection") \
-	XX(VertSym, "Vertical Reflection") \
-	XX(HoriVertSym, "Horizontal + Vertical") \
-	XX(Rot2Sym, "2-way Rotational") \
-	XX(Rot4Sym, "4-way Rotational") \
-	XX(FwdDiag, "Forward Diagonal") \
-	XX(BackDiag, "Backward Diagonal") \
-	XX(FullSym, "Full Symmetry")
 
 // Constants for future functionality, changing the sizing of things depending on the screen size
 const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	///< For future functionality, the screen size in the x direction

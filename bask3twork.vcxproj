@@ -34,6 +34,7 @@
   <ItemGroup>
     <ClInclude Include="header\Connection.h" />
     <ClInclude Include="header\DisplayGrid.h" />
+    <ClInclude Include="header\Enum.h" />
     <ClInclude Include="header\ExportRegion.h" />
     <ClInclude Include="header\GenerateRegion.h" />
     <ClInclude Include="header\Glyph.h" />
