@@ -59,7 +59,9 @@ InputPathsVariant get_input_paths(int argc, const char** argv)
 		return R"(The CSV file path must have ".csv" extension)";
 
 	if (not std::filesystem::exists(output_path))
-		return std::format(R"(The output path does not exist: "{}")", output_path.string());
+	{
+		std::filesystem::create_directory(output_path);
+	}
 	if (not std::filesystem::is_directory(output_path))
 		return "The output path must be a directory";
 
@@ -78,13 +80,13 @@ FStreamsVariant get_fstreams(const std::pair<std::filesystem::path, std::filesys
 	if (not csv.is_open())
 		return std::format(R"(Could not open the CSV file: "{}")", csv_path.string());
 
-	std::ofstream all_glyphs = std::ofstream(output_path / "AllGlyphs.ipp");
+	std::ofstream all_glyphs = std::ofstream(output_path / "AllGlyphs.impl");
 	if (not all_glyphs.is_open())
-		return std::format(R"(Could not open or create the output file: "{}/AllGlyphs.ipp")", csv_path.string());
+		return std::format(R"(Could not open or create the output file: "{}/AllGlyphs.impl")", csv_path.string());
 
-	std::ofstream unichar_to_glyph = std::ofstream(output_path / "UnicharToGlyph.ipp");
+	std::ofstream unichar_to_glyph = std::ofstream(output_path / "UnicharToGlyph.impl");
 	if (not unichar_to_glyph.is_open())
-		return std::format(R"(Could not open or create the output file: "{}/UnicharToGlyph.ipp")", csv_path.string());
+		return std::format(R"(Could not open or create the output file: "{}/UnicharToGlyph.impl")", csv_path.string());
 
 	return std::tuple(std::move(csv), std::move(all_glyphs), std::move(unichar_to_glyph));
 }
@@ -234,10 +236,10 @@ void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedInputVecto
 		all_glyphs_file << std::format("{:{}}", mirror_x_index, max_sizes[3] + 14);
 		all_glyphs_file << std::format("{:{}}", mirror_y_index, max_sizes[4] + 14);
 
-		all_glyphs_file << std::format("{:{}}", line.up_connection + ", ", max_sizes[5] + 2);
-		all_glyphs_file << std::format("{:{}}", line.down_connection + ", ", max_sizes[6] + 2);
-		all_glyphs_file << std::format("{:{}}", line.left_connection + ", ", max_sizes[7] + 2);
-		all_glyphs_file << std::format("{:{}}", line.right_connection, max_sizes[8]);
+		all_glyphs_file << std::format("Connection::{:{}}", line.up_connection + ", ", max_sizes[5] + 2);
+		all_glyphs_file << std::format("Connection::{:{}}", line.down_connection + ", ", max_sizes[6] + 2);
+		all_glyphs_file << std::format("Connection::{:{}}", line.left_connection + ", ", max_sizes[7] + 2);
+		all_glyphs_file << std::format("Connection::{:{}}", line.right_connection, max_sizes[8]);
 
 		all_glyphs_file << " ),\n";
 	}
@@ -313,6 +315,6 @@ int main(int argc, const char** argv)
 	output_all_glyphs(all_glyphs_file, processed_input_lines);
 	output_unichar_to_glyphs(unichar_to_glyphs_file, codepoint_to_index);
 
-	std::cout << R"(Bask3twork successfully generated "AllGlyphs.ipp" and "UnicharToGlyph.ipp")" << "\n";
+	std::cout << R"(Bask3twork successfully generated "AllGlyphs.impl" and "UnicharToGlyph.impl")" << "\n";
 	return EXIT_SUCCESS;
 }
