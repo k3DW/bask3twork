@@ -48,13 +48,11 @@ struct GlyphsTransformed
 };
 
 /// A struct to store the glyph information of the the Celtic Knots font
-struct Glyph
+struct Glyph : GlyphsTransformed
 {
 	wxUniChar::value_type code_point; ///< The character that gets displayed
 	wxUniChar get() const { return wxUniChar(code_point); }
-
-	GlyphsTransformed transformed;
-
+	
 	Connection up;
 	Connection down;
 	Connection left;
@@ -66,7 +64,7 @@ struct Glyph
 
 	/// All the \c connectTo____ flags are determined from the other parameters, but the other parameters are given explicitly
 	consteval Glyph(wxUniChar::value_type code_point, GlyphsTransformed transformed, Connection up, Connection down, Connection left, Connection right) :
-		code_point(code_point), transformed(transformed), up(up), down(down), left(left), right(right)
+		code_point(code_point), GlyphsTransformed(transformed), up(up), down(down), left(left), right(right)
 	{
 		flags = get_flags();
 	}
@@ -80,24 +78,24 @@ struct Glyph
 consteval GlyphFlag Glyph::get_flags() const
 {
 	return GlyphFlag::NONE
-		| (GlyphFlag::SA_ROT4 * (this == transformed.rotate_90))
-		| (GlyphFlag::SA_ROT2 * (this == transformed.rotate_180))
-		| (GlyphFlag::SA_MIRX * (this == transformed.mirror_x))
-		| (GlyphFlag::SA_MIRY * (this == transformed.mirror_y))
-		| (GlyphFlag::CT_ROT4U * (up == rotate_90(right)))
-		| (GlyphFlag::CT_ROT4D * (down == rotate_90(left)))
-		| (GlyphFlag::CT_ROT4L * (left == rotate_90(up)))
-		| (GlyphFlag::CT_ROT4R * (right == rotate_90(down)))
-		| (GlyphFlag::CT_ROT2U * (up == rotate_180(up)))
-		| (GlyphFlag::CT_ROT2D * (down == rotate_180(down)))
-		| (GlyphFlag::CT_ROT2L * (left == rotate_180(left)))
-		| (GlyphFlag::CT_ROT2R * (right == rotate_180(right)))
-		| (GlyphFlag::CT_MIRU * (up == mirror_x(up)))
-		| (GlyphFlag::CT_MIRD * (down == mirror_x(down)))
-		| (GlyphFlag::CT_MIRL * (left == mirror_y(left)))
-		| (GlyphFlag::CT_MIRR * (right == mirror_y(right)))
-		| (GlyphFlag::SA_MIRFD * (this == transformed.mirror_forward_diagonal))
-		| (GlyphFlag::SA_MIRBD * (this == transformed.mirror_backward_diagonal))
+		| (GlyphFlag::SA_ROT4 * (this == rotate_90))
+		| (GlyphFlag::SA_ROT2 * (this == rotate_180))
+		| (GlyphFlag::SA_MIRX * (this == mirror_x))
+		| (GlyphFlag::SA_MIRY * (this == mirror_y))
+		| (GlyphFlag::CT_ROT4U * (up == ::rotate_90(right)))
+		| (GlyphFlag::CT_ROT4D * (down == ::rotate_90(left)))
+		| (GlyphFlag::CT_ROT4L * (left == ::rotate_90(up)))
+		| (GlyphFlag::CT_ROT4R * (right == ::rotate_90(down)))
+		| (GlyphFlag::CT_ROT2U * (up == ::rotate_180(up)))
+		| (GlyphFlag::CT_ROT2D * (down == ::rotate_180(down)))
+		| (GlyphFlag::CT_ROT2L * (left == ::rotate_180(left)))
+		| (GlyphFlag::CT_ROT2R * (right == ::rotate_180(right)))
+		| (GlyphFlag::CT_MIRU * (up == ::mirror_x(up)))
+		| (GlyphFlag::CT_MIRD * (down == ::mirror_x(down)))
+		| (GlyphFlag::CT_MIRL * (left == ::mirror_y(left)))
+		| (GlyphFlag::CT_MIRR * (right == ::mirror_y(right)))
+		| (GlyphFlag::SA_MIRFD * (this == mirror_forward_diagonal))
+		| (GlyphFlag::SA_MIRBD * (this == mirror_backward_diagonal))
 		| (GlyphFlag::CT_SELFU * (up == down))
 		| (GlyphFlag::CT_SELFD * (up == down))
 		| (GlyphFlag::CT_SELFL * (left == right))
