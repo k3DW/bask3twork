@@ -4,7 +4,7 @@
 #include "Enum.h"
 /// \file
 
-/// The bit flag for each of the properties of a Glyph object
+/// The bit flag for each of the properties of a \c Glyph object
 enum class GlyphFlag
 {
 	NONE	 = 0,       ///< No flag
@@ -37,6 +37,7 @@ template <> struct opt_into_enum_operations<GlyphFlag> : std::true_type {};
 struct Glyph;
 using Glyphs = std::vector<std::vector<const Glyph*>>;
 
+/// A struct for each of the unit transformations on a \c Glyph, to keep the code inside the \c Glyph struct cleaner
 struct GlyphsTransformed
 {
 	const Glyph* rotate_90;  ///< This Glyph rotated by 90 degrees clockwise
@@ -103,8 +104,8 @@ consteval GlyphFlag Glyph::get_flags() const
 }
 
 
-/// The array of every Glyph in the program (generated in Excel), the only place where a Glyph object is initialized;
-/// every other place a Glyph is referenced in the whole codebase is actually a pointer to one of the Glyphs in \c AllGlyphs.
+/// The constexpr array of every \c Glyph in the program, the only place where a Glyph object is initialized;
+/// every other place a \c Glyph is referenced in the whole codebase is actually a pointer to a \c Glyph in \c AllGlyphs.
 #include "generated\AllGlyphs.impl"
 
 /// The mapping from the unicode character to the Glyph that uses that character, used for reading knots.
@@ -123,29 +124,25 @@ constexpr bool compatible(Connections known, Connections checking)
 
 inline const Glyph* RandomGlyph(const Connections connections, const GlyphFlag flags)
 /// This function takes in the desired flags and outputs the vector of all glyphs which meet the criteria.
+/// 
+/// \param connections The \c Connections required. If any connection should be disregarded, then pass \c Connection::DO_NOT_CARE.
+/// \param flags The bit flags required for this \c Glyph. Any bits with a value of \c 0 are ignored, and any bits with a value of \c 1 are required.
+/// \return A pointer to a randomly selected \c Glyph that fits the criteria, or \c nullptr if nothing exists.
 {
-	/// \param connections The \c Connections desired. If any connection does not matter, then pass \c Connection::DO_NOT_CARE.
-	/// \param flags The other condition flags to check for the glyphs, passed by using \c operator| on \c GlyphFlag values. Any bits with a value of \c 0 are ignored
+	static std::vector<const Glyph*> glyph_list(AllGlyphs.size(), nullptr);
+	glyph_list.clear();
 
-	/// \b Method
-
-	/// This function allows all properties of the Glyphs to be checked at once, instead of checking multiple properties in order.
-	/// Using this function allows for high speed Glyph selection, since all attributes are assessed simultaneously.
-
-	/// Loop through \c AllGlyphs.
-	/// If the Glyph has compatible connections and it has all the needed flags, then add the pointer to this Glyph to the output vector.
-	std::vector<const Glyph*> glyphList;
-	for (const Glyph& glyph : AllGlyphs)
+	for (auto& glyph : AllGlyphs)
 		if (compatible(connections, glyph) && (glyph.flags % flags))
-			glyphList.push_back(&glyph);
+			glyph_list.push_back(&glyph);
 
-	if (glyphList.empty())
+	if (glyph_list.empty())
 		return nullptr;
 	else
 	{
 		static std::mt19937 twister{ std::random_device{}() };
 		static const Glyph* glyph = nullptr;
-		std::sample(glyphList.begin(), glyphList.end(), &glyph, 1, twister);
+		std::ranges::sample(glyph_list, &glyph, 1, twister);
 		return glyph;
 	}
 }
