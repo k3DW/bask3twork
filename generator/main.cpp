@@ -242,15 +242,16 @@ void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedInputVecto
 		auto mirror_x_index = std::format("&AllGlyphs[{}], ", line.mirror_x_index);
 		auto mirror_y_index = std::format("&AllGlyphs[{}], ", line.mirror_y_index);
 		auto mirror_forward_diag_index = std::format("&AllGlyphs[{}], ", line.mirror_forward_diag_index);
-		auto mirror_backward_diag_index = std::format("&AllGlyphs[{}], ", line.mirror_backward_diag_index);
+		auto mirror_backward_diag_index = std::format("&AllGlyphs[{}]", line.mirror_backward_diag_index);
 
+		all_glyphs_file << "{ ";
 		all_glyphs_file << std::format("{:{}}", rotate_90_index, max_sizes[1] + 14);
 		all_glyphs_file << std::format("{:{}}", rotate_180_index, max_sizes[2] + 14);
 		all_glyphs_file << std::format("{:{}}", mirror_x_index, max_sizes[3] + 14);
 		all_glyphs_file << std::format("{:{}}", mirror_y_index, max_sizes[4] + 14);
-
 		all_glyphs_file << std::format("{:{}}", mirror_forward_diag_index, max_sizes[5] + 14);
-		all_glyphs_file << std::format("{:{}}", mirror_backward_diag_index, max_sizes[6] + 14);
+		all_glyphs_file << std::format("{:{}}", mirror_backward_diag_index, max_sizes[6] + 12);
+		all_glyphs_file << " }, ";
 
 		all_glyphs_file << std::format("Connection::{:{}}", line.up_connection + ", ", max_sizes[7] + 2);
 		all_glyphs_file << std::format("Connection::{:{}}", line.down_connection + ", ", max_sizes[8] + 2);

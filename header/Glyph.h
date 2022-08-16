@@ -34,18 +34,26 @@ enum class GlyphFlag
 
 template <> struct opt_into_enum_operations<GlyphFlag> : std::true_type {};
 
-/** A struct to store the information for all the possible glyphs in the Celtic Knots font,
-	where each individual flag contained within corresponds to a GlyphFlag */
-struct Glyph {
+struct Glyph;
+using Glyphs = std::vector<std::vector<const Glyph*>>;
+
+struct GlyphsTransformed
+{
+	const Glyph* rotate_90;  ///< This Glyph rotated by 90 degrees clockwise
+	const Glyph* rotate_180; ///< This Glyph rotated by 180 degrees clockwise
+	const Glyph* mirror_x;   ///< This Glyph mirrored across its horizontal line
+	const Glyph* mirror_y;   ///< This Glyph mirrored across its veritcal line
+	const Glyph* mirror_forward_diagonal;  ///< This Glyph mirrored across its forward diagonal line
+	const Glyph* mirror_backward_diagonal; ///< This Glyph mirrored across its backward diagonal line
+};
+
+/// A struct to store the glyph information of the the Celtic Knots font
+struct Glyph
+{
 	wxUniChar::value_type code_point; ///< The character that gets displayed
 	wxUniChar get() const { return wxUniChar(code_point); }
 
-	const Glyph* const rotated4;	///< The pointer to the Glyph, of this Glyph rotated by 90 degrees clockwise
-	const Glyph* const rotated2;	///< The pointer to the Glyph, of this Glyph rotated by 180 degrees clockwise
-	const Glyph* const mirroredX;	///< The pointer to the Glyph, of this Glyph mirrored across the horizontal line
-	const Glyph* const mirroredY;	///< The pointer to the Glyph, of this Glyph mirrored across the veritcal line
-	const Glyph* const mirroredFD;	///< The pointer to the Glyph, of this Glyph mirrored across the forward diagonal line
-	const Glyph* const mirroredBD;	///< The pointer to the Glyph, of this Glyph mirrored across the backward diagonal line
+	GlyphsTransformed transformed;
 
 	Connection up;
 	Connection down;
@@ -53,39 +61,15 @@ struct Glyph {
 	Connection right;
 	operator Connections() const { return { up, down, left, right }; }
 
-	GlyphFlag flags;	///< The total signature of this glyph, in a union with all the other flags to access the individual flags simultaneously
+	GlyphFlag flags; ///< The total signature of this glyph
+	consteval GlyphFlag get_flags() const;
 
 	/// All the \c connectTo____ flags are determined from the other parameters, but the other parameters are given explicitly
-	consteval Glyph(wxUniChar::value_type code_point, const Glyph* rotated4, const Glyph* rotated2, const Glyph* mirroredX, const Glyph* mirroredY, const Glyph* mirroredFD, const Glyph* mirroredBD,
-	const Connection up, const Connection down, const Connection left, const Connection right) :
-		code_point{ code_point }, rotated4{ rotated4 }, rotated2{ rotated2 }, mirroredX{ mirroredX }, mirroredY{ mirroredY }, mirroredFD{ mirroredFD }, mirroredBD{ mirroredBD },
-		up{ up }, down{ down }, left{ left }, right{ right },
-		flags
-		{
-			(GlyphFlag::SA_ROT4 * (this == rotated4)) |
-			(GlyphFlag::SA_ROT2 * (this == rotated2)) |
-			(GlyphFlag::SA_MIRX * (this == mirroredX)) |
-			(GlyphFlag::SA_MIRY * (this == mirroredY)) |
-			(GlyphFlag::CT_ROT4U * (up    == rotate_90(right))) |
-			(GlyphFlag::CT_ROT4D * (down  == rotate_90(left)))  |
-			(GlyphFlag::CT_ROT4L * (left  == rotate_90(up)))    |
-			(GlyphFlag::CT_ROT4R * (right == rotate_90(down)))  |
-			(GlyphFlag::CT_ROT2U * (up    == rotate_180(up)))    |
-			(GlyphFlag::CT_ROT2D * (down  == rotate_180(down)))  |
-			(GlyphFlag::CT_ROT2L * (left  == rotate_180(left)))  |
-			(GlyphFlag::CT_ROT2R * (right == rotate_180(right))) |
-			(GlyphFlag::CT_MIRU * (up    == mirror_x(up)))    |
-			(GlyphFlag::CT_MIRD * (down  == mirror_x(down)))  |
-			(GlyphFlag::CT_MIRL * (left  == mirror_y(left)))  |
-			(GlyphFlag::CT_MIRR * (right == mirror_y(right))) |
-			(GlyphFlag::SA_MIRFD * (this == mirroredFD))  |
-			(GlyphFlag::SA_MIRBD * (this == mirroredBD)) |
-			(GlyphFlag::CT_SELFU * (up == down))    |
-			(GlyphFlag::CT_SELFD * (up == down))    |
-			(GlyphFlag::CT_SELFL * (left == right)) |
-			(GlyphFlag::CT_SELFR * (left == right))
-		}
-	{}
+	consteval Glyph(wxUniChar::value_type code_point, GlyphsTransformed transformed, Connection up, Connection down, Connection left, Connection right) :
+		code_point(code_point), transformed(transformed), up(up), down(down), left(left), right(right)
+	{
+		flags = get_flags();
+	}
 
 	Glyph(const Glyph&) = delete;
 	Glyph(Glyph&&) = delete;
@@ -93,7 +77,33 @@ struct Glyph {
 	Glyph& operator=(Glyph&&) = delete;
 };
 
-using Glyphs = std::vector<std::vector<const Glyph*>>;
+consteval GlyphFlag Glyph::get_flags() const
+{
+	return GlyphFlag::NONE
+		| (GlyphFlag::SA_ROT4 * (this == transformed.rotate_90))
+		| (GlyphFlag::SA_ROT2 * (this == transformed.rotate_180))
+		| (GlyphFlag::SA_MIRX * (this == transformed.mirror_x))
+		| (GlyphFlag::SA_MIRY * (this == transformed.mirror_y))
+		| (GlyphFlag::CT_ROT4U * (up == rotate_90(right)))
+		| (GlyphFlag::CT_ROT4D * (down == rotate_90(left)))
+		| (GlyphFlag::CT_ROT4L * (left == rotate_90(up)))
+		| (GlyphFlag::CT_ROT4R * (right == rotate_90(down)))
+		| (GlyphFlag::CT_ROT2U * (up == rotate_180(up)))
+		| (GlyphFlag::CT_ROT2D * (down == rotate_180(down)))
+		| (GlyphFlag::CT_ROT2L * (left == rotate_180(left)))
+		| (GlyphFlag::CT_ROT2R * (right == rotate_180(right)))
+		| (GlyphFlag::CT_MIRU * (up == mirror_x(up)))
+		| (GlyphFlag::CT_MIRD * (down == mirror_x(down)))
+		| (GlyphFlag::CT_MIRL * (left == mirror_y(left)))
+		| (GlyphFlag::CT_MIRR * (right == mirror_y(right)))
+		| (GlyphFlag::SA_MIRFD * (this == transformed.mirror_forward_diagonal))
+		| (GlyphFlag::SA_MIRBD * (this == transformed.mirror_backward_diagonal))
+		| (GlyphFlag::CT_SELFU * (up == down))
+		| (GlyphFlag::CT_SELFD * (up == down))
+		| (GlyphFlag::CT_SELFL * (left == right))
+		| (GlyphFlag::CT_SELFR * (left == right));
+}
+
 
 /// The array of every Glyph in the program (generated in Excel), the only place where a Glyph object is initialized;
 /// every other place a Glyph is referenced in the whole codebase is actually a pointer to one of the Glyphs in \c AllGlyphs.
