@@ -33,13 +33,14 @@ constexpr bool is_connection(std::string_view str)
 }
 constexpr std::string_view is_connection_name = "a connection type";
 
-constexpr std::size_t entries_per_line = 9;
+constexpr std::size_t entries_per_line_raw = 9;
+constexpr std::size_t entries_per_line_processed = 11;
 
 constexpr std::array validator_functions = { is_uint, is_uint, is_uint, is_uint, is_uint, is_connection, is_connection, is_connection, is_connection };
 constexpr std::array validator_functions_names = { is_uint_name, is_uint_name, is_uint_name, is_uint_name, is_uint_name, is_connection_name, is_connection_name, is_connection_name, is_connection_name };
 
-static_assert(validator_functions.size() == entries_per_line);
-static_assert(validator_functions_names.size() == entries_per_line);
+static_assert(validator_functions.size() == entries_per_line_raw);
+static_assert(validator_functions_names.size() == entries_per_line_raw);
 
 
 
@@ -122,6 +123,8 @@ struct ProcessedInputLine
 	std::string rotate_180_index;
 	std::string mirror_x_index;
 	std::string mirror_y_index;
+	std::string mirror_forward_diag_index;
+	std::string mirror_backward_diag_index;
 	std::string up_connection;
 	std::string down_connection;
 	std::string left_connection;
@@ -139,8 +142,8 @@ ProcessedInputVariant get_processed_input(const std::vector<std::vector<std::str
 	{
 		line_number++;
 
-		if (line.size() != entries_per_line)
-			return std::format("Line {} of the CSV file has the wrong number of entries. Expected = {}, actual = {}.", line_number, entries_per_line, line.size());
+		if (line.size() != entries_per_line_raw)
+			return std::format("Line {} of the CSV file has the wrong number of entries. Expected = {}, actual = {}.", line_number, entries_per_line_raw, line.size());
 
 		if (std::ranges::all_of(line, &std::string::empty))
 			continue; // Entirely empty lines are fine, they will just be skipped later
@@ -192,6 +195,12 @@ ProcessedInputVariant get_processed_input(const std::vector<std::vector<std::str
 		processed.right_connection = line[8];
 	}
 
+	for (auto& processed : processed_input_lines)
+	{
+		processed.mirror_forward_diag_index  = processed_input_lines[std::stoi(processed.rotate_90_index)].mirror_x_index;
+		processed.mirror_backward_diag_index = processed_input_lines[std::stoi(processed.mirror_x_index)].rotate_90_index;
+	}
+
 	if (codepoint_to_index.size() != processed_input_lines.size())
 		return "Bask3twork generator internal error.";
 
@@ -202,7 +211,7 @@ ProcessedInputVariant get_processed_input(const std::vector<std::vector<std::str
 
 void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedInputVector& processed_input_lines)
 {
-	std::array<std::size_t, entries_per_line> max_sizes = {};
+	std::array<std::size_t, entries_per_line_processed> max_sizes = {};
 
 	for (auto& line : processed_input_lines)
 	{
@@ -211,10 +220,12 @@ void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedInputVecto
 		max_sizes[2] = std::max(max_sizes[2], line.rotate_180_index.size());
 		max_sizes[3] = std::max(max_sizes[3], line.mirror_x_index.size());
 		max_sizes[4] = std::max(max_sizes[4], line.mirror_y_index.size());
-		max_sizes[5] = std::max(max_sizes[5], line.up_connection.size());
-		max_sizes[6] = std::max(max_sizes[6], line.down_connection.size());
-		max_sizes[7] = std::max(max_sizes[7], line.left_connection.size());
-		max_sizes[8] = std::max(max_sizes[8], line.right_connection.size());
+		max_sizes[5] = std::max(max_sizes[5], line.mirror_forward_diag_index.size());
+		max_sizes[6] = std::max(max_sizes[6], line.mirror_backward_diag_index.size());
+		max_sizes[7] = std::max(max_sizes[7], line.up_connection.size());
+		max_sizes[8] = std::max(max_sizes[8], line.down_connection.size());
+		max_sizes[9] = std::max(max_sizes[9], line.left_connection.size());
+		max_sizes[10] = std::max(max_sizes[10], line.right_connection.size());
 	}
 
 	all_glyphs_file << std::format("constexpr std::array<Glyph, {}> AllGlyphs =\n", processed_input_lines.size());
@@ -230,16 +241,21 @@ void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedInputVecto
 		auto rotate_180_index = std::format("&AllGlyphs[{}], ", line.rotate_180_index);
 		auto mirror_x_index = std::format("&AllGlyphs[{}], ", line.mirror_x_index);
 		auto mirror_y_index = std::format("&AllGlyphs[{}], ", line.mirror_y_index);
+		auto mirror_forward_diag_index = std::format("&AllGlyphs[{}], ", line.mirror_forward_diag_index);
+		auto mirror_backward_diag_index = std::format("&AllGlyphs[{}], ", line.mirror_backward_diag_index);
 
 		all_glyphs_file << std::format("{:{}}", rotate_90_index, max_sizes[1] + 14);
 		all_glyphs_file << std::format("{:{}}", rotate_180_index, max_sizes[2] + 14);
 		all_glyphs_file << std::format("{:{}}", mirror_x_index, max_sizes[3] + 14);
 		all_glyphs_file << std::format("{:{}}", mirror_y_index, max_sizes[4] + 14);
 
-		all_glyphs_file << std::format("Connection::{:{}}", line.up_connection + ", ", max_sizes[5] + 2);
-		all_glyphs_file << std::format("Connection::{:{}}", line.down_connection + ", ", max_sizes[6] + 2);
-		all_glyphs_file << std::format("Connection::{:{}}", line.left_connection + ", ", max_sizes[7] + 2);
-		all_glyphs_file << std::format("Connection::{:{}}", line.right_connection, max_sizes[8]);
+		all_glyphs_file << std::format("{:{}}", mirror_forward_diag_index, max_sizes[5] + 14);
+		all_glyphs_file << std::format("{:{}}", mirror_backward_diag_index, max_sizes[6] + 14);
+
+		all_glyphs_file << std::format("Connection::{:{}}", line.up_connection + ", ", max_sizes[7] + 2);
+		all_glyphs_file << std::format("Connection::{:{}}", line.down_connection + ", ", max_sizes[8] + 2);
+		all_glyphs_file << std::format("Connection::{:{}}", line.left_connection + ", ", max_sizes[9] + 2);
+		all_glyphs_file << std::format("Connection::{:{}}", line.right_connection, max_sizes[10]);
 
 		all_glyphs_file << " ),\n";
 	}
