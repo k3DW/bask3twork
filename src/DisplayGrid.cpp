@@ -66,7 +66,7 @@ Tiles DisplayGrid::make_tiles(MainWindow* parent, DisplayGrid* self)
 		{
 			wxWindowID id = (i * parent->w) + j;
 			const wxColour& colour = Colours::tile[i % 2][j % 2];
-			tiles[i][j] = new Tile(self, id, DefaultGlyph->chr, colour);
+			tiles[i][j] = new Tile(self, id, DefaultGlyph->get(), colour);
 			tiles[i][j]->Bind(wxEVT_LEFT_DOWN, &MainWindow::left_click_tile, parent);
 			tiles[i][j]->Bind(wxEVT_RIGHT_DOWN, &MainWindow::right_click_tile, parent);
 			self->sizer->Add(tiles[i][j], wxGBPosition(i + 1, j + 1)/*, wxDefaultSpan, wxALIGN_CENTER*/);

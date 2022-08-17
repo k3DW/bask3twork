@@ -2,7 +2,7 @@
 
 Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar), glyphs(h, std::vector<const Glyph*>(w, DefaultGlyph)) {}
 Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : h(glyphs.size()), w(glyphs[0].size()), statusBar(statusBar), glyphs(glyphs) {}
-wxString Knot::get(const int i, const int j) const { return glyphs[i][j]->chr; }
+wxString Knot::get(const int i, const int j) const { return glyphs[i][j]->get(); }
 
 bool Knot::generate(Symmetry sym, Selection selection)
 /** Generate a knot with the given symmetry in the given selection.
@@ -160,12 +160,12 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 			if (!glyphGrid[i][j]) return std::nullopt;
 
 			/// \b (4) If the function has made it to this point, then reflect and rotate the newly generated Glyph to the appropriate spots given the symmetry required.
-			if (bitHori) glyphGrid[selection.max.i - iOffset][j] = glyphGrid[i][j]->mirroredX;
-			if (bitVert) glyphGrid[i][selection.max.j - jOffset] = glyphGrid[i][j]->mirroredY;
-			if (bitRot2) glyphGrid[selection.max.i - iOffset][selection.max.j - jOffset] = glyphGrid[i][j]->rotated2;
-			if (bitRot4) { glyphGrid[selection.min.i + jOffset][selection.max.j - iOffset] = glyphGrid[i][j]->rotated4; glyphGrid[selection.max.i - jOffset][selection.min.j + iOffset] = glyphGrid[i][j]->rotated2->rotated4; }
-			if (bitFwDi) glyphGrid[selection.max.i - jOffset][selection.max.j - iOffset] = glyphGrid[i][j]->mirroredFD;
-			if (bitBkDi) glyphGrid[selection.min.i + jOffset][selection.min.j + iOffset] = glyphGrid[i][j]->mirroredBD;
+			if (bitHori) glyphGrid[selection.max.i - iOffset][j] = glyphGrid[i][j]->mirror_x;
+			if (bitVert) glyphGrid[i][selection.max.j - jOffset] = glyphGrid[i][j]->mirror_y;
+			if (bitRot2) glyphGrid[selection.max.i - iOffset][selection.max.j - jOffset] = glyphGrid[i][j]->rotate_180;
+			if (bitRot4) { glyphGrid[selection.min.i + jOffset][selection.max.j - iOffset] = glyphGrid[i][j]->rotate_90; glyphGrid[selection.max.i - jOffset][selection.min.j + iOffset] = glyphGrid[i][j]->rotate_180->rotate_90; }
+			if (bitFwDi) glyphGrid[selection.max.i - jOffset][selection.max.j - iOffset] = glyphGrid[i][j]->mirror_forward_diagonal;
+			if (bitBkDi) glyphGrid[selection.min.i + jOffset][selection.min.j + iOffset] = glyphGrid[i][j]->mirror_backward_diagonal;
 		}
 	}
 
