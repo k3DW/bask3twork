@@ -1,6 +1,6 @@
 #include "Files.h"
 
-static InputPaths get_input_paths(int argc, const char** argv)
+static Expected<InputPaths> get_input_paths(int argc, const char** argv)
 {
 	if (argc != 3)
 		return std::unexpected("Bask3twork generator must be given exactly 2 arguments:\n\t(1) The path of the CSV file; and\n\t(2) The path of the output directory");
@@ -20,10 +20,10 @@ static InputPaths get_input_paths(int argc, const char** argv)
 	if (not std::filesystem::is_directory(output_path))
 		return std::unexpected("The output path must be a directory");
 	
-	return std::pair(std::move(csv_path), std::move(output_path));
+	return InputPaths(std::move(csv_path), std::move(output_path));
 }
 
-static FStreams get_fstreams(const std::pair<std::filesystem::path, std::filesystem::path>& paths)
+static Expected<FStreams> get_fstreams(const InputPaths& paths)
 {
 	const auto& [csv_path, output_path] = paths;
 
@@ -39,12 +39,12 @@ static FStreams get_fstreams(const std::pair<std::filesystem::path, std::filesys
 	if (not unichar_to_glyph.is_open())
 		return std::unexpected(std::format(R"(Could not open or create the output file: "{}/UnicharToGlyph.impl")", csv_path.string()));
 
-	return std::tuple(std::move(csv_file), std::move(all_glyphs), std::move(unichar_to_glyph));
+	return FStreams(std::move(csv_file), std::move(all_glyphs), std::move(unichar_to_glyph));
 }
 
 
 
-FStreams get_files(int argc, const char** argv)
+Expected<FStreams> get_files(int argc, const char** argv)
 {
 	auto paths = get_input_paths(argc, argv);
 	if (not paths.has_value())

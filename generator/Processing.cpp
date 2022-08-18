@@ -122,7 +122,7 @@ static Expected<ProcessedLines> get_processed_lines(const InputLines& validated_
 
 
 
-ProcessedData get_processed_data(std::ifstream& csv_file)
+Expected<ProcessedData> get_processed_data(std::ifstream& csv_file)
 {
 	auto raw_input = get_raw_input(csv_file);
 	auto validated_input = get_validated_input(raw_input);
@@ -130,12 +130,12 @@ ProcessedData get_processed_data(std::ifstream& csv_file)
 		return std::unexpected(std::move(validated_input.error()));
 
 	auto codepoint_to_index = get_codepoint_to_index_map(validated_input.value());
-	auto processed_lines_ex = get_processed_lines(validated_input.value(), codepoint_to_index);
-	if (not processed_lines_ex.has_value())
-		return std::unexpected(std::move(processed_lines_ex.error()));
+	auto processed_lines = get_processed_lines(validated_input.value(), codepoint_to_index);
+	if (not processed_lines.has_value())
+		return std::unexpected(std::move(processed_lines.error()));
 
-	if (codepoint_to_index.size() != processed_lines_ex.value().size())
+	if (codepoint_to_index.size() != processed_lines.value().size())
 		return std::unexpected("Bask3twork generator internal error.");
 
-	return std::pair(std::move(codepoint_to_index), std::move(processed_lines_ex.value()));
+	return ProcessedData(std::move(codepoint_to_index), std::move(processed_lines.value()));
 }

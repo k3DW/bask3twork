@@ -20,6 +20,6 @@ struct ProcessedLine
 
 using CodepointToIndex = std::map<int, int>;
 using ProcessedLines   = std::vector<ProcessedLine>;
-using ProcessedData    = Expected<std::pair<CodepointToIndex, ProcessedLines>>;
+using ProcessedData    = std::pair<CodepointToIndex, ProcessedLines>;
 
-ProcessedData get_processed_data(std::ifstream& csv_file);
+Expected<ProcessedData> get_processed_data(std::ifstream& csv_file);

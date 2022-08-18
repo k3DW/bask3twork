@@ -102,12 +102,12 @@ if (not _exception_.has_value())              \
 
 int main(int argc, const char** argv)
 {
-	FStreams files = get_files(argc, argv);
+	Expected<FStreams> files = get_files(argc, argv);
 	return_if_error(files);
 
 	auto& [csv_file, all_glyphs_file, unichar_to_glyphs_file] = files.value();
 
-	ProcessedData processed_data = get_processed_data(csv_file);
+	Expected<ProcessedData> processed_data = get_processed_data(csv_file);
 	return_if_error(processed_data);
 
 	const auto& [codepoint_to_index, processed_lines] = processed_data.value();
