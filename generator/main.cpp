@@ -1,179 +1,23 @@
-#include <array>
-#include <filesystem>
-#include <format>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <ranges>
-#include <string>
-#include <string_view>
-#include <variant>
-
 #include "Files.h"
+#include "Processing.h"
 
-template <class T>
-using ErrorVariant = std::variant<T, std::string>;
+#include <iostream>
 
-constexpr bool is_uint(std::string_view str)
+
+
+void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedLines& processed_input_lines)
 {
-	return std::ranges::all_of(str, &isdigit);
-}
-constexpr std::string_view is_uint_name = "a positive integer";
-
-constexpr bool is_connection(std::string_view str)
-{
-	return str == "EMPTY"
-		|| str == "DIAG_BOTH"
-		|| str == "ORTHO_BOTH"
-		|| str == "DIAG_FRONT"
-		|| str == "DIAG_BACK"
-		|| str == "ORTHO_UP"
-		|| str == "ORTHO_DOWN"
-		|| str == "ORTHO_LEFT"
-		|| str == "ORTHO_RIGHT"
-	;
-}
-constexpr std::string_view is_connection_name = "a connection type";
-
-constexpr std::size_t entries_per_line_raw = 9;
-constexpr std::size_t entries_per_line_processed = 11;
-
-constexpr std::array validator_functions = { is_uint, is_uint, is_uint, is_uint, is_uint, is_connection, is_connection, is_connection, is_connection };
-constexpr std::array validator_functions_names = { is_uint_name, is_uint_name, is_uint_name, is_uint_name, is_uint_name, is_connection_name, is_connection_name, is_connection_name, is_connection_name };
-
-static_assert(validator_functions.size() == entries_per_line_raw);
-static_assert(validator_functions_names.size() == entries_per_line_raw);
-
-
-
-using RawInputVariant = ErrorVariant<std::vector<std::vector<std::string>>>;
-
-RawInputVariant get_raw_input(std::ifstream& csv)
-{
-	std::vector<std::vector<std::string>> raw_input;
-
-	for (std::string line; std::getline(csv, line); )
-	{
-		std::vector<std::string> vec;
-
-		auto& back = raw_input.emplace_back();
-		for (auto value : line | std::views::split(','))
-		{
-			back.emplace_back(value.begin(), value.end());
-		}
-	}
-
-	return RawInputVariant(std::move(raw_input));
-}
-
-
-
-struct ProcessedInputLine
-{
-	std::string codepoint;
-	std::string rotate_90_index;
-	std::string rotate_180_index;
-	std::string mirror_x_index;
-	std::string mirror_y_index;
-	std::string mirror_forward_diag_index;
-	std::string mirror_backward_diag_index;
-	std::string up_connection;
-	std::string down_connection;
-	std::string left_connection;
-	std::string right_connection;
-};
-
-using CodepointToIndexMap = std::map<std::string, std::string>;
-using ProcessedInputVector = std::vector<ProcessedInputLine>;
-
-using ProcessedInputVariant = ErrorVariant<std::pair<CodepointToIndexMap, ProcessedInputVector>>;
-
-ProcessedInputVariant get_processed_input(const std::vector<std::vector<std::string>>& raw_input)
-{
-	for (int line_number = 0; auto& line : raw_input)
-	{
-		line_number++;
-
-		if (line.size() != entries_per_line_raw)
-			return std::format("Line {} of the CSV file has the wrong number of entries. Expected = {}, actual = {}.", line_number, entries_per_line_raw, line.size());
-
-		if (std::ranges::all_of(line, &std::string::empty))
-			continue; // Entirely empty lines are fine, they will just be skipped later
-
-		for (int entry_number = 0; const std::string& entry : line)
-		{
-			entry_number++;
-			if (not std::invoke(validator_functions[entry_number - 1], entry))
-				return std::format(R"(Entry {} in line {} of the CSV file does not match the required form. Expected = *{}*, actual = "{}")", entry_number, line_number, validator_functions_names[entry_number - 1], entry);
-		}
-	}
-
-	CodepointToIndexMap codepoint_to_index;
-
-	for (int index = 0; auto& line : raw_input)
-	{
-		if (std::ranges::all_of(line, &std::string::empty))
-			continue; // Entirely empty lines are skipped
-
-		codepoint_to_index.emplace(line[0], std::to_string(index++));
-	}
-
-	ProcessedInputVector processed_input_lines;
-
-	for (int line_number = 0; auto& line : raw_input)
-	{
-		line_number++;
-
-		if (std::ranges::all_of(line, &std::string::empty))
-			continue; // Entirely empty lines are skipped
-
-		auto& processed = processed_input_lines.emplace_back();
-		processed.codepoint = line[0];
-
-		for (int i = 1; i <= 4; i++)
-		{
-			if (not codepoint_to_index.contains(line[i]))
-				return std::format(R"(Entry {} in line {} of the CSV file is not present as the 1st entry of any other line. Actual = {})", i, line_number, line[i]);
-		}
-
-		processed.rotate_90_index  = codepoint_to_index.at(line[1]);
-		processed.rotate_180_index = codepoint_to_index.at(line[2]);
-		processed.mirror_x_index   = codepoint_to_index.at(line[3]);
-		processed.mirror_y_index   = codepoint_to_index.at(line[4]);
-
-		processed.up_connection    = line[5];
-		processed.down_connection  = line[6];
-		processed.left_connection  = line[7];
-		processed.right_connection = line[8];
-	}
-
-	for (auto& processed : processed_input_lines)
-	{
-		processed.mirror_forward_diag_index  = processed_input_lines[std::stoi(processed.rotate_90_index)].mirror_x_index;
-		processed.mirror_backward_diag_index = processed_input_lines[std::stoi(processed.mirror_x_index)].rotate_90_index;
-	}
-
-	if (codepoint_to_index.size() != processed_input_lines.size())
-		return "Bask3twork generator internal error.";
-
-	return std::pair(std::move(codepoint_to_index), std::move(processed_input_lines));
-}
-
-
-
-void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedInputVector& processed_input_lines)
-{
-	std::array<std::size_t, entries_per_line_processed> max_sizes = {};
+	std::array<std::size_t, 11> max_sizes = {};
 
 	for (auto& line : processed_input_lines)
 	{
-		max_sizes[0] = std::max(max_sizes[0], line.codepoint.size());
-		max_sizes[1] = std::max(max_sizes[1], line.rotate_90_index.size());
-		max_sizes[2] = std::max(max_sizes[2], line.rotate_180_index.size());
-		max_sizes[3] = std::max(max_sizes[3], line.mirror_x_index.size());
-		max_sizes[4] = std::max(max_sizes[4], line.mirror_y_index.size());
-		max_sizes[5] = std::max(max_sizes[5], line.mirror_forward_diag_index.size());
-		max_sizes[6] = std::max(max_sizes[6], line.mirror_backward_diag_index.size());
+		max_sizes[0] = std::max(max_sizes[0], std::to_string(line.codepoint).size());
+		max_sizes[1] = std::max(max_sizes[1], std::to_string(line.rotate_90_index).size());
+		max_sizes[2] = std::max(max_sizes[2], std::to_string(line.rotate_180_index).size());
+		max_sizes[3] = std::max(max_sizes[3], std::to_string(line.mirror_x_index).size());
+		max_sizes[4] = std::max(max_sizes[4], std::to_string(line.mirror_y_index).size());
+		max_sizes[5] = std::max(max_sizes[5], std::to_string(line.mirror_forward_diag_index).size());
+		max_sizes[6] = std::max(max_sizes[6], std::to_string(line.mirror_backward_diag_index).size());
 		max_sizes[7] = std::max(max_sizes[7], line.up_connection.size());
 		max_sizes[8] = std::max(max_sizes[8], line.down_connection.size());
 		max_sizes[9] = std::max(max_sizes[9], line.left_connection.size());
@@ -187,7 +31,7 @@ void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedInputVecto
 	{
 		all_glyphs_file << "\tGlyph( ";
 
-		all_glyphs_file << std::format("{:{}}", line.codepoint + ", ", max_sizes[0] + 2);
+		all_glyphs_file << std::format("{:{}}", std::to_string(line.codepoint) + ", ", max_sizes[0] + 2);
 
 		auto rotate_90_index = std::format("&AllGlyphs[{}], ", line.rotate_90_index);
 		auto rotate_180_index = std::format("&AllGlyphs[{}], ", line.rotate_180_index);
@@ -216,14 +60,14 @@ void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedInputVecto
 	all_glyphs_file << "};\n";
 }
 
-void output_unichar_to_glyphs(std::ofstream& unichar_to_glyphs_file, const CodepointToIndexMap& codepoint_to_index)
+void output_unichar_to_glyphs(std::ofstream& unichar_to_glyphs_file, const CodepointToIndex& codepoint_to_index)
 {
 	std::array<std::size_t, 2> max_sizes = {};
 
-	for (auto& line : codepoint_to_index)
+	for (auto [codepoint, index] : codepoint_to_index)
 	{
-		max_sizes[0] = std::max(max_sizes[0], line.first.size());
-		max_sizes[1] = std::max(max_sizes[1], line.second.size());
+		max_sizes[0] = std::max(max_sizes[0], std::to_string(codepoint).size());
+		max_sizes[1] = std::max(max_sizes[1], std::to_string(index).size());
 	}
 
 	unichar_to_glyphs_file << "inline const std::map<wxUniChar, const Glyph*> UnicharToGlyph =\n";
@@ -247,34 +91,28 @@ void output_unichar_to_glyphs(std::ofstream& unichar_to_glyphs_file, const Codep
 
 
 
+#define return_if_error(_exception_)          \
+if (not _exception_.has_value())              \
+{                                             \
+	std::cout << _exception_.error() << "\n"; \
+	return EXIT_FAILURE;                      \
+}
+
+
+
 int main(int argc, const char** argv)
 {
 	FStreams files = get_files(argc, argv);
-	if (not files.has_value())
-	{
-		std::cout << files.error() << "\n";
-		return EXIT_FAILURE;
-	}
+	return_if_error(files);
 
-	auto& [csv, all_glyphs_file, unichar_to_glyphs_file] = files.value();
+	auto& [csv_file, all_glyphs_file, unichar_to_glyphs_file] = files.value();
 
-	auto raw_input = get_raw_input(csv);
-	if (raw_input.index() == 1)
-	{
-		std::cout << std::get<1>(raw_input) << "\n";
-		return EXIT_FAILURE;
-	}
+	ProcessedData processed_data = get_processed_data(csv_file);
+	return_if_error(processed_data);
 
-	auto processed_input = get_processed_input(std::get<0>(raw_input));
-	if (processed_input.index() == 1)
-	{
-		std::cout << std::get<1>(processed_input) << "\n";
-		return EXIT_FAILURE;
-	}
+	const auto& [codepoint_to_index, processed_lines] = processed_data.value();
 
-	const auto& [codepoint_to_index, processed_input_lines] = std::get<0>(processed_input);
-
-	output_all_glyphs(all_glyphs_file, processed_input_lines);
+	output_all_glyphs(all_glyphs_file, processed_lines);
 	output_unichar_to_glyphs(unichar_to_glyphs_file, codepoint_to_index);
 
 	std::cout << R"(Bask3twork successfully generated "AllGlyphs.impl" and "UnicharToGlyph.impl")" << "\n";

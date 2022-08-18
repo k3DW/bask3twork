@@ -27,8 +27,8 @@ static FStreams get_fstreams(const std::pair<std::filesystem::path, std::filesys
 {
 	const auto& [csv_path, output_path] = paths;
 
-	std::ifstream csv = std::ifstream(csv_path);
-	if (not csv.is_open())
+	std::ifstream csv_file = std::ifstream(csv_path);
+	if (not csv_file.is_open())
 		return std::unexpected(std::format(R"(Could not open the CSV file: "{}")", csv_path.string()));
 
 	std::ofstream all_glyphs = std::ofstream(output_path / "AllGlyphs.impl");
@@ -39,7 +39,7 @@ static FStreams get_fstreams(const std::pair<std::filesystem::path, std::filesys
 	if (not unichar_to_glyph.is_open())
 		return std::unexpected(std::format(R"(Could not open or create the output file: "{}/UnicharToGlyph.impl")", csv_path.string()));
 
-	return std::tuple(std::move(csv), std::move(all_glyphs), std::move(unichar_to_glyph));
+	return std::tuple(std::move(csv_file), std::move(all_glyphs), std::move(unichar_to_glyph));
 }
 
 
