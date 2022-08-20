@@ -3,22 +3,26 @@
 
 #include <iostream>
 
-static std::string get_string(int i)                  { return std::to_string(i); }
-static std::string get_string(const std::string& str) { return str; }
+static std::string        get_string(int i)                  { return std::to_string(i); }
+static const std::string& get_string(const std::string& str) { return str; }
 
-template <class T, class... Us>
-static std::array<std::size_t, sizeof...(Us)> get_max_sizes(const T& t, Us T::value_type::*...members)
+template <class Collection, std::size_t Width = std::tuple_size_v<typename Collection::value_type>>
+static std::array<std::size_t, Width> get_max_sizes(const Collection& collection)
 {
-	std::array<std::size_t, sizeof...(Us)> max_sizes = {};
-
-	for (const typename T::value_type& elem : t)
+	static constexpr auto get_element_sizes = []<std::size_t... Is>(std::index_sequence<Is...>)
 	{
-		std::array<std::size_t, sizeof...(Us)> elem_sizes = { get_string(elem.*members).size()...};
+		return [](auto& element) -> std::array<std::size_t, Width>
+		{
+			return { get_string(get<Is>(element)).size()... };
+		};
+	}(std::make_index_sequence<Width>{});
 
+	std::array<std::size_t, Width> max_sizes = {};
+	for (const auto& elem : collection)
+	{
 		static constexpr auto max_fn = [](std::size_t a, std::size_t b) -> std::size_t { return std::max(a, b); };
-		std::ranges::transform(max_sizes, elem_sizes, max_sizes.begin(), max_fn);
+		std::ranges::transform(max_sizes, get_element_sizes(elem), max_sizes.begin(), max_fn);
 	}
-
 	return max_sizes;
 }
 
@@ -36,11 +40,7 @@ const auto formatted = [](std::size_t max_size, std::string_view format, auto va
 
 void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedLines& processed_input_lines)
 {
-	using T = ProcessedLines::value_type;
-	const std::array<std::size_t, 11> max_sizes = get_max_sizes(processed_input_lines
-		, &T::codepoint, &T::rotate_90_index, &T::rotate_180_index, &T::mirror_x_index, &T::mirror_y_index, &T::mirror_forward_diag_index, &T::mirror_backward_diag_index
-		, &T::up_connection, &T::down_connection, &T::left_connection, &T::right_connection
-	);
+	const std::array<std::size_t, 11> max_sizes = get_max_sizes(processed_input_lines);
 
 	all_glyphs_file << std::format("constexpr std::array<Glyph, {}> AllGlyphs =\n", processed_input_lines.size());
 	all_glyphs_file << "{\n";
@@ -73,8 +73,7 @@ void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedLines& pro
 
 void output_unichar_to_glyphs(std::ofstream& unichar_to_glyphs_file, const CodepointToIndex& codepoint_to_index)
 {
-	using T = CodepointToIndex::value_type;
-	const std::array<std::size_t, 2> max_sizes = get_max_sizes(codepoint_to_index, &T::first, &T::second);
+	const std::array<std::size_t, 2> max_sizes = get_max_sizes(codepoint_to_index);
 
 	unichar_to_glyphs_file << "inline const std::map<wxUniChar, const Glyph*> UnicharToGlyph =\n";
 	unichar_to_glyphs_file << "{\n";
