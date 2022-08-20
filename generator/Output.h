@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-static size_t size(int i)                  { return std::to_string(i).size(); }
-static size_t size(const std::string& str) { return str.size(); }
+static std::string get_string(int i)                  { return std::to_string(i); }
+static std::string get_string(const std::string& str) { return str; }
 
 template <class T, class... Us>
 static std::array<std::size_t, sizeof...(Us)> get_max_sizes(const T& t, Us T::value_type::*...members)
@@ -13,7 +13,7 @@ static std::array<std::size_t, sizeof...(Us)> get_max_sizes(const T& t, Us T::va
 
 	for (const typename T::value_type& elem : t)
 	{
-		std::array<std::size_t, sizeof...(Us)> elem_sizes = { size(elem.*members)... };
+		std::array<std::size_t, sizeof...(Us)> elem_sizes = { get_string(elem.*members).size()...};
 
 		static constexpr auto max_fn = [](std::size_t a, std::size_t b) -> std::size_t { return std::max(a, b); };
 		std::ranges::transform(max_sizes, elem_sizes, max_sizes.begin(), max_fn);
@@ -23,6 +23,16 @@ static std::array<std::size_t, sizeof...(Us)> get_max_sizes(const T& t, Us T::va
 }
 
 
+
+const auto formatted = [](std::size_t max_size, std::string_view format, auto value) -> std::string
+{
+	std::string str = get_string(value);
+	std::string formatted = std::vformat(format, std::make_format_args(str));
+	if (std::size_t padding = max_size - str.size(); padding != 0)
+		return std::format("{}{:{}}", formatted, "", padding);
+	else
+		return formatted;
+};
 
 void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedLines& processed_input_lines)
 {
@@ -39,28 +49,21 @@ void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedLines& pro
 	{
 		all_glyphs_file << "\tGlyph( ";
 
-		all_glyphs_file << std::format("{:{}}", std::to_string(line.codepoint) + ", ", max_sizes[0] + 2);
-
-		auto rotate_90_index = std::format("&AllGlyphs[{}]", line.rotate_90_index) + ", ";
-		auto rotate_180_index = std::format("&AllGlyphs[{}]", line.rotate_180_index) + ", ";
-		auto mirror_x_index = std::format("&AllGlyphs[{}]", line.mirror_x_index) + ", ";
-		auto mirror_y_index = std::format("&AllGlyphs[{}]", line.mirror_y_index) + ", ";
-		auto mirror_forward_diag_index = std::format("&AllGlyphs[{}]", line.mirror_forward_diag_index) + ", ";
-		auto mirror_backward_diag_index = std::format("&AllGlyphs[{}]", line.mirror_backward_diag_index);
+		all_glyphs_file << formatted(max_sizes[0], "{}, ", line.codepoint);
 
 		all_glyphs_file << "{ ";
-		all_glyphs_file << std::format("{:{}}", rotate_90_index, max_sizes[1] + 14);
-		all_glyphs_file << std::format("{:{}}", rotate_180_index, max_sizes[2] + 14);
-		all_glyphs_file << std::format("{:{}}", mirror_x_index, max_sizes[3] + 14);
-		all_glyphs_file << std::format("{:{}}", mirror_y_index, max_sizes[4] + 14);
-		all_glyphs_file << std::format("{:{}}", mirror_forward_diag_index, max_sizes[5] + 14);
-		all_glyphs_file << std::format("{:{}}", mirror_backward_diag_index, max_sizes[6] + 12);
+		all_glyphs_file << formatted(max_sizes[1], "&AllGlyphs[{}], ", line.rotate_90_index);
+		all_glyphs_file << formatted(max_sizes[2], "&AllGlyphs[{}], ", line.rotate_180_index);
+		all_glyphs_file << formatted(max_sizes[3], "&AllGlyphs[{}], ", line.mirror_x_index);
+		all_glyphs_file << formatted(max_sizes[4], "&AllGlyphs[{}], ", line.mirror_y_index);
+		all_glyphs_file << formatted(max_sizes[5], "&AllGlyphs[{}], ", line.mirror_forward_diag_index);
+		all_glyphs_file << formatted(max_sizes[6], "&AllGlyphs[{}]", line.mirror_backward_diag_index);
 		all_glyphs_file << " }, ";
 
-		all_glyphs_file << std::format("Connection::{:{}}", line.up_connection + ", ", max_sizes[7] + 2);
-		all_glyphs_file << std::format("Connection::{:{}}", line.down_connection + ", ", max_sizes[8] + 2);
-		all_glyphs_file << std::format("Connection::{:{}}", line.left_connection + ", ", max_sizes[9] + 2);
-		all_glyphs_file << std::format("Connection::{:{}}", line.right_connection, max_sizes[10]);
+		all_glyphs_file << formatted(max_sizes[7], "Connection::{}, ", line.up_connection);
+		all_glyphs_file << formatted(max_sizes[8], "Connection::{}, ", line.down_connection);
+		all_glyphs_file << formatted(max_sizes[9], "Connection::{}, ", line.left_connection);
+		all_glyphs_file << formatted(max_sizes[10], "Connection::{}", line.right_connection);
 
 		all_glyphs_file << " ),\n";
 	}
@@ -76,14 +79,11 @@ void output_unichar_to_glyphs(std::ofstream& unichar_to_glyphs_file, const Codep
 	unichar_to_glyphs_file << "inline const std::map<wxUniChar, const Glyph*> UnicharToGlyph =\n";
 	unichar_to_glyphs_file << "{\n";
 
-	for (auto& line : codepoint_to_index)
+	for (auto& [codepoint, glyph] : codepoint_to_index)
 	{
-		auto codepoint = std::format("wxUniChar({}), ", line.first);
-		auto glyph = std::format("&AllGlyphs[{}]", line.second);
-
 		unichar_to_glyphs_file << "\t{ ";
-		unichar_to_glyphs_file << std::format("{:{}}", codepoint, max_sizes[0] + 13);
-		unichar_to_glyphs_file << std::format("{:{}}", glyph, max_sizes[1] + 12);
+		unichar_to_glyphs_file << formatted(max_sizes[0], "wxUniChar({}), ", codepoint);
+		unichar_to_glyphs_file << formatted(max_sizes[1], "&AllGlyphs[{}]", glyph);
 		unichar_to_glyphs_file << " },\n";
 	}
 
