@@ -1,7 +1,7 @@
 #pragma once
-#include "Glyph.h"
-#include "Selection.h"
-#include "Enum.h"
+#include "pure/Enum.h"
+#include "pure/Glyph.h"
+#include "pure/Selection.h"
 
 /** All the types of symmetry which can be used in this program.
  * The bit flags tell \c Knot::generate() how to generate.

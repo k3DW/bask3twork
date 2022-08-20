@@ -1,7 +1,9 @@
 #pragma once
-#include "Constants.h"
-#include "Connection.h"
-#include "Enum.h"
+#include "pure/Connection.h"
+#include "pure/Enum.h"
+#include <map>
+#include <random>
+#include <vector>
 /// \file
 
 /// The bit flag for each of the properties of a \c Glyph object
@@ -51,8 +53,7 @@ struct GlyphsTransformed
 /// A struct to store the glyph information of the the Celtic Knots font
 struct Glyph : GlyphsTransformed
 {
-	wxUniChar::value_type code_point; ///< The character that gets displayed
-	wxUniChar get() const { return wxUniChar(code_point); }
+	int32_t code_point; ///< The character that gets displayed
 	
 	Connection up;
 	Connection down;
@@ -64,7 +65,7 @@ struct Glyph : GlyphsTransformed
 	consteval GlyphFlag get_flags() const;
 
 	/// All the \c connectTo____ flags are determined from the other parameters, but the other parameters are given explicitly
-	consteval Glyph(wxUniChar::value_type code_point, GlyphsTransformed transformed, Connection up, Connection down, Connection left, Connection right) :
+	consteval Glyph(int32_t code_point, GlyphsTransformed transformed, Connection up, Connection down, Connection left, Connection right) :
 		code_point(code_point), GlyphsTransformed(transformed), up(up), down(down), left(left), right(right)
 	{
 		flags = get_flags();
@@ -106,10 +107,10 @@ consteval GlyphFlag Glyph::get_flags() const
 
 /// The constexpr array of every \c Glyph in the program, the only place where a Glyph object is initialized;
 /// every other place a \c Glyph is referenced in the whole codebase is actually a pointer to a \c Glyph in \c AllGlyphs.
-#include "generated\AllGlyphs.impl"
+#include "generated/AllGlyphs.impl"
 
 /// The mapping from the unicode character to the Glyph that uses that character, used for reading knots.
-#include "generated\UnicharToGlyph.impl"
+#include "generated/UnicharToGlyph.impl"
 
 /// The default Glyph to fill the Knot upon initialization, which is set as the \c space character, \c \x20
 constexpr const Glyph* DefaultGlyph = &AllGlyphs[0];

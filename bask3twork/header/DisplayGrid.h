@@ -1,6 +1,6 @@
 #pragma once
 #include "Constants.h"
-#include "Selection.h"
+#include "pure/Selection.h"
 
 class MainWindow;
 class Knot;

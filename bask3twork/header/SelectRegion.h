@@ -1,6 +1,6 @@
 #pragma once
 #include "wx/wx.h"
-#include "Selection.h"
+#include "pure/Selection.h"
 
 class MainWindow;
 

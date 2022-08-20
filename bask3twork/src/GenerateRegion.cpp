@@ -1,6 +1,6 @@
 #include "GenerateRegion.h"
 #include "MainWindow.h"
-#include "Symmetry.h"
+#include "pure/Symmetry.h"
 
 GenerateRegion::GenerateRegion(MainWindow* parent)
 	: wxStaticBoxSizer(wxVERTICAL, parent, "Generate")

@@ -26,26 +26,26 @@
     <ClCompile Include="src\MenuBar.cpp" />
     <ClCompile Include="src\RegenDialog.cpp" />
     <ClCompile Include="src\SelectRegion.cpp" />
-    <ClCompile Include="src\Symmetry.cpp" />
+    <ClCompile Include="pure\Symmetry.cpp" />
     <ClCompile Include="src\Knot.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
     <ClCompile Include="src\Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header\Connection.h" />
+    <ClInclude Include="pure\Connection.h" />
     <ClInclude Include="header\DisplayGrid.h" />
-    <ClInclude Include="header\Enum.h" />
+    <ClInclude Include="pure\Enum.h" />
     <ClInclude Include="header\ExportRegion.h" />
     <ClInclude Include="header\GenerateRegion.h" />
-    <ClInclude Include="header\Glyph.h" />
+    <ClInclude Include="pure\Glyph.h" />
     <ClInclude Include="header\Constants.h" />
     <ClInclude Include="header\MenuBar.h" />
     <ClInclude Include="header\RegenDialog.h" />
     <ClInclude Include="header\SelectRegion.h" />
-    <ClInclude Include="header\Symmetry.h" />
+    <ClInclude Include="pure\Symmetry.h" />
     <ClInclude Include="header\Knot.h" />
     <ClInclude Include="header\MainWindow.h" />
-    <ClInclude Include="header\Selection.h" />
+    <ClInclude Include="pure\Selection.h" />
     <ClInclude Include="header\Tile.h" />
     <ClInclude Include="header\Version.h" />
   </ItemGroup>
@@ -140,7 +140,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir)header;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir);$(ProjectDir)header</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
@@ -159,7 +159,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir)header;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir);$(ProjectDir)header</AdditionalIncludeDirectories>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
@@ -177,7 +177,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir)header;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir);$(ProjectDir)header</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
@@ -200,7 +200,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir)header;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir);$(ProjectDir)header</AdditionalIncludeDirectories>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
