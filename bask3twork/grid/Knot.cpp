@@ -1,11 +1,8 @@
-#include <wx/statusbr.h>
-#include <wx/string.h>
-
+#include "pch.h"
 #include "grid/Knot.h"
 #include "pure/Glyph.h"
 #include "pure/Selection.h"
 #include "pure/Symmetry.h"
-
 #include "Constants.h"
 
 Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar), glyphs(h, std::vector<const Glyph*>(w, DefaultGlyph)) {}

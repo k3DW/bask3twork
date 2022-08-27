@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "pure/Symmetry.h"
 
 Symmetry SymmetryChecker::get(int h, int w) const

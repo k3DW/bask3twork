@@ -1,23 +1,16 @@
-#include <wx/filedlg.h>
-#include <wx/msgdlg.h>
-#include <wx/textfile.h>
-
+#include "pch.h"
 #include "Constants.h"
 #include "MainWindow.h"
-
 #include "grid/Display.h"
 #include "grid/Knot.h"
 #include "grid/GridSizer.h"
-
 #include "pure/Enum.h"
 #include "pure/Glyph.h"
 #include "pure/Symmetry.h"
-
 #include "regions/Select.h"
 #include "regions/Generate.h"
 #include "regions/Export.h"
 #include "regions/RegionSizer.h"
-
 #include "controls/MenuBar.h"
 #include "controls/RegenDialog.h"
 

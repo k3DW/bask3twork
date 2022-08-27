@@ -1,6 +1,6 @@
+#include "pch.h"
 #include "grid/Tile.h"
 #include "grid/Display.h"
-
 #include "Constants.h"
 
 Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxColour& base)

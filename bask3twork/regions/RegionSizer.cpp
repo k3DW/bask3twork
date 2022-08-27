@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "regions/RegionSizer.h"
 #include "regions/Select.h"
 #include "regions/Generate.h"

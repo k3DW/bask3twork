@@ -1,10 +1,7 @@
-#include <wx/button.h>
-#include <wx/stattext.h>
-
+#include "pch.h"
+#include "regions/Select.h"
 #include "Constants.h"
 #include "MainWindow.h"
-
-#include "regions/Select.h"
 
 SelectRegion::SelectRegion(MainWindow* parent, int h, int w)
 	: wxStaticBoxSizer(wxVERTICAL, parent, "Select")

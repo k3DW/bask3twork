@@ -1,10 +1,6 @@
-#include <wx/button.h>
-#include <wx/clipbrd.h>
-#include <wx/textctrl.h>
-
+#include "pch.h"
 #include "regions/Export.h"
 #include "grid/Knot.h"
-
 #include "Constants.h"
 #include "MainWindow.h"
 

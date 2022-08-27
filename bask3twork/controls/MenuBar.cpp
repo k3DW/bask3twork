@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "controls/MenuBar.h"
 #include "MainWindow.h"
 

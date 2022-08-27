@@ -13,7 +13,7 @@
 	-> Simple weaves as example knots
 */
 
-#include <wx/app.h>
+#include "pch.h"
 #include "MainWindow.h"
 #include "Version.h"
 
