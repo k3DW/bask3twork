@@ -49,22 +49,18 @@ struct GlyphsTransformed
 };
 
 /// A struct to store the glyph information of the the Celtic Knots font
-struct Glyph : GlyphsTransformed
+struct Glyph : GlyphsTransformed, Connections
 {
 	int32_t code_point; ///< The character that gets displayed
-	
-	Connection up;
-	Connection down;
-	Connection left;
-	Connection right;
-	operator Connections() const { return { up, down, left, right }; }
 
 	GlyphFlag flags; ///< The total signature of this glyph
 	consteval GlyphFlag get_flags() const;
 
 	/// All the \c connectTo____ flags are determined from the other parameters, but the other parameters are given explicitly
-	consteval Glyph(int32_t code_point, GlyphsTransformed transformed, Connection up, Connection down, Connection left, Connection right) :
-		code_point(code_point), GlyphsTransformed(transformed), up(up), down(down), left(left), right(right)
+	consteval Glyph(int32_t code_point, GlyphsTransformed transformed, Connection up, Connection down, Connection left, Connection right)
+		: GlyphsTransformed(transformed)
+		, Connections{ .up = up, .down = down, .left = left, .right = right }
+		, code_point(code_point)
 	{
 		flags = get_flags();
 	}
