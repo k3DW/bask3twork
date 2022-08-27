@@ -1,6 +1,12 @@
+#include <wx/button.h>
+#include <wx/clipbrd.h>
+#include <wx/textctrl.h>
+
 #include "regions/Export.h"
-#include "MainWindow.h"
 #include "grid/Knot.h"
+
+#include "Constants.h"
+#include "MainWindow.h"
 
 ExportRegion::ExportRegion(MainWindow* parent, int h, int w)
 	: wxStaticBoxSizer(wxVERTICAL, parent, "Export")

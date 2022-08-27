@@ -1,5 +1,6 @@
 #pragma once
-#include "wx/wx.h"
+#include <wx/menu.h>
+#include <array>
 #include "MainWindow.h"
 
 class MenuBar : wxMenuBar

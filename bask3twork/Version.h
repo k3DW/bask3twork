@@ -1,5 +1,5 @@
 #pragma once
-#include "wx/string.h"
+#include <wx/string.h>
 
 struct Version
 {

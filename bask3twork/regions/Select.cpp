@@ -1,5 +1,10 @@
-#include "regions/Select.h"
+#include <wx/button.h>
+#include <wx/stattext.h>
+
+#include "Constants.h"
 #include "MainWindow.h"
+
+#include "regions/Select.h"
 
 SelectRegion::SelectRegion(MainWindow* parent, int h, int w)
 	: wxStaticBoxSizer(wxVERTICAL, parent, "Select")
@@ -50,4 +55,13 @@ void SelectRegion::normalize()
 		std::swap(selection.min.j, selection.max.j);
 
 	update_display();
+}
+
+void SelectRegion::set_toggle_show()
+{
+	toggle_button->SetLabelText("Show");
+}
+void SelectRegion::set_toggle_hide()
+{
+	toggle_button->SetLabelText("Hide");
 }

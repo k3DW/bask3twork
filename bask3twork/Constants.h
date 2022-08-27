@@ -1,20 +1,9 @@
 #pragma once
-#include "wx/wx.h"
-#include "wx/clipbrd.h"
-#include "wx/gbsizer.h"
-#include "wx/textfile.h"
-#include "wx/wfstream.h"
+#include <wx/colour.h>
+#include <wx/font.h>
 #include <array>
-#include <map>
-#include <optional>
-#include <random>
-#include <vector>
 /// \file
 
-// Constants for future functionality, changing the sizing of things depending on the screen size
-const int SCREEN_X = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);	///< For future functionality, the screen size in the x direction
-const int SCREEN_Y = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);	///< For future functionality, the screen size in the y direction
-const wxSize MAX_SIZE{ SCREEN_X, SCREEN_Y };						///< For future functionality, the maximum size of the app window
 constexpr size_t MAX_H = 100;	///< The maximum height of the grid allowed in the program, in terms of tiles.
 constexpr size_t MAX_W = 100;	///< The maximum width of the grid allowed in the program, in terms of tiles
 

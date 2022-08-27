@@ -1,6 +1,12 @@
-#include "controls/RegenDialog.h"
+#include <wx/button.h>
+#include <wx/msgdlg.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+
 #include "Constants.h"
 #include "MainWindow.h"
+
+#include "controls/RegenDialog.h"
 
 RegenDialog::RegenDialog(MainWindow* parent, int h, int w)
 	: wxDialog(nullptr, wxID_ANY, "Grid")

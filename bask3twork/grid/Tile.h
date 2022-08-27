@@ -1,5 +1,5 @@
 #pragma once
-#include "Constants.h"
+#include <wx/stattext.h>
 #include "Forward.h"
 
 /** Tile represents a glyph display tile within a DisplayGrid object. */

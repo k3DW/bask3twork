@@ -1,6 +1,7 @@
 #pragma once
-#include "wx/wx.h"
-#include "Constants.h"
+#include <wx/button.h>
+#include <wx/sizer.h>
+#include <array>
 #include "Forward.h"
 
 /// The buttons inside the GenerateRegion allow the Knot \c generate functions to have no conditional operation, and just assume that the parameters are valid.

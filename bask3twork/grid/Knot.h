@@ -1,10 +1,10 @@
 #pragma once
-#include "Constants.h"
+#include <optional>
 #include "Forward.h"
-#include "pure/Symmetry.h"
 
 /** This class represents a knot object as a grid of glyphs, with corresponding public functions to generate various symmetries. */
-class Knot {
+class Knot
+{
 public:
 	Knot(int h, int w, wxStatusBar* statusBar);
 	Knot(Glyphs&& glyphs, wxStatusBar* statusBar);
@@ -20,7 +20,7 @@ public:
 
 	bool checkWrapping(Selection selection) const;
 
-	Symmetry symmetry_of(Selection selection) const { return SymmetryChecker(glyphs, selection).get(h, w); }
+	Symmetry symmetry_of(Selection selection) const;
 
 	wxString plaintext() const;
 

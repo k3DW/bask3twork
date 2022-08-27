@@ -1,5 +1,6 @@
 #pragma once
-#include "wx/wx.h"
+#include <wx/dialog.h>
+#include <wx/textctrl.h>
 #include "Forward.h"
 
 class RegenDialog : public wxDialog

@@ -11,6 +11,16 @@ struct Version;
 
 
 
+// wx
+class wxBoxSizer;
+class wxGridBagSizer;
+class wxStaticText;
+class wxStatusBar;
+class wxString;
+class wxTextCtrl;
+
+
+
 // Controls
 class MenuBar;
 class RegenDialog;

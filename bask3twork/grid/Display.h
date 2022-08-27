@@ -1,7 +1,6 @@
 #pragma once
-#include "Constants.h"
+#include <wx/panel.h>
 #include "Forward.h"
-#include "pure/Selection.h"
 
 /// As a more specialized \c wxPanel object, this class represents the grid to be displayed on the left side of the MainWindow.
 class DisplayGrid : public wxPanel

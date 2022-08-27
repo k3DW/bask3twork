@@ -1,5 +1,6 @@
 #pragma once
-#include "wx/wx.h"
+#include <wx/sizer.h>
+#include "Forward.h"
 
 class GridSizer : public wxBoxSizer
 {

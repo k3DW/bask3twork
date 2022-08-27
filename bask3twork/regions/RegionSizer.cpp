@@ -2,6 +2,7 @@
 #include "regions/Select.h"
 #include "regions/Generate.h"
 #include "regions/Export.h"
+#include "Constants.h"
 
 RegionSizer::RegionSizer(SelectRegion* select_region, GenerateRegion* generate_region, ExportRegion* export_region)
 	: wxBoxSizer(wxVERTICAL)

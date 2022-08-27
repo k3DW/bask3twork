@@ -1,7 +1,12 @@
+#include <wx/gbsizer.h>
+
 #include "grid/Display.h"
 #include "grid/Knot.h"
 #include "grid/Tile.h"
+#include "pure/Glyph.h"
+#include "pure/Selection.h"
 
+#include "Constants.h"
 #include "MainWindow.h"
 
 DisplayGrid::DisplayGrid(MainWindow* parent, int h, int w)

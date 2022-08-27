@@ -1,5 +1,5 @@
 #pragma once
-#include "Constants.h"
+#include <wx/frame.h>
 #include "Forward.h"
 
 /** As a more specialized \c wxFrame object, this class represents main window of the application;

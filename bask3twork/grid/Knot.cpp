@@ -1,4 +1,12 @@
+#include <wx/statusbr.h>
+#include <wx/string.h>
+
 #include "grid/Knot.h"
+#include "pure/Glyph.h"
+#include "pure/Selection.h"
+#include "pure/Symmetry.h"
+
+#include "Constants.h"
 
 Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar), glyphs(h, std::vector<const Glyph*>(w, DefaultGlyph)) {}
 Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : h(glyphs.size()), w(glyphs[0].size()), statusBar(statusBar), glyphs(glyphs) {}
@@ -205,6 +213,11 @@ bool Knot::checkWrapping(Selection selection) const {
 	}
 
 	return true;
+}
+
+Symmetry Knot::symmetry_of(Selection selection) const
+{
+	return SymmetryChecker(glyphs, selection).get(h, w);
 }
 
 wxString Knot::plaintext() const
