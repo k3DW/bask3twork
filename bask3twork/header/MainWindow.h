@@ -8,6 +8,8 @@ enum class Symmetry;
 class SelectRegion;
 class GenerateRegion;
 class ExportRegion;
+class RegionSizer;
+
 class MenuBar;
 class RegenDialog;
 
@@ -32,12 +34,11 @@ public:
 		w;		///< The width of the knot, i.e. the number of columns.
 
 public:
-	SelectRegion* select_region;
-	bool showing_selection;
-
+	SelectRegion*   select_region;
+	bool            showing_selection;
 	GenerateRegion* generate_region;
-
-	ExportRegion* export_region;
+	ExportRegion*   export_region;
+	RegionSizer*    region_sizer;
 
 	MenuBar* menu_bar;
 
@@ -60,7 +61,6 @@ private:
 	Knot* knot;				///< The Knot object belonging to this program.
 	wxBoxSizer* mainSizer;
 	wxBoxSizer* dispSizer;
-	wxBoxSizer* buttonSizer;
 
 	Symmetry current_symmetry() const;
 

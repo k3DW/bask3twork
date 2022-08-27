@@ -1,4 +1,4 @@
-#include "SelectRegion.h"
+#include "regions/Select.h"
 #include "MainWindow.h"
 
 SelectRegion::SelectRegion(MainWindow* parent, int h, int w)

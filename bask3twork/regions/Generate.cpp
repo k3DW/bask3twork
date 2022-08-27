@@ -1,4 +1,4 @@
-#include "GenerateRegion.h"
+#include "regions/Generate.h"
 #include "MainWindow.h"
 #include "pure/Symmetry.h"
 
@@ -37,7 +37,7 @@ void GenerateRegion::disable_buttons()
 }
 
 GenerateRegionButton::GenerateRegionButton(MainWindow* parent, Symmetry symmetry, const char* label)
-	: wxButton(parent, static_cast<int>(symmetry), label)
+	: wxButton(parent, static_cast<wxWindowID>(symmetry), label)
 	, symmetry(symmetry)
 {
 	Bind(wxEVT_BUTTON, &MainWindow::generateKnot, parent);

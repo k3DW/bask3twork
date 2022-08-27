@@ -33,19 +33,22 @@
     <ClCompile Include="src\Tile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SelectRegion.cpp">
+    <ClCompile Include="regions\Select.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GenerateRegion.cpp">
+    <ClCompile Include="regions\Generate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ExportRegion.cpp">
+    <ClCompile Include="regions\Export.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\MenuBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\RegenDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="regions\Sizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,13 +83,13 @@
     <ClInclude Include="pure\Selection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\SelectRegion.h">
+    <ClInclude Include="regions\Select.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\GenerateRegion.h">
+    <ClInclude Include="regions\Generate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\ExportRegion.h">
+    <ClInclude Include="regions\Export.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\MenuBar.h">
@@ -96,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pure\Enum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="regions\Sizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,9 +2,11 @@
 #include "DisplayGrid.h"
 #include "Knot.h"
 
-#include "SelectRegion.h"
-#include "GenerateRegion.h"
-#include "ExportRegion.h"
+#include "regions/Select.h"
+#include "regions/Generate.h"
+#include "regions/Export.h"
+#include "regions/Sizer.h"
+
 #include "MenuBar.h"
 #include "RegenDialog.h"
 
@@ -26,18 +28,13 @@ MainWindow::~MainWindow() {
 void MainWindow::initSizerLayout() {
 	initDispSizer();
 
-	buttonSizer = new wxBoxSizer(wxVERTICAL);
-	buttonSizer->AddStretchSpacer();
-	buttonSizer->Add(select_region, 0, wxDOWN, GAP_2);
-	buttonSizer->Add(generate_region, 0, wxDOWN, GAP_2);
-	buttonSizer->Add(export_region);
-	buttonSizer->AddStretchSpacer();
+	region_sizer = new RegionSizer(select_region, generate_region, export_region);
 
 	mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	mainSizer->AddStretchSpacer();
 	mainSizer->Add(dispSizer, 0, wxEXPAND | wxALL, GAP_1);
 	mainSizer->AddStretchSpacer();
-	mainSizer->Add(buttonSizer, 0, wxEXPAND | (wxALL ^ wxLEFT), GAP_1);
+	mainSizer->Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), GAP_1);
 	SetSizer(mainSizer);
 }
 void MainWindow::initDispSizer() {
