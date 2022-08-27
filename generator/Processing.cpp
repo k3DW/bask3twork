@@ -1,4 +1,7 @@
+#include "pch.h"
 #include "Processing.h"
+
+using InputLines = std::vector<std::vector<std::string>>;
 
 static InputLines get_raw_input(std::ifstream& csv_file)
 {

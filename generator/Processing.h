@@ -1,7 +1,5 @@
 #pragma once
-#include "Common.h"
-
-using InputLines = std::vector<std::vector<std::string>>;
+#include "Forward.h"
 
 struct ProcessedLine
 {
@@ -39,9 +37,5 @@ decltype(auto) get(T&& line)
 
 template<>              struct std::tuple_size<ProcessedLine>       : std::integral_constant<std::size_t, 11> {};
 template<std::size_t I> struct std::tuple_element<I, ProcessedLine> : std::type_identity<std::remove_cvref_t<decltype(get<I>(std::declval<ProcessedLine>()))>> {};
-
-using CodepointToIndex = std::map<int, int>;
-using ProcessedLines   = std::vector<ProcessedLine>;
-using ProcessedData    = std::pair<CodepointToIndex, ProcessedLines>;
 
 Expected<ProcessedData> get_processed_data(std::ifstream& csv_file);

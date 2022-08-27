@@ -1,4 +1,4 @@
 .vs
-bin
-doc
-resources/Resource.aps
+.bin
+.doc
+Resource.aps

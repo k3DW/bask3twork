@@ -1,4 +1,6 @@
+#include "pch.h"
 #include "Output.h"
+#include "Processing.h"
 
 static std::string        get_string(int i)                  { return std::to_string(i); }
 static const std::string& get_string(const std::string& str) { return str; }
@@ -86,13 +88,13 @@ void output_unichar_to_glyphs(std::ofstream& unichar_to_glyphs_file, const Codep
 {
 	const OutputFormatter formatter(codepoint_to_index);
 
-	unichar_to_glyphs_file << "inline const std::map<wxUniChar, const Glyph*> UnicharToGlyph =\n";
+	unichar_to_glyphs_file << "inline const std::map<int32_t, const Glyph*> UnicharToGlyph =\n";
 	unichar_to_glyphs_file << "{\n";
 
 	for (auto& line : codepoint_to_index)
 	{
 		unichar_to_glyphs_file << "\t{ ";
-		unichar_to_glyphs_file << formatter.format<0>(line, "wxUniChar({}), ");
+		unichar_to_glyphs_file << formatter.format<0>(line, "{}, ");
 		unichar_to_glyphs_file << formatter.format<1>(line, "&AllGlyphs[{}]");
 		unichar_to_glyphs_file << " },\n";
 	}
