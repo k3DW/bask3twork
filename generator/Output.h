@@ -1,5 +1,5 @@
 #pragma once
-#include "Processing.h"
+#include "Forward.h"
 
 void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedLines& processed_input_lines);
 

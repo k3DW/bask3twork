@@ -1,5 +1,6 @@
 #pragma once
-#include "Common.h"
+#include "Forward.h"
+#include <filesystem>
 
 using InputPaths = std::pair<std::filesystem::path, std::filesystem::path>;
 using FStreams   = std::tuple<std::ifstream, std::ofstream, std::ofstream>;

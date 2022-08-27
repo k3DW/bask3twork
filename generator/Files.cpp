@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Files.h"
 
 static Expected<InputPaths> get_input_paths(int argc, const char** argv)
