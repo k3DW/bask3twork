@@ -110,6 +110,9 @@
     <ClInclude Include="grid\GridSizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Forward.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\Resource.rc">

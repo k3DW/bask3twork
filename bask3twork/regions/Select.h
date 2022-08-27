@@ -1,8 +1,7 @@
 #pragma once
 #include "wx/wx.h"
 #include "pure/Selection.h"
-
-class MainWindow;
+#include "Forward.h"
 
 class SelectRegion : public wxStaticBoxSizer
 {

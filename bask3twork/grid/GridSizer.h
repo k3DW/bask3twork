@@ -1,8 +1,6 @@
 #pragma once
 #include "wx/wx.h"
 
-class DisplayGrid;
-
 class GridSizer : public wxBoxSizer
 {
 public:

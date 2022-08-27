@@ -1,18 +1,6 @@
 #pragma once
 #include "Constants.h"
-
-class DisplayGrid;
-class Knot;
-class GridSizer;
-enum class Symmetry;
-
-class SelectRegion;
-class GenerateRegion;
-class ExportRegion;
-class RegionSizer;
-
-class MenuBar;
-class RegenDialog;
+#include "Forward.h"
 
 /** As a more specialized \c wxFrame object, this class represents main window of the application;
 	most of the WX object member variables are not documented here. */

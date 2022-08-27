@@ -1,8 +1,6 @@
 #pragma once
 #include "wx/wx.h"
-
-class MainWindow;
-class Knot;
+#include "Forward.h"
 
 class ExportRegion : public wxStaticBoxSizer
 {

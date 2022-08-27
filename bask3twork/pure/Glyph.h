@@ -1,6 +1,7 @@
 #pragma once
 #include "pure/Connection.h"
 #include "pure/Enum.h"
+#include "Forward.h"
 #include <map>
 #include <random>
 #include <vector>
@@ -35,9 +36,6 @@ enum class GlyphFlag
 };
 
 template <> struct opt_into_enum_operations<GlyphFlag> : std::true_type {};
-
-struct Glyph;
-using Glyphs = std::vector<std::vector<const Glyph*>>;
 
 /// A struct for each of the unit transformations on a \c Glyph, to keep the code inside the \c Glyph struct cleaner
 struct GlyphsTransformed

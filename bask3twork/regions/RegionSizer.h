@@ -1,9 +1,6 @@
 #pragma once
 #include "wx/wx.h"
-
-class SelectRegion;
-class GenerateRegion;
-class ExportRegion;
+#include "Forward.h"
 
 class RegionSizer : public wxBoxSizer
 {

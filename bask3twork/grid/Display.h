@@ -1,11 +1,7 @@
 #pragma once
 #include "Constants.h"
+#include "Forward.h"
 #include "pure/Selection.h"
-
-class MainWindow;
-class Knot;
-class Tile;
-using Tiles = std::vector<std::vector<Tile*>>;
 
 /// As a more specialized \c wxPanel object, this class represents the grid to be displayed on the left side of the MainWindow.
 class DisplayGrid : public wxPanel

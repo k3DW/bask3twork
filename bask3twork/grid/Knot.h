@@ -1,6 +1,6 @@
 #pragma once
 #include "Constants.h"
-#include "pure/Glyph.h"
+#include "Forward.h"
 #include "pure/Symmetry.h"
 
 /** This class represents a knot object as a grid of glyphs, with corresponding public functions to generate various symmetries. */
