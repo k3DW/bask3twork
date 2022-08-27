@@ -1,7 +1,8 @@
-#include "DisplayGrid.h"
+#include "grid/Display.h"
+#include "grid/Knot.h"
+#include "grid/Tile.h"
+
 #include "MainWindow.h"
-#include "Tile.h"
-#include "Knot.h"
 
 DisplayGrid::DisplayGrid(MainWindow* parent, int h, int w)
 	: wxPanel(parent)

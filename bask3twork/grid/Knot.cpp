@@ -1,4 +1,4 @@
-#include "Knot.h"
+#include "grid/Knot.h"
 
 Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar), glyphs(h, std::vector<const Glyph*>(w, DefaultGlyph)) {}
 Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : h(glyphs.size()), w(glyphs[0].size()), statusBar(statusBar), glyphs(glyphs) {}

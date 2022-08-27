@@ -1,5 +1,5 @@
-#include "Tile.h"
-#include "DisplayGrid.h"
+#include "grid/Tile.h"
+#include "grid/Display.h"
 
 Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxColour& base)
 	: wxStaticText(parent, id, label)

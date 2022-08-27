@@ -19,22 +19,24 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="regions\Sizer.cpp" />
+    <ClCompile Include="grid\GridSizer.cpp" />
+    <ClCompile Include="regions\RegionSizer.cpp" />
     <ClCompile Include="src\App.cpp" />
-    <ClCompile Include="src\DisplayGrid.cpp" />
+    <ClCompile Include="grid\Display.cpp" />
     <ClCompile Include="regions\Export.cpp" />
     <ClCompile Include="regions\Generate.cpp" />
     <ClCompile Include="src\MenuBar.cpp" />
     <ClCompile Include="src\RegenDialog.cpp" />
     <ClCompile Include="regions\Select.cpp" />
     <ClCompile Include="pure\Symmetry.cpp" />
-    <ClCompile Include="src\Knot.cpp" />
+    <ClCompile Include="grid\Knot.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
-    <ClCompile Include="src\Tile.cpp" />
+    <ClCompile Include="grid\Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="grid\GridSizer.h" />
     <ClInclude Include="pure\Connection.h" />
-    <ClInclude Include="header\DisplayGrid.h" />
+    <ClInclude Include="grid\Display.h" />
     <ClInclude Include="pure\Enum.h" />
     <ClInclude Include="regions\Export.h" />
     <ClInclude Include="regions\Generate.h" />
@@ -44,12 +46,12 @@
     <ClInclude Include="header\RegenDialog.h" />
     <ClInclude Include="regions\Select.h" />
     <ClInclude Include="pure\Symmetry.h" />
-    <ClInclude Include="header\Knot.h" />
+    <ClInclude Include="grid\Knot.h" />
     <ClInclude Include="header\MainWindow.h" />
     <ClInclude Include="pure\Selection.h" />
-    <ClInclude Include="header\Tile.h" />
+    <ClInclude Include="grid\Tile.h" />
     <ClInclude Include="header\Version.h" />
-    <ClInclude Include="regions\Sizer.h" />
+    <ClInclude Include="regions\RegionSizer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\Resource.rc" />

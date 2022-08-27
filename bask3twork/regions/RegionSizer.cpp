@@ -1,4 +1,4 @@
-#include "regions/Sizer.h"
+#include "regions/RegionSizer.h"
 #include "regions/Select.h"
 #include "regions/Generate.h"
 #include "regions/Export.h"

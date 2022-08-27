@@ -24,4 +24,3 @@ class AxisLabel : public wxStaticText
 public:
 	AxisLabel(DisplayGrid* parent, int value);
 };
-

@@ -1,6 +1,6 @@
 #include "regions/Export.h"
 #include "MainWindow.h"
-#include "Knot.h"
+#include "grid/Knot.h"
 
 ExportRegion::ExportRegion(MainWindow* parent, int h, int w)
 	: wxStaticBoxSizer(wxVERTICAL, parent, "Export")

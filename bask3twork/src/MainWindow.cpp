@@ -1,11 +1,12 @@
 #include "MainWindow.h"
-#include "DisplayGrid.h"
-#include "Knot.h"
+#include "grid/Display.h"
+#include "grid/Knot.h"
+#include "grid/GridSizer.h"
 
 #include "regions/Select.h"
 #include "regions/Generate.h"
 #include "regions/Export.h"
-#include "regions/Sizer.h"
+#include "regions/RegionSizer.h"
 
 #include "MenuBar.h"
 #include "RegenDialog.h"
@@ -16,6 +17,8 @@ MainWindow::MainWindow(int h, int w, wxString title)
 	, generate_region(new GenerateRegion(this))
 	, export_region(new ExportRegion(this, h, w))
 	, menu_bar(new MenuBar(this))
+	, disp(new DisplayGrid(this, h, w))
+	, knot(new Knot(h, w, GetStatusBar()))
 {
 	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
@@ -26,38 +29,15 @@ MainWindow::~MainWindow() {
 	Hide();
 }
 void MainWindow::initSizerLayout() {
-	initDispSizer();
-
 	region_sizer = new RegionSizer(select_region, generate_region, export_region);
+	grid_sizer = new GridSizer(disp);
 
 	mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	mainSizer->AddStretchSpacer();
-	mainSizer->Add(dispSizer, 0, wxEXPAND | wxALL, GAP_1);
+	mainSizer->Add(grid_sizer, 0, wxEXPAND | wxALL, GAP_1);
 	mainSizer->AddStretchSpacer();
 	mainSizer->Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), GAP_1);
 	SetSizer(mainSizer);
-}
-void MainWindow::initDispSizer() {
-	/// \b Method
-
-	/// First, check to see if the Knot has been initialized already.
-	/// If it has not, then neither has the DisplayGrid or its sizer, so the sizer is initialized with 2 stretch spacers.
-	/// It the Knot has been initialized, then \c delete the Knot and \c Destroy() the DisplayGrid.
-	if (!knot) { 
-		dispSizer = new wxBoxSizer(wxVERTICAL);
-		dispSizer->AddStretchSpacer();
-		dispSizer->AddStretchSpacer();
-	}
-	else {
-		delete knot;
-		disp->Destroy();
-	}
-
-	/// Regardless of the above, initialize the Knot with the member variables \c h and \c w and the status bar.
-	/// Then initialize the DisplayGrid with the newly generated Knot, and insert it between the stretch spacers in its sizer.
-	knot = new Knot(h, w, GetStatusBar());
-	disp = new DisplayGrid(this, h, w);
-	dispSizer->Insert(1, disp, 0, wxEXPAND);
 }
 
 void MainWindow::show_selection()
@@ -183,7 +163,8 @@ void MainWindow::openFile() {
 	// Initialize the DisplayGrid with the newly generated Knot, and insert it between the stretch spacers in its sizer.
 	knot = new Knot(std::move(glyphs), GetStatusBar());
 	disp = new DisplayGrid(this, h, w);
-	dispSizer->Insert(1, disp, 0, wxEXPAND);
+	disp->draw(knot);
+	grid_sizer->update(disp);
 
 	// Then, reset the select coordinates with MainWindow::reset_selection()
 	// and regenerate and export textbox.
@@ -253,7 +234,12 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 		h = new_h;
 		w = new_w;
 
-		initDispSizer();
+		delete knot;
+		knot = new Knot(h, w, GetStatusBar());
+
+		disp->Destroy();
+		disp = new DisplayGrid(this, h, w);
+		grid_sizer->update(disp);
 
 		// / Then, reset the select coordinates with MainWindow::reset_selection(),
 		// / regenerate and export textbox,
