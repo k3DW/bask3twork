@@ -10,7 +10,7 @@
 DisplayGrid::DisplayGrid(MainWindow* parent, int h, int w)
 	: wxPanel(parent)
 	, sizer(new wxGridBagSizer(-1, 0))
-	, tiles(make_tiles(parent, this))
+	, tiles(make_tiles(parent))
 	, highlighted(false)
 {
 	Hide();
@@ -61,7 +61,7 @@ void DisplayGrid::add_axis_labels(DisplayGrid* self, int h, int w)
 		self->sizer->Add(new AxisLabel(self, i), wxGBPosition(i, 0), wxDefaultSpan, wxALIGN_CENTER);
 }
 
-Tiles DisplayGrid::make_tiles(MainWindow* parent, DisplayGrid* self)
+Tiles DisplayGrid::make_tiles(MainWindow* parent)
 {
 	auto tiles = Tiles(parent->h, std::vector<Tile*>(parent->w, nullptr));
 	for (int i = 0; i < parent->h; i++)
@@ -70,10 +70,10 @@ Tiles DisplayGrid::make_tiles(MainWindow* parent, DisplayGrid* self)
 		{
 			wxWindowID id = (i * parent->w) + j;
 			const wxColour& colour = Colours::tile[i % 2][j % 2];
-			tiles[i][j] = new Tile(self, id, wxUniChar(DefaultGlyph->code_point), colour);
+			tiles[i][j] = new Tile(this, id, wxUniChar(DefaultGlyph->code_point), colour);
 			tiles[i][j]->Bind(wxEVT_LEFT_DOWN, &MainWindow::left_click_tile, parent);
 			tiles[i][j]->Bind(wxEVT_RIGHT_DOWN, &MainWindow::right_click_tile, parent);
-			self->sizer->Add(tiles[i][j], wxGBPosition(i + 1, j + 1)/*, wxDefaultSpan, wxALIGN_CENTER*/);
+			sizer->Add(tiles[i][j], wxGBPosition(i + 1, j + 1)/*, wxDefaultSpan, wxALIGN_CENTER*/);
 		}
 	}
 	return tiles;

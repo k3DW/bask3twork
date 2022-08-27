@@ -20,5 +20,5 @@ private:
 	bool highlighted;      ///< A flag to determine if any \c Tile is currently highlighted
 
 	static void add_axis_labels(DisplayGrid* self, int h, int w);   ///< Creates the X and Y axis labels by directly adding new \c AxisLabel objects to the sizer
-	static Tiles make_tiles(MainWindow* parent, DisplayGrid* self); ///< Creates the \c Tile objects, packing them into the sizer and binding to the \c MainWindow
+	Tiles make_tiles(MainWindow* parent); ///< Creates the \c Tile objects, packing them into the sizer and binding to the \c MainWindow
 };
