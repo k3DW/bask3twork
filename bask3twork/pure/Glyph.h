@@ -56,14 +56,12 @@ struct Glyph : GlyphsTransformed, Connections
 	GlyphFlag flags; ///< The total signature of this glyph
 	consteval GlyphFlag get_flags() const;
 
-	/// All the \c connectTo____ flags are determined from the other parameters, but the other parameters are given explicitly
-	consteval Glyph(int32_t code_point, GlyphsTransformed transformed, Connection up, Connection down, Connection left, Connection right)
+	consteval Glyph(int32_t code_point, GlyphsTransformed transformed, Connections connections)
 		: GlyphsTransformed(transformed)
-		, Connections{ .up = up, .down = down, .left = left, .right = right }
+		, Connections(connections)
 		, code_point(code_point)
-	{
-		flags = get_flags();
-	}
+		, flags(get_flags())
+	{}
 
 	Glyph(const Glyph&) = delete;
 	Glyph(Glyph&&) = delete;
