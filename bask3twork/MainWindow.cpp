@@ -230,12 +230,12 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 {
 	return [this, regen_dialog](wxCommandEvent& evt)
 	{
-		auto [new_h, new_w] = regen_dialog->get_values();
-		if (new_h == -1 || new_w == -1)
+		std::optional<Point> values = regen_dialog->get_values();
+		if (not values)
 			return;
 
-		h = new_h;
-		w = new_w;
+		h = values->i;
+		w = values->j;
 
 		delete knot;
 		knot = new Knot(h, w, GetStatusBar());
