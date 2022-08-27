@@ -15,7 +15,7 @@ DisplayGrid::DisplayGrid(MainWindow* parent, int h, int w)
 {
 	Hide();
 	SetSizer(sizer);
-	add_axis_labels(this, h, w);
+	add_axis_labels(h, w);
 	Show();
 }
 
@@ -53,12 +53,12 @@ void DisplayGrid::draw(const Knot* knot)
 			tiles[i][j]->SetLabelText(knot->get(i, j));
 }
 
-void DisplayGrid::add_axis_labels(DisplayGrid* self, int h, int w)
+void DisplayGrid::add_axis_labels(int h, int w)
 {
 	for (int i = 1; i <= w; i++)
-		self->sizer->Add(new AxisLabel(self, i), wxGBPosition(0, i), wxDefaultSpan, wxALIGN_CENTER);
+		sizer->Add(new AxisLabel(this, i), wxGBPosition(0, i), wxDefaultSpan, wxALIGN_CENTER);
 	for (int i = 1; i <= h; i++)
-		self->sizer->Add(new AxisLabel(self, i), wxGBPosition(i, 0), wxDefaultSpan, wxALIGN_CENTER);
+		sizer->Add(new AxisLabel(this, i), wxGBPosition(i, 0), wxDefaultSpan, wxALIGN_CENTER);
 }
 
 Tiles DisplayGrid::make_tiles(MainWindow* parent)
