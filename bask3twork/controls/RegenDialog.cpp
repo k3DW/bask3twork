@@ -1,4 +1,4 @@
-#include "RegenDialog.h"
+#include "controls/RegenDialog.h"
 #include "Constants.h"
 #include "MainWindow.h"
 

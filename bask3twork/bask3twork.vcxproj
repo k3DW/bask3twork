@@ -21,16 +21,16 @@
   <ItemGroup>
     <ClCompile Include="grid\GridSizer.cpp" />
     <ClCompile Include="regions\RegionSizer.cpp" />
-    <ClCompile Include="src\App.cpp" />
+    <ClCompile Include="App.cpp" />
     <ClCompile Include="grid\Display.cpp" />
     <ClCompile Include="regions\Export.cpp" />
     <ClCompile Include="regions\Generate.cpp" />
-    <ClCompile Include="src\MenuBar.cpp" />
-    <ClCompile Include="src\RegenDialog.cpp" />
+    <ClCompile Include="controls\MenuBar.cpp" />
+    <ClCompile Include="controls\RegenDialog.cpp" />
     <ClCompile Include="regions\Select.cpp" />
     <ClCompile Include="pure\Symmetry.cpp" />
     <ClCompile Include="grid\Knot.cpp" />
-    <ClCompile Include="src\MainWindow.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="grid\Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -41,16 +41,16 @@
     <ClInclude Include="regions\Export.h" />
     <ClInclude Include="regions\Generate.h" />
     <ClInclude Include="pure\Glyph.h" />
-    <ClInclude Include="header\Constants.h" />
-    <ClInclude Include="header\MenuBar.h" />
-    <ClInclude Include="header\RegenDialog.h" />
+    <ClInclude Include="Constants.h" />
+    <ClInclude Include="controls\MenuBar.h" />
+    <ClInclude Include="controls\RegenDialog.h" />
     <ClInclude Include="regions\Select.h" />
     <ClInclude Include="pure\Symmetry.h" />
     <ClInclude Include="grid\Knot.h" />
-    <ClInclude Include="header\MainWindow.h" />
+    <ClInclude Include="MainWindow.h" />
     <ClInclude Include="pure\Selection.h" />
     <ClInclude Include="grid\Tile.h" />
-    <ClInclude Include="header\Version.h" />
+    <ClInclude Include="Version.h" />
     <ClInclude Include="regions\RegionSizer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -144,7 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir);$(ProjectDir)header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
@@ -163,7 +163,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir);$(ProjectDir)header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir)</AdditionalIncludeDirectories>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>
@@ -181,7 +181,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir);$(ProjectDir)header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
@@ -204,7 +204,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir);$(ProjectDir)header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(ProjectDir)</AdditionalIncludeDirectories>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
     </ClCompile>
     <Link>

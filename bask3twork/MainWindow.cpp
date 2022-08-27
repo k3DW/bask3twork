@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+
 #include "grid/Display.h"
 #include "grid/Knot.h"
 #include "grid/GridSizer.h"
@@ -8,8 +9,8 @@
 #include "regions/Export.h"
 #include "regions/RegionSizer.h"
 
-#include "MenuBar.h"
-#include "RegenDialog.h"
+#include "controls/MenuBar.h"
+#include "controls/RegenDialog.h"
 
 MainWindow::MainWindow(int h, int w, wxString title)
 	: wxFrame(nullptr, wxID_ANY, title), h(h), w(w)

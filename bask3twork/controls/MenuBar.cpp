@@ -1,4 +1,4 @@
-#include "MenuBar.h"
+#include "controls/MenuBar.h"
 #include "MainWindow.h"
 
 MenuBar::MenuBar(MainWindow* parent)

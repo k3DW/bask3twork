@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\App.cpp">
+    <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="grid\Display.cpp">
@@ -24,7 +24,7 @@
     <ClCompile Include="grid\Knot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MainWindow.cpp">
+    <ClCompile Include="MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pure\Symmetry.cpp">
@@ -42,10 +42,10 @@
     <ClCompile Include="regions\Export.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MenuBar.cpp">
+    <ClCompile Include="controls\MenuBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\RegenDialog.cpp">
+    <ClCompile Include="controls\RegenDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="regions\RegionSizer.cpp">
@@ -65,16 +65,16 @@
     <ClInclude Include="grid\Knot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Constants.h">
+    <ClInclude Include="Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\MainWindow.h">
+    <ClInclude Include="MainWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="grid\Tile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\Version.h">
+    <ClInclude Include="Version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pure\Connection.h">
@@ -95,10 +95,10 @@
     <ClInclude Include="regions\Export.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\MenuBar.h">
+    <ClInclude Include="controls\MenuBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="header\RegenDialog.h">
+    <ClInclude Include="controls\RegenDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pure\Enum.h">
