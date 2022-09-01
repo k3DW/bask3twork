@@ -44,7 +44,7 @@ public:
 
 private:
 	void initSizerLayout();
-	void RefreshMinSize();	///< Sets the minimum size of the window, and sets the size of the window if not maximized.
+	void refresh_min_size(); ///< Sets the minimum size of the window to fit the content, and sets the current size to this value if not maximized
 
 	DisplayGrid* disp;		///< The DisplayGrid for this program, i.e. the \c wxPanel that displays the Knot.
 	Knot* knot;				///< The Knot object belonging to this program.
