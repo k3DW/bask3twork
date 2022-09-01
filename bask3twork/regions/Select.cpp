@@ -22,7 +22,7 @@ SelectRegion::SelectRegion(MainWindow* parent, int h, int w)
 	display->SetFont(Fonts::select);
 	update_display();
 
-	Add(display, 0, wxALIGN_CENTER | wxDOWN, GAP_3);
+	Add(display, 0, wxALIGN_CENTER | wxDOWN, Borders::sub_region);
 	Add(button_sizer, 0, wxEXPAND);
 	Layout();
 }

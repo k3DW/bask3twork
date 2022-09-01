@@ -2,6 +2,7 @@
 #include "Constants.h"
 #include "MainWindow.h"
 #include "controls/RegenDialog.h"
+#include "pure/Selection.h"
 
 RegenDialog::RegenDialog(MainWindow* parent, int h, int w)
 	: wxDialog(nullptr, wxID_ANY, "Grid")
@@ -17,8 +18,8 @@ RegenDialog::RegenDialog(MainWindow* parent, int h, int w)
 	textbox_sizer->Add(new wxStaticText(this, wxID_ANY, " by "), 0, wxALIGN_CENTER);
 	textbox_sizer->Add(width_box, 0, wxEXPAND);
 
-	main_sizer->Add(textbox_sizer, 0, wxEXPAND | wxALL, GAP_3);
-	main_sizer->Add(button, 0, wxEXPAND | (wxALL ^ wxUP), GAP_3);
+	main_sizer->Add(textbox_sizer, 0, wxEXPAND | wxALL, Borders::sub_region);
+	main_sizer->Add(button, 0, wxEXPAND | (wxALL ^ wxUP), Borders::sub_region);
 	SetSizer(main_sizer);
 
 	SetMinSize(wxDefaultSize);
@@ -26,19 +27,17 @@ RegenDialog::RegenDialog(MainWindow* parent, int h, int w)
 	SetSize(GetBestSize());
 }
 
-std::pair<int, int> RegenDialog::get_values() const
+std::optional<Point> RegenDialog::get_values() const
 {
-	static constexpr std::pair<int, int> default_pair{ -1, -1 };
-
-	int height = height_box->get_value<MAX_H>();
-	if (height == -1)
-		return default_pair;
+	auto height = height_box->get_value<MAX_H>();
+	if (not height)
+		return std::nullopt;
 	
-	int width = width_box->get_value<MAX_W>();
-	if (width == -1)
-		return default_pair;
+	auto width = width_box->get_value<MAX_W>();
+	if (not width)
+		return std::nullopt;
 
-	return { height, width };
+	return Point{ .i = *height, .j = *width };
 }
 
 
@@ -51,7 +50,7 @@ RegenDialogTextBox::RegenDialogTextBox(RegenDialog* parent, int default_value)
 }
 
 template <int maximum>
-int RegenDialogTextBox::get_value() const
+std::optional<int> RegenDialogTextBox::get_value() const
 {
 	wxString string = GetValue();
 
@@ -59,13 +58,13 @@ int RegenDialogTextBox::get_value() const
 	if (string.ToInt(&number) == false)
 	{
 		wxMessageBox("You can only enter whole numbers for the new grid size.", "Error: Non-integer grid size");
-		return -1;
+		return std::nullopt;
 	}
 
 	else if (number < 1)
 	{
 		wxMessageBox("You can only enter positive numbers for the new grid size.", "Error: Non-positive grid size");
-		return -1;
+		return std::nullopt;
 	}
 
 	return number;

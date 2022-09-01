@@ -1,9 +1,8 @@
 #pragma once
+#include "Forward.h"
 #include "pure/Connection.h"
 #include "pure/Enum.h"
-#include "Forward.h"
 #include <map>
-#include <random>
 #include <vector>
 /// \file
 
@@ -49,30 +48,26 @@ struct GlyphsTransformed
 };
 
 /// A struct to store the glyph information of the the Celtic Knots font
-struct Glyph : GlyphsTransformed
+struct Glyph : GlyphsTransformed, Connections
 {
 	int32_t code_point; ///< The character that gets displayed
-	
-	Connection up;
-	Connection down;
-	Connection left;
-	Connection right;
-	operator Connections() const { return { up, down, left, right }; }
 
 	GlyphFlag flags; ///< The total signature of this glyph
 	consteval GlyphFlag get_flags() const;
 
-	/// All the \c connectTo____ flags are determined from the other parameters, but the other parameters are given explicitly
-	consteval Glyph(int32_t code_point, GlyphsTransformed transformed, Connection up, Connection down, Connection left, Connection right) :
-		code_point(code_point), GlyphsTransformed(transformed), up(up), down(down), left(left), right(right)
-	{
-		flags = get_flags();
-	}
+	consteval Glyph(int32_t code_point, GlyphsTransformed transformed, Connections connections)
+		: GlyphsTransformed(transformed)
+		, Connections(connections)
+		, code_point(code_point)
+		, flags(get_flags())
+	{}
 
 	Glyph(const Glyph&) = delete;
 	Glyph(Glyph&&) = delete;
 	Glyph& operator=(const Glyph&) = delete;
 	Glyph& operator=(Glyph&&) = delete;
+
+	static const Glyph* Random(Connections connections, GlyphFlag flags);
 };
 
 consteval GlyphFlag Glyph::get_flags() const
@@ -112,36 +107,3 @@ consteval GlyphFlag Glyph::get_flags() const
 
 /// The default Glyph to fill the Knot upon initialization, which is set as the \c space character, \c \x20
 constexpr const Glyph* DefaultGlyph = &AllGlyphs[0];
-
-constexpr bool compatible(Connections known, Connections checking)
-{
-	return (known.up    == Connection::DO_NOT_CARE || known.up    == checking.up)
-	    && (known.down  == Connection::DO_NOT_CARE || known.down  == checking.down)
-	    && (known.left  == Connection::DO_NOT_CARE || known.left  == checking.left)
-	    && (known.right == Connection::DO_NOT_CARE || known.right == checking.right);
-}
-
-inline const Glyph* RandomGlyph(const Connections connections, const GlyphFlag flags)
-/// This function takes in the desired flags and outputs the vector of all glyphs which meet the criteria.
-/// 
-/// \param connections The \c Connections required. If any connection should be disregarded, then pass \c Connection::DO_NOT_CARE.
-/// \param flags The bit flags required for this \c Glyph. Any bits with a value of \c 0 are ignored, and any bits with a value of \c 1 are required.
-/// \return A pointer to a randomly selected \c Glyph that fits the criteria, or \c nullptr if nothing exists.
-{
-	static std::vector<const Glyph*> glyph_list(AllGlyphs.size(), nullptr);
-	glyph_list.clear();
-
-	for (auto& glyph : AllGlyphs)
-		if (compatible(connections, glyph) && (glyph.flags % flags))
-			glyph_list.push_back(&glyph);
-
-	if (glyph_list.empty())
-		return nullptr;
-	else
-	{
-		static std::mt19937 twister{ std::random_device{}() };
-		static const Glyph* glyph = nullptr;
-		std::ranges::sample(glyph_list, &glyph, 1, twister);
-		return glyph;
-	}
-}

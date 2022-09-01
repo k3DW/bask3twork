@@ -10,9 +10,9 @@ RegionSizer::RegionSizer(SelectRegion* select_region, GenerateRegion* generate_r
 {
 	AddStretchSpacer();
 	Add(select_region);
-	AddSpacer(GAP_2);
+	AddSpacer(Borders::inter_region);
 	Add(generate_region);
-	AddSpacer(GAP_2);
+	AddSpacer(Borders::inter_region);
 	Add(export_region);
 	AddStretchSpacer();
 }

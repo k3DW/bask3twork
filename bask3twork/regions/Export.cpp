@@ -19,7 +19,7 @@ void ExportRegion::regenerate(MainWindow* parent, int h, int w)
 		textbox->Destroy();
 	textbox = new wxTextCtrl(parent, wxID_ANY, "", wxDefaultPosition, wxSize(9 * w + 14, 19 * h + 7), wxTE_MULTILINE | wxTE_NO_VSCROLL | wxTE_READONLY);
 	textbox->SetFont(Fonts::export_);
-	Prepend(textbox, 0, wxALIGN_CENTER | wxUP | wxDOWN, GAP_3);
+	Prepend(textbox, 0, wxALIGN_CENTER | wxUP | wxDOWN, Borders::sub_region);
 }
 
 void ExportRegion::display(const Knot* knot)
