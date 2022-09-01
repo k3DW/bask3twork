@@ -1,5 +1,6 @@
 #pragma once
 #include <wx/frame.h>
+#include <wx/sizer.h>
 #include "Forward.h"
 
 /** As a more specialized \c wxFrame object, this class represents main window of the application;
@@ -43,14 +44,13 @@ public:
 	auto get_regen_dialog_handler(RegenDialog* regen_dialog); ///< The function bound to the \c RegenDialog button
 
 private:
-	void initSizerLayout();
 	void refresh_min_size(); ///< Sets the minimum size of the window to fit the content, and sets the current size to this value if not maximized
 
 	DisplayGrid* disp;		///< The DisplayGrid for this program, i.e. the \c wxPanel that displays the Knot.
 	Knot* knot;				///< The Knot object belonging to this program.
 	GridSizer* grid_sizer;
 
-	wxBoxSizer* mainSizer;
+	MainSizer* main_sizer;
 
 	Symmetry current_symmetry() const;
 
@@ -68,3 +68,11 @@ public:
  * \param w The initial width of the grid, but can be changed later when MainWindow::gridRegenFunction() is called
  * \param title The title of the whole window
  */
+
+
+
+class MainSizer : public wxBoxSizer
+{
+public:
+	MainSizer(GridSizer* grid_sizer, RegionSizer* region_sizer);
+};

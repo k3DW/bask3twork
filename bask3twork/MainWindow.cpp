@@ -16,31 +16,28 @@
 
 MainWindow::MainWindow(int h, int w, wxString title)
 	: wxFrame(nullptr, wxID_ANY, title), h(h), w(w)
+
 	, select_region(new SelectRegion(this, h, w))
+	, showing_selection(false)
 	, generate_region(new GenerateRegion(this))
 	, export_region(new ExportRegion(this, h, w))
+	, region_sizer(new RegionSizer(select_region, generate_region, export_region))
+
 	, menu_bar(new MenuBar(this))
+
 	, disp(new DisplayGrid(this, h, w))
-	, knot(new Knot(h, w, GetStatusBar()))
+	, knot(new Knot(h, w, GetStatusBar())) // Apparently you can call GetStatusBar() before CreateStatusBar()
+	, grid_sizer(new GridSizer(disp))
+
+	, main_sizer(new MainSizer(grid_sizer, region_sizer))
 {
 	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
-	initSizerLayout();
+	SetSizer(main_sizer);
 	refresh_min_size();
 }
 MainWindow::~MainWindow() {
 	Hide();
-}
-void MainWindow::initSizerLayout() {
-	region_sizer = new RegionSizer(select_region, generate_region, export_region);
-	grid_sizer = new GridSizer(disp);
-
-	mainSizer = new wxBoxSizer(wxHORIZONTAL);
-	mainSizer->AddStretchSpacer();
-	mainSizer->Add(grid_sizer, 0, wxEXPAND | wxALL, Borders::outside);
-	mainSizer->AddStretchSpacer();
-	mainSizer->Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), Borders::outside);
-	SetSizer(mainSizer);
 }
 
 void MainWindow::show_selection()
@@ -306,4 +303,15 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// and re-enable the generate buttons.
 	GetStatusBar()->SetStatusText(oldStatus);
 	evt.Skip();
+}
+
+
+
+MainSizer::MainSizer(GridSizer* grid_sizer, RegionSizer* region_sizer)
+	: wxBoxSizer(wxHORIZONTAL)
+{
+	AddStretchSpacer();
+	Add(grid_sizer, 0, wxEXPAND | wxALL, Borders::outside);
+	AddStretchSpacer();
+	Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), Borders::outside);
 }
