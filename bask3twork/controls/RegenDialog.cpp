@@ -18,8 +18,8 @@ RegenDialog::RegenDialog(MainWindow* parent, int h, int w)
 	textbox_sizer->Add(new wxStaticText(this, wxID_ANY, " by "), 0, wxALIGN_CENTER);
 	textbox_sizer->Add(width_box, 0, wxEXPAND);
 
-	main_sizer->Add(textbox_sizer, 0, wxEXPAND | wxALL, GAP_3);
-	main_sizer->Add(button, 0, wxEXPAND | (wxALL ^ wxUP), GAP_3);
+	main_sizer->Add(textbox_sizer, 0, wxEXPAND | wxALL, Borders::sub_region);
+	main_sizer->Add(button, 0, wxEXPAND | (wxALL ^ wxUP), Borders::sub_region);
 	SetSizer(main_sizer);
 
 	SetMinSize(wxDefaultSize);

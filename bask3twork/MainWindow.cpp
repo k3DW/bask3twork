@@ -37,9 +37,9 @@ void MainWindow::initSizerLayout() {
 
 	mainSizer = new wxBoxSizer(wxHORIZONTAL);
 	mainSizer->AddStretchSpacer();
-	mainSizer->Add(grid_sizer, 0, wxEXPAND | wxALL, GAP_1);
+	mainSizer->Add(grid_sizer, 0, wxEXPAND | wxALL, Borders::outside);
 	mainSizer->AddStretchSpacer();
-	mainSizer->Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), GAP_1);
+	mainSizer->Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), Borders::outside);
 	SetSizer(mainSizer);
 }
 
