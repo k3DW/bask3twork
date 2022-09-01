@@ -51,6 +51,8 @@ struct Glyph;
 using Glyphs = std::vector<std::vector<const Glyph*>>;
 struct GlyphsTransformed;
 
+struct GridSize;
+
 struct Point;
 struct Selection;
 

@@ -6,9 +6,9 @@
 class RegenDialog : public wxDialog
 {
 public:
-	RegenDialog(MainWindow* parent, int h, int w);
+	RegenDialog(MainWindow* parent, GridSize size);
 
-	std::optional<Point> get_values() const;
+	std::optional<GridSize> get_size() const;
 
 private:
 	wxBoxSizer* textbox_sizer;
@@ -26,6 +26,6 @@ private:
 
 	RegenDialogTextBox(RegenDialog* parent, int default_value);
 
-	template <int maximum>
+	template <size_t maximum>
 	std::optional<int> get_value() const;
 };

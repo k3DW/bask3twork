@@ -1,12 +1,13 @@
 #include "pch.h"
+#include "pure/GridSize.h"
 #include "grid/Knot.h"
 #include "pure/Glyph.h"
 #include "pure/Selection.h"
 #include "pure/Symmetry.h"
 #include "Constants.h"
 
-Knot::Knot(int h, int w, wxStatusBar* statusBar) : h(h), w(w), statusBar(statusBar), glyphs(h, std::vector<const Glyph*>(w, DefaultGlyph)) {}
-Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : h(glyphs.size()), w(glyphs[0].size()), statusBar(statusBar), glyphs(glyphs) {}
+Knot::Knot(GridSize size, wxStatusBar* statusBar) : size(size), statusBar(statusBar), glyphs(size.rows, std::vector<const Glyph*>(size.columns, DefaultGlyph)) {}
+Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : size{ .rows = (int)glyphs.size(), .columns = (int)glyphs[0].size() }, statusBar(statusBar), glyphs(glyphs) {}
 wxString Knot::get(const int i, const int j) const { return wxUniChar(glyphs[i][j]->code_point); }
 
 bool Knot::generate(Symmetry sym, Selection selection)
@@ -97,8 +98,8 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 
 	const bool isEvenRows = (selection.max.i - selection.min.i + 1) % 2 == 0;
 	const bool isEvenCols = (selection.max.j - selection.min.j + 1) % 2 == 0;
-	const bool isAllRows = selection.min.i == 0 && selection.max.i == h - 1;
-	const bool isAllCols = selection.min.j == 0 && selection.max.j == w - 1;
+	const bool isAllRows = selection.min.i == 0 && selection.max.i == size.rows - 1;
+	const bool isAllCols = selection.min.j == 0 && selection.max.j == size.columns -1;
 	const int iMid = (selection.min.i + selection.max.i) / 2;
 	const int jMid = (selection.min.j + selection.max.j) / 2;
 	const GlyphFlag midHoriFlag = isEvenRows ? GlyphFlag::CT_MIRD : GlyphFlag::SA_MIRX;
@@ -107,7 +108,7 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 	
 	const bool isSquare = bitRot4 || bitFwDi || bitBkDi;
 	const GlyphFlag midRot4Flag = isSquare ? (isEvenRows ? GlyphFlag::CT_ROT4R : !isEvenRows ? GlyphFlag::SA_ROT4 : GlyphFlag::NONE) : GlyphFlag::NONE;
-	const GlyphFlag selfFlag = (GlyphFlag::CT_SELFD * (h == 1)) | (GlyphFlag::CT_SELFR * (w == 1)); // If this selection is only 1 row in length in either direction, flag appropriately
+	const GlyphFlag selfFlag = (GlyphFlag::CT_SELFD * (size.rows == 1)) | (GlyphFlag::CT_SELFR * (size.columns == 1)); // If this selection is only 1 row in length in either direction, flag appropriately
 	
 	const bool doWrapX = wrapXEnabled && (!isSquare || wrapYEnabled);
 	const bool doWrapY = wrapYEnabled && (!isSquare || wrapXEnabled);
@@ -133,10 +134,10 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 				 *		the connection on the opposite side, from the neighbouring glyph on this particular side.
 				 */
 				{
-					i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[h - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[h - 1][j]->down)	: (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
-					i == h - 1	? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up)		: (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up		) ,
-					j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][w - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][w - 1]->right) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right	) ,
-					j == w - 1	? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left)		: (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	)
+					i == 0		? (!doWrapY ? Connection::EMPTY : !glyphGrid[size.rows - 1][j]	? Connection::DO_NOT_CARE : glyphGrid[size.rows - 1][j]->down)	: (!glyphGrid[i - 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i - 1][j]->down	) ,
+					i == size.rows - 1	? (!doWrapY ? Connection::EMPTY : !glyphGrid[0][j]		? Connection::DO_NOT_CARE : glyphGrid[0][j]->up)		: (!glyphGrid[i + 1][j] ? Connection::DO_NOT_CARE : glyphGrid[i + 1][j]->up		) ,
+					j == 0		? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][size.columns - 1]	? Connection::DO_NOT_CARE : glyphGrid[i][size.columns - 1]->right) : (!glyphGrid[i][j - 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j - 1]->right	) ,
+					j == size.columns - 1	? (!doWrapX ? Connection::EMPTY : !glyphGrid[i][0]		? Connection::DO_NOT_CARE : glyphGrid[i][0]->left)		: (!glyphGrid[i][j + 1] ? Connection::DO_NOT_CARE : glyphGrid[i][j + 1]->left	)
 				},
 				/** The \c boolFlags argument in Glyph::Random() has different components added, under various conditions. 
 				 *  (a) If this type of symmetry includes horizontal reflection, then add \c GlyphFlag::CT_MIRU, only if the selection encompasses all rows and if the current location is in the uppermost row of the Knot.
@@ -182,12 +183,12 @@ bool Knot::checkWrapping(Selection selection) const {
 	// If the wrap in the Y direction is not enabled
 	if (!wrapYEnabled) {
 		// Only do the check if the selection either includes the top or bottom row, but not both
-		if (selection.min.i == 0 && selection.max.i != h - 1) {
+		if (selection.min.i == 0 && selection.max.i != size.rows - 1) {
 			for (int j = selection.min.j; j <= selection.max.j; j++)
 				if (glyphs[selection.min.i][j]->up != Connection::EMPTY)
 					return false;
 		}
-		else if (selection.min.i != 0 && selection.max.i == h - 1) {
+		else if (selection.min.i != 0 && selection.max.i == size.rows - 1) {
 			for (int j = selection.min.j; j <= selection.max.j; j++)
 				if (glyphs[selection.max.i][j]->down != Connection::EMPTY)
 					return false;
@@ -197,12 +198,12 @@ bool Knot::checkWrapping(Selection selection) const {
 	// If the wrap in the X direction is not enabled
 	if (!wrapXEnabled) {
 		// Only do the check if the selection either includes the left or right column, but not both
-		if (selection.min.j == 0 && selection.max.j != w - 1) {
+		if (selection.min.j == 0 && selection.max.j != size.columns - 1) {
 			for (int i = selection.min.i; i <= selection.max.i; i++)
 				if (glyphs[i][selection.min.j]->left != Connection::EMPTY)
 					return false;
 		}
-		else if (selection.min.j != 0 && selection.max.j == w - 1) {
+		else if (selection.min.j != 0 && selection.max.j == size.columns - 1) {
 			for (int i = selection.min.i; i <= selection.max.i; i++)
 				if (glyphs[i][selection.max.j]->right != Connection::EMPTY)
 					return false;
@@ -214,17 +215,17 @@ bool Knot::checkWrapping(Selection selection) const {
 
 Symmetry Knot::symmetry_of(Selection selection) const
 {
-	return SymmetryChecker(glyphs, selection).get(h, w);
+	return SymmetryChecker(glyphs, selection).get(size);
 }
 
 wxString Knot::plaintext() const
 {
 	wxString output;
-	for (int i = 0; i < h; i++)
+	for (int i = 0; i < size.rows; i++)
 	{
-		for (int j = 0; j < w; j++)
+		for (int j = 0; j < size.columns; j++)
 			output << get(i, j);
-		if (i != h - 1)
+		if (i != size.rows - 1)
 			output << "\r\n";
 	}
 	return output;

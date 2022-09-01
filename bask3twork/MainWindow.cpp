@@ -6,6 +6,7 @@
 #include "grid/GridSizer.h"
 #include "pure/Enum.h"
 #include "pure/Glyph.h"
+#include "pure/GridSize.h"
 #include "pure/Symmetry.h"
 #include "regions/Select.h"
 #include "regions/Generate.h"
@@ -14,19 +15,20 @@
 #include "controls/MenuBar.h"
 #include "controls/RegenDialog.h"
 
-MainWindow::MainWindow(int h, int w, wxString title)
-	: wxFrame(nullptr, wxID_ANY, title), h(h), w(w)
+MainWindow::MainWindow(GridSize size, wxString title)
+	: wxFrame(nullptr, wxID_ANY, title)
+	, size(size)
 
-	, select_region(new SelectRegion(this, h, w))
+	, select_region(new SelectRegion(this, size))
 	, showing_selection(false)
 	, generate_region(new GenerateRegion(this))
-	, export_region(new ExportRegion(this, h, w))
+	, export_region(new ExportRegion(this, size))
 	, region_sizer(new RegionSizer(select_region, generate_region, export_region))
 
 	, menu_bar(new MenuBar(this))
 
-	, disp(new DisplayGrid(this, h, w))
-	, knot(new Knot(h, w, GetStatusBar())) // Apparently you can call GetStatusBar() before CreateStatusBar()
+	, disp(new DisplayGrid(this, size))
+	, knot(new Knot(size, GetStatusBar())) // Apparently you can call GetStatusBar() before CreateStatusBar()
 	, grid_sizer(new GridSizer(disp))
 
 	, main_sizer(new MainSizer(grid_sizer, region_sizer))
@@ -36,7 +38,8 @@ MainWindow::MainWindow(int h, int w, wxString title)
 	SetSizer(main_sizer);
 	refresh_min_size();
 }
-MainWindow::~MainWindow() {
+MainWindow::~MainWindow()
+{
 	Hide();
 }
 
@@ -67,7 +70,7 @@ void MainWindow::toggle_selection(wxCommandEvent& evt)
 void MainWindow::reset_selection()
 {
 	select_region->set_min({ 0, 0 });
-	select_region->set_max({ h - 1, w - 1 });
+	select_region->set_max({ size.rows - 1, size.columns - 1 });
 	select_region->update_display();
 	hide_selection();
 }
@@ -80,7 +83,7 @@ void MainWindow::reset_selection(wxCommandEvent& evt)
 void MainWindow::left_click_tile(wxMouseEvent& evt)
 {
 	wxWindowID id = evt.GetId();
-	select_region->set_min({ id / w, id % w });
+	select_region->set_min({ id / size.columns, id % size.columns });
 	select_region->update_display();
 	hide_selection();
 	evt.Skip();
@@ -88,7 +91,7 @@ void MainWindow::left_click_tile(wxMouseEvent& evt)
 void MainWindow::right_click_tile(wxMouseEvent& evt)
 {
 	wxWindowID id = evt.GetId();
-	select_region->set_max({ id / w, id % w });
+	select_region->set_max({ id / size.columns, id % size.columns });
 	select_region->update_display();
 	hide_selection();
 	evt.Skip();
@@ -116,8 +119,8 @@ void MainWindow::openFile() {
 	// Get the column count of the first row, must be 1 <= columns <= MAX_W
 	const size_t rowCount = file.GetLineCount();
 	const size_t colCount = file.GetFirstLine().size();
-	if (rowCount > MAX_H || colCount > MAX_W) {
-		wxMessageBox(wxString::Format("Please choose a smaller file. The file can only be %i rows by %i columns.", MAX_H, MAX_W), "Error: File is too large");
+	if (rowCount > Limits::rows || colCount > Limits::columns) {
+		wxMessageBox(wxString::Format("Please choose a smaller file. The file can only be %i rows by %i columns.", Limits::rows, Limits::columns), "Error: File is too large");
 		return;
 	}
 	if (rowCount < 1) {
@@ -156,20 +159,19 @@ void MainWindow::openFile() {
 	disp->Destroy();
 
 	// Set the height and width, then set the grid regen textbox values.
-	h = glyphs.size();
-	w = glyphs[0].size();
+	size = { .rows = (int)glyphs.size(), .columns = (int)glyphs[0].size() };
 
 	// Next, initialize the Knot with the variable \c glyphs and the status bar.
 	// Initialize the DisplayGrid with the newly generated Knot, and insert it between the stretch spacers in its sizer.
 	knot = new Knot(std::move(glyphs), GetStatusBar());
-	disp = new DisplayGrid(this, h, w);
+	disp = new DisplayGrid(this, size);
 	disp->draw(knot);
 	grid_sizer->update(disp);
 
 	// Then, reset the select coordinates with MainWindow::reset_selection()
 	// and regenerate and export textbox.
 	reset_selection();
-	export_region->regenerate(this, h, w);
+	export_region->regenerate(this, size);
 	export_region->display(knot);
 
 	// Reset the wrapping checkboxes
@@ -199,9 +201,9 @@ void MainWindow::saveFile() {
 	else file.Create();
 
 	// Write the knot to the file, line by line
-	for (int i = 0; i < knot->h; i++) {
+	for (int i = 0; i < size.rows; i++) {
 		wxString line = "";
-		for (int j = 0; j < knot->w; j++)
+		for (int j = 0; j < size.columns; j++)
 			line << knot->get(i, j);
 		file.AddLine(line);
 	}
@@ -227,25 +229,24 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 {
 	return [this, regen_dialog](wxCommandEvent& evt)
 	{
-		std::optional<Point> values = regen_dialog->get_values();
-		if (not values)
+		std::optional<GridSize> opt_size = regen_dialog->get_size();
+		if (not opt_size)
 			return;
 
-		h = values->i;
-		w = values->j;
+		size = *opt_size;
 
 		delete knot;
-		knot = new Knot(h, w, GetStatusBar());
+		knot = new Knot(size, GetStatusBar());
 
 		disp->Destroy();
-		disp = new DisplayGrid(this, h, w);
+		disp = new DisplayGrid(this, size);
 		grid_sizer->update(disp);
 
 		// / Then, reset the select coordinates with MainWindow::reset_selection(),
 		// / regenerate and export textbox,
 		// / and reset the knot wrapping \c wxMenuItem objects.
 		reset_selection();
-		export_region->regenerate(this, h, w);
+		export_region->regenerate(this, size);
 		menu_bar->reset_wrapping();
 
 		// / Lastly, refresh the minimum size of the window.
@@ -258,7 +259,7 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 
 void MainWindow::regenerate_grid()
 {
-	RegenDialog* regen_dialog = new RegenDialog(this, h, w);
+	RegenDialog* regen_dialog = new RegenDialog(this, size);
 	regen_dialog->Bind(wxEVT_BUTTON, get_regen_dialog_handler(regen_dialog));
 
 	regen_dialog->ShowModal();

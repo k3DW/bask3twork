@@ -2,13 +2,13 @@
 #include <wx/frame.h>
 #include <wx/sizer.h>
 #include "Forward.h"
+#include "pure/GridSize.h"
 
-/** As a more specialized \c wxFrame object, this class represents main window of the application;
-	most of the WX object member variables are not documented here. */
+///< As a more specialized \c wxFrame object, this class represents the main window of the application.
 class MainWindow : public wxFrame
 {
 public:
-	MainWindow(int h, int w, wxString title);
+	MainWindow(GridSize size, wxString title);
 	~MainWindow(); ///< Hides this MainWindow object automatically, so the destruction is not visible
 
 	void show_selection();
@@ -20,8 +20,7 @@ public:
 	void left_click_tile(wxMouseEvent& evt);  ///< Sets the left displayed coordinate, based on which Tile the left click takes place
 	void right_click_tile(wxMouseEvent& evt); ///< Sets the right displayed coordinate, based on which Tile the right click takes place
 
-	int h,		///< The height of the knot, i.e. the number of rows.
-		w;		///< The width of the knot, i.e. the number of columns.
+	GridSize size;
 
 public:
 	SelectRegion*   select_region;
@@ -59,13 +58,12 @@ public:
 };
 
 /* MainWindow constructor */
-/** \fn MainWindow::MainWindow(int h, int w, wxString title)
+/** \fn MainWindow::MainWindow(GridSize size, wxString title)
  * Sets the \c wxFrame base object with the proper title, sets the initial height and width of the grid and the initial selection coordinates.
  *
  * Also creates the status bar, sets the background colour, initializes all WX objects, and sets the window size and minimum size.
  *
- * \param h The initial height of the grid, but can be changed later when MainWindow::gridRegenFunction() is called
- * \param w The initial width of the grid, but can be changed later when MainWindow::gridRegenFunction() is called
+ * \param size The initial size of the grid, which can be changed later when MainWindow::gridRegenFunction() is called
  * \param title The title of the whole window
  */
 

@@ -5,10 +5,10 @@
 class ExportRegion : public wxStaticBoxSizer
 {
 public:
-	ExportRegion(MainWindow* parent, int h, int w);
+	ExportRegion(MainWindow* parent, GridSize size);
 
-	void regenerate(MainWindow* parent, int h, int w); ///< Define the export textbox with a size dependent on the height and width of the knot
-	void display(const Knot* knot);                    ///< Output the contents of the knot into the export textbox
+	void regenerate(MainWindow* parent, GridSize size); ///< Define the export textbox with a size dependent on the height and width of the knot
+	void display(const Knot* knot);                     ///< Output the contents of the knot into the export textbox
 
 private:
 	wxTextCtrl* textbox;
