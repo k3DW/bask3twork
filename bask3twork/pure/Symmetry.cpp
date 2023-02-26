@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "pure/Symmetry.h"
 
-Symmetry SymmetryChecker::get(int h, int w) const
+Symmetry SymmetryChecker::get(GridSize size) const
 {
-	if (selection.is_full_selection(h, w))
+	if (selection.is_full_selection(size))
 	{
 		Symmetry non_square = Symmetry::HoriSym | Symmetry::VertSym | Symmetry::Rot2Sym;
 		Symmetry square = selection.is_square() * (Symmetry::Rot4Sym | Symmetry::FwdDiag | Symmetry::BackDiag);

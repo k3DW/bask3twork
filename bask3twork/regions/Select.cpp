@@ -1,11 +1,12 @@
 #include "pch.h"
+#include "pure/GridSize.h"
 #include "regions/Select.h"
 #include "Constants.h"
 #include "MainWindow.h"
 
-SelectRegion::SelectRegion(MainWindow* parent, int h, int w)
+SelectRegion::SelectRegion(MainWindow* parent, GridSize size)
 	: wxStaticBoxSizer(wxVERTICAL, parent, "Select")
-	, selection{ .min{ 0, 0 }, .max{ h - 1, w - 1 } }
+	, selection{ .min{ 0, 0 }, .max{ size.rows - 1, size.columns - 1 } }
 {
 	toggle_button = new wxButton(parent, wxID_ANY, "Show", wxDefaultPosition, wxSize(65,23));
 	toggle_button->Bind(wxEVT_BUTTON, &MainWindow::toggle_selection, parent);

@@ -7,6 +7,7 @@
 // Main
 class App;
 class MainWindow;
+class MainSizer;
 struct Version;
 
 
@@ -49,6 +50,8 @@ enum class GlyphFlag;
 struct Glyph;
 using Glyphs = std::vector<std::vector<const Glyph*>>;
 struct GlyphsTransformed;
+
+struct GridSize;
 
 struct Point;
 struct Selection;

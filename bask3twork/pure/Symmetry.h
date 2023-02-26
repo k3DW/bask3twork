@@ -1,6 +1,7 @@
 #pragma once
 #include "pure/Enum.h"
 #include "pure/Glyph.h"
+#include "pure/GridSize.h"
 #include "pure/Selection.h"
 
 /** All the types of symmetry which can be used in this program.
@@ -39,7 +40,7 @@ public:
 		, corners{ IteratorBuilder(selection.min, &glyphs), IteratorBuilder(Point{ selection.min.i, selection.max.j }, &glyphs), IteratorBuilder(Point{ selection.max.i, selection.min.j }, &glyphs), IteratorBuilder(selection.max, &glyphs), }
 	{}
 
-	Symmetry get(int h, int w) const;
+	Symmetry get(GridSize size) const;
 
 private:
 	enum class CornerType { upper_left, upper_right, lower_left, lower_right, };

@@ -2,13 +2,14 @@
 #include "Constants.h"
 #include "MainWindow.h"
 #include "controls/RegenDialog.h"
+#include "pure/GridSize.h"
 #include "pure/Selection.h"
 
-RegenDialog::RegenDialog(MainWindow* parent, int h, int w)
+RegenDialog::RegenDialog(MainWindow* parent, GridSize size)
 	: wxDialog(nullptr, wxID_ANY, "Grid")
 	, textbox_sizer(new wxBoxSizer(wxHORIZONTAL))
-	, height_box(new RegenDialogTextBox(this, h))
-	, width_box(new RegenDialogTextBox(this, w))
+	, height_box(new RegenDialogTextBox(this, size.rows))
+	, width_box(new RegenDialogTextBox(this, size.columns))
 	, main_sizer(new wxBoxSizer(wxVERTICAL))
 	, button(new wxButton(this, wxID_ANY, "Regenerate"))
 {
@@ -27,17 +28,17 @@ RegenDialog::RegenDialog(MainWindow* parent, int h, int w)
 	SetSize(GetBestSize());
 }
 
-std::optional<Point> RegenDialog::get_values() const
+std::optional<GridSize> RegenDialog::get_size() const
 {
-	auto height = height_box->get_value<MAX_H>();
+	auto height = height_box->get_value<Limits::rows>();
 	if (not height)
 		return std::nullopt;
 	
-	auto width = width_box->get_value<MAX_W>();
+	auto width = width_box->get_value<Limits::columns>();
 	if (not width)
 		return std::nullopt;
 
-	return Point{ .i = *height, .j = *width };
+	return GridSize{ .rows = *height, .columns = *width };
 }
 
 
@@ -49,7 +50,7 @@ RegenDialogTextBox::RegenDialogTextBox(RegenDialog* parent, int default_value)
 	SetFont(Fonts::regenerate);
 }
 
-template <int maximum>
+template <size_t maximum>
 std::optional<int> RegenDialogTextBox::get_value() const
 {
 	wxString string = GetValue();

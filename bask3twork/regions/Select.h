@@ -6,7 +6,7 @@
 class SelectRegion : public wxStaticBoxSizer
 {
 public:
-	SelectRegion(MainWindow* parent, int h, int w);
+	SelectRegion(MainWindow* parent, GridSize size);
 
 	void update_display();     ///< Updates the displayed selection coordinates, also has other effects.
 	void set_min(Point point); ///< Sets the \c min portion of the displayed selection

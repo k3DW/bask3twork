@@ -1,17 +1,17 @@
 #pragma once
 #include <optional>
 #include "Forward.h"
+#include "pure/GridSize.h"
 
 /** This class represents a knot object as a grid of glyphs, with corresponding public functions to generate various symmetries. */
 class Knot
 {
 public:
-	Knot(int h, int w, wxStatusBar* statusBar);
+	Knot(GridSize size, wxStatusBar* statusBar);
 	Knot(Glyphs&& glyphs, wxStatusBar* statusBar);
 	wxString get(const int i, const int j) const;
 
-	const int h, ///< The height of the knot, i.e. the number of rows. This is publicly accessible but not mutable
-			  w; ///< The width of the knot, i.e. the number of columns. This is publicly accessible but not mutable
+	GridSize size;                  ///< The size of the knot
 	wxStatusBar* const statusBar;	///< The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot
 	bool wrapXEnabled = false;		///< Is wrapping enabled in the X direction
 	bool wrapYEnabled = false;		///< Is wrapping enabled in the Y direction
@@ -31,11 +31,10 @@ private:
 };
 
 /* Knot::Knot */
-/** \fn Knot::Knot(int h, int w, wxStatusBar* statusBar)
+/** \fn Knot::Knot(GridSize size, wxStatusBar* statusBar)
  * Constructor for a Knot object with default data.
  * 
- * \param h The height of the knot, i.e. the number of rows.
- * \param w The width of the knot, i.e. the number of columns.
+ * \param size The size of the knot, i.e. the number of rows and columns.
  * \param statusBar The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot. This will usually be passed as GetStatusBar() when called.
  */
 /** \fn Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar)

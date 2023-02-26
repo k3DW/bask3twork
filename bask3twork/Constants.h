@@ -4,8 +4,11 @@
 #include <array>
 /// \file
 
-constexpr size_t MAX_H = 100;	///< The maximum height of the grid allowed in the program, in terms of tiles.
-constexpr size_t MAX_W = 100;	///< The maximum width of the grid allowed in the program, in terms of tiles
+namespace Limits
+{
+	constexpr size_t rows    = 100; ///< The maximum height of the grid allowed in the program, in terms of tiles.
+	constexpr size_t columns = 100; ///< The maximum width of the grid allowed in the program, in terms of tiles
+}	
 
 namespace Colours
 {
