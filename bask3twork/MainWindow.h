@@ -49,7 +49,7 @@ private:
 	Knot* knot;				///< The Knot object belonging to this program.
 	wxBoxSizer* grid_sizer;
 
-	MainSizer* main_sizer;
+	wxBoxSizer* main_sizer;
 
 	Symmetry current_symmetry() const;
 
@@ -59,6 +59,7 @@ public:
 private:
 	static wxBoxSizer* make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region, ExportRegion* export_region);
 	static wxBoxSizer* make_grid_sizer(DisplayGrid* display);
+	static wxBoxSizer* make_main_sizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer);
 };
 
 /* MainWindow constructor */
@@ -70,11 +71,3 @@ private:
  * \param size The initial size of the grid, which can be changed later when MainWindow::gridRegenFunction() is called
  * \param title The title of the whole window
  */
-
-
-
-class MainSizer : public wxBoxSizer
-{
-public:
-	MainSizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer);
-};

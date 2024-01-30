@@ -7,7 +7,6 @@
 // Main
 class App;
 class MainWindow;
-class MainSizer;
 struct Version;
 
 

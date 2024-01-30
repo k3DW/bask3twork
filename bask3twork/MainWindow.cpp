@@ -29,7 +29,7 @@ MainWindow::MainWindow(GridSize size, wxString title)
 	, knot(new Knot(size, GetStatusBar())) // Apparently you can call GetStatusBar() before CreateStatusBar()
 	, grid_sizer(make_grid_sizer(disp))
 
-	, main_sizer(new MainSizer(grid_sizer, region_sizer))
+	, main_sizer(make_main_sizer(grid_sizer, region_sizer))
 {
 	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
@@ -328,13 +328,12 @@ wxBoxSizer* MainWindow::make_grid_sizer(DisplayGrid* display)
 	return sizer;
 }
 
-
-
-MainSizer::MainSizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer)
-	: wxBoxSizer(wxHORIZONTAL)
+wxBoxSizer* make_main_sizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer)
 {
-	AddStretchSpacer();
-	Add(grid_sizer, 0, wxEXPAND | wxALL, Borders::outside);
-	AddStretchSpacer();
-	Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), Borders::outside);
+	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+	sizer->AddStretchSpacer();
+	sizer->Add(grid_sizer, 0, wxEXPAND | wxALL, Borders::outside);
+	sizer->AddStretchSpacer();
+	sizer->Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), Borders::outside);
+	return sizer;
 }
