@@ -27,7 +27,7 @@ public:
 	bool            showing_selection;
 	GenerateRegion* generate_region;
 	ExportRegion*   export_region;
-	RegionSizer*    region_sizer;
+	wxBoxSizer*     region_sizer;
 
 	MenuBar* menu_bar;
 
@@ -55,6 +55,9 @@ private:
 
 public:
 	void generateKnot(wxCommandEvent& evt);			///< This function checks which of the generating buttons was pressed and calls the appropriate Knot function.
+
+private:
+	static wxBoxSizer* make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region, ExportRegion* export_region);
 };
 
 /* MainWindow constructor */
@@ -72,5 +75,5 @@ public:
 class MainSizer : public wxBoxSizer
 {
 public:
-	MainSizer(GridSizer* grid_sizer, RegionSizer* region_sizer);
+	MainSizer(GridSizer* grid_sizer, wxBoxSizer* region_sizer);
 };

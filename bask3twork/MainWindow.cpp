@@ -11,7 +11,6 @@
 #include "regions/Select.h"
 #include "regions/Generate.h"
 #include "regions/Export.h"
-#include "regions/RegionSizer.h"
 #include "controls/MenuBar.h"
 #include "controls/RegenDialog.h"
 
@@ -23,7 +22,7 @@ MainWindow::MainWindow(GridSize size, wxString title)
 	, showing_selection(false)
 	, generate_region(new GenerateRegion(this))
 	, export_region(new ExportRegion(this, size))
-	, region_sizer(new RegionSizer(select_region, generate_region, export_region))
+	, region_sizer(make_region_sizer(select_region, generate_region, export_region))
 
 	, menu_bar(new MenuBar(this))
 
@@ -308,7 +307,22 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 
 
 
-MainSizer::MainSizer(GridSizer* grid_sizer, RegionSizer* region_sizer)
+wxBoxSizer* MainWindow::make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region, ExportRegion* export_region)
+{
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->AddStretchSpacer();
+	sizer->Add(select_region);
+	sizer->AddSpacer(Borders::inter_region);
+	sizer->Add(generate_region);
+	sizer->AddSpacer(Borders::inter_region);
+	sizer->Add(export_region);
+	sizer->AddStretchSpacer();
+	return sizer;
+}
+
+
+
+MainSizer::MainSizer(GridSizer* grid_sizer, wxBoxSizer* region_sizer)
 	: wxBoxSizer(wxHORIZONTAL)
 {
 	AddStretchSpacer();

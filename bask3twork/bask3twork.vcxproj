@@ -27,7 +27,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="pure\Glyph.cpp" />
-    <ClCompile Include="regions\RegionSizer.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="grid\Display.cpp" />
     <ClCompile Include="regions\Export.cpp" />
@@ -61,7 +60,6 @@
     <ClInclude Include="pure\Selection.h" />
     <ClInclude Include="grid\Tile.h" />
     <ClInclude Include="Version.h" />
-    <ClInclude Include="regions\RegionSizer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\Resource.rc" />
