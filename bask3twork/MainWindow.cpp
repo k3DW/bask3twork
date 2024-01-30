@@ -328,7 +328,7 @@ wxBoxSizer* MainWindow::make_grid_sizer(DisplayGrid* display)
 	return sizer;
 }
 
-wxBoxSizer* make_main_sizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer)
+wxBoxSizer* MainWindow::make_main_sizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer)
 {
 	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
 	sizer->AddStretchSpacer();
