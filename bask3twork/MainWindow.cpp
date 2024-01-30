@@ -3,7 +3,6 @@
 #include "MainWindow.h"
 #include "grid/Display.h"
 #include "grid/Knot.h"
-#include "grid/GridSizer.h"
 #include "pure/Enum.h"
 #include "pure/Glyph.h"
 #include "pure/GridSize.h"
@@ -11,7 +10,6 @@
 #include "regions/Select.h"
 #include "regions/Generate.h"
 #include "regions/Export.h"
-#include "regions/RegionSizer.h"
 #include "controls/MenuBar.h"
 #include "controls/RegenDialog.h"
 
@@ -23,15 +21,15 @@ MainWindow::MainWindow(GridSize size, wxString title)
 	, showing_selection(false)
 	, generate_region(new GenerateRegion(this))
 	, export_region(new ExportRegion(this, size))
-	, region_sizer(new RegionSizer(select_region, generate_region, export_region))
+	, region_sizer(make_region_sizer(select_region, generate_region, export_region))
 
 	, menu_bar(new MenuBar(this))
 
 	, disp(new DisplayGrid(this, size))
 	, knot(new Knot(size, GetStatusBar())) // Apparently you can call GetStatusBar() before CreateStatusBar()
-	, grid_sizer(new GridSizer(disp))
+	, grid_sizer(make_grid_sizer(disp))
 
-	, main_sizer(new MainSizer(grid_sizer, region_sizer))
+	, main_sizer(make_main_sizer(grid_sizer, region_sizer))
 {
 	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
@@ -166,7 +164,7 @@ void MainWindow::openFile() {
 	knot = new Knot(std::move(glyphs), GetStatusBar());
 	disp = new DisplayGrid(this, size);
 	disp->draw(knot);
-	grid_sizer->update(disp);
+	grid_sizer->Insert(1, disp, 0, wxEXPAND);
 
 	// Then, reset the select coordinates with MainWindow::reset_selection()
 	// and regenerate and export textbox.
@@ -240,7 +238,7 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 
 		disp->Destroy();
 		disp = new DisplayGrid(this, size);
-		grid_sizer->update(disp);
+		grid_sizer->Insert(1, disp, 0, wxEXPAND);
 
 		// / Then, reset the select coordinates with MainWindow::reset_selection(),
 		// / regenerate and export textbox,
@@ -308,11 +306,34 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 
 
 
-MainSizer::MainSizer(GridSizer* grid_sizer, RegionSizer* region_sizer)
-	: wxBoxSizer(wxHORIZONTAL)
+wxBoxSizer* MainWindow::make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region, ExportRegion* export_region)
 {
-	AddStretchSpacer();
-	Add(grid_sizer, 0, wxEXPAND | wxALL, Borders::outside);
-	AddStretchSpacer();
-	Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), Borders::outside);
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->AddStretchSpacer();
+	sizer->Add(select_region);
+	sizer->AddSpacer(Borders::inter_region);
+	sizer->Add(generate_region);
+	sizer->AddSpacer(Borders::inter_region);
+	sizer->Add(export_region);
+	sizer->AddStretchSpacer();
+	return sizer;
+}
+
+wxBoxSizer* MainWindow::make_grid_sizer(DisplayGrid* display)
+{
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->AddStretchSpacer();
+	sizer->Add(display);
+	sizer->AddStretchSpacer();
+	return sizer;
+}
+
+wxBoxSizer* make_main_sizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer)
+{
+	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+	sizer->AddStretchSpacer();
+	sizer->Add(grid_sizer, 0, wxEXPAND | wxALL, Borders::outside);
+	sizer->AddStretchSpacer();
+	sizer->Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), Borders::outside);
+	return sizer;
 }

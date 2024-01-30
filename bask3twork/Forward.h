@@ -7,7 +7,6 @@
 // Main
 class App;
 class MainWindow;
-class MainSizer;
 struct Version;
 
 
@@ -31,7 +30,6 @@ class RegenDialogTextBox;
 
 // Grid
 class DisplayGrid;
-class GridSizer;
 class Knot;
 
 class Tile;
@@ -65,5 +63,4 @@ class SymmetryChecker;
 class ExportRegion;
 class GenerateRegion;
 class GenerateRegionButton;
-class RegionSizer;
 class SelectRegion;

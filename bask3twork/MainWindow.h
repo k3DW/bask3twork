@@ -27,7 +27,7 @@ public:
 	bool            showing_selection;
 	GenerateRegion* generate_region;
 	ExportRegion*   export_region;
-	RegionSizer*    region_sizer;
+	wxBoxSizer*     region_sizer;
 
 	MenuBar* menu_bar;
 
@@ -47,14 +47,19 @@ private:
 
 	DisplayGrid* disp;		///< The DisplayGrid for this program, i.e. the \c wxPanel that displays the Knot.
 	Knot* knot;				///< The Knot object belonging to this program.
-	GridSizer* grid_sizer;
+	wxBoxSizer* grid_sizer;
 
-	MainSizer* main_sizer;
+	wxBoxSizer* main_sizer;
 
 	Symmetry current_symmetry() const;
 
 public:
 	void generateKnot(wxCommandEvent& evt);			///< This function checks which of the generating buttons was pressed and calls the appropriate Knot function.
+
+private:
+	static wxBoxSizer* make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region, ExportRegion* export_region);
+	static wxBoxSizer* make_grid_sizer(DisplayGrid* display);
+	static wxBoxSizer* make_main_sizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer);
 };
 
 /* MainWindow constructor */
@@ -66,11 +71,3 @@ public:
  * \param size The initial size of the grid, which can be changed later when MainWindow::gridRegenFunction() is called
  * \param title The title of the whole window
  */
-
-
-
-class MainSizer : public wxBoxSizer
-{
-public:
-	MainSizer(GridSizer* grid_sizer, RegionSizer* region_sizer);
-};
