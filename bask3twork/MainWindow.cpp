@@ -3,7 +3,6 @@
 #include "MainWindow.h"
 #include "grid/Display.h"
 #include "grid/Knot.h"
-#include "grid/GridSizer.h"
 #include "pure/Enum.h"
 #include "pure/Glyph.h"
 #include "pure/GridSize.h"
@@ -28,7 +27,7 @@ MainWindow::MainWindow(GridSize size, wxString title)
 
 	, disp(new DisplayGrid(this, size))
 	, knot(new Knot(size, GetStatusBar())) // Apparently you can call GetStatusBar() before CreateStatusBar()
-	, grid_sizer(new GridSizer(disp))
+	, grid_sizer(make_grid_sizer(disp))
 
 	, main_sizer(new MainSizer(grid_sizer, region_sizer))
 {
@@ -165,7 +164,7 @@ void MainWindow::openFile() {
 	knot = new Knot(std::move(glyphs), GetStatusBar());
 	disp = new DisplayGrid(this, size);
 	disp->draw(knot);
-	grid_sizer->update(disp);
+	grid_sizer->Insert(1, disp, 0, wxEXPAND);
 
 	// Then, reset the select coordinates with MainWindow::reset_selection()
 	// and regenerate and export textbox.
@@ -239,7 +238,7 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 
 		disp->Destroy();
 		disp = new DisplayGrid(this, size);
-		grid_sizer->update(disp);
+		grid_sizer->Insert(1, disp, 0, wxEXPAND);
 
 		// / Then, reset the select coordinates with MainWindow::reset_selection(),
 		// / regenerate and export textbox,
@@ -320,9 +319,18 @@ wxBoxSizer* MainWindow::make_region_sizer(SelectRegion* select_region, GenerateR
 	return sizer;
 }
 
+wxBoxSizer* MainWindow::make_grid_sizer(DisplayGrid* display)
+{
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->AddStretchSpacer();
+	sizer->Add(display);
+	sizer->AddStretchSpacer();
+	return sizer;
+}
 
 
-MainSizer::MainSizer(GridSizer* grid_sizer, wxBoxSizer* region_sizer)
+
+MainSizer::MainSizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer)
 	: wxBoxSizer(wxHORIZONTAL)
 {
 	AddStretchSpacer();

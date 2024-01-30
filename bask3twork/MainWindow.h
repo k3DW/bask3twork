@@ -47,7 +47,7 @@ private:
 
 	DisplayGrid* disp;		///< The DisplayGrid for this program, i.e. the \c wxPanel that displays the Knot.
 	Knot* knot;				///< The Knot object belonging to this program.
-	GridSizer* grid_sizer;
+	wxBoxSizer* grid_sizer;
 
 	MainSizer* main_sizer;
 
@@ -58,6 +58,7 @@ public:
 
 private:
 	static wxBoxSizer* make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region, ExportRegion* export_region);
+	static wxBoxSizer* make_grid_sizer(DisplayGrid* display);
 };
 
 /* MainWindow constructor */
@@ -75,5 +76,5 @@ private:
 class MainSizer : public wxBoxSizer
 {
 public:
-	MainSizer(GridSizer* grid_sizer, wxBoxSizer* region_sizer);
+	MainSizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer);
 };

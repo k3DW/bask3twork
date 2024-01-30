@@ -31,7 +31,6 @@ class RegenDialogTextBox;
 
 // Grid
 class DisplayGrid;
-class GridSizer;
 class Knot;
 
 class Tile;
