@@ -3,9 +3,9 @@
 #include "grid/Display.h"
 #include "Constants.h"
 
-Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxColour& base)
+Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const TileColours& colours)
 	: wxStaticText(parent, id, label)
-	, base(base)
+	, colours(colours)
 {
 	SetFont(Fonts::glyph);
 	unhighlight();
@@ -22,13 +22,13 @@ void Tile::set_colour()
 	switch (state)
 	{
 	break; case TileState::none:
-		SetBackgroundColour(base);
+		SetBackgroundColour(colours.base);
 	break; case TileState::highlighted:
-		SetBackgroundColour(Colours::highlight);
+		SetBackgroundColour(colours.highlighted);
 	break; case TileState::locked:
-		SetBackgroundColour(Colours::lock);
+		SetBackgroundColour(colours.locked);
 	break; case TileState::highlighted | TileState::locked:
-		SetBackgroundColour(Colours::highlight_lock);
+		SetBackgroundColour(colours.highlighted_locked);
 	}
 }
 
