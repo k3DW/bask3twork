@@ -47,6 +47,22 @@ void DisplayGrid::unhighlight(bool refresh) {// This function clears all tiles f
 	}
 }
 
+void DisplayGrid::lock(Selection selection)
+{
+	for (int i = selection.min.i; i <= selection.max.i; i++)
+		for (int j = selection.min.j; j <= selection.max.j; j++)
+			tiles[i][j]->lock();
+	Refresh();
+}
+
+void DisplayGrid::unlock(Selection selection)
+{
+	for (int i = selection.min.i; i <= selection.max.i; i++)
+		for (int j = selection.min.j; j <= selection.max.j; j++)
+			tiles[i][j]->unlock();
+	Refresh();
+}
+
 void DisplayGrid::draw(const Knot* knot)
 {
 	for (int i = 0; i < knot->size.rows; i++)

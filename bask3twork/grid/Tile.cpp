@@ -14,6 +14,9 @@ Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxCo
 void Tile::highlight()   { state |= TileState::highlighted; set_colour(); }
 void Tile::unhighlight() { state &= ~TileState::highlighted; set_colour(); }
 
+void Tile::lock()   { state |= TileState::locked; set_colour(); }
+void Tile::unlock() { state &= ~TileState::locked; set_colour(); }
+
 void Tile::set_colour()
 {
 	switch (state)
@@ -22,6 +25,10 @@ void Tile::set_colour()
 		SetBackgroundColour(base);
 	break; case TileState::highlighted:
 		SetBackgroundColour(Colours::highlight);
+	break; case TileState::locked:
+		SetBackgroundColour(Colours::lock);
+	break; case TileState::highlighted | TileState::locked:
+		SetBackgroundColour(Colours::highlight_lock);
 	}
 }
 

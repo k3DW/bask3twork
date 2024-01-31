@@ -8,6 +8,7 @@ enum class TileState
 {
 	none        = 0b00,
 	highlighted = 0b01,
+	locked      = 0b10,
 };
 
 template <> struct opt_into_enum_operations<TileState> : std::true_type {};
@@ -20,6 +21,9 @@ public:
 	
 	void highlight();
 	void unhighlight();
+
+	void lock();
+	void unlock();
 	
 private:
 	void set_colour();

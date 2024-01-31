@@ -82,11 +82,13 @@ void MainWindow::reset_selection(wxCommandEvent& evt)
 
 void MainWindow::lock_selection(wxCommandEvent& evt)
 {
+	disp->lock(select_region->get_selection());
 	evt.Skip();
 }
 
 void MainWindow::unlock_selection(wxCommandEvent& evt)
 {
+	disp->unlock(select_region->get_selection());
 	evt.Skip();
 }
 

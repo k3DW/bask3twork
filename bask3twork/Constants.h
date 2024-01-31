@@ -13,7 +13,10 @@ namespace Limits
 namespace Colours
 {
 	const wxColour background = wxColour(240, 240, 240); ///< The default background colour of the whole program
-	const wxColour highlight  = wxColour(150, 200, 255); ///< The highlighted colour of a \c Tile
+
+	const wxColour highlight      = wxColour(150, 200, 255); ///< The colour of a highlighted \c Tile
+	const wxColour lock           = wxColour(255, 144, 84);  ///< The colour of a locked \c Tile
+	const wxColour highlight_lock = wxColour(198, 175, 177); ///< The colour of a highlighted and locked \c Tile, see https://meyerweb.com/eric/tools/color-blend/#96C8FF:FF9054:10:rgbd
 
 	/// The colours of the Tile objects in the DisplayGrid, in a repeating 2x2 pattern
 	const std::array tile =
