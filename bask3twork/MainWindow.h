@@ -16,6 +16,8 @@ public:
 	void toggle_selection(wxCommandEvent& evt);
 	void reset_selection();
 	void reset_selection(wxCommandEvent& evt);
+	void lock_selection(wxCommandEvent& evt);
+	void unlock_selection(wxCommandEvent& evt);
 
 	void left_click_tile(wxMouseEvent& evt);  ///< Sets the left displayed coordinate, based on which Tile the left click takes place
 	void right_click_tile(wxMouseEvent& evt); ///< Sets the right displayed coordinate, based on which Tile the right click takes place
