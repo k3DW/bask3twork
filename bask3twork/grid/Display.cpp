@@ -55,12 +55,24 @@ void DisplayGrid::lock(Selection selection)
 	Refresh();
 }
 
+void DisplayGrid::lock(Point point)
+{
+	tiles[point.i][point.j]->lock();
+	tiles[point.i][point.j]->Refresh();
+}
+
 void DisplayGrid::unlock(Selection selection)
 {
 	for (int i = selection.min.i; i <= selection.max.i; i++)
 		for (int j = selection.min.j; j <= selection.max.j; j++)
 			tiles[i][j]->unlock();
 	Refresh();
+}
+
+void DisplayGrid::unlock(Point point)
+{
+	tiles[point.i][point.j]->unlock();
+	tiles[point.i][point.j]->Refresh();
 }
 
 void DisplayGrid::draw(const Knot* knot)
