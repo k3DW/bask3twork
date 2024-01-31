@@ -45,6 +45,7 @@ void MainWindow::show_selection()
 {
 	select_region->normalize();
 	select_region->set_toggle_hide();
+	select_region->enable_lock_buttons();
 	disp->highlight(select_region->get_selection());
 	generate_region->enable_buttons(current_symmetry());
 	showing_selection = true;
@@ -52,6 +53,7 @@ void MainWindow::show_selection()
 void MainWindow::hide_selection()
 {
 	select_region->set_toggle_show();
+	select_region->disable_lock_buttons();
 	disp->unhighlight(true);
 	generate_region->disable_buttons();
 	showing_selection = false;
@@ -75,6 +77,18 @@ void MainWindow::reset_selection()
 void MainWindow::reset_selection(wxCommandEvent& evt)
 {
 	reset_selection();
+	evt.Skip();
+}
+
+void MainWindow::lock_selection(wxCommandEvent& evt)
+{
+	disp->lock(select_region->get_selection());
+	evt.Skip();
+}
+
+void MainWindow::unlock_selection(wxCommandEvent& evt)
+{
+	disp->unlock(select_region->get_selection());
 	evt.Skip();
 }
 
@@ -328,7 +342,7 @@ wxBoxSizer* MainWindow::make_grid_sizer(DisplayGrid* display)
 	return sizer;
 }
 
-wxBoxSizer* make_main_sizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer)
+wxBoxSizer* MainWindow::make_main_sizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer)
 {
 	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
 	sizer->AddStretchSpacer();

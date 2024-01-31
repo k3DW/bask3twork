@@ -14,9 +14,22 @@ SelectRegion::SelectRegion(MainWindow* parent, GridSize size)
 	reset_button = new wxButton(parent, wxID_ANY, "Reset", wxDefaultPosition, wxSize(65,23));
 	reset_button->Bind(wxEVT_BUTTON, &MainWindow::reset_selection, parent);
 
-	button_sizer = new wxBoxSizer(wxHORIZONTAL);
-	button_sizer->Add(toggle_button);
-	button_sizer->Add(reset_button);
+	selecting_button_sizer = new wxBoxSizer(wxHORIZONTAL);
+	selecting_button_sizer->Add(toggle_button);
+	selecting_button_sizer->Add(reset_button);
+
+
+	lock_button = new wxButton(parent, wxID_ANY, "Lock", wxDefaultPosition, wxSize(65,23));
+	lock_button->Bind(wxEVT_BUTTON, &MainWindow::lock_selection, parent);
+	lock_button->Disable();
+
+	unlock_button = new wxButton(parent, wxID_ANY, "Unlock", wxDefaultPosition, wxSize(65,23));
+	unlock_button->Bind(wxEVT_BUTTON, &MainWindow::unlock_selection, parent);
+	unlock_button->Disable();
+
+	locking_button_sizer = new wxBoxSizer(wxHORIZONTAL);
+	locking_button_sizer->Add(lock_button);
+	locking_button_sizer->Add(unlock_button);
 
 
 	display = new wxStaticText(parent, wxID_ANY, "");
@@ -24,7 +37,8 @@ SelectRegion::SelectRegion(MainWindow* parent, GridSize size)
 	update_display();
 
 	Add(display, 0, wxALIGN_CENTER | wxDOWN, Borders::sub_region);
-	Add(button_sizer, 0, wxEXPAND);
+	Add(selecting_button_sizer, 0, wxEXPAND);
+	Add(locking_button_sizer, 0, wxEXPAND);
 	Layout();
 }
 
@@ -62,4 +76,15 @@ void SelectRegion::set_toggle_show()
 void SelectRegion::set_toggle_hide()
 {
 	toggle_button->SetLabelText("Hide");
+}
+
+void SelectRegion::disable_lock_buttons()
+{
+	lock_button->Disable();
+	unlock_button->Disable();
+}
+void SelectRegion::enable_lock_buttons()
+{
+	lock_button->Enable();
+	unlock_button->Enable();
 }

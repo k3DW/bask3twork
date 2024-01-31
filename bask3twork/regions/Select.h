@@ -16,12 +16,19 @@ public:
 	void set_toggle_show();
 	void set_toggle_hide();
 
+	void disable_lock_buttons();
+	void enable_lock_buttons();
+
 	Selection get_selection() const { return selection; }
 
 private:
 	wxButton*   toggle_button;
 	wxButton*   reset_button;
-	wxBoxSizer* button_sizer;
+	wxBoxSizer* selecting_button_sizer;
+
+	wxButton*   lock_button;
+	wxButton*   unlock_button;
+	wxBoxSizer* locking_button_sizer;
 
 	Selection selection;   ///< The pair of zero-indexed coordinates representing the top left (lower numerically) and bottom right (higher numerically) of the current selection
 	wxStaticText* display; ///< The display of "selection coordinates", i.e. top-left to bottom-right

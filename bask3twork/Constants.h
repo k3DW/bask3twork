@@ -13,13 +13,33 @@ namespace Limits
 namespace Colours
 {
 	const wxColour background = wxColour(240, 240, 240); ///< The default background colour of the whole program
-	const wxColour highlight  = wxColour(150, 200, 255); ///< The highlighted colour of a \c Tile
 
 	/// The colours of the Tile objects in the DisplayGrid, in a repeating 2x2 pattern
-	const std::array tile =
+	const std::array tile_base =
 	{
 		std::array{ wxColour(255, 255, 255), wxColour(245, 245, 245) },
 		std::array{ wxColour(245, 245, 245), wxColour(235, 235, 235) },
+	};
+
+	/// The colours of a highlighted \c Tile, in a repeating 2x2 pattern
+	const std::array tile_highlighted =
+	{
+		std::array{ wxColour(150, 200, 255), wxColour(150, 200, 255) },
+		std::array{ wxColour(150, 200, 255), wxColour(150, 200, 255) },
+	};
+
+	/// The colours of a locked \c Tile, in a repeating 2x2 pattern
+	const std::array tile_locked =
+	{
+		std::array{ wxColour(255, 144, 84), wxColour(245, 139, 82) },
+		std::array{ wxColour(245, 139, 82), wxColour(235, 134, 80) },
+	};
+
+	/// The colours of a highlighted and locked \c Tile, in a repeating 2x2 pattern, see https://meyerweb.com/eric/tools/color-blend/
+	const std::array tile_highlighted_locked =
+	{
+		std::array{ wxColour(193, 172, 176), wxColour(193, 172, 176) },
+		std::array{ wxColour(193, 172, 176), wxColour(193, 172, 176) },
 	};
 }
 
