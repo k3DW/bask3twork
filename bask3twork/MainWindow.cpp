@@ -95,17 +95,33 @@ void MainWindow::unlock_selection(wxCommandEvent& evt)
 void MainWindow::left_click_tile(wxMouseEvent& evt)
 {
 	wxWindowID id = evt.GetId();
-	select_region->set_min({ id / size.columns, id % size.columns });
-	select_region->update_display();
-	hide_selection();
+	Point point = { id / size.columns, id % size.columns };
+	if (wxGetKeyState(WXK_CONTROL))
+	{
+		disp->lock(point);
+	}
+	else
+	{
+		select_region->set_min(point);
+		select_region->update_display();
+		hide_selection();
+	}
 	evt.Skip();
 }
 void MainWindow::right_click_tile(wxMouseEvent& evt)
 {
 	wxWindowID id = evt.GetId();
-	select_region->set_max({ id / size.columns, id % size.columns });
-	select_region->update_display();
-	hide_selection();
+	Point point = { id / size.columns, id % size.columns };
+	if (wxGetKeyState(WXK_CONTROL))
+	{
+		disp->unlock(point);
+	}
+	else
+	{
+		select_region->set_max(point);
+		select_region->update_display();
+		hide_selection();
+	}
 	evt.Skip();
 }
 
