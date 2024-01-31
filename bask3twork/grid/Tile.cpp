@@ -11,8 +11,19 @@ Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxCo
 	unhighlight();
 }
 
-void Tile::highlight()   { SetBackgroundColour(Colours::highlight); }
-void Tile::unhighlight() { SetBackgroundColour(base); }
+void Tile::highlight()   { state |= TileState::highlighted; set_colour(); }
+void Tile::unhighlight() { state &= ~TileState::highlighted; set_colour(); }
+
+void Tile::set_colour()
+{
+	switch (state)
+	{
+	break; case TileState::none:
+		SetBackgroundColour(base);
+	break; case TileState::highlighted:
+		SetBackgroundColour(Colours::highlight);
+	}
+}
 
 /** \fn Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxColour& base)
  * Sets the \c wxStaticText base object, the \c base colour, and the font.

@@ -15,6 +15,10 @@ constexpr std::underlying_type_t<E> to_underlying(E e)
 
 template <UsableEnum E> constexpr E operator&(E lhs, E rhs) { return static_cast<E>(to_underlying(lhs) & to_underlying(rhs)); }
 template <UsableEnum E> constexpr E operator|(E lhs, E rhs) { return static_cast<E>(to_underlying(lhs) | to_underlying(rhs)); }
+template <UsableEnum E> constexpr E operator~(E e) { return static_cast<E>(~to_underlying(lhs)); }
+
+template <UsableEnum E> constexpr E& operator&=(E& lhs, E rhs) { return (lhs = lhs & rhs); }
+template <UsableEnum E> constexpr E& operator|=(E& lhs, E rhs) { return (lhs = lhs | rhs); }
 
 template <UsableEnum E> constexpr E operator*(E sym, bool b) { return static_cast<E>(to_underlying(sym) * b); }
 template <UsableEnum E> constexpr E operator*(bool b, E sym) { return static_cast<E>(to_underlying(sym) * b); }
