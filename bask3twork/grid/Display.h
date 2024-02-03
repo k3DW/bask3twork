@@ -19,6 +19,8 @@ public:
 
 	void draw(const Knot* knot); ///< Pulls data from the Knot object and displays it in the grid
 
+	const Tiles& get_tiles() const { return tiles; }
+
 private:
 	wxGridBagSizer* sizer; ///< The sizer used to pack all the components in this \c wxPanel object
 	Tiles tiles;           ///< The grid of Tile objects to be used

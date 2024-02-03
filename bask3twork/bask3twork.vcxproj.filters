@@ -116,6 +116,12 @@
     <ClInclude Include="pure\CornerMovement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="pure\SelectionIterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pure\SelectionZip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\Resource.rc">
