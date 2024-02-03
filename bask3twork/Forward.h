@@ -66,7 +66,6 @@ class SymmetryChecker;
 
 
 // Regions
-class ExportRegion;
 class GenerateRegion;
 class GenerateRegionButton;
 class SelectRegion;

@@ -9,7 +9,6 @@
 #include "pure/UsableEnum.h"
 #include "regions/Select.h"
 #include "regions/Generate.h"
-#include "regions/Export.h"
 #include "controls/ExportDialog.h"
 #include "controls/MenuBar.h"
 #include "controls/RegenDialog.h"
@@ -21,8 +20,7 @@ MainWindow::MainWindow(GridSize size, wxString title)
 	, select_region(new SelectRegion(this, size))
 	, showing_selection(false)
 	, generate_region(new GenerateRegion(this))
-	, export_region(new ExportRegion(this, size))
-	, region_sizer(make_region_sizer(select_region, generate_region, export_region))
+	, region_sizer(make_region_sizer(select_region, generate_region))
 
 	, menu_bar(new MenuBar(this))
 
@@ -200,10 +198,7 @@ void MainWindow::openFile() {
 	grid_sizer->Insert(1, disp, 0, wxEXPAND);
 
 	// Then, reset the select coordinates with MainWindow::reset_selection()
-	// and regenerate and export textbox.
 	reset_selection();
-	export_region->regenerate(this, size);
-	export_region->display(knot);
 
 	// Reset the wrapping checkboxes
 	menu_bar->reset_wrapping();
@@ -282,10 +277,8 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 		grid_sizer->Insert(1, disp, 0, wxEXPAND);
 
 		// / Then, reset the select coordinates with MainWindow::reset_selection(),
-		// / regenerate and export textbox,
 		// / and reset the knot wrapping \c wxMenuItem objects.
 		reset_selection();
-		export_region->regenerate(this, size);
 		menu_bar->reset_wrapping();
 
 		// / Lastly, update the window sizing.
@@ -358,7 +351,6 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	Symmetry sym = static_cast<Symmetry>(evt.GetId());
 	if (knot->generate(sym, select_region->get_selection(), disp->get_tiles())) {
 		disp->draw(knot);
-		export_region->display(knot);
 	}
 	else
 		wxMessageBox(wxString::Format("The specified knot was not able to be generated in %i attempts.", MAX_ATTEMPTS), "Error: Knot failed");
@@ -371,15 +363,13 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 
 
 
-wxBoxSizer* MainWindow::make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region, ExportRegion* export_region)
+wxBoxSizer* MainWindow::make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region)
 {
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->AddStretchSpacer();
 	sizer->Add(select_region);
 	sizer->AddSpacer(Borders::inter_region);
 	sizer->Add(generate_region);
-	sizer->AddSpacer(Borders::inter_region);
-	sizer->Add(export_region);
 	sizer->AddStretchSpacer();
 	return sizer;
 }

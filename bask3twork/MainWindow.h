@@ -28,7 +28,6 @@ public:
 	SelectRegion*   select_region;
 	bool            showing_selection;
 	GenerateRegion* generate_region;
-	ExportRegion*   export_region;
 	wxBoxSizer*     region_sizer;
 
 	MenuBar* menu_bar;
@@ -62,7 +61,7 @@ public:
 	void generateKnot(wxCommandEvent& evt);			///< This function checks which of the generating buttons was pressed and calls the appropriate Knot function.
 
 private:
-	static wxBoxSizer* make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region, ExportRegion* export_region);
+	static wxBoxSizer* make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region);
 	static wxBoxSizer* make_grid_sizer(DisplayGrid* display);
 	static wxBoxSizer* make_main_sizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer);
 };

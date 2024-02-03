@@ -39,9 +39,6 @@
     <ClCompile Include="regions\Generate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="regions\Export.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="controls\MenuBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -93,9 +90,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="regions\Generate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="regions\Export.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="controls\MenuBar.h">
