@@ -242,6 +242,11 @@ void MainWindow::saveFile() {
 	file.Write();
 	file.Close();
 }
+
+void MainWindow::export_grid()
+{
+}
+
 void MainWindow::update_wrap_x()
 {
 	knot->wrapXEnabled = menu_bar->is_wrap_x();

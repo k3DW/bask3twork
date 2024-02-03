@@ -17,6 +17,7 @@ public:
 	{
 		OPEN,
 		SAVE,
+		EXPORT_GRID,
 		WRAP_X,
 		WRAP_Y,
 		REGEN_GRID,
@@ -26,6 +27,7 @@ public:
 	{
 		&MainWindow::openFile,
 		&MainWindow::saveFile,
+		&MainWindow::export_grid,
 		&MainWindow::update_wrap_x,
 		&MainWindow::update_wrap_y,
 		&MainWindow::regenerate_grid,

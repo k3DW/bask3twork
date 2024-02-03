@@ -38,6 +38,7 @@ public:
 	
 	void openFile();        ///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
 	void saveFile();        ///< Saves the current knot as a \c .k3knot file or a \c .txt file
+	void export_grid();     ///< Open the "Export" dialog pop-up, giving the user the option to copy to the clipboard
 	void update_wrap_x();   ///< Grab the x wrapping from the menu bar, and refresh the buttons
 	void update_wrap_y();   ///< Grab the y wrapping from the menu bar, and refresh the buttons
 	void regenerate_grid(); ///< Open the "Regenerate" dialog pop-up, and regenerate the grid if successful
