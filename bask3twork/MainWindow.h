@@ -45,7 +45,9 @@ public:
 	auto get_regen_dialog_handler(RegenDialog* regen_dialog); ///< The function bound to the \c RegenDialog button
 
 private:
-	void refresh_min_size(); ///< Sets the minimum size of the window to fit the content, and sets the current size to this value if not maximized
+	void update_min_size();             ///< Set the minimum size of the window to fit the content
+	void update_sizing();               ///< Updates the size of the \c DisplayGrid and its \c Tile children so that this \c MainWindow fits in the current display
+	wxSize active_display_size() const; ///< Grabs the screen size of the active display
 
 	DisplayGrid* disp;		///< The DisplayGrid for this program, i.e. the \c wxPanel that displays the Knot.
 	Knot* knot;				///< The Knot object belonging to this program.
