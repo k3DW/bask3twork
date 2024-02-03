@@ -4,13 +4,14 @@
 #include "pure/Glyph.h"
 #include "pure/Selection.h"
 #include "pure/Symmetry.h"
+#include "grid/Tile.h" // This breaks the dependency direction between folders, todo change this later (maybe)
 #include "Constants.h"
 
 Knot::Knot(GridSize size, wxStatusBar* statusBar) : size(size), statusBar(statusBar), glyphs(size.rows, std::vector<const Glyph*>(size.columns, DefaultGlyph)) {}
 Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : size{ .rows = (int)glyphs.size(), .columns = (int)glyphs[0].size() }, statusBar(statusBar), glyphs(std::move(glyphs)) {}
 wxString Knot::get(const int i, const int j) const { return wxUniChar(glyphs[i][j]->code_point); }
 
-bool Knot::generate(Symmetry sym, Selection selection)
+bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
 /** Generate a knot with the given symmetry in the given selection.
  *
  * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
@@ -50,8 +51,13 @@ bool Knot::generate(Symmetry sym, Selection selection)
 	/// Then, make a copy of \c glyphs, and set all members in the selection to \c nullptr to denote that they are unassigned.
 	Glyphs baseGlyphs = glyphs;
 	for (int i = selection.min.i; i <= selection.max.i; i++)
-		for (int j = selection.min.j; j <= selection.max.j; j++)
+	for (int j = selection.min.j; j <= selection.max.j; j++)
+	{
+		if (tiles[i][j]->locked())
+			baseGlyphs[i][j] = glyphs[i][j];
+		else
 			baseGlyphs[i][j] = nullptr;
+	}
 
 	/// Next, enter a loop, counting the number of attempts made at generating this knot. The steps are as follows.
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {

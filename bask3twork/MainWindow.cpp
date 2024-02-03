@@ -326,7 +326,7 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// so update the DisplayGrid with DisplayGrid::draw() and update the export text box with MainWindow::showExportBox().
 	/// If the generate function returns \c false, then display an error message as a \c wxMessageBox.
 	Symmetry sym = static_cast<Symmetry>(evt.GetId());
-	if (knot->generate(sym, select_region->get_selection())) {
+	if (knot->generate(sym, select_region->get_selection(), disp->get_tiles())) {
 		disp->draw(knot);
 		export_region->display(knot);
 	}
