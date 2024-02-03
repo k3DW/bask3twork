@@ -7,6 +7,7 @@ ExportDialog::ExportDialog(const Knot* knot)
 	: wxDialog(nullptr, wxID_ANY, "Export")
 {
 	SetIcon(wxIcon(L"AppIcon"));
+	Bind(wxEVT_CHAR_HOOK, &ExportDialog::on_exit, this);
 
 	wxBoxSizer* inner_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -40,4 +41,13 @@ void ExportDialog::copy(wxCommandEvent& evt)
 		wxTheClipboard->Close();                                            // Close the clipboard
 	}
 	evt.Skip();
+}
+
+void ExportDialog::on_exit(wxKeyEvent& event)
+{
+	if (event.GetKeyCode() == WXK_ESCAPE)
+	{
+		EndModal(0);
+	}
+	event.Skip();
 }

@@ -14,6 +14,7 @@ RegenDialog::RegenDialog(MainWindow* parent, GridSize size)
 	, button(new wxButton(this, wxID_ANY, "Regenerate"))
 {
 	SetIcon(wxIcon(L"AppIcon"));
+	Bind(wxEVT_CHAR_HOOK, &RegenDialog::on_exit, this);
 
 	textbox_sizer->Add(height_box, 0, wxEXPAND);
 	textbox_sizer->Add(new wxStaticText(this, wxID_ANY, " by "), 0, wxALIGN_CENTER);
@@ -71,3 +72,11 @@ std::optional<int> RegenDialogTextBox::get_value() const
 	return number;
 }
 
+void RegenDialog::on_exit(wxKeyEvent& event)
+{
+	if (event.GetKeyCode() == WXK_ESCAPE)
+	{
+		EndModal(0);
+	}
+	event.Skip();
+}
