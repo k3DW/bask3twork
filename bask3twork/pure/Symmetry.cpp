@@ -16,24 +16,32 @@ public:
 		: glyphs(&glyphs), tiles(&tiles), selection(selection)
 	{}
 
-	Symmetry symmetry() const;
+	Symmetry connections(GridSize size) const;
+	Symmetry locking(Symmetry connection_sym) const; // The parameter is used for short circuiting
 
 private:
 	using enum Corner;
 	using enum Movement;
 
 	template <ConnectionFn transform, Connection Connections::* lhs, Connection Connections::* rhs = lhs>
-	bool are_connections_compatible(const SelectionZipRange& range) const;
+	bool check_connections(const SelectionZipRange& range) const;
+
+	bool has_mirror_x_connections() const;
+	bool has_mirror_y_connections() const;
+	bool has_rotate_180_connections() const;
+	bool has_rotate_90_connections() const;
+	bool has_forward_diagonal_connections() const;
+	bool has_backward_diagonal_connections() const;
 
 	template <const Glyph* GlyphsTransformed::* transform>
-	bool is_locking_compatible(const SelectionZipRange& range) const;
+	bool check_locking(const SelectionZipRange& range) const;
 
-	Symmetry has_mirror_x_symmetry() const;
-	Symmetry has_mirror_y_symmetry() const;
-	Symmetry has_rotate_180_symmetry() const;
-	Symmetry has_rotate_90_symmetry() const;
-	Symmetry has_forward_diagonal_symmetry() const;
-	Symmetry has_backward_diagonal_symmetry() const;
+	bool has_mirror_x_locking() const;
+	bool has_mirror_y_locking() const;
+	bool has_rotate_180_locking() const;
+	bool has_rotate_90_locking() const;
+	bool has_forward_diagonal_locking() const;
+	bool has_backward_diagonal_locking() const;
 
 	const Glyph* glyph(Point p) const { return (*glyphs)[p.i][p.j]; }
 	const Tile* tile(Point p) const { return (*tiles)[p.i][p.j]; }
@@ -46,32 +54,52 @@ private:
 
 Symmetry check_symmetry(const Glyphs& glyphs, const Tiles& tiles, Selection selection, GridSize size)
 {
+	const SymmetryChecker checker(glyphs, tiles, selection);
+	const Symmetry connections = checker.connections(size);
+	return checker.locking(connections);
+}
+
+Symmetry SymmetryChecker::connections(GridSize size) const
+{
 	if (selection.is_full_selection(size))
 	{
-		Symmetry non_square = Symmetry::HoriSym | Symmetry::VertSym | Symmetry::Rot2Sym;
-		Symmetry square = selection.is_square() * (Symmetry::Rot4Sym | Symmetry::FwdDiag | Symmetry::BackDiag);
-
+		const Symmetry non_square = Symmetry::HoriSym | Symmetry::VertSym | Symmetry::Rot2Sym;
+		const Symmetry square = selection.is_square() * (Symmetry::Rot4Sym | Symmetry::FwdDiag | Symmetry::BackDiag);
 		return non_square | square;
 	}
 
-	return SymmetryChecker(glyphs, tiles, selection).symmetry();
+	const Symmetry non_square
+		= (Symmetry::AnySym)
+		| (Symmetry::HoriSym * has_mirror_x_connections())
+		| (Symmetry::VertSym * has_mirror_y_connections())
+		| (Symmetry::Rot2Sym * has_rotate_180_connections());
+
+	if (!selection.is_square())
+		return non_square;
+
+	const Symmetry square
+		= ((non_square % Symmetry::Rot2Sym) ? Symmetry::Rot4Sym * has_rotate_90_connections() : Symmetry::Nothing)
+		| (Symmetry::FwdDiag * has_forward_diagonal_connections())
+		| (Symmetry::BackDiag * has_backward_diagonal_connections());
+
+	return non_square | square;
 }
 
-Symmetry SymmetryChecker::symmetry() const
+Symmetry SymmetryChecker::locking(Symmetry connection_sym) const
 {
-	Symmetry non_square = has_mirror_x_symmetry() | has_mirror_y_symmetry() | has_rotate_180_symmetry();
-
-	Symmetry square = Symmetry::Nothing;
-	if (selection.is_square())
-		square = has_rotate_90_symmetry() | has_forward_diagonal_symmetry() | has_backward_diagonal_symmetry();
-
-	return Symmetry::AnySym | non_square | square;
+	return Symmetry::AnySym
+		| (connection_sym % Symmetry::HoriSym  ? Symmetry::HoriSym  * has_mirror_x_locking()          : Symmetry::Nothing)
+		| (connection_sym % Symmetry::VertSym  ? Symmetry::VertSym  * has_mirror_y_locking()          : Symmetry::Nothing)
+		| (connection_sym % Symmetry::Rot2Sym  ? Symmetry::Rot2Sym  * has_rotate_180_locking()        : Symmetry::Nothing)
+		| (connection_sym % Symmetry::Rot4Sym  ? Symmetry::Rot4Sym  * has_rotate_90_locking()         : Symmetry::Nothing)
+		| (connection_sym % Symmetry::FwdDiag  ? Symmetry::FwdDiag  * has_forward_diagonal_locking()  : Symmetry::Nothing)
+		| (connection_sym % Symmetry::BackDiag ? Symmetry::BackDiag * has_backward_diagonal_locking() : Symmetry::Nothing);
 }
 
 
 
 template <ConnectionFn transform, Connection Connections::* lhs, Connection Connections::* rhs>
-bool SymmetryChecker::are_connections_compatible(const SelectionZipRange& range) const
+bool SymmetryChecker::check_connections(const SelectionZipRange& range) const
 {
 	for (const auto& [p1, p2] : range)
 	{
@@ -82,7 +110,7 @@ bool SymmetryChecker::are_connections_compatible(const SelectionZipRange& range)
 }
 
 template <const Glyph* GlyphsTransformed::* transform>
-bool SymmetryChecker::is_locking_compatible(const SelectionZipRange& range) const
+bool SymmetryChecker::check_locking(const SelectionZipRange& range) const
 {
 	for (const auto& [p1, p2] : range)
 	{
@@ -92,66 +120,76 @@ bool SymmetryChecker::is_locking_compatible(const SelectionZipRange& range) cons
 	return true;
 }
 
-Symmetry SymmetryChecker::has_mirror_x_symmetry() const
+
+
+bool SymmetryChecker::has_mirror_x_connections() const
 {
-	return Symmetry::HoriSym *
-	(
-		   are_connections_compatible<mirror_x, &Glyph::left>             ({ selection.left_column(), upper_left | down, lower_left | up })
-		&& are_connections_compatible<mirror_x, &Glyph::right>            ({ selection.right_column(), upper_right | down, lower_right | up })
-		&& are_connections_compatible<mirror_x, &Glyph::up, &Glyph::down> ({ selection.upper_row(), upper_left | right, selection.lower_row(), lower_left | right })
-		&& is_locking_compatible<&Glyph::mirror_x>({ selection, upper_left | right, lower_left | right })
-	);
+	return check_connections<mirror_x, &Glyph::left>             ({ selection.left_column(), upper_left | down, lower_left | up })
+		&& check_connections<mirror_x, &Glyph::right>            ({ selection.right_column(), upper_right | down, lower_right | up })
+		&& check_connections<mirror_x, &Glyph::up, &Glyph::down> ({ selection.upper_row(), upper_left | right, selection.lower_row(), lower_left | right });
 }
 
-Symmetry SymmetryChecker::has_mirror_y_symmetry() const
+bool SymmetryChecker::has_mirror_y_connections() const
 {
-	return Symmetry::VertSym *
-	(
-		   are_connections_compatible<mirror_y, &Glyph::up>                  ({ selection.upper_row(), upper_left | right, upper_right | left })
-		&& are_connections_compatible<mirror_y, &Glyph::down>                ({ selection.lower_row(), lower_left | right, lower_right | left })
-		&& are_connections_compatible<mirror_y, &Glyph::left, &Glyph::right> ({ selection.left_column(), upper_left | down, selection.right_column(), upper_right | down })
-		&& is_locking_compatible<&Glyph::mirror_y>({ selection, upper_left | down, upper_right | down })
-	);
+	return check_connections<mirror_y, &Glyph::up>                  ({ selection.upper_row(), upper_left | right, upper_right | left })
+		&& check_connections<mirror_y, &Glyph::down>                ({ selection.lower_row(), lower_left | right, lower_right | left })
+		&& check_connections<mirror_y, &Glyph::left, &Glyph::right> ({ selection.left_column(), upper_left | down, selection.right_column(), upper_right | down });
 }
 
-Symmetry SymmetryChecker::has_rotate_180_symmetry() const
+bool SymmetryChecker::has_rotate_180_connections() const
 {
-	return Symmetry::Rot2Sym *
-	(
-		   are_connections_compatible<rotate_180, &Glyph::up, &Glyph::down>    ({ selection.upper_row(), upper_left | right, selection.lower_row(), lower_right| left })
-		&& are_connections_compatible<rotate_180, &Glyph::left, &Glyph::right> ({ selection.left_column(), upper_left | down, selection.right_column(), lower_right | up })
-		&& is_locking_compatible<&Glyph::rotate_180>({ selection, upper_left | right, lower_right | left })
-	);
+	return check_connections<rotate_180, &Glyph::up, &Glyph::down>    ({ selection.upper_row(), upper_left | right, selection.lower_row(), lower_right| left })
+		&& check_connections<rotate_180, &Glyph::left, &Glyph::right> ({ selection.left_column(), upper_left | down, selection.right_column(), lower_right | up });
 }
 
-Symmetry SymmetryChecker::has_rotate_90_symmetry() const
+bool SymmetryChecker::has_rotate_90_connections() const
 {
-	return Symmetry::Rot4Sym *
-	(
-		   are_connections_compatible<rotate_90, &Glyph::up, &Glyph::left>     ({ selection.upper_row(), upper_left | right, selection.left_column(), lower_left | up })
-		&& are_connections_compatible<rotate_90, &Glyph::left, &Glyph::down>   ({ selection.left_column(), lower_left | up, selection.lower_row(), lower_right | left })
-		&& are_connections_compatible<rotate_180, &Glyph::left, &Glyph::right> ({ selection.left_column(), upper_left | down, selection.right_column(), lower_right | up })
-		&& is_locking_compatible<&Glyph::rotate_90>({ selection, upper_left | right, lower_left | up })
-		&& is_locking_compatible<&Glyph::rotate_90>({ selection, upper_right | down, upper_left | right })
-	);
+	return check_connections<rotate_90, &Glyph::up, &Glyph::left>     ({ selection.upper_row(), upper_left | right, selection.left_column(), lower_left | up })
+		&& check_connections<rotate_90, &Glyph::left, &Glyph::down>   ({ selection.left_column(), lower_left | up, selection.lower_row(), lower_right | left })
+		&& check_connections<rotate_180, &Glyph::left, &Glyph::right> ({ selection.left_column(), upper_left | down, selection.right_column(), lower_right | up });
 }
 
-Symmetry SymmetryChecker::has_forward_diagonal_symmetry() const
+bool SymmetryChecker::has_forward_diagonal_connections() const
 {
-	return Symmetry::FwdDiag *
-	(
-		   are_connections_compatible<mirror_forward_diagonal, &Glyph::up, &Glyph::right>  ({ selection.upper_row(), upper_left | right, selection.right_column(), lower_right | up })
-		&& are_connections_compatible<mirror_forward_diagonal, &Glyph::left, &Glyph::down> ({ selection.left_column(), upper_left | down, selection.lower_row(), lower_right | left })
-		&& is_locking_compatible<&Glyph::mirror_forward_diagonal>({ selection, upper_left | right, lower_right | up })
-	);
+	return check_connections<mirror_forward_diagonal, &Glyph::up, &Glyph::right>  ({ selection.upper_row(), upper_left | right, selection.right_column(), lower_right | up })
+		&& check_connections<mirror_forward_diagonal, &Glyph::left, &Glyph::down> ({ selection.left_column(), upper_left | down, selection.lower_row(), lower_right | left });
 }
 
-Symmetry SymmetryChecker::has_backward_diagonal_symmetry() const
+bool SymmetryChecker::has_backward_diagonal_connections() const
 {
-	return Symmetry::BackDiag *
-	(
-		   are_connections_compatible<mirror_backward_diagonal, &Glyph::up, &Glyph::left>    ({ selection.upper_row(), upper_right | left, selection.left_column(), lower_left | up })
-		&& are_connections_compatible<mirror_backward_diagonal, &Glyph::right, &Glyph::down> ({ selection.right_column(), upper_right | down, selection.lower_row(), lower_left | right })
-		&& is_locking_compatible<&Glyph::mirror_forward_diagonal>({ selection, upper_right | left, lower_left | up })
-	);
+	return check_connections<mirror_backward_diagonal, &Glyph::up, &Glyph::left>    ({ selection.upper_row(), upper_right | left, selection.left_column(), lower_left | up })
+		&& check_connections<mirror_backward_diagonal, &Glyph::right, &Glyph::down> ({ selection.right_column(), upper_right | down, selection.lower_row(), lower_left | right });
+}
+
+
+
+bool SymmetryChecker::has_mirror_x_locking() const
+{
+	return check_locking<&Glyph::mirror_x>({ selection, upper_left | right, lower_left | right });
+}
+
+bool SymmetryChecker::has_mirror_y_locking() const
+{
+	return check_locking<&Glyph::mirror_y>({ selection, upper_left | down, upper_right | down });
+}
+
+bool SymmetryChecker::has_rotate_180_locking() const
+{
+	return check_locking<&Glyph::rotate_180>({ selection, upper_left | right, lower_right | left });
+}
+
+bool SymmetryChecker::has_rotate_90_locking() const
+{
+	return check_locking<&Glyph::rotate_90>({ selection, upper_left | right, lower_left | up })
+		&& check_locking<&Glyph::rotate_90>({ selection, upper_right | down, upper_left | right });
+}
+
+bool SymmetryChecker::has_forward_diagonal_locking() const
+{
+	return check_locking<&Glyph::mirror_forward_diagonal>({ selection, upper_left | right, lower_right | up });
+}
+
+bool SymmetryChecker::has_backward_diagonal_locking() const
+{
+	return check_locking<&Glyph::mirror_backward_diagonal>({ selection, upper_right | left, lower_left | up });
 }
