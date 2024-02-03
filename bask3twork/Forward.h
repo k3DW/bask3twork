@@ -22,6 +22,7 @@ class wxTextCtrl;
 
 
 // Controls
+class ExportDialog;
 class MenuBar;
 class RegenDialog;
 class RegenDialogTextBox;

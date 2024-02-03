@@ -10,6 +10,7 @@
 #include "regions/Select.h"
 #include "regions/Generate.h"
 #include "regions/Export.h"
+#include "controls/ExportDialog.h"
 #include "controls/MenuBar.h"
 #include "controls/RegenDialog.h"
 
@@ -245,6 +246,9 @@ void MainWindow::saveFile() {
 
 void MainWindow::export_grid()
 {
+	ExportDialog* export_dialog = new ExportDialog(knot);
+	export_dialog->ShowModal();
+	export_dialog->Destroy();
 }
 
 void MainWindow::update_wrap_x()

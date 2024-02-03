@@ -54,6 +54,9 @@
     <ClCompile Include="pure\Glyph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="controls\ExportDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="grid\Display.h">
@@ -120,6 +123,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pure\SelectionZip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="controls\ExportDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
