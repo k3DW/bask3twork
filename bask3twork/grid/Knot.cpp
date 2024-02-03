@@ -176,7 +176,7 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 	}
 
 	/// \b (5) If the loop finishes, then the Knot has been successfully generated. Return \c true.
-	return glyphGrid;
+	return { std::move(glyphGrid) };
 }
 
 bool Knot::checkWrapping(Selection selection) const {
