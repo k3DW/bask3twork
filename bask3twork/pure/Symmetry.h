@@ -91,12 +91,17 @@ private:
 	template <ConnectionFn transform>
 	bool glyph_range_compatible(Iterator lhs, Iterator rhs) const;
 
+	template <ConnectionFn transform, Connection Connections::* lhs, Connection Connections::* rhs = lhs>
+	bool are_connections_compatible(const SelectionZipRange& range) const;
+
 	Symmetry has_mirror_x_symmetry() const;
 	Symmetry has_mirror_y_symmetry() const;
 	Symmetry has_rotate_180_symmetry() const;
 	Symmetry has_rotate_90_symmetry() const;
 	Symmetry has_forward_diagonal_symmetry() const;
 	Symmetry has_backward_diagonal_symmetry() const;
+
+	const Glyph* glyph(Point p) const { return (*glyphs)[p.i][p.j]; }
 
 private:
 	const Glyphs* glyphs;

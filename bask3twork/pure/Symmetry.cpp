@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "pure/SelectionZip.h"
 #include "pure/Symmetry.h"
 
 Symmetry SymmetryChecker::get(GridSize size) const
@@ -27,6 +28,17 @@ bool SymmetryChecker::glyph_range_compatible(Iterator lhs, Iterator rhs) const
 	for (; selection.contains(lhs.point()) && selection.contains(rhs.point()); lhs.move(), rhs.move())
 	{
 		if (lhs.get() != transform(rhs.get()))
+			return false;
+	}
+	return true;
+}
+
+template <ConnectionFn transform, Connection Connections::* lhs, Connection Connections::* rhs>
+bool SymmetryChecker::are_connections_compatible(const SelectionZipRange& range) const
+{
+	for (const auto& [p1, p2] : range)
+	{
+		if ((glyph(p1)->*lhs) != transform(glyph(p2)->*rhs))
 			return false;
 	}
 	return true;
