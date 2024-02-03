@@ -83,12 +83,14 @@ void MainWindow::reset_selection(wxCommandEvent& evt)
 void MainWindow::lock_selection(wxCommandEvent& evt)
 {
 	disp->lock(select_region->get_selection());
+	generate_region->enable_buttons(current_symmetry());
 	evt.Skip();
 }
 
 void MainWindow::unlock_selection(wxCommandEvent& evt)
 {
 	disp->unlock(select_region->get_selection());
+	generate_region->enable_buttons(current_symmetry());
 	evt.Skip();
 }
 
@@ -104,8 +106,8 @@ void MainWindow::left_click_tile(wxMouseEvent& evt)
 	{
 		select_region->set_min(point);
 		select_region->update_display();
-		hide_selection();
 	}
+	hide_selection();
 	evt.Skip();
 }
 void MainWindow::right_click_tile(wxMouseEvent& evt)
@@ -120,8 +122,8 @@ void MainWindow::right_click_tile(wxMouseEvent& evt)
 	{
 		select_region->set_max(point);
 		select_region->update_display();
-		hide_selection();
 	}
+	hide_selection();
 	evt.Skip();
 }
 
