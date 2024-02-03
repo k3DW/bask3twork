@@ -4,6 +4,7 @@
 #include <wx/clipbrd.h>
 #include <wx/colour.h>
 #include <wx/dialog.h>
+#include <wx/display.h>
 #include <wx/filedlg.h>
 #include <wx/font.h>
 #include <wx/frame.h>

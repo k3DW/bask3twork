@@ -34,7 +34,7 @@ MainWindow::MainWindow(GridSize size, wxString title)
 	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
 	SetSizer(main_sizer);
-	refresh_min_size();
+	update_sizing();
 }
 MainWindow::~MainWindow()
 {
@@ -207,8 +207,8 @@ void MainWindow::openFile() {
 	// Reset the wrapping checkboxes
 	menu_bar->reset_wrapping();
 
-	// Lastly, refresh the minimum size of the window.
-	refresh_min_size();
+	// Lastly, update the window sizing.
+	update_sizing();
 	
 	file.Close();
 }
@@ -279,8 +279,8 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 		export_region->regenerate(this, size);
 		menu_bar->reset_wrapping();
 
-		// / Lastly, refresh the minimum size of the window.
-		refresh_min_size();
+		// / Lastly, update the window sizing.
+		update_sizing();
 
 		regen_dialog->EndModal(0);
 		evt.Skip();
@@ -296,16 +296,37 @@ void MainWindow::regenerate_grid()
 	regen_dialog->Destroy();
 }
 
-void MainWindow::refresh_min_size()
+void MainWindow::update_min_size()
 {
 	// To change the minimum size of the window to fit the content,
 	// the minimum size must first be set to \c wxDefaultSize, before finding the new size with \c GetBestSize().
 	SetMinSize(wxDefaultSize);
 	const wxSize newSize = GetBestSize();
 	SetMinSize(newSize);
+}
+
+void MainWindow::update_sizing()
+{
+	while (true)
+	{
+		const wxSize display_size = active_display_size();
+		const wxSize best_size = GetBestSize();
+		if (best_size.x <= display_size.x && best_size.y <= display_size.y)
+			break;
+		disp->reduce_glyph_font_size_by(Fonts::reduce_by);
+	}
+
+	update_min_size();
 	if (!IsMaximized())
-		SetSize(newSize);
+		SetSize(GetMinSize());
+
 	Layout();
+}
+
+wxSize MainWindow::active_display_size() const
+{
+	wxRect rect = wxDisplay(this).GetClientArea();
+	return wxSize(rect.width, rect.height);
 }
 
 Symmetry MainWindow::current_symmetry() const
