@@ -1,5 +1,8 @@
 /* TODO for later versions */
 /*
+	-> Properly fix regeneration performance
+		-> See https://forums.wxwidgets.org/viewtopic.php?p=220992
+		-> May need to draw text manually
 	-> Knot navigation, like moving all the data in a certain direction
 	-> Undo/redo (up to a certain level)
 	-> DisplayGrid automatically changes size depending on the size of the screen/window
