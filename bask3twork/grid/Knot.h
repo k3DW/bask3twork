@@ -20,7 +20,7 @@ public:
 
 	bool checkWrapping(Selection selection) const;
 
-	Symmetry symmetry_of(Selection selection) const;
+	Symmetry symmetry_of(Selection selection, const Tiles& tiles) const;
 
 	wxString plaintext() const;
 

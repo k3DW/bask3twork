@@ -5,14 +5,15 @@
 #include "pure/Selection.h"
 #include "pure/SelectionZip.h"
 #include "pure/Symmetry.h"
+#include "grid/Tile.h" // This breaks the dependency direction between folders, todo change this later (maybe)
 
 
 
 class SymmetryChecker
 {
 public:
-	SymmetryChecker(const Glyphs& glyphs, Selection selection)
-		: glyphs(&glyphs), selection(selection)
+	SymmetryChecker(const Glyphs& glyphs, const Tiles& tiles, Selection selection)
+		: glyphs(&glyphs), tiles(&tiles), selection(selection)
 	{}
 
 	Symmetry symmetry() const;
@@ -32,6 +33,7 @@ private:
 	Symmetry has_backward_diagonal_symmetry() const;
 
 	const Glyph* glyph(Point p) const { return (*glyphs)[p.i][p.j]; }
+	const Tile* tile(Point p) const { return (*tiles)[p.i][p.j]; }
 
 private:
 	const Glyphs* glyphs;
@@ -39,7 +41,7 @@ private:
 	Selection selection;
 };
 
-Symmetry check_symmetry(const Glyphs& glyphs, Selection selection, GridSize size)
+Symmetry check_symmetry(const Glyphs& glyphs, const Tiles& tiles, Selection selection, GridSize size)
 {
 	if (selection.is_full_selection(size))
 	{
@@ -49,7 +51,7 @@ Symmetry check_symmetry(const Glyphs& glyphs, Selection selection, GridSize size
 		return non_square | square;
 	}
 
-	return SymmetryChecker(glyphs, selection).symmetry();
+	return SymmetryChecker(glyphs, tiles, selection).symmetry();
 }
 
 Symmetry SymmetryChecker::symmetry() const

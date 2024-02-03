@@ -53,12 +53,14 @@ public:
 
 	void lock();
 	void unlock();
+
+	bool locked() const { return (state & TileState::locked) != TileState::none; }
 	
 private:
 	void set_colour();
 
 	TileColours colours;
-	TileState state;
+	TileState state = TileState::none;
 };
 
  /** AxisLabel represents an axis label on the row or column within a DisplayGrid object. */

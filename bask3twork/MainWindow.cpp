@@ -311,7 +311,7 @@ void MainWindow::refresh_min_size()
 Symmetry MainWindow::current_symmetry() const
 {
 	if (knot->checkWrapping(select_region->get_selection()))
-		return knot->symmetry_of(select_region->get_selection());
+		return knot->symmetry_of(select_region->get_selection(), disp->get_tiles());
 	else
 		return Symmetry::Nothing;
 }

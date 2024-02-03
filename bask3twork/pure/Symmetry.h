@@ -29,4 +29,4 @@ enum class Symmetry
 
 template <> struct opt_into_enum_operations<Symmetry> : std::true_type {};
 
-Symmetry check_symmetry(const Glyphs& glyphs, Selection selection, GridSize size);
+Symmetry check_symmetry(const Glyphs& glyphs, const Tiles& tiles, Selection selection, GridSize size);
