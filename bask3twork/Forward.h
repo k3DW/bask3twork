@@ -22,6 +22,7 @@ class wxTextCtrl;
 
 
 // Controls
+class ExportDialog;
 class MenuBar;
 class RegenDialog;
 class RegenDialogTextBox;
@@ -65,7 +66,6 @@ class SymmetryChecker;
 
 
 // Regions
-class ExportRegion;
 class GenerateRegion;
 class GenerateRegionButton;
 class SelectRegion;

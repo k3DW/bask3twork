@@ -17,6 +17,8 @@ private:
 
 	wxBoxSizer* main_sizer;
 	wxButton* button;
+
+	void on_exit(wxKeyEvent& event); ///< This function provides a means of closing the dialog by pressing esc
 };
 
 class RegenDialogTextBox : public wxTextCtrl

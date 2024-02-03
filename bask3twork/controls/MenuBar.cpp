@@ -9,6 +9,8 @@ MenuBar::MenuBar(MainWindow* parent)
 	file_menu->Bind(wxEVT_MENU, &MainWindow::menu_event_handler, parent);
 	file_menu->Append(static_cast<int>(MenuID::OPEN), "&Open\tCtrl-O", "Open a knot file.");
 	file_menu->Append(static_cast<int>(MenuID::SAVE), "&Save\tCtrl-S", "Save a knot file.");
+	file_menu->AppendSeparator();
+	file_menu->Append(static_cast<int>(MenuID::EXPORT_GRID), "&Export\tCtrl-E", "Export the knot.");
 
 	generate_menu = new wxMenu();
 	generate_menu->Bind(wxEVT_MENU, &MainWindow::menu_event_handler, parent);

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="controls\ExportDialog.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -28,7 +29,6 @@
     <ClCompile Include="pure\Glyph.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="grid\Display.cpp" />
-    <ClCompile Include="regions\Export.cpp" />
     <ClCompile Include="regions\Generate.cpp" />
     <ClCompile Include="controls\MenuBar.cpp" />
     <ClCompile Include="controls\RegenDialog.cpp" />
@@ -39,6 +39,7 @@
     <ClCompile Include="grid\Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="controls\ExportDialog.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="pure\Connection.h" />
     <ClInclude Include="grid\Display.h" />
@@ -47,7 +48,6 @@
     <ClInclude Include="pure\SelectionZip.h" />
     <ClInclude Include="pure\UsableEnum.h" />
     <ClInclude Include="pure\GridSize.h" />
-    <ClInclude Include="regions\Export.h" />
     <ClInclude Include="Forward.h" />
     <ClInclude Include="regions\Generate.h" />
     <ClInclude Include="pure\Glyph.h" />
