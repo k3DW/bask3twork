@@ -1,4 +1,5 @@
 #pragma once
+#include "pure/CornerMovement.h"
 #include "pure/Glyph.h"
 #include "pure/GridSize.h"
 #include "pure/Selection.h"
@@ -43,14 +44,12 @@ public:
 	Symmetry get(GridSize size) const;
 
 private:
-	enum class CornerType { upper_left, upper_right, lower_left, lower_right, };
-	using enum CornerType;
+	using enum Corner;
 
 	enum class ConnectionType { up_connection, down_connection, left_connection, right_connection, };
 	using enum ConnectionType;
 
-	enum class MovementType { up, down, left, right, };
-	using enum MovementType;
+	using enum Movement;
 
 	static constexpr std::array connections{ &Glyph::up, &Glyph::down, &Glyph::left, &Glyph::right, };
 	static constexpr std::array movements{ Point{ -1, 0 }, Point{ 1, 0 }, Point{ 0, -1 }, Point{ 0, 1 }, };
@@ -81,10 +80,10 @@ private:
 		operator Iterator() const { return Iterator(*this); }
 
 		IteratorBuilder& checking_the(ConnectionType con) { connection = connections[static_cast<int>(con)]; return *this; }
-		IteratorBuilder& moving(MovementType move)        { movement = movements[static_cast<int>(move)]; return *this; }
+		IteratorBuilder& moving(Movement move)            { movement = movements[static_cast<int>(move)]; return *this; }
 	};
 
-	IteratorBuilder starting_from_the(CornerType corner) const
+	IteratorBuilder starting_from_the(Corner corner) const
 	{
 		return corners[static_cast<int>(corner)];
 	}
