@@ -1,7 +1,7 @@
 #pragma once
 #include <wx/stattext.h>
 #include "Forward.h"
-#include "pure/Enum.h"
+#include "pure/UsableEnum.h"
 
 /** A bit flag enum representing the possible states of a Tile. */
 enum class TileState

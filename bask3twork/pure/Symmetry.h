@@ -1,8 +1,8 @@
 #pragma once
-#include "pure/Enum.h"
 #include "pure/Glyph.h"
 #include "pure/GridSize.h"
 #include "pure/Selection.h"
+#include "pure/UsableEnum.h"
 
 /** All the types of symmetry which can be used in this program.
  * The bit flags tell \c Knot::generate() how to generate.
