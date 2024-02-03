@@ -101,7 +101,7 @@
     <ClInclude Include="controls\RegenDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pure\Enum.h">
+    <ClInclude Include="pure\UsableEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Forward.h">
@@ -111,6 +111,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pure\GridSize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pure\CornerMovement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

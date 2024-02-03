@@ -3,10 +3,10 @@
 #include "MainWindow.h"
 #include "grid/Display.h"
 #include "grid/Knot.h"
-#include "pure/Enum.h"
 #include "pure/Glyph.h"
 #include "pure/GridSize.h"
 #include "pure/Symmetry.h"
+#include "pure/UsableEnum.h"
 #include "regions/Select.h"
 #include "regions/Generate.h"
 #include "regions/Export.h"
@@ -308,7 +308,10 @@ void MainWindow::refresh_min_size()
 
 Symmetry MainWindow::current_symmetry() const
 {
-	return knot->symmetry_of(select_region->get_selection()) * knot->checkWrapping(select_region->get_selection());
+	if (knot->checkWrapping(select_region->get_selection()))
+		return knot->symmetry_of(select_region->get_selection());
+	else
+		return Symmetry::Nothing;
 }
 
 void MainWindow::generateKnot(wxCommandEvent& evt) {

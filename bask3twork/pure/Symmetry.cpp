@@ -14,8 +14,9 @@ Symmetry SymmetryChecker::get(GridSize size) const
 	Symmetry non_square = 
 		(has_mirror_x_symmetry() | has_mirror_y_symmetry() | has_rotate_180_symmetry());
 
-	Symmetry square = selection.is_square() *
-		(has_rotate_90_symmetry() | has_forward_diagonal_symmetry() | has_backward_diagonal_symmetry());
+	Symmetry square = Symmetry::Nothing;
+	if (selection.is_square())
+		square = has_rotate_90_symmetry() | has_forward_diagonal_symmetry() | has_backward_diagonal_symmetry();
 
 	return Symmetry::AnySym | non_square | square;
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "Forward.h"
 #include "pure/Connection.h"
-#include "pure/Enum.h"
+#include "pure/UsableEnum.h"
 #include <map>
 #include <vector>
 /// \file
