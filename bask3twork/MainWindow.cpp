@@ -308,7 +308,10 @@ void MainWindow::refresh_min_size()
 
 Symmetry MainWindow::current_symmetry() const
 {
-	return knot->symmetry_of(select_region->get_selection()) * knot->checkWrapping(select_region->get_selection());
+	if (knot->checkWrapping(select_region->get_selection()))
+		return knot->symmetry_of(select_region->get_selection());
+	else
+		return Symmetry::Nothing;
 }
 
 void MainWindow::generateKnot(wxCommandEvent& evt) {
