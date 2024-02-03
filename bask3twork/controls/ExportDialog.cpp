@@ -5,19 +5,24 @@
 
 ExportDialog::ExportDialog(const Knot* knot)
 	: wxDialog(nullptr, wxID_ANY, "Export")
-	, sizer(new wxBoxSizer(wxVERTICAL))
 {
+	SetIcon(wxIcon(L"AppIcon"));
+
+	wxBoxSizer* inner_sizer = new wxBoxSizer(wxVERTICAL);
+
 	textbox = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(9 * knot->size.columns + 14, 19 * knot->size.rows + 7), wxTE_MULTILINE | wxTE_NO_VSCROLL | wxTE_READONLY);
 	textbox->SetFont(Fonts::export_);
-	sizer->Add(textbox, 0, wxALIGN_CENTER | wxUP | wxDOWN, Borders::sub_region);
+	inner_sizer->Add(textbox, 0, wxALIGN_CENTER | wxDOWN, Borders::sub_region);
 
-	copy_button = new wxButton(this, wxID_ANY, "Copy", wxDefaultPosition, wxSize(54, 23));
+	copy_button = new wxButton(this, wxID_ANY, "Copy", wxDefaultPosition, Sizes::button);
 	copy_button->Bind(wxEVT_BUTTON, &ExportDialog::copy, this);
-	sizer->Add(copy_button, 0, wxEXPAND);
+	inner_sizer->Add(copy_button, 0, wxALIGN_CENTER);
 
 	textbox->SetLabel(knot->plaintext());
 	copy_button->SetFocus();
 
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->Add(inner_sizer, 0, wxALL, Borders::inter_region);
 	SetSizer(sizer);
 
 	SetMinSize(wxDefaultSize);
