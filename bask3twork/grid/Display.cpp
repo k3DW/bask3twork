@@ -85,9 +85,18 @@ void DisplayGrid::draw(const Knot* knot)
 void DisplayGrid::add_axis_labels(GridSize size)
 {
 	for (int i = 1; i <= size.columns; i++)
-		sizer->Add(new AxisLabel(this, i), wxGBPosition(0, i), wxDefaultSpan, wxALIGN_CENTER);
+	{
+		AxisLabel* label = new AxisLabel(this, i);
+		x_axis.push_back(label);
+		sizer->Add(label, wxGBPosition(0, i), wxDefaultSpan, wxALIGN_CENTER);
+	}
+
 	for (int i = 1; i <= size.rows; i++)
-		sizer->Add(new AxisLabel(this, i), wxGBPosition(i, 0), wxDefaultSpan, wxALIGN_CENTER);
+	{
+		AxisLabel* label = new AxisLabel(this, i);
+		y_axis.push_back(label);
+		sizer->Add(label, wxGBPosition(i, 0), wxDefaultSpan, wxALIGN_CENTER);
+	}
 }
 
 Tiles DisplayGrid::make_tiles(MainWindow* parent)

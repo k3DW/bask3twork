@@ -26,6 +26,9 @@ private:
 	Tiles tiles;           ///< The grid of Tile objects to be used
 	bool highlighted;      ///< A flag to determine if any \c Tile is currently highlighted
 
+	std::vector<AxisLabel*> x_axis;
+	std::vector<AxisLabel*> y_axis;
+
 	void add_axis_labels(GridSize size);   ///< Creates the X and Y axis labels by directly adding new \c AxisLabel objects to the sizer
 	Tiles make_tiles(MainWindow* parent);  ///< Creates the \c Tile objects, packing them into the sizer and binding to the \c MainWindow
 };
