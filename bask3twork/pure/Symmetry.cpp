@@ -25,6 +25,9 @@ private:
 	template <ConnectionFn transform, Connection Connections::* lhs, Connection Connections::* rhs = lhs>
 	bool are_connections_compatible(const SelectionZipRange& range) const;
 
+	template <const Glyph* GlyphsTransformed::* transform>
+	bool is_locking_compatible(const SelectionZipRange& range) const;
+
 	Symmetry has_mirror_x_symmetry() const;
 	Symmetry has_mirror_y_symmetry() const;
 	Symmetry has_rotate_180_symmetry() const;
@@ -78,6 +81,17 @@ bool SymmetryChecker::are_connections_compatible(const SelectionZipRange& range)
 	return true;
 }
 
+template <const Glyph* GlyphsTransformed::* transform>
+bool SymmetryChecker::is_locking_compatible(const SelectionZipRange& range) const
+{
+	for (const auto& [p1, p2] : range)
+	{
+		if (tile(p1)->locked() && tile(p2)->locked() && glyph(p1) != (glyph(p2)->*transform))
+			return false;
+	}
+	return true;
+}
+
 Symmetry SymmetryChecker::has_mirror_x_symmetry() const
 {
 	return Symmetry::HoriSym *
@@ -85,6 +99,7 @@ Symmetry SymmetryChecker::has_mirror_x_symmetry() const
 		   are_connections_compatible<mirror_x, &Glyph::left>             ({ selection.left_column(), upper_left | down, lower_left | up })
 		&& are_connections_compatible<mirror_x, &Glyph::right>            ({ selection.right_column(), upper_right | down, lower_right | up })
 		&& are_connections_compatible<mirror_x, &Glyph::up, &Glyph::down> ({ selection.upper_row(), upper_left | right, selection.lower_row(), lower_left | right })
+		&& is_locking_compatible<&Glyph::mirror_x>({ selection, upper_left | right, lower_left | right })
 	);
 }
 
@@ -95,6 +110,7 @@ Symmetry SymmetryChecker::has_mirror_y_symmetry() const
 		   are_connections_compatible<mirror_y, &Glyph::up>                  ({ selection.upper_row(), upper_left | right, upper_right | left })
 		&& are_connections_compatible<mirror_y, &Glyph::down>                ({ selection.lower_row(), lower_left | right, lower_right | left })
 		&& are_connections_compatible<mirror_y, &Glyph::left, &Glyph::right> ({ selection.left_column(), upper_left | down, selection.right_column(), upper_right | down })
+		&& is_locking_compatible<&Glyph::mirror_y>({ selection, upper_left | down, upper_right | down })
 	);
 }
 
@@ -104,6 +120,7 @@ Symmetry SymmetryChecker::has_rotate_180_symmetry() const
 	(
 		   are_connections_compatible<rotate_180, &Glyph::up, &Glyph::down>    ({ selection.upper_row(), upper_left | right, selection.lower_row(), lower_right| left })
 		&& are_connections_compatible<rotate_180, &Glyph::left, &Glyph::right> ({ selection.left_column(), upper_left | down, selection.right_column(), lower_right | up })
+		&& is_locking_compatible<&Glyph::rotate_180>({ selection, upper_left | right, lower_right | left })
 	);
 }
 
@@ -114,6 +131,8 @@ Symmetry SymmetryChecker::has_rotate_90_symmetry() const
 		   are_connections_compatible<rotate_90, &Glyph::up, &Glyph::left>     ({ selection.upper_row(), upper_left | right, selection.left_column(), lower_left | up })
 		&& are_connections_compatible<rotate_90, &Glyph::left, &Glyph::down>   ({ selection.left_column(), lower_left | up, selection.lower_row(), lower_right | left })
 		&& are_connections_compatible<rotate_180, &Glyph::left, &Glyph::right> ({ selection.left_column(), upper_left | down, selection.right_column(), lower_right | up })
+		&& is_locking_compatible<&Glyph::rotate_90>({ selection, upper_left | right, lower_left | up })
+		&& is_locking_compatible<&Glyph::rotate_90>({ selection, upper_right | down, upper_left | right })
 	);
 }
 
@@ -123,6 +142,7 @@ Symmetry SymmetryChecker::has_forward_diagonal_symmetry() const
 	(
 		   are_connections_compatible<mirror_forward_diagonal, &Glyph::up, &Glyph::right>  ({ selection.upper_row(), upper_left | right, selection.right_column(), lower_right | up })
 		&& are_connections_compatible<mirror_forward_diagonal, &Glyph::left, &Glyph::down> ({ selection.left_column(), upper_left | down, selection.lower_row(), lower_right | left })
+		&& is_locking_compatible<&Glyph::mirror_forward_diagonal>({ selection, upper_left | right, lower_right | up })
 	);
 }
 
@@ -132,5 +152,6 @@ Symmetry SymmetryChecker::has_backward_diagonal_symmetry() const
 	(
 		   are_connections_compatible<mirror_backward_diagonal, &Glyph::up, &Glyph::left>    ({ selection.upper_row(), upper_right | left, selection.left_column(), lower_left | up })
 		&& are_connections_compatible<mirror_backward_diagonal, &Glyph::right, &Glyph::down> ({ selection.right_column(), upper_right | down, selection.lower_row(), lower_left | right })
+		&& is_locking_compatible<&Glyph::mirror_forward_diagonal>({ selection, upper_right | left, lower_left | up })
 	);
 }
