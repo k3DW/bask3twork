@@ -1,8 +1,45 @@
 #include "pch.h"
+#include "pure/CornerMovement.h"
+#include "pure/Glyph.h"
+#include "pure/GridSize.h"
+#include "pure/Selection.h"
 #include "pure/SelectionZip.h"
 #include "pure/Symmetry.h"
 
-Symmetry SymmetryChecker::get(GridSize size) const
+
+
+class SymmetryChecker
+{
+public:
+	SymmetryChecker(const Glyphs& glyphs, Selection selection)
+		: glyphs(&glyphs), selection(selection)
+	{}
+
+	Symmetry symmetry() const;
+
+private:
+	using enum Corner;
+	using enum Movement;
+
+	template <ConnectionFn transform, Connection Connections::* lhs, Connection Connections::* rhs = lhs>
+	bool are_connections_compatible(const SelectionZipRange& range) const;
+
+	Symmetry has_mirror_x_symmetry() const;
+	Symmetry has_mirror_y_symmetry() const;
+	Symmetry has_rotate_180_symmetry() const;
+	Symmetry has_rotate_90_symmetry() const;
+	Symmetry has_forward_diagonal_symmetry() const;
+	Symmetry has_backward_diagonal_symmetry() const;
+
+	const Glyph* glyph(Point p) const { return (*glyphs)[p.i][p.j]; }
+
+private:
+	const Glyphs* glyphs;
+	const Tiles* tiles;
+	Selection selection;
+};
+
+Symmetry check_symmetry(const Glyphs& glyphs, Selection selection, GridSize size)
 {
 	if (selection.is_full_selection(size))
 	{
@@ -12,8 +49,12 @@ Symmetry SymmetryChecker::get(GridSize size) const
 		return non_square | square;
 	}
 
-	Symmetry non_square = 
-		(has_mirror_x_symmetry() | has_mirror_y_symmetry() | has_rotate_180_symmetry());
+	return SymmetryChecker(glyphs, selection).symmetry();
+}
+
+Symmetry SymmetryChecker::symmetry() const
+{
+	Symmetry non_square = has_mirror_x_symmetry() | has_mirror_y_symmetry() | has_rotate_180_symmetry();
 
 	Symmetry square = Symmetry::Nothing;
 	if (selection.is_square())
@@ -21,6 +62,8 @@ Symmetry SymmetryChecker::get(GridSize size) const
 
 	return Symmetry::AnySym | non_square | square;
 }
+
+
 
 template <ConnectionFn transform, Connection Connections::* lhs, Connection Connections::* rhs>
 bool SymmetryChecker::are_connections_compatible(const SelectionZipRange& range) const

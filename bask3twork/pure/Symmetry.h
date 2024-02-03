@@ -1,9 +1,6 @@
 #pragma once
-#include "pure/CornerMovement.h"
-#include "pure/Glyph.h"
-#include "pure/GridSize.h"
-#include "pure/Selection.h"
 #include "pure/UsableEnum.h"
+#include "Forward.h"
 
 /** All the types of symmetry which can be used in this program.
  * The bit flags tell \c Knot::generate() how to generate.
@@ -32,33 +29,4 @@ enum class Symmetry
 
 template <> struct opt_into_enum_operations<Symmetry> : std::true_type {};
 
-
-class SymmetryChecker
-{
-public:
-	SymmetryChecker(const Glyphs& glyphs, Selection selection)
-		: glyphs(&glyphs), selection(selection)
-	{}
-
-	Symmetry get(GridSize size) const;
-
-private:
-	using enum Corner;
-	using enum Movement;
-
-	template <ConnectionFn transform, Connection Connections::* lhs, Connection Connections::* rhs = lhs>
-	bool are_connections_compatible(const SelectionZipRange& range) const;
-
-	Symmetry has_mirror_x_symmetry() const;
-	Symmetry has_mirror_y_symmetry() const;
-	Symmetry has_rotate_180_symmetry() const;
-	Symmetry has_rotate_90_symmetry() const;
-	Symmetry has_forward_diagonal_symmetry() const;
-	Symmetry has_backward_diagonal_symmetry() const;
-
-	const Glyph* glyph(Point p) const { return (*glyphs)[p.i][p.j]; }
-
-private:
-	const Glyphs* glyphs;
-	Selection selection;
-};
+Symmetry check_symmetry(const Glyphs& glyphs, Selection selection, GridSize size);

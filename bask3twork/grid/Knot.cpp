@@ -215,7 +215,7 @@ bool Knot::checkWrapping(Selection selection) const {
 
 Symmetry Knot::symmetry_of(Selection selection) const
 {
-	return SymmetryChecker(glyphs, selection).get(size);
+	return check_symmetry(glyphs, selection, size);
 }
 
 wxString Knot::plaintext() const
