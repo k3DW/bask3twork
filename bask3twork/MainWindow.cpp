@@ -3,15 +3,13 @@
 #include "MainWindow.h"
 #include "grid/Display.h"
 #include "grid/Knot.h"
-#include "grid/GridSizer.h"
-#include "pure/Enum.h"
 #include "pure/Glyph.h"
 #include "pure/GridSize.h"
 #include "pure/Symmetry.h"
+#include "pure/UsableEnum.h"
 #include "regions/Select.h"
 #include "regions/Generate.h"
 #include "regions/Export.h"
-#include "regions/RegionSizer.h"
 #include "controls/MenuBar.h"
 #include "controls/RegenDialog.h"
 
@@ -23,15 +21,15 @@ MainWindow::MainWindow(GridSize size, wxString title)
 	, showing_selection(false)
 	, generate_region(new GenerateRegion(this))
 	, export_region(new ExportRegion(this, size))
-	, region_sizer(new RegionSizer(select_region, generate_region, export_region))
+	, region_sizer(make_region_sizer(select_region, generate_region, export_region))
 
 	, menu_bar(new MenuBar(this))
 
 	, disp(new DisplayGrid(this, size))
 	, knot(new Knot(size, GetStatusBar())) // Apparently you can call GetStatusBar() before CreateStatusBar()
-	, grid_sizer(new GridSizer(disp))
+	, grid_sizer(make_grid_sizer(disp))
 
-	, main_sizer(new MainSizer(grid_sizer, region_sizer))
+	, main_sizer(make_main_sizer(grid_sizer, region_sizer))
 {
 	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
@@ -47,6 +45,7 @@ void MainWindow::show_selection()
 {
 	select_region->normalize();
 	select_region->set_toggle_hide();
+	select_region->enable_lock_buttons();
 	disp->highlight(select_region->get_selection());
 	generate_region->enable_buttons(current_symmetry());
 	showing_selection = true;
@@ -54,6 +53,7 @@ void MainWindow::show_selection()
 void MainWindow::hide_selection()
 {
 	select_region->set_toggle_show();
+	select_region->disable_lock_buttons();
 	disp->unhighlight(true);
 	generate_region->disable_buttons();
 	showing_selection = false;
@@ -80,19 +80,49 @@ void MainWindow::reset_selection(wxCommandEvent& evt)
 	evt.Skip();
 }
 
+void MainWindow::lock_selection(wxCommandEvent& evt)
+{
+	disp->lock(select_region->get_selection());
+	generate_region->enable_buttons(current_symmetry());
+	evt.Skip();
+}
+
+void MainWindow::unlock_selection(wxCommandEvent& evt)
+{
+	disp->unlock(select_region->get_selection());
+	generate_region->enable_buttons(current_symmetry());
+	evt.Skip();
+}
+
 void MainWindow::left_click_tile(wxMouseEvent& evt)
 {
 	wxWindowID id = evt.GetId();
-	select_region->set_min({ id / size.columns, id % size.columns });
-	select_region->update_display();
+	Point point = { id / size.columns, id % size.columns };
+	if (wxGetKeyState(WXK_CONTROL))
+	{
+		disp->lock(point);
+	}
+	else
+	{
+		select_region->set_min(point);
+		select_region->update_display();
+	}
 	hide_selection();
 	evt.Skip();
 }
 void MainWindow::right_click_tile(wxMouseEvent& evt)
 {
 	wxWindowID id = evt.GetId();
-	select_region->set_max({ id / size.columns, id % size.columns });
-	select_region->update_display();
+	Point point = { id / size.columns, id % size.columns };
+	if (wxGetKeyState(WXK_CONTROL))
+	{
+		disp->unlock(point);
+	}
+	else
+	{
+		select_region->set_max(point);
+		select_region->update_display();
+	}
 	hide_selection();
 	evt.Skip();
 }
@@ -166,7 +196,7 @@ void MainWindow::openFile() {
 	knot = new Knot(std::move(glyphs), GetStatusBar());
 	disp = new DisplayGrid(this, size);
 	disp->draw(knot);
-	grid_sizer->update(disp);
+	grid_sizer->Insert(1, disp, 0, wxEXPAND);
 
 	// Then, reset the select coordinates with MainWindow::reset_selection()
 	// and regenerate and export textbox.
@@ -240,7 +270,7 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 
 		disp->Destroy();
 		disp = new DisplayGrid(this, size);
-		grid_sizer->update(disp);
+		grid_sizer->Insert(1, disp, 0, wxEXPAND);
 
 		// / Then, reset the select coordinates with MainWindow::reset_selection(),
 		// / regenerate and export textbox,
@@ -280,7 +310,10 @@ void MainWindow::refresh_min_size()
 
 Symmetry MainWindow::current_symmetry() const
 {
-	return knot->symmetry_of(select_region->get_selection()) * knot->checkWrapping(select_region->get_selection());
+	if (knot->checkWrapping(select_region->get_selection()))
+		return knot->symmetry_of(select_region->get_selection(), disp->get_tiles());
+	else
+		return Symmetry::Nothing;
 }
 
 void MainWindow::generateKnot(wxCommandEvent& evt) {
@@ -293,7 +326,7 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// so update the DisplayGrid with DisplayGrid::draw() and update the export text box with MainWindow::showExportBox().
 	/// If the generate function returns \c false, then display an error message as a \c wxMessageBox.
 	Symmetry sym = static_cast<Symmetry>(evt.GetId());
-	if (knot->generate(sym, select_region->get_selection())) {
+	if (knot->generate(sym, select_region->get_selection(), disp->get_tiles())) {
 		disp->draw(knot);
 		export_region->display(knot);
 	}
@@ -308,11 +341,34 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 
 
 
-MainSizer::MainSizer(GridSizer* grid_sizer, RegionSizer* region_sizer)
-	: wxBoxSizer(wxHORIZONTAL)
+wxBoxSizer* MainWindow::make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region, ExportRegion* export_region)
 {
-	AddStretchSpacer();
-	Add(grid_sizer, 0, wxEXPAND | wxALL, Borders::outside);
-	AddStretchSpacer();
-	Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), Borders::outside);
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->AddStretchSpacer();
+	sizer->Add(select_region);
+	sizer->AddSpacer(Borders::inter_region);
+	sizer->Add(generate_region);
+	sizer->AddSpacer(Borders::inter_region);
+	sizer->Add(export_region);
+	sizer->AddStretchSpacer();
+	return sizer;
+}
+
+wxBoxSizer* MainWindow::make_grid_sizer(DisplayGrid* display)
+{
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->AddStretchSpacer();
+	sizer->Add(display);
+	sizer->AddStretchSpacer();
+	return sizer;
+}
+
+wxBoxSizer* MainWindow::make_main_sizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer)
+{
+	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+	sizer->AddStretchSpacer();
+	sizer->Add(grid_sizer, 0, wxEXPAND | wxALL, Borders::outside);
+	sizer->AddStretchSpacer();
+	sizer->Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), Borders::outside);
+	return sizer;
 }

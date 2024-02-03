@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="grid\GridSizer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -27,7 +26,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="pure\Glyph.cpp" />
-    <ClCompile Include="regions\RegionSizer.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="grid\Display.cpp" />
     <ClCompile Include="regions\Export.cpp" />
@@ -41,11 +39,13 @@
     <ClCompile Include="grid\Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="grid\GridSizer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="pure\Connection.h" />
     <ClInclude Include="grid\Display.h" />
-    <ClInclude Include="pure\Enum.h" />
+    <ClInclude Include="pure\CornerMovement.h" />
+    <ClInclude Include="pure\SelectionIterator.h" />
+    <ClInclude Include="pure\SelectionZip.h" />
+    <ClInclude Include="pure\UsableEnum.h" />
     <ClInclude Include="pure\GridSize.h" />
     <ClInclude Include="regions\Export.h" />
     <ClInclude Include="Forward.h" />
@@ -61,7 +61,6 @@
     <ClInclude Include="pure\Selection.h" />
     <ClInclude Include="grid\Tile.h" />
     <ClInclude Include="Version.h" />
-    <ClInclude Include="regions\RegionSizer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\Resource.rc" />

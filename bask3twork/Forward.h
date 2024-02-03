@@ -7,7 +7,6 @@
 // Main
 class App;
 class MainWindow;
-class MainSizer;
 struct Version;
 
 
@@ -31,9 +30,9 @@ class RegenDialogTextBox;
 
 // Grid
 class DisplayGrid;
-class GridSizer;
 class Knot;
 
+enum class TileState;
 class Tile;
 using Tiles = std::vector<std::vector<Tile*>>;
 class AxisLabel;
@@ -56,6 +55,10 @@ struct GridSize;
 struct Point;
 struct Selection;
 
+class SelectionIterator;
+class SelectionZipIterator;
+class SelectionZipRange;
+
 enum class Symmetry;
 class SymmetryChecker;
 
@@ -65,5 +68,4 @@ class SymmetryChecker;
 class ExportRegion;
 class GenerateRegion;
 class GenerateRegionButton;
-class RegionSizer;
 class SelectRegion;

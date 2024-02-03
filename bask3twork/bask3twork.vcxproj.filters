@@ -48,12 +48,6 @@
     <ClCompile Include="controls\RegenDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="regions\RegionSizer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="grid\GridSizer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -107,13 +101,7 @@
     <ClInclude Include="controls\RegenDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pure\Enum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="regions\RegionSizer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="grid\GridSizer.h">
+    <ClInclude Include="pure\UsableEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Forward.h">
@@ -123,6 +111,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pure\GridSize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pure\CornerMovement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pure\SelectionIterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pure\SelectionZip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

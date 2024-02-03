@@ -3,16 +3,34 @@
 #include "grid/Display.h"
 #include "Constants.h"
 
-Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxColour& base)
+Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const TileColours& colours)
 	: wxStaticText(parent, id, label)
-	, base(base)
+	, colours(colours)
 {
 	SetFont(Fonts::glyph);
 	unhighlight();
 }
 
-void Tile::highlight()   { SetBackgroundColour(Colours::highlight); }
-void Tile::unhighlight() { SetBackgroundColour(base); }
+void Tile::highlight()   { state |= TileState::highlighted; set_colour(); }
+void Tile::unhighlight() { state &= ~TileState::highlighted; set_colour(); }
+
+void Tile::lock()   { state |= TileState::locked; set_colour(); }
+void Tile::unlock() { state &= ~TileState::locked; set_colour(); }
+
+void Tile::set_colour()
+{
+	switch (state)
+	{
+	break; case TileState::none:
+		SetBackgroundColour(colours.base);
+	break; case TileState::highlighted:
+		SetBackgroundColour(colours.highlighted);
+	break; case TileState::locked:
+		SetBackgroundColour(colours.locked);
+	break; case TileState::highlighted | TileState::locked:
+		SetBackgroundColour(colours.highlighted_locked);
+	}
+}
 
 /** \fn Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxColour& base)
  * Sets the \c wxStaticText base object, the \c base colour, and the font.

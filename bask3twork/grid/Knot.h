@@ -16,11 +16,11 @@ public:
 	bool wrapXEnabled = false;		///< Is wrapping enabled in the X direction
 	bool wrapYEnabled = false;		///< Is wrapping enabled in the Y direction
 
-	bool generate(Symmetry sym, Selection selection);
+	bool generate(Symmetry sym, Selection selection, const Tiles& tiles);
 
 	bool checkWrapping(Selection selection) const;
 
-	Symmetry symmetry_of(Selection selection) const;
+	Symmetry symmetry_of(Selection selection, const Tiles& tiles) const;
 
 	wxString plaintext() const;
 

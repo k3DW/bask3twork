@@ -12,7 +12,14 @@ public:
 	void highlight(Selection selection); ///< Highlights the given area, unhighlighting the rest
 	void unhighlight(bool refresh);      ///< Unhighlights the whole grid, and maybe refreshes the base \c wxPanel
 
+	void lock(Selection selection);   ///< Locks the given area, regardless of whether it was locked already
+	void lock(Point point);           ///< Locks the tile at the given coordinate, regardless of whether it was locked already
+	void unlock(Selection selection); ///< Unlocks the given area, regardless of whether it was locked already
+	void unlock(Point point);         ///< Unlocks the tile at the given coordinate, regardless of whether it was locked already
+
 	void draw(const Knot* knot); ///< Pulls data from the Knot object and displays it in the grid
+
+	const Tiles& get_tiles() const { return tiles; }
 
 private:
 	wxGridBagSizer* sizer; ///< The sizer used to pack all the components in this \c wxPanel object

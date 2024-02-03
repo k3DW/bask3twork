@@ -3,14 +3,16 @@
 #include "grid/Knot.h"
 #include "pure/Glyph.h"
 #include "pure/Selection.h"
+#include "pure/SelectionZip.h"
 #include "pure/Symmetry.h"
+#include "grid/Tile.h" // This breaks the dependency direction between folders, todo change this later (maybe)
 #include "Constants.h"
 
 Knot::Knot(GridSize size, wxStatusBar* statusBar) : size(size), statusBar(statusBar), glyphs(size.rows, std::vector<const Glyph*>(size.columns, DefaultGlyph)) {}
-Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : size{ .rows = (int)glyphs.size(), .columns = (int)glyphs[0].size() }, statusBar(statusBar), glyphs(glyphs) {}
+Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : size{ .rows = (int)glyphs.size(), .columns = (int)glyphs[0].size() }, statusBar(statusBar), glyphs(std::move(glyphs)) {}
 wxString Knot::get(const int i, const int j) const { return wxUniChar(glyphs[i][j]->code_point); }
 
-bool Knot::generate(Symmetry sym, Selection selection)
+bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
 /** Generate a knot with the given symmetry in the given selection.
  *
  * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
@@ -50,8 +52,100 @@ bool Knot::generate(Symmetry sym, Selection selection)
 	/// Then, make a copy of \c glyphs, and set all members in the selection to \c nullptr to denote that they are unassigned.
 	Glyphs baseGlyphs = glyphs;
 	for (int i = selection.min.i; i <= selection.max.i; i++)
-		for (int j = selection.min.j; j <= selection.max.j; j++)
+	for (int j = selection.min.j; j <= selection.max.j; j++)
+	{
+		if (tiles[i][j]->locked())
+			baseGlyphs[i][j] = glyphs[i][j];
+		else
 			baseGlyphs[i][j] = nullptr;
+	}
+
+
+
+	{
+		// Note, this is all done in `generate()` and not in `tryGenerating()` to avoid doing it repeatedly dong this work for failed attempts
+		using enum Corner;
+		using enum Movement;
+
+		if (sym % Symmetry::HoriSym)
+		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | right, lower_left | right })
+		{
+			const Tile* t1 = tiles[p1.i][p1.j];
+			const Tile* t2 = tiles[p2.i][p2.j];
+			if (t1->locked() && !t2->locked())
+				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->mirror_x;
+			else if (!t1->locked() && t2->locked())
+				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->mirror_x;
+		}
+
+		if (sym % Symmetry::VertSym)
+		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | down, upper_right | down })
+		{
+			const Tile* t1 = tiles[p1.i][p1.j];
+			const Tile* t2 = tiles[p2.i][p2.j];
+			if (t1->locked() && !t2->locked())
+				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->mirror_y;
+			else if (!t1->locked() && t2->locked())
+				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->mirror_y;
+		}
+
+		if (sym % Symmetry::Rot2Sym)
+		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | right, lower_right | left })
+		{
+			const Tile* t1 = tiles[p1.i][p1.j];
+			const Tile* t2 = tiles[p2.i][p2.j];
+			if (t1->locked() && !t2->locked())
+				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->rotate_180;
+			else if (!t1->locked() && t2->locked())
+				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->rotate_180;
+		}
+
+		if (sym % Symmetry::Rot4Sym)
+		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | right, lower_left | up })
+		{
+			const Tile* t1 = tiles[p1.i][p1.j];
+			const Tile* t2 = tiles[p2.i][p2.j];
+			if (t1->locked() && !t2->locked())
+				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->rotate_90;
+			else if (!t1->locked() && t2->locked())
+				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->rotate_180->rotate_90;
+		}
+
+		if (sym % Symmetry::Rot4Sym)
+		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_right | down, upper_left | right })
+		{
+			const Tile* t1 = tiles[p1.i][p1.j];
+			const Tile* t2 = tiles[p2.i][p2.j];
+			if (t1->locked() && !t2->locked())
+				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->rotate_180->rotate_90;
+			else if (!t1->locked() && t2->locked())
+				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->rotate_90;
+		}
+
+		if (sym % Symmetry::FwdDiag)
+		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | right, lower_right | up })
+		{
+			const Tile* t1 = tiles[p1.i][p1.j];
+			const Tile* t2 = tiles[p2.i][p2.j];
+			if (t1->locked() && !t2->locked())
+				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->mirror_forward_diagonal;
+			else if (!t1->locked() && t2->locked())
+				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->mirror_forward_diagonal;
+		}
+
+		if (sym % Symmetry::BackDiag)
+		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_right | left, lower_left | up })
+		{
+			const Tile* t1 = tiles[p1.i][p1.j];
+			const Tile* t2 = tiles[p2.i][p2.j];
+			if (t1->locked() && !t2->locked())
+				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->mirror_backward_diagonal;
+			else if (!t1->locked() && t2->locked())
+				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->mirror_backward_diagonal;
+		}
+	}
+
+
 
 	/// Next, enter a loop, counting the number of attempts made at generating this knot. The steps are as follows.
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
@@ -176,7 +270,7 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 	}
 
 	/// \b (5) If the loop finishes, then the Knot has been successfully generated. Return \c true.
-	return glyphGrid;
+	return { std::move(glyphGrid) };
 }
 
 bool Knot::checkWrapping(Selection selection) const {
@@ -213,9 +307,9 @@ bool Knot::checkWrapping(Selection selection) const {
 	return true;
 }
 
-Symmetry Knot::symmetry_of(Selection selection) const
+Symmetry Knot::symmetry_of(Selection selection, const Tiles& tiles) const
 {
-	return SymmetryChecker(glyphs, selection).get(size);
+	return check_symmetry(glyphs, tiles, selection, size);
 }
 
 wxString Knot::plaintext() const

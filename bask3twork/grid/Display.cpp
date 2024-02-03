@@ -47,6 +47,34 @@ void DisplayGrid::unhighlight(bool refresh) {// This function clears all tiles f
 	}
 }
 
+void DisplayGrid::lock(Selection selection)
+{
+	for (int i = selection.min.i; i <= selection.max.i; i++)
+		for (int j = selection.min.j; j <= selection.max.j; j++)
+			tiles[i][j]->lock();
+	Refresh();
+}
+
+void DisplayGrid::lock(Point point)
+{
+	tiles[point.i][point.j]->lock();
+	tiles[point.i][point.j]->Refresh();
+}
+
+void DisplayGrid::unlock(Selection selection)
+{
+	for (int i = selection.min.i; i <= selection.max.i; i++)
+		for (int j = selection.min.j; j <= selection.max.j; j++)
+			tiles[i][j]->unlock();
+	Refresh();
+}
+
+void DisplayGrid::unlock(Point point)
+{
+	tiles[point.i][point.j]->unlock();
+	tiles[point.i][point.j]->Refresh();
+}
+
 void DisplayGrid::draw(const Knot* knot)
 {
 	for (int i = 0; i < knot->size.rows; i++)
@@ -71,8 +99,8 @@ Tiles DisplayGrid::make_tiles(MainWindow* parent)
 		for (int j = 0; j < columns; j++)
 		{
 			wxWindowID id = (i * columns) + j;
-			const wxColour& colour = Colours::tile[i % 2][j % 2];
-			tiles[i][j] = new Tile(this, id, wxUniChar(DefaultGlyph->code_point), colour);
+			const TileColours& colours = TileColours::all[i % 2][j % 2];
+			tiles[i][j] = new Tile(this, id, wxUniChar(DefaultGlyph->code_point), colours);
 			tiles[i][j]->Bind(wxEVT_LEFT_DOWN, &MainWindow::left_click_tile, parent);
 			tiles[i][j]->Bind(wxEVT_RIGHT_DOWN, &MainWindow::right_click_tile, parent);
 			sizer->Add(tiles[i][j], wxGBPosition(i + 1, j + 1)/*, wxDefaultSpan, wxALIGN_CENTER*/);
