@@ -16,6 +16,7 @@ ExportDialog::ExportDialog(const Knot* knot)
 	sizer->Add(copy_button, 0, wxEXPAND);
 
 	textbox->SetLabel(knot->plaintext());
+	copy_button->SetFocus();
 
 	SetSizer(sizer);
 
