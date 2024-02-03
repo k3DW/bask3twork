@@ -55,6 +55,8 @@ struct GridSize;
 struct Point;
 struct Selection;
 
+class SelectionIterator;
+
 enum class Symmetry;
 class SymmetryChecker;
 

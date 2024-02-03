@@ -43,6 +43,7 @@
     <ClInclude Include="pure\Connection.h" />
     <ClInclude Include="grid\Display.h" />
     <ClInclude Include="pure\CornerMovement.h" />
+    <ClInclude Include="pure\SelectionIterator.h" />
     <ClInclude Include="pure\UsableEnum.h" />
     <ClInclude Include="pure\GridSize.h" />
     <ClInclude Include="regions\Export.h" />
