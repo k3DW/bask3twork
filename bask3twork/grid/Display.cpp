@@ -13,6 +13,8 @@ DisplayGrid::DisplayGrid(MainWindow* parent, GridSize size)
 	, sizer(new wxGridBagSizer(-1, 0))
 	, tiles(make_tiles(parent))
 	, highlighted(false)
+	, glyph_font(Fonts::glyph)
+	, axis_font(Fonts::axis)
 {
 	Hide();
 	SetSizer(sizer);
@@ -80,6 +82,36 @@ void DisplayGrid::draw(const Knot* knot)
 	for (int i = 0; i < knot->size.rows; i++)
 		for (int j = 0; j < knot->size.columns; j++)
 			tiles[i][j]->SetLabelText(knot->get(i, j));
+}
+
+void DisplayGrid::reduce_glyph_font_size_by(int i)
+{
+	wxSize old_size = glyph_font.GetPixelSize();
+	wxSize size{ old_size.x - i, old_size.y - i };
+
+	glyph_font.SetPixelSize(size);
+
+	int axis_point_size = std::max(std::min(12, size.x / 3), 1);
+	axis_font.SetPointSize(axis_point_size);
+
+	for (const auto& row : tiles)
+		for (Tile* tile : row)
+		{
+			tile->SetFont(glyph_font);
+			tile->SetMinSize(size);
+		}
+
+	for (AxisLabel* label : x_axis)
+	{
+		label->SetFont(axis_font);
+		label->SetMinSize(wxDefaultSize);
+	}
+
+	for (AxisLabel* label : y_axis)
+	{
+		label->SetFont(axis_font);
+		label->SetMinSize(wxDefaultSize);
+	}
 }
 
 void DisplayGrid::add_axis_labels(GridSize size)

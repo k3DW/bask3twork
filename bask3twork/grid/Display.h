@@ -21,10 +21,15 @@ public:
 
 	const Tiles& get_tiles() const { return tiles; }
 
+	void reduce_glyph_font_size_by(int i);
+
 private:
 	wxGridBagSizer* sizer; ///< The sizer used to pack all the components in this \c wxPanel object
 	Tiles tiles;           ///< The grid of Tile objects to be used
 	bool highlighted;      ///< A flag to determine if any \c Tile is currently highlighted
+
+	wxFont glyph_font; ///< The glyph font, stored locally per \c DisplayGrid so we can change sizing
+	wxFont axis_font;  ///< The axis font, stored locally per \c DisplayGrid so we can change sizing
 
 	std::vector<AxisLabel*> x_axis;
 	std::vector<AxisLabel*> y_axis;
