@@ -1,6 +1,5 @@
 /* TODO for later versions */
 /*
-	-> Tile locking
 	-> Knot navigation, like moving all the data in a certain direction
 	-> Undo/redo (up to a certain level)
 	-> DisplayGrid automatically changes size depending on the size of the screen/window
