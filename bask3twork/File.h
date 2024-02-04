@@ -15,7 +15,7 @@ public:
 	static auto read(const wxString& file_name)
 		-> std::optional<std::tuple<GridSize, Glyphs, std::vector<Bool>>>;
 
-	static constexpr const char* ext = "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt)|*.txt";
+	static constexpr const char* ext = "Bask3twork Knot Files (*.k3knot)|*.k3knot";
 
 private:
 	static std::size_t file_size(GridSize size);
