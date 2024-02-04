@@ -95,6 +95,11 @@ void MainWindow::unlock_selection(wxCommandEvent& evt)
 	evt.Skip();
 }
 
+void MainWindow::invert_locking(wxCommandEvent& evt)
+{
+	evt.Skip();
+}
+
 void MainWindow::left_click_tile(wxMouseEvent& evt)
 {
 	wxWindowID id = evt.GetId();
