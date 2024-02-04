@@ -25,7 +25,7 @@ public:
 
 	static constexpr std::array functions =
 	{
-		&MainWindow::openFile,
+		&MainWindow::open_file,
 		&MainWindow::save_file,
 		&MainWindow::export_grid,
 		&MainWindow::update_wrap_x,
