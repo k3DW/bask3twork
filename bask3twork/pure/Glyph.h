@@ -50,12 +50,12 @@ struct GlyphsTransformed
 /// A struct to store the glyph information of the the Celtic Knots font
 struct Glyph : GlyphsTransformed, Connections
 {
-	int32_t code_point; ///< The character that gets displayed
+	CodePoint code_point; ///< The character that gets displayed
 
 	GlyphFlag flags; ///< The total signature of this glyph
 	consteval GlyphFlag get_flags() const;
 
-	consteval Glyph(int32_t code_point, GlyphsTransformed transformed, Connections connections)
+	consteval Glyph(CodePoint code_point, GlyphsTransformed transformed, Connections connections)
 		: GlyphsTransformed(transformed)
 		, Connections(connections)
 		, code_point(code_point)

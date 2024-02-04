@@ -90,7 +90,7 @@ void output_unichar_to_glyphs(std::ofstream& unichar_to_glyphs_file, const Codep
 {
 	const OutputFormatter formatter(codepoint_to_index);
 
-	unichar_to_glyphs_file << "inline const std::map<int32_t, const Glyph*> UnicharToGlyph =\n";
+	unichar_to_glyphs_file << "inline const std::map<CodePoint, const Glyph*> UnicharToGlyph =\n";
 	unichar_to_glyphs_file << "{\n";
 
 	for (auto& line : codepoint_to_index)
