@@ -77,6 +77,19 @@ void DisplayGrid::unlock(Point point)
 	tiles[point.i][point.j]->Refresh();
 }
 
+void DisplayGrid::invert_locking(Selection selection)
+{
+	for (int i = selection.min.i; i <= selection.max.i; i++)
+		for (int j = selection.min.j; j <= selection.max.j; j++)
+		{
+			Tile* tile = tiles[i][j];
+			tile->locked()
+				? tile->unlock()
+				: tile->lock();
+		}
+	Refresh();
+}
+
 void DisplayGrid::draw(const Knot* knot)
 {
 	for (int i = 0; i < knot->size.rows; i++)
