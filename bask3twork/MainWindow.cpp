@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Constants.h"
+#include "File.h"
 #include "MainWindow.h"
 #include "grid/Display.h"
 #include "grid/Knot.h"
@@ -208,35 +209,17 @@ void MainWindow::openFile() {
 	
 	file.Close();
 }
-void MainWindow::saveFile() {
+
+void MainWindow::save_file()
+{
 	// Open a wxFileDialog to get the name of the file.
-	wxFileDialog saveFileDialog(this, "Save Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt)|*.txt", wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_CHANGE_DIR);
+	wxFileDialog dialog(this, "Save Knot file", "", "", File::ext, wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_CHANGE_DIR);
 
 	// If the wxFileDialog gets closed, stop the function.
-	if (saveFileDialog.ShowModal() == wxID_CANCEL)
+	if (dialog.ShowModal() == wxID_CANCEL)
 		return;
 
-	// Uses a wxTextFile to write to this file; could also use wxFileOutputStream
-	wxTextFile file(saveFileDialog.GetPath());
-
-	// Clear the file if it exists, or create a file if it doesn't exist
-	if (file.Exists()) {
-		file.Open();
-		file.Clear();
-	}
-	else file.Create();
-
-	// Write the knot to the file, line by line
-	for (int i = 0; i < size.rows; i++) {
-		wxString line = "";
-		for (int j = 0; j < size.columns; j++)
-			line << knot->get(i, j);
-		file.AddLine(line);
-	}
-
-	// Save changes, then close
-	file.Write();
-	file.Close();
+	File::write(dialog.GetPath(), knot, disp);
 }
 
 void MainWindow::export_grid()
