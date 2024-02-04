@@ -10,6 +10,7 @@ public:
 	Knot(GridSize size, wxStatusBar* statusBar);
 	Knot(Glyphs&& glyphs, wxStatusBar* statusBar);
 	wxString get(const int i, const int j) const;
+	CodePoint code_point(const int i, const int j) const;
 
 	GridSize size;                  ///< The size of the knot
 	wxStatusBar* const statusBar;	///< The \c wxStatusBar object from the MainWindow class where the knot should output its progress while generating a knot
