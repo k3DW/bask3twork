@@ -35,8 +35,8 @@ public:
 public:
 	void menu_event_handler(wxCommandEvent& evt); ///< Handles all events for menu presses
 	
-	void openFile();        ///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
-	void saveFile();        ///< Saves the current knot as a \c .k3knot file or a \c .txt file
+	void open_file();       ///< Opens a \c .k3knot file or a \c .txt file, loading it into the grid
+	void save_file();       ///< Saves the current knot as a \c .k3knot file or a \c .txt file
 	void export_grid();     ///< Open the "Export" dialog pop-up, giving the user the option to copy to the clipboard
 	void update_wrap_x();   ///< Grab the x wrapping from the menu bar, and refresh the buttons
 	void update_wrap_y();   ///< Grab the y wrapping from the menu bar, and refresh the buttons

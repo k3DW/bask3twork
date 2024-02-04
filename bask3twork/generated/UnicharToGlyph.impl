@@ -1,4 +1,4 @@
-inline const std::map<int32_t, const Glyph*> UnicharToGlyph =
+inline const std::map<CodePoint, const Glyph*> UnicharToGlyph =
 {
 	{ 32,   &AllGlyphs[0]   },
 	{ 33,   &AllGlyphs[1]   },

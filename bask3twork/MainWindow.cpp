@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "Constants.h"
+#include "File.h"
 #include "MainWindow.h"
 #include "grid/Display.h"
 #include "grid/Knot.h"
+#include "grid/Tile.h"
 #include "pure/Glyph.h"
 #include "pure/GridSize.h"
 #include "pure/Symmetry.h"
@@ -132,111 +134,63 @@ void MainWindow::menu_event_handler(wxCommandEvent& evt)
 	evt.Skip();
 }
 
-void MainWindow::openFile() {
+void MainWindow::open_file()
+{
 	// Open a wxFileDialog to get the name of the file.
-	wxFileDialog openFileDialog(this, "Open Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt)|*.txt", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
+	wxFileDialog dialog(this, "Open Knot file", "", "", File::ext, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
 
 	// If the wxFileDialog gets closed, stop the function.
-	if (openFileDialog.ShowModal() == wxID_CANCEL)
+	if (dialog.ShowModal() == wxID_CANCEL)
 		return;
 
-	// Uses a wxTextFile to read from this file; could also use wxFileInputStream.
-	wxTextFile file(openFileDialog.GetPath());
-	file.Open();
+	auto opt = File::read(dialog.GetPath());
+	if (!opt) // The function validates, and sends error messages with a messagebox, so no need for a message here
+		return;
 
-	// Check the row count, must be 1 <= rows <= MAX_H
-	// Get the column count of the first row, must be 1 <= columns <= MAX_W
-	const size_t rowCount = file.GetLineCount();
-	const size_t colCount = file.GetFirstLine().size();
-	if (rowCount > Limits::rows || colCount > Limits::columns) {
-		wxMessageBox(wxString::Format("Please choose a smaller file. The file can only be %i rows by %i columns.", Limits::rows, Limits::columns), "Error: File is too large");
-		return;
-	}
-	if (rowCount < 1) {
-		wxMessageBox("Please choose a non-empty file.", "Error: File is empty");
-		return;
-	}
-	if (colCount < 1) {
-		wxMessageBox("Please choose a file with non-empty rows.", "Error: First row is empty");
-		return;
+	auto& [new_size, glyphs, locking] = *opt;
+
+	size = new_size;
+
+	// Knot section
+	{
+		delete knot;
+		knot = new Knot(std::move(glyphs), GetStatusBar());
 	}
 
-	// Make a 2D vector of Glyphs, to be later written to the new Knot
-	std::vector<std::vector<const Glyph*>> glyphs;
-	glyphs.reserve(rowCount);
+	// DisplayGrid and Tile section
+	{
+		disp->Destroy();
+		disp = new DisplayGrid(this, size);
 
-	// For each line in the file
-	for (wxString line = file.GetFirstLine(); !file.Eof(); line = file.GetNextLine()) {
-		// If the width has a different number of columns than it should, output an error
-		if (line.size() != colCount) {
-			wxMessageBox("Please choose a valid knot file. The number of characters in every row must be equal.", "Error: File has jagged rows");
-			return;
+		std::size_t running_index = 0;
+		for (int i = 0; i < size.rows; ++i)
+		{
+			for (int j = 0; j < size.columns; ++j)
+			{
+				if (locking[running_index++])
+					disp->lock(Point{ i, j });
+			}
 		}
 
-		// Make a 1D vector of Glyphs, to be written to the 2D vector
-		std::vector<const Glyph*> glyphRow;
-		glyphRow.reserve(colCount);
-
-		// Take each character from the line, and push the corresponding Glyph to the vector
-		for (wxUniChar c : line)
-			glyphRow.push_back(UnicharToGlyph.at(c));
-		glyphs.push_back(glyphRow);
+		disp->draw(knot);
+		grid_sizer->Insert(1, disp, 0, wxEXPAND);
 	}
 
-	// Delete the current knot and destroy the DisplayGrid.
-	delete knot;
-	disp->Destroy();
-
-	// Set the height and width, then set the grid regen textbox values.
-	size = { .rows = (int)glyphs.size(), .columns = (int)glyphs[0].size() };
-
-	// Next, initialize the Knot with the variable \c glyphs and the status bar.
-	// Initialize the DisplayGrid with the newly generated Knot, and insert it between the stretch spacers in its sizer.
-	knot = new Knot(std::move(glyphs), GetStatusBar());
-	disp = new DisplayGrid(this, size);
-	disp->draw(knot);
-	grid_sizer->Insert(1, disp, 0, wxEXPAND);
-
-	// Then, reset the select coordinates with MainWindow::reset_selection()
-	reset_selection();
-
-	// Reset the wrapping checkboxes
-	menu_bar->reset_wrapping();
-
-	// Lastly, update the window sizing.
-	update_sizing();
-	
-	file.Close();
+	reset_selection();          // Reset the select coordinates,
+	menu_bar->reset_wrapping(); // Reset the wrapping checkboxes,
+	update_sizing();            // Update the window sizing.
 }
-void MainWindow::saveFile() {
+
+void MainWindow::save_file()
+{
 	// Open a wxFileDialog to get the name of the file.
-	wxFileDialog saveFileDialog(this, "Save Knot file", "", "", "k3DW Knot Files (*.k3knot)|*.k3knot|Text files (*.txt)|*.txt", wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_CHANGE_DIR);
+	wxFileDialog dialog(this, "Save Knot file", "", "", File::ext, wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_CHANGE_DIR);
 
 	// If the wxFileDialog gets closed, stop the function.
-	if (saveFileDialog.ShowModal() == wxID_CANCEL)
+	if (dialog.ShowModal() == wxID_CANCEL)
 		return;
 
-	// Uses a wxTextFile to write to this file; could also use wxFileOutputStream
-	wxTextFile file(saveFileDialog.GetPath());
-
-	// Clear the file if it exists, or create a file if it doesn't exist
-	if (file.Exists()) {
-		file.Open();
-		file.Clear();
-	}
-	else file.Create();
-
-	// Write the knot to the file, line by line
-	for (int i = 0; i < size.rows; i++) {
-		wxString line = "";
-		for (int j = 0; j < size.columns; j++)
-			line << knot->get(i, j);
-		file.AddLine(line);
-	}
-
-	// Save changes, then close
-	file.Write();
-	file.Close();
+	File::write(dialog.GetPath(), knot, disp);
 }
 
 void MainWindow::export_grid()

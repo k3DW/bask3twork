@@ -50,6 +50,7 @@ enum class GlyphFlag;
 struct Glyph;
 using Glyphs = std::vector<std::vector<const Glyph*>>;
 struct GlyphsTransformed;
+using CodePoint = int32_t;
 
 struct GridSize;
 
