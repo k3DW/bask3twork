@@ -37,7 +37,7 @@ SelectRegion::SelectRegion(MainWindow* parent, GridSize size)
 	update_display();
 
 	Add(display, 0, wxALIGN_CENTER | wxDOWN, Borders::sub_region);
-	Add(selecting_button_sizer, 0, wxEXPAND);
+	Add(selecting_button_sizer, 0, wxEXPAND | wxDOWN, Borders::sub_region);
 	Add(locking_button_sizer, 0, wxEXPAND);
 	Layout();
 }
