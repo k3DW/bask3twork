@@ -8,10 +8,10 @@ SelectRegion::SelectRegion(MainWindow* parent, GridSize size)
 	: wxStaticBoxSizer(wxVERTICAL, parent, "Select")
 	, selection{ .min{ 0, 0 }, .max{ size.rows - 1, size.columns - 1 } }
 {
-	toggle_button = new wxButton(parent, wxID_ANY, "Show", wxDefaultPosition, wxSize(65,23));
+	toggle_button = new wxButton(parent, wxID_ANY, "Show", wxDefaultPosition, Sizes::button);
 	toggle_button->Bind(wxEVT_BUTTON, &MainWindow::toggle_selection, parent);
 
-	reset_button = new wxButton(parent, wxID_ANY, "Reset", wxDefaultPosition, wxSize(65,23));
+	reset_button = new wxButton(parent, wxID_ANY, "Reset", wxDefaultPosition, Sizes::button);
 	reset_button->Bind(wxEVT_BUTTON, &MainWindow::reset_selection, parent);
 
 	selecting_button_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -19,11 +19,11 @@ SelectRegion::SelectRegion(MainWindow* parent, GridSize size)
 	selecting_button_sizer->Add(reset_button);
 
 
-	lock_button = new wxButton(parent, wxID_ANY, "Lock", wxDefaultPosition, wxSize(65,23));
+	lock_button = new wxButton(parent, wxID_ANY, "Lock", wxDefaultPosition, Sizes::button);
 	lock_button->Bind(wxEVT_BUTTON, &MainWindow::lock_selection, parent);
 	lock_button->Disable();
 
-	unlock_button = new wxButton(parent, wxID_ANY, "Unlock", wxDefaultPosition, wxSize(65,23));
+	unlock_button = new wxButton(parent, wxID_ANY, "Unlock", wxDefaultPosition, Sizes::button);
 	unlock_button->Bind(wxEVT_BUTTON, &MainWindow::unlock_selection, parent);
 	unlock_button->Disable();
 
@@ -31,14 +31,19 @@ SelectRegion::SelectRegion(MainWindow* parent, GridSize size)
 	locking_button_sizer->Add(lock_button);
 	locking_button_sizer->Add(unlock_button);
 
+	invert_locking_button = new wxButton(parent, wxID_ANY, "Invert locking");
+	invert_locking_button->Bind(wxEVT_BUTTON, &MainWindow::invert_locking, parent);
+	invert_locking_button->Disable();
+
 
 	display = new wxStaticText(parent, wxID_ANY, "");
 	display->SetFont(Fonts::select);
 	update_display();
 
 	Add(display, 0, wxALIGN_CENTER | wxDOWN, Borders::sub_region);
-	Add(selecting_button_sizer, 0, wxEXPAND);
+	Add(selecting_button_sizer, 0, wxEXPAND | wxDOWN, Borders::sub_region);
 	Add(locking_button_sizer, 0, wxEXPAND);
+	Add(invert_locking_button, 0, wxEXPAND);
 	Layout();
 }
 
@@ -82,9 +87,11 @@ void SelectRegion::disable_lock_buttons()
 {
 	lock_button->Disable();
 	unlock_button->Disable();
+	invert_locking_button->Disable();
 }
 void SelectRegion::enable_lock_buttons()
 {
 	lock_button->Enable();
 	unlock_button->Enable();
+	invert_locking_button->Enable();
 }

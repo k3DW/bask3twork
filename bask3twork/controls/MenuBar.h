@@ -17,6 +17,7 @@ public:
 	{
 		OPEN,
 		SAVE,
+		EXPORT_GRID,
 		WRAP_X,
 		WRAP_Y,
 		REGEN_GRID,
@@ -24,8 +25,9 @@ public:
 
 	static constexpr std::array functions =
 	{
-		&MainWindow::openFile,
-		&MainWindow::saveFile,
+		&MainWindow::open_file,
+		&MainWindow::save_file,
+		&MainWindow::export_grid,
 		&MainWindow::update_wrap_x,
 		&MainWindow::update_wrap_y,
 		&MainWindow::regenerate_grid,

@@ -4,7 +4,7 @@
 #include "Constants.h"
 
 Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const TileColours& colours)
-	: wxStaticText(parent, id, label)
+	: wxStaticText(parent, id, label, wxDefaultPosition, Fonts::glyph.GetPixelSize(), wxST_NO_AUTORESIZE)
 	, colours(colours)
 {
 	SetFont(Fonts::glyph);

@@ -11,6 +11,7 @@
 Knot::Knot(GridSize size, wxStatusBar* statusBar) : size(size), statusBar(statusBar), glyphs(size.rows, std::vector<const Glyph*>(size.columns, DefaultGlyph)) {}
 Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : size{ .rows = (int)glyphs.size(), .columns = (int)glyphs[0].size() }, statusBar(statusBar), glyphs(std::move(glyphs)) {}
 wxString Knot::get(const int i, const int j) const { return wxUniChar(glyphs[i][j]->code_point); }
+CodePoint Knot::code_point(const int i, const int j) const { return glyphs[i][j]->code_point; }
 
 bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
 /** Generate a knot with the given symmetry in the given selection.
