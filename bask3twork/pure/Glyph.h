@@ -106,4 +106,4 @@ consteval GlyphFlag Glyph::get_flags() const
 #include "generated/UnicharToGlyph.impl"
 
 /// The default Glyph to fill the Knot upon initialization, which is set as the \c space character, \c \x20
-constexpr const Glyph* DefaultGlyph = &AllGlyphs[0];
+constexpr const Glyph* SpaceGlyph = &AllGlyphs[0];

@@ -8,9 +8,9 @@
 #include "grid/Tile.h" // This breaks the dependency direction between folders, todo change this later (maybe)
 #include "Constants.h"
 
-Knot::Knot(GridSize size, wxStatusBar* statusBar) : size(size), statusBar(statusBar), glyphs(size.rows, std::vector<const Glyph*>(size.columns, DefaultGlyph)) {}
+Knot::Knot(GridSize size, wxStatusBar* statusBar) : size(size), statusBar(statusBar), glyphs(size.rows, std::vector<const Glyph*>(size.columns, SpaceGlyph)) {}
 Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : size{ .rows = (int)glyphs.size(), .columns = (int)glyphs[0].size() }, statusBar(statusBar), glyphs(std::move(glyphs)) {}
-wxString Knot::get(const int i, const int j) const { return wxUniChar(glyphs[i][j]->code_point); }
+wxUniChar Knot::get(const int i, const int j) const { return wxUniChar(glyphs[i][j]->code_point); }
 CodePoint Knot::code_point(const int i, const int j) const { return glyphs[i][j]->code_point; }
 
 bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
@@ -319,7 +319,14 @@ wxString Knot::plaintext() const
 	for (int i = 0; i < size.rows; i++)
 	{
 		for (int j = 0; j < size.columns; j++)
-			output << get(i, j);
+		{
+			wxUniChar c = get(i, j);
+			if (c == SpaceGlyph->code_point)
+				output << wxUniChar(0x00A0); // Turn a regular space into a non-breaking space
+			else
+				output << c;
+		}
+
 		if (i != size.rows - 1)
 			output << "\r\n";
 	}

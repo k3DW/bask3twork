@@ -156,6 +156,7 @@ void MainWindow::open_file()
 
 	auto& [new_size, glyphs, locking] = *opt;
 
+	const bool is_same_size = (size == new_size);
 	size = new_size;
 
 	// Knot section
@@ -166,8 +167,11 @@ void MainWindow::open_file()
 
 	// DisplayGrid and Tile section
 	{
-		disp->Destroy();
-		disp = new DisplayGrid(this, size);
+		if (!is_same_size)
+		{
+			disp->Destroy();
+			disp = new DisplayGrid(this, size);
+		}
 
 		std::size_t running_index = 0;
 		for (int i = 0; i < size.rows; ++i)
@@ -179,8 +183,11 @@ void MainWindow::open_file()
 			}
 		}
 
-		disp->draw(knot);
-		grid_sizer->Insert(1, disp, 0, wxEXPAND);
+		if (!is_same_size)
+		{
+			disp->draw(knot);
+			grid_sizer->Insert(1, disp, 0, wxEXPAND);
+		}
 	}
 
 	reset_selection();          // Reset the select coordinates,
@@ -228,14 +235,22 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 		if (not opt_size)
 			return;
 
+		const bool is_same_size = (size == *opt_size);
 		size = *opt_size;
 
 		delete knot;
 		knot = new Knot(size, GetStatusBar());
 
-		disp->Destroy();
-		disp = new DisplayGrid(this, size);
-		grid_sizer->Insert(1, disp, 0, wxEXPAND);
+		if (!is_same_size)
+		{
+			disp->Destroy();
+			disp = new DisplayGrid(this, size);
+			grid_sizer->Insert(1, disp, 0, wxEXPAND);
+		}
+		else
+		{
+			disp->unlock({ { 0, 0 }, { size.rows - 1, size.columns - 1 } });
+		}
 
 		// / Then, reset the select coordinates with MainWindow::reset_selection(),
 		// / and reset the knot wrapping \c wxMenuItem objects.
