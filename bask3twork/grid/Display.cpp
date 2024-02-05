@@ -154,7 +154,7 @@ Tiles DisplayGrid::make_tiles(MainWindow* parent)
 		{
 			wxWindowID id = (i * columns) + j;
 			const TileColours& colours = TileColours::all[i % 2][j % 2];
-			tiles[i][j] = new Tile(this, id, wxUniChar(DefaultGlyph->code_point), colours);
+			tiles[i][j] = new Tile(this, id, wxUniChar(SpaceGlyph->code_point), colours);
 			tiles[i][j]->Bind(wxEVT_LEFT_DOWN, &MainWindow::left_click_tile, parent);
 			tiles[i][j]->Bind(wxEVT_RIGHT_DOWN, &MainWindow::right_click_tile, parent);
 			sizer->Add(tiles[i][j], wxGBPosition(i + 1, j + 1)/*, wxDefaultSpan, wxALIGN_CENTER*/);

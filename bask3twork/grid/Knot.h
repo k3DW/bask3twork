@@ -9,7 +9,7 @@ class Knot
 public:
 	Knot(GridSize size, wxStatusBar* statusBar);
 	Knot(Glyphs&& glyphs, wxStatusBar* statusBar);
-	wxString get(const int i, const int j) const;
+	wxUniChar get(const int i, const int j) const;
 	CodePoint code_point(const int i, const int j) const;
 
 	GridSize size;                  ///< The size of the knot
