@@ -32,6 +32,7 @@ MainWindow::MainWindow(GridSize size, wxString title)
 
 	, main_sizer(make_main_sizer(grid_sizer, region_sizer))
 {
+	Bind(wxEVT_CHAR_HOOK, &MainWindow::on_key_press, this);
 	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
 	SetSizer(main_sizer);
@@ -59,13 +60,16 @@ void MainWindow::hide_selection()
 	generate_region->disable_buttons();
 	showing_selection = false;
 }
-void MainWindow::toggle_selection(wxCommandEvent& evt)
+void MainWindow::toggle_selection()
 {
 	if (showing_selection)
 		hide_selection();
 	else
 		show_selection();
-
+}
+void MainWindow::toggle_selection(wxCommandEvent& evt)
+{
+	toggle_selection();
 	evt.Skip();
 }
 void MainWindow::reset_selection()
@@ -267,7 +271,14 @@ Symmetry MainWindow::current_symmetry() const
 		return Symmetry::Nothing;
 }
 
-void MainWindow::generateKnot(wxCommandEvent& evt) {
+void MainWindow::generate_knot(wxCommandEvent& evt)
+{
+	generate_knot(static_cast<Symmetry>(evt.GetId()));
+	evt.Skip();
+}
+
+void MainWindow::generate_knot(Symmetry sym)
+{
 	/// The Knot::generate() function uses the status bar, so first store the current displayed message.
 	const wxString oldStatus = GetStatusBar()->GetStatusText();
 
@@ -277,12 +288,10 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// so update the DisplayGrid with DisplayGrid::draw() and update the export text box with MainWindow::showExportBox().
 	/// If the generate function returns \c false, then display an error message as a \c wxMessageBox.
 	
-	const Symmetry sym = static_cast<Symmetry>(evt.GetId());
 	if (sym == Symmetry::Nothing)
 	{
 		knot->clear(select_region->get_selection(), disp->get_tiles());
 		disp->render();
-		evt.Skip();
 		return;
 	}
 
@@ -296,7 +305,6 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// At the end, set the status bar back to the message which was displayed at the beginning of the function,
 	/// and re-enable the generate buttons.
 	GetStatusBar()->SetStatusText(oldStatus);
-	evt.Skip();
 }
 
 
@@ -329,4 +337,53 @@ wxBoxSizer* MainWindow::make_main_sizer(wxBoxSizer* grid_sizer, wxBoxSizer* regi
 	sizer->AddStretchSpacer();
 	sizer->Add(region_sizer, 0, wxEXPAND | (wxALL ^ wxLEFT), Borders::outside);
 	return sizer;
+}
+
+void MainWindow::on_key_press(wxKeyEvent& event)
+{
+	const int code = event.GetKeyCode();
+	switch (code)
+	{
+
+	case WXK_ESCAPE:
+		if (showing_selection)
+			hide_selection();
+		else
+			reset_selection();
+		break;
+
+	case WXK_TAB:
+		toggle_selection();
+		break;
+
+	case WXK_DELETE:
+	case '0':
+		if (event.GetModifiers() == wxMOD_CONTROL && generate_region->is_enabled(Symmetry::Nothing))     generate_knot(Symmetry::Nothing); break;
+
+	case '1': if (event.GetModifiers() == wxMOD_CONTROL && generate_region->is_enabled(Symmetry::AnySym))      generate_knot(Symmetry::AnySym); break;
+	case '2': if (event.GetModifiers() == wxMOD_CONTROL && generate_region->is_enabled(Symmetry::HoriSym))     generate_knot(Symmetry::HoriSym); break;
+	case '3': if (event.GetModifiers() == wxMOD_CONTROL && generate_region->is_enabled(Symmetry::VertSym))     generate_knot(Symmetry::VertSym); break;
+	case '4': if (event.GetModifiers() == wxMOD_CONTROL && generate_region->is_enabled(Symmetry::HoriVertSym)) generate_knot(Symmetry::HoriVertSym); break;
+	case '5': if (event.GetModifiers() == wxMOD_CONTROL && generate_region->is_enabled(Symmetry::Rot2Sym))     generate_knot(Symmetry::Rot2Sym); break;
+	case '6': if (event.GetModifiers() == wxMOD_CONTROL && generate_region->is_enabled(Symmetry::Rot4Sym))     generate_knot(Symmetry::Rot4Sym); break;
+	case '7': if (event.GetModifiers() == wxMOD_CONTROL && generate_region->is_enabled(Symmetry::FwdDiag))     generate_knot(Symmetry::FwdDiag); break;
+	case '8': if (event.GetModifiers() == wxMOD_CONTROL && generate_region->is_enabled(Symmetry::BackDiag))    generate_knot(Symmetry::BackDiag); break;
+	case '9': if (event.GetModifiers() == wxMOD_CONTROL && generate_region->is_enabled(Symmetry::FullSym))     generate_knot(Symmetry::FullSym); break;
+
+	case WXK_NUMPAD0: if (generate_region->is_enabled(Symmetry::Nothing))     generate_knot(Symmetry::Nothing); break;
+	case WXK_NUMPAD1: if (generate_region->is_enabled(Symmetry::AnySym))      generate_knot(Symmetry::AnySym); break;
+	case WXK_NUMPAD2: if (generate_region->is_enabled(Symmetry::HoriSym))     generate_knot(Symmetry::HoriSym); break;
+	case WXK_NUMPAD3: if (generate_region->is_enabled(Symmetry::VertSym))     generate_knot(Symmetry::VertSym); break;
+	case WXK_NUMPAD4: if (generate_region->is_enabled(Symmetry::HoriVertSym)) generate_knot(Symmetry::HoriVertSym); break;
+	case WXK_NUMPAD5: if (generate_region->is_enabled(Symmetry::Rot2Sym))     generate_knot(Symmetry::Rot2Sym); break;
+	case WXK_NUMPAD6: if (generate_region->is_enabled(Symmetry::Rot4Sym))     generate_knot(Symmetry::Rot4Sym); break;
+	case WXK_NUMPAD7: if (generate_region->is_enabled(Symmetry::FwdDiag))     generate_knot(Symmetry::FwdDiag); break;
+	case WXK_NUMPAD8: if (generate_region->is_enabled(Symmetry::BackDiag))    generate_knot(Symmetry::BackDiag); break;
+	case WXK_NUMPAD9: if (generate_region->is_enabled(Symmetry::FullSym))     generate_knot(Symmetry::FullSym); break;
+
+	default:;
+
+	}
+
+	event.Skip();
 }
