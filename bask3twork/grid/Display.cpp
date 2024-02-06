@@ -58,6 +58,8 @@ void DisplayGrid::update_sizes_and_offsets()
 
 	wxSize axis_font_size = axis_font.GetPixelSize();
 	tiles_offset = { axis_font_size.y / 2 + 1, axis_font_size.y + 1 }; // For some reason, the x value reads 0
+	if (grid_size.rows >= 10)
+		tiles_offset.x *= 2;
 
 	tiles_size = { glyph_font_size.x * grid_size.columns, glyph_font_size.y * grid_size.rows };
 	window_size = { tiles_offset.x + tiles_size.x, tiles_offset.y + tiles_size.y };
@@ -133,6 +135,11 @@ void DisplayGrid::render(wxDC& dc)
 
 void DisplayGrid::render_axis_labels(wxDC& dc)
 {
+	static const wxBrush background = Colours::background;
+	dc.SetBrush(background);
+	dc.DrawRectangle({ 0, 0 }, { tiles_offset.x, window_size.y });
+	dc.DrawRectangle({ 0, 0 }, { window_size.x, tiles_offset.y });
+
 	dc.SetFont(axis_font);
 
 	for (int i = 0; i < grid_size.rows; i++)
@@ -271,7 +278,7 @@ wxPoint DisplayGrid::x_label_offset(int pos) const
 
 wxPoint DisplayGrid::y_label_offset(int pos) const
 {
-	int x = 0;
+	int x = (grid_size.rows < 10 || pos >= 9) ? 0 : tiles_offset.x / 4;
 	int y = tiles_offset.y + (pos * glyph_font_size.y) + (glyph_font_size.y / 2) - (tiles_offset.y / 2);
 	return { x, y };
 }
