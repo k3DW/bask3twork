@@ -3,60 +3,23 @@
 #include "grid/Display.h"
 #include "Constants.h"
 
-Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const TileColours& colours)
-	: wxStaticText(parent, id, label, wxDefaultPosition, Fonts::glyph.GetPixelSize(), wxST_NO_AUTORESIZE)
-	, colours(colours)
-{
-	SetFont(Fonts::glyph);
-	unhighlight();
-}
+Tile::Tile(DisplayGrid* parent, const TileBrushes& brushes, wxPoint offset)
+	: brushes(brushes)
+	, offset(offset)
+{}
 
-void Tile::highlight()   { state |= TileState::highlighted; set_colour(); }
-void Tile::unhighlight() { state &= ~TileState::highlighted; set_colour(); }
-
-void Tile::lock()   { state |= TileState::locked; set_colour(); }
-void Tile::unlock() { state &= ~TileState::locked; set_colour(); }
-
-void Tile::set_colour()
+void Tile::render(wxDC& dc, wxSize size) const
 {
 	switch (state)
 	{
 	break; case TileState::none:
-		SetBackgroundColour(colours.base);
+		dc.SetBrush(brushes.base);
 	break; case TileState::highlighted:
-		SetBackgroundColour(colours.highlighted);
+		dc.SetBrush(brushes.highlighted);
 	break; case TileState::locked:
-		SetBackgroundColour(colours.locked);
+		dc.SetBrush(brushes.locked);
 	break; case TileState::highlighted | TileState::locked:
-		SetBackgroundColour(colours.highlighted_locked);
+		dc.SetBrush(brushes.highlighted_locked);
 	}
+	dc.DrawRectangle(offset, size);
 }
-
-/** \fn Tile::Tile(DisplayGrid* parent, wxWindowID id, const wxString& label, const wxColour& base)
- * Sets the \c wxStaticText base object, the \c base colour, and the font.
- *
- * \param parent The parent \c DisplayGrid object
- * \param id The id value, used for identifying which tile is clicked with mouse events
- * \param label The displayed text in the \c wxStaticText object
- * \param base The colour for the background, when not highlighted
- */
-
-/** \fn Tile::highlight(bool enable)
- * Sets the background colour to the highlighted colour
- */
-/** \fn Tile::unhighlight(bool enable)
- * Sets the background colour to the base colour
- */
-
-AxisLabel::AxisLabel(DisplayGrid* parent, int value)
-	: wxStaticText(parent, wxID_ANY, wxString::Format("%i", value))
-{
-	SetFont(Fonts::axis);
-}
-
-/** \fn AxisLabel::AxisLabel(DisplayGrid* parent, int value)
- * Sets the \c wxStaticText base object and the font.
- *
- * \param parent The parent \c DisplayGrid object
- * \param value Displays this number as the value of the axis label
- */

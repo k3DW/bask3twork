@@ -1,40 +1,69 @@
 #pragma once
-#include <wx/panel.h>
+#include <wx/window.h>
 #include "Forward.h"
+#include "pure/GridSize.h"
+#include "pure/Selection.h"
+#include "grid/Tile.h"
 
-/// As a more specialized \c wxPanel object, this class represents the grid to be displayed on the left side of the MainWindow.
-class DisplayGrid : public wxPanel
+/// \c DisplayGrid is the \c wxWindow where the knot gets displayed, on the left side of the \c MainWindow.
+class DisplayGrid : public wxWindow
 {
 public:
-	DisplayGrid(MainWindow* parent, GridSize size); ///< Creates this \c DisplayGrid object with the given \c parent, with axis labels according to \c h and \c w
-	~DisplayGrid();                                 ///< Hides this \c DisplayGrid object automatically, so it looks like destruction is immediate
-
-	void highlight(Selection selection); ///< Highlights the given area, unhighlighting the rest
-	void unhighlight(bool refresh);      ///< Unhighlights the whole grid, and maybe refreshes the base \c wxPanel
-
-	void lock(Selection selection);           ///< Locks the given area, regardless of whether it was locked already
-	void lock(Point point);                   ///< Locks the tile at the given coordinate, regardless of whether it was locked already
-	void unlock(Selection selection);         ///< Unlocks the given area, regardless of whether it was locked already
-	void unlock(Point point);                 ///< Unlocks the tile at the given coordinate, regardless of whether it was locked already
-	void invert_locking(Selection selection); ///< Invert the locking on the selection
-
-	void draw(const Knot* knot); ///< Pulls data from the Knot object and displays it in the grid
-
-	const Tiles& get_tiles() const { return tiles; }
-
-	void reduce_glyph_font_size_by(int i);
+	DisplayGrid(MainWindow* parent, GridSize size);
+	~DisplayGrid();
+	void resize(GridSize size); ///< This function is effectively an assignment operator, almost everything is reset to the new grid size
 
 private:
-	wxGridBagSizer* sizer; ///< The sizer used to pack all the components in this \c wxPanel object
-	Tiles tiles;           ///< The grid of Tile objects to be used
-	bool highlighted;      ///< A flag to determine if any \c Tile is currently highlighted
+	// Event handlers
+	void on_lclick(wxMouseEvent& evt);
+	void on_rclick(wxMouseEvent& evt);
+	void on_paint(wxPaintEvent&);
+
+public:
+	// Rendering functions
+	void render();
+private:
+	void render(wxDC& dc);
+	void render_axis_labels(wxDC& dc);
+	void render_tiles(wxDC& dc);
+	void render_knot(wxDC& dc);
+
+public:
+	// Modifiers
+	void highlight(Selection selection);
+	void unhighlight();
+	void lock(Point point);
+	void unlock(Point point);
+	void lock(Selection selection);
+	void unlock(Selection selection);
+	void invert_locking(Selection selection);
+	void reset_tiles(); // Unhighlight and unlock
+
+	// Misc functions
+	void set_knot(const Knot* knot) { this->knot = knot; }
+	const Tiles& get_tiles() const { return tiles; }
+	const Tile& get_tile(Point point) const { return tiles[point.i][point.j]; }
+
+private:
+	MainWindow* parent;
+	GridSize grid_size = {};
+	const Knot* knot = nullptr;
+
+	Tiles tiles;
+	void make_tiles();
+
+	void update_sizes_and_offsets();
+
+	wxPoint x_label_offset(int pos) const;
+	wxPoint y_label_offset(int pos) const;
+	wxPoint tile_offset(int i, int j) const;
+	Point tile_position(wxPoint offset) const;
 
 	wxFont glyph_font; ///< The glyph font, stored locally per \c DisplayGrid so we can change sizing
 	wxFont axis_font;  ///< The axis font, stored locally per \c DisplayGrid so we can change sizing
 
-	std::vector<AxisLabel*> x_axis;
-	std::vector<AxisLabel*> y_axis;
-
-	void add_axis_labels(GridSize size);   ///< Creates the X and Y axis labels by directly adding new \c AxisLabel objects to the sizer
-	Tiles make_tiles(MainWindow* parent);  ///< Creates the \c Tile objects, packing them into the sizer and binding to the \c MainWindow
+	wxSize glyph_font_size; ///< Stores the value of \c glyph_font.GetPixelSize()
+	wxPoint tiles_offset;   ///< The offset into the window where the tile grid starts
+	wxSize tiles_size;      ///< The pixel size of the tile grid
+	wxSize window_size;     ///< The pixel size of the entire widget, including the axes
 };
