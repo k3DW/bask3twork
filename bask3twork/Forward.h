@@ -35,8 +35,7 @@ class Knot;
 
 enum class TileState;
 class Tile;
-using Tiles = std::vector<std::vector<Tile*>>;
-class AxisLabel;
+using Tiles = std::vector<std::vector<Tile>>;
 
 
 

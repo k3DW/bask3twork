@@ -55,7 +55,7 @@ bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
 	for (int i = selection.min.i; i <= selection.max.i; i++)
 	for (int j = selection.min.j; j <= selection.max.j; j++)
 	{
-		if (tiles[i][j]->locked())
+		if (tiles[i][j].locked())
 			baseGlyphs[i][j] = glyphs[i][j];
 		else
 			baseGlyphs[i][j] = nullptr;
@@ -64,84 +64,84 @@ bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
 
 
 	{
-		// Note, this is all done in `generate()` and not in `tryGenerating()` to avoid doing it repeatedly dong this work for failed attempts
+		// Note, this is all done in `generate()` and not in `tryGenerating()` to avoid doing it repeatedly for failed attempts
 		using enum Corner;
 		using enum Movement;
 
 		if (sym % Symmetry::HoriSym)
 		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | right, lower_left | right })
 		{
-			const Tile* t1 = tiles[p1.i][p1.j];
-			const Tile* t2 = tiles[p2.i][p2.j];
-			if (t1->locked() && !t2->locked())
+			const Tile& t1 = tiles[p1.i][p1.j];
+			const Tile& t2 = tiles[p2.i][p2.j];
+			if (t1.locked() && !t2.locked())
 				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->mirror_x;
-			else if (!t1->locked() && t2->locked())
+			else if (!t1.locked() && t2.locked())
 				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->mirror_x;
 		}
 
 		if (sym % Symmetry::VertSym)
 		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | down, upper_right | down })
 		{
-			const Tile* t1 = tiles[p1.i][p1.j];
-			const Tile* t2 = tiles[p2.i][p2.j];
-			if (t1->locked() && !t2->locked())
+			const Tile& t1 = tiles[p1.i][p1.j];
+			const Tile& t2 = tiles[p2.i][p2.j];
+			if (t1.locked() && !t2.locked())
 				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->mirror_y;
-			else if (!t1->locked() && t2->locked())
+			else if (!t1.locked() && t2.locked())
 				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->mirror_y;
 		}
 
 		if (sym % Symmetry::Rot2Sym)
 		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | right, lower_right | left })
 		{
-			const Tile* t1 = tiles[p1.i][p1.j];
-			const Tile* t2 = tiles[p2.i][p2.j];
-			if (t1->locked() && !t2->locked())
+			const Tile& t1 = tiles[p1.i][p1.j];
+			const Tile& t2 = tiles[p2.i][p2.j];
+			if (t1.locked() && !t2.locked())
 				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->rotate_180;
-			else if (!t1->locked() && t2->locked())
+			else if (!t1.locked() && t2.locked())
 				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->rotate_180;
 		}
 
 		if (sym % Symmetry::Rot4Sym)
 		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | right, lower_left | up })
 		{
-			const Tile* t1 = tiles[p1.i][p1.j];
-			const Tile* t2 = tiles[p2.i][p2.j];
-			if (t1->locked() && !t2->locked())
+			const Tile& t1 = tiles[p1.i][p1.j];
+			const Tile& t2 = tiles[p2.i][p2.j];
+			if (t1.locked() && !t2.locked())
 				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->rotate_90;
-			else if (!t1->locked() && t2->locked())
+			else if (!t1.locked() && t2.locked())
 				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->rotate_180->rotate_90;
 		}
 
 		if (sym % Symmetry::Rot4Sym)
 		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_right | down, upper_left | right })
 		{
-			const Tile* t1 = tiles[p1.i][p1.j];
-			const Tile* t2 = tiles[p2.i][p2.j];
-			if (t1->locked() && !t2->locked())
+			const Tile& t1 = tiles[p1.i][p1.j];
+			const Tile& t2 = tiles[p2.i][p2.j];
+			if (t1.locked() && !t2.locked())
 				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->rotate_180->rotate_90;
-			else if (!t1->locked() && t2->locked())
+			else if (!t1.locked() && t2.locked())
 				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->rotate_90;
 		}
 
 		if (sym % Symmetry::FwdDiag)
 		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | right, lower_right | up })
 		{
-			const Tile* t1 = tiles[p1.i][p1.j];
-			const Tile* t2 = tiles[p2.i][p2.j];
-			if (t1->locked() && !t2->locked())
+			const Tile& t1 = tiles[p1.i][p1.j];
+			const Tile& t2 = tiles[p2.i][p2.j];
+			if (t1.locked() && !t2.locked())
 				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->mirror_forward_diagonal;
-			else if (!t1->locked() && t2->locked())
+			else if (!t1.locked() && t2.locked())
 				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->mirror_forward_diagonal;
 		}
 
 		if (sym % Symmetry::BackDiag)
 		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_right | left, lower_left | up })
 		{
-			const Tile* t1 = tiles[p1.i][p1.j];
-			const Tile* t2 = tiles[p2.i][p2.j];
-			if (t1->locked() && !t2->locked())
+			const Tile& t1 = tiles[p1.i][p1.j];
+			const Tile& t2 = tiles[p2.i][p2.j];
+			if (t1.locked() && !t2.locked())
 				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->mirror_backward_diagonal;
-			else if (!t1->locked() && t2->locked())
+			else if (!t1.locked() && t2.locked())
 				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->mirror_backward_diagonal;
 		}
 	}
