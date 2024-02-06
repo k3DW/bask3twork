@@ -13,6 +13,16 @@ Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : size{ .rows = (int)glyphs.
 wxUniChar Knot::get(const int i, const int j) const { return wxUniChar(glyphs[i][j]->code_point); }
 CodePoint Knot::code_point(const int i, const int j) const { return glyphs[i][j]->code_point; }
 
+void Knot::clear(Selection selection, const Tiles& tiles)
+{
+	for (int i = selection.min.i; i <= selection.max.i; i++)
+	for (int j = selection.min.j; j <= selection.max.j; j++)
+	{
+		if (!tiles[i][j].locked())
+			glyphs[i][j] = SpaceGlyph;
+	}
+}
+
 bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
 /** Generate a knot with the given symmetry in the given selection.
  *

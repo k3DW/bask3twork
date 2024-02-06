@@ -15,7 +15,7 @@ public:
 	void disable_buttons();
 
 private:
-	std::array<GenerateRegionButton*, 9> buttons;
+	std::array<GenerateRegionButton*, 10> buttons;
 };
 
 class GenerateRegionButton : public wxButton

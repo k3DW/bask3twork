@@ -8,6 +8,7 @@ GenerateRegion::GenerateRegion(MainWindow* parent)
 {
 	buttons =
 	{
+		new GenerateRegionButton(parent, Symmetry::Nothing,     "Clear Selection"),
 		new GenerateRegionButton(parent, Symmetry::AnySym,      "No Symmetry"),
 		new GenerateRegionButton(parent, Symmetry::HoriSym,     "Horizontal Reflection"),
 		new GenerateRegionButton(parent, Symmetry::VertSym,     "Vertical Reflection"),
