@@ -7,7 +7,7 @@ ExportDialog::ExportDialog(const Knot* knot)
 	: wxDialog(nullptr, wxID_ANY, "Export")
 {
 	SetIcon(wxIcon(L"AppIcon"));
-	Bind(wxEVT_CHAR_HOOK, &ExportDialog::on_exit, this);
+	Bind(wxEVT_CHAR_HOOK, &ExportDialog::on_key_press, this);
 
 	wxBoxSizer* inner_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -31,7 +31,7 @@ ExportDialog::ExportDialog(const Knot* knot)
 	SetSize(GetBestSize());
 }
 
-void ExportDialog::copy(wxCommandEvent& evt)
+void ExportDialog::copy()
 {
 	// Open the clipboard
 	if (wxTheClipboard->Open())
@@ -40,14 +40,31 @@ void ExportDialog::copy(wxCommandEvent& evt)
 		wxTheClipboard->Flush();                                            // Keep the knot in the clipboard after closing the program
 		wxTheClipboard->Close();                                            // Close the clipboard
 	}
+}
+
+void ExportDialog::copy(wxCommandEvent& evt)
+{
+	copy();
 	evt.Skip();
 }
 
-void ExportDialog::on_exit(wxKeyEvent& event)
+void ExportDialog::on_key_press(wxKeyEvent& event)
 {
-	if (event.GetKeyCode() == WXK_ESCAPE)
+	switch (event.GetKeyCode())
 	{
+
+	case WXK_ESCAPE:
 		EndModal(0);
+		break;
+
+	case 'C':
+		if (event.GetModifiers() == wxMOD_CONTROL)
+			copy();
+		break;
+
+	default:;
+
 	}
+
 	event.Skip();
 }
