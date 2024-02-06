@@ -197,6 +197,11 @@ void DisplayGrid::lock(Point point)
 	render();
 }
 
+void DisplayGrid::lock_no_render(Point point)
+{
+	tiles[point.i][point.j].lock();
+}
+
 void DisplayGrid::unlock(Point point)
 {
 	tiles[point.i][point.j].unlock();

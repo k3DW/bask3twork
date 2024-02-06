@@ -152,7 +152,7 @@ void MainWindow::open_file()
 			for (int j = 0; j < size.columns; ++j)
 			{
 				if (locking[running_index++])
-					disp->lock(Point{ i, j });
+					disp->lock_no_render(Point{ i, j });
 			}
 		}
 	}

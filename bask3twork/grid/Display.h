@@ -36,6 +36,7 @@ public:
 	void highlight(Selection selection);
 	void unhighlight();
 	void lock(Point point);
+	void lock_no_render(Point point);
 	void unlock(Point point);
 	void lock(Selection selection);
 	void unlock(Selection selection);
