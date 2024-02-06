@@ -271,7 +271,7 @@ void DisplayGrid::update_tile_offsets()
 	const auto [rows, columns] = grid_size;
 	for (int i = 0; i < rows; i++)
 		for (int j = 0; j < columns; j++)
-			tiles[i][j] = Tile(this, TileBrushes::all[i % 2][j % 2], tile_offset(i, j));
+			tiles[i][j].set_offset(tile_offset(i, j));
 }
 
 wxPoint DisplayGrid::x_label_offset(int pos) const

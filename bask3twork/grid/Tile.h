@@ -48,6 +48,7 @@ public:
 	Tile(DisplayGrid* parent, const TileBrushes& brushes, wxPoint offset);
 
 	void reset_state() { state = TileState::none; }
+	void set_offset(wxPoint p) { offset = p; }
 
 	void highlight() { state |= TileState::highlighted; }
 	void unhighlight() { state &= ~TileState::highlighted; }
@@ -60,7 +61,7 @@ public:
 	void render(wxDC& dc, wxSize size) const;
 
 private:
-	std::reference_wrapper<const TileBrushes> brushes; // This is a ref wrapper to make the class assignable
+	const TileBrushes& brushes;
 	TileState state = TileState::none;
 	wxPoint offset;
 };
