@@ -144,6 +144,8 @@ void MainWindow::open_file()
 
 	// DisplayGrid and Tile section
 	{
+		disp->resize(size);
+		disp->set_knot(knot);
 		std::size_t running_index = 0;
 		for (int i = 0; i < size.rows; ++i)
 		{
@@ -155,7 +157,6 @@ void MainWindow::open_file()
 		}
 	}
 
-	disp->resize(size);         // Resize the DisplayGrid,
 	reset_selection();          // Reset the select coordinates,
 	menu_bar->reset_wrapping(); // Reset the wrapping checkboxes,
 	update_sizing();            // Update the window sizing.
