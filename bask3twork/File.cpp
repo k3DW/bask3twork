@@ -150,7 +150,7 @@ std::vector<std::byte> File::make_buffer(const Knot* knot, const DisplayGrid* di
 	for (int i = 0; i < size.rows; ++i)
 	for (int j = 0; j < size.columns; ++j)
 	{
-		add_to_buffer(Bool{ disp->get_tiles()[i][j]->locked() });
+		add_to_buffer(Bool{ disp->get_tile({i, j}).locked() });
 	}
 
 	return buffer;

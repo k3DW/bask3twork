@@ -20,8 +20,8 @@ public:
 	void unlock_selection(wxCommandEvent& evt);
 	void invert_locking(wxCommandEvent& evt);
 
-	void left_click_tile(wxMouseEvent& evt);  ///< Sets the left displayed coordinate, based on which Tile the left click takes place
-	void right_click_tile(wxMouseEvent& evt); ///< Sets the right displayed coordinate, based on which Tile the right click takes place
+	void set_min(Point point);
+	void set_max(Point point);
 
 	GridSize size;
 
@@ -50,8 +50,8 @@ private:
 	void update_sizing();               ///< Updates the size of the \c DisplayGrid and its \c Tile children so that this \c MainWindow fits in the current display
 	wxSize active_display_size() const; ///< Grabs the screen size of the active display
 
-	DisplayGrid* disp;		///< The DisplayGrid for this program, i.e. the \c wxPanel that displays the Knot.
-	Knot* knot;				///< The Knot object belonging to this program.
+	DisplayGrid* disp; ///< The DisplayGrid for this program, i.e. the \c wxWindow that displays the Knot.
+	Knot* knot;        ///< The Knot object belonging to this program.
 	wxBoxSizer* grid_sizer;
 
 	wxBoxSizer* main_sizer;

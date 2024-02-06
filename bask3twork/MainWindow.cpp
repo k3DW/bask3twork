@@ -55,7 +55,7 @@ void MainWindow::hide_selection()
 {
 	select_region->set_toggle_show();
 	select_region->disable_lock_buttons();
-	disp->unhighlight(true);
+	disp->unhighlight();
 	generate_region->disable_buttons();
 	showing_selection = false;
 }
@@ -102,37 +102,15 @@ void MainWindow::invert_locking(wxCommandEvent& evt)
 	evt.Skip();
 }
 
-void MainWindow::left_click_tile(wxMouseEvent& evt)
+void MainWindow::set_min(Point point)
 {
-	wxWindowID id = evt.GetId();
-	Point point = { id / size.columns, id % size.columns };
-	if (wxGetKeyState(WXK_CONTROL))
-	{
-		disp->lock(point);
-	}
-	else
-	{
-		select_region->set_min(point);
-		select_region->update_display();
-	}
-	hide_selection();
-	evt.Skip();
+	select_region->set_min(point);
+	select_region->update_display();
 }
-void MainWindow::right_click_tile(wxMouseEvent& evt)
+void MainWindow::set_max(Point point)
 {
-	wxWindowID id = evt.GetId();
-	Point point = { id / size.columns, id % size.columns };
-	if (wxGetKeyState(WXK_CONTROL))
-	{
-		disp->unlock(point);
-	}
-	else
-	{
-		select_region->set_max(point);
-		select_region->update_display();
-	}
-	hide_selection();
-	evt.Skip();
+	select_region->set_max(point);
+	select_region->update_display();
 }
 
 void MainWindow::menu_event_handler(wxCommandEvent& evt)
@@ -169,8 +147,11 @@ void MainWindow::open_file()
 	{
 		if (!is_same_size)
 		{
-			disp->Destroy();
-			disp = new DisplayGrid(this, size);
+			disp->resize(size);
+		}
+		else
+		{
+			disp->reset_tiles();
 		}
 
 		std::size_t running_index = 0;
@@ -182,14 +163,9 @@ void MainWindow::open_file()
 					disp->lock(Point{ i, j });
 			}
 		}
-
-		if (!is_same_size)
-		{
-			disp->draw(knot);
-			grid_sizer->Insert(1, disp, 0, wxEXPAND);
-		}
 	}
 
+	disp->set_knot(knot);       // Give the DisplayGrid the Knot
 	reset_selection();          // Reset the select coordinates,
 	menu_bar->reset_wrapping(); // Reset the wrapping checkboxes,
 	update_sizing();            // Update the window sizing.
@@ -243,13 +219,11 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 
 		if (!is_same_size)
 		{
-			disp->Destroy();
-			disp = new DisplayGrid(this, size);
-			grid_sizer->Insert(1, disp, 0, wxEXPAND);
+			disp->resize(size);
 		}
 		else
 		{
-			disp->unlock({ { 0, 0 }, { size.rows - 1, size.columns - 1 } });
+			disp->reset_tiles();
 		}
 
 		// / Then, reset the select coordinates with MainWindow::reset_selection(),
@@ -285,14 +259,14 @@ void MainWindow::update_min_size()
 
 void MainWindow::update_sizing()
 {
-	while (true)
-	{
-		const wxSize display_size = active_display_size();
-		const wxSize best_size = GetBestSize();
-		if (best_size.x <= display_size.x && best_size.y <= display_size.y)
-			break;
-		disp->reduce_glyph_font_size_by(Fonts::reduce_by);
-	}
+	//while (true)
+	//{
+	//	const wxSize display_size = active_display_size();
+	//	const wxSize best_size = GetBestSize();
+	//	if (best_size.x <= display_size.x && best_size.y <= display_size.y)
+	//		break;
+	//	disp->reduce_glyph_font_size_by(Fonts::reduce_by);
+	//}
 
 	update_min_size();
 	if (!IsMaximized())
@@ -326,7 +300,8 @@ void MainWindow::generateKnot(wxCommandEvent& evt) {
 	/// If the generate function returns \c false, then display an error message as a \c wxMessageBox.
 	Symmetry sym = static_cast<Symmetry>(evt.GetId());
 	if (knot->generate(sym, select_region->get_selection(), disp->get_tiles())) {
-		disp->draw(knot);
+		disp->set_knot(knot);
+		disp->render();
 	}
 	else
 		wxMessageBox(wxString::Format("The specified knot was not able to be generated in %i attempts.", MAX_ATTEMPTS), "Error: Knot failed");
