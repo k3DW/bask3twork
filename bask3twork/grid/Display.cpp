@@ -15,7 +15,6 @@ DisplayGrid::DisplayGrid(MainWindow* parent, GridSize size)
 	, axis_font(Fonts::axis)
 {
 	Hide();
-
 	resize(size);
 
 	Bind(wxEVT_PAINT, &DisplayGrid::on_paint, this);
@@ -23,7 +22,6 @@ DisplayGrid::DisplayGrid(MainWindow* parent, GridSize size)
 	Bind(wxEVT_RIGHT_DOWN, &DisplayGrid::on_rclick, this);
 
 	SetDoubleBuffered(true);
-
 	Show();
 }
 
@@ -32,13 +30,40 @@ DisplayGrid::~DisplayGrid()
 	Hide();
 }
 
+
+
 void DisplayGrid::resize(GridSize size)
 {
 	grid_size = size;
-	SetMinSize(wxDefaultSize);
-	update_sizes_and_offsets();
 	make_tiles();
+	update_sizes_and_offsets();
 	knot = nullptr;
+}
+
+void DisplayGrid::reduce_glyph_font_size_by(int i)
+{
+	wxSize old = glyph_font_size;
+	wxSize size{ old.x - i, old.y - i };
+	glyph_font.SetPixelSize(size);
+
+	const int axis_point_size = std::max(std::min(Sizes::font_point, size.x / 3), 1);
+	axis_font.SetPointSize(axis_point_size);
+
+	update_sizes_and_offsets();
+}
+
+void DisplayGrid::update_sizes_and_offsets()
+{
+	glyph_font_size = glyph_font.GetPixelSize();
+
+	wxSize axis_font_size = axis_font.GetPixelSize();
+	tiles_offset = { axis_font_size.y / 2 + 1, axis_font_size.y + 1 }; // For some reason, the x value reads 0
+
+	tiles_size = { glyph_font_size.x * grid_size.columns, glyph_font_size.y * grid_size.rows };
+	window_size = { tiles_offset.x + tiles_size.x, tiles_offset.y + tiles_size.y };
+
+	update_tile_offsets();
+	SetMinSize(wxDefaultSize);
 	SetMinSize(window_size);
 }
 
@@ -226,15 +251,15 @@ void DisplayGrid::make_tiles()
 	}
 }
 
-void DisplayGrid::update_sizes_and_offsets()
+void DisplayGrid::update_tile_offsets()
 {
-	glyph_font_size = glyph_font.GetPixelSize();
-	
-	wxSize axis_font_size = axis_font.GetPixelSize();
-	tiles_offset = { axis_font_size.y / 2 + 2, axis_font_size.y + 2 }; // For some reason, the x value reads 0
+	if (tiles.empty())
+		return;
 
-	tiles_size = { glyph_font_size.x * grid_size.columns, glyph_font_size.y * grid_size.rows };
-	window_size = { tiles_offset.x + tiles_size.x, tiles_offset.y + tiles_size.y };
+	const auto [rows, columns] = grid_size;
+	for (int i = 0; i < rows; i++)
+		for (int j = 0; j < columns; j++)
+			tiles[i][j] = Tile(this, TileBrushes::all[i % 2][j % 2], tile_offset(i, j));
 }
 
 wxPoint DisplayGrid::x_label_offset(int pos) const

@@ -11,7 +11,10 @@ class DisplayGrid : public wxWindow
 public:
 	DisplayGrid(MainWindow* parent, GridSize size);
 	~DisplayGrid();
-	void resize(GridSize size); ///< This function is effectively an assignment operator, almost everything is reset to the new grid size
+
+	void resize(GridSize size);            ///< This function is effectively an assignment operator, almost everything is reset to the new grid size
+	void update_sizes_and_offsets();       ///< This function keeps the same grid size, but refreshes all the offsets and pixel sizes
+	void reduce_glyph_font_size_by(int i);
 
 private:
 	// Event handlers
@@ -51,8 +54,7 @@ private:
 
 	Tiles tiles;
 	void make_tiles();
-
-	void update_sizes_and_offsets();
+	void update_tile_offsets();
 
 	wxPoint x_label_offset(int pos) const;
 	wxPoint y_label_offset(int pos) const;

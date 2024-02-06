@@ -60,7 +60,7 @@ public:
 	void render(wxDC& dc, wxSize size) const;
 
 private:
-	const TileBrushes& brushes;
+	std::reference_wrapper<const TileBrushes> brushes; // This is a ref wrapper to make the class assignable
 	TileState state = TileState::none;
 	wxPoint offset;
 };

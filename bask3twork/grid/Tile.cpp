@@ -13,13 +13,13 @@ void Tile::render(wxDC& dc, wxSize size) const
 	switch (state)
 	{
 	break; case TileState::none:
-		dc.SetBrush(brushes.base);
+		dc.SetBrush(brushes.get().base);
 	break; case TileState::highlighted:
-		dc.SetBrush(brushes.highlighted);
+		dc.SetBrush(brushes.get().highlighted);
 	break; case TileState::locked:
-		dc.SetBrush(brushes.locked);
+		dc.SetBrush(brushes.get().locked);
 	break; case TileState::highlighted | TileState::locked:
-		dc.SetBrush(brushes.highlighted_locked);
+		dc.SetBrush(brushes.get().highlighted_locked);
 	}
 	dc.DrawRectangle(offset, size);
 }

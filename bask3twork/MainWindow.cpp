@@ -134,7 +134,6 @@ void MainWindow::open_file()
 
 	auto& [new_size, glyphs, locking] = *opt;
 
-	const bool is_same_size = (size == new_size);
 	size = new_size;
 
 	// Knot section
@@ -145,15 +144,6 @@ void MainWindow::open_file()
 
 	// DisplayGrid and Tile section
 	{
-		if (!is_same_size)
-		{
-			disp->resize(size);
-		}
-		else
-		{
-			disp->reset_tiles();
-		}
-
 		std::size_t running_index = 0;
 		for (int i = 0; i < size.rows; ++i)
 		{
@@ -165,7 +155,7 @@ void MainWindow::open_file()
 		}
 	}
 
-	disp->set_knot(knot);       // Give the DisplayGrid the Knot
+	disp->resize(size);         // Resize the DisplayGrid,
 	reset_selection();          // Reset the select coordinates,
 	menu_bar->reset_wrapping(); // Reset the wrapping checkboxes,
 	update_sizing();            // Update the window sizing.
@@ -211,28 +201,15 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 		if (not opt_size)
 			return;
 
-		const bool is_same_size = (size == *opt_size);
 		size = *opt_size;
 
 		delete knot;
 		knot = new Knot(size, GetStatusBar());
 
-		if (!is_same_size)
-		{
-			disp->resize(size);
-		}
-		else
-		{
-			disp->reset_tiles();
-		}
-
-		// / Then, reset the select coordinates with MainWindow::reset_selection(),
-		// / and reset the knot wrapping \c wxMenuItem objects.
-		reset_selection();
-		menu_bar->reset_wrapping();
-
-		// / Lastly, update the window sizing.
-		update_sizing();
+		disp->resize(size);         // Resize the DisplayGrid,
+		reset_selection();          // Reset the select coordinates,
+		menu_bar->reset_wrapping(); // Reset the wrapping checkboxes,
+		update_sizing();            // Update the window sizing.
 
 		regen_dialog->EndModal(0);
 		evt.Skip();
@@ -259,14 +236,14 @@ void MainWindow::update_min_size()
 
 void MainWindow::update_sizing()
 {
-	//while (true)
-	//{
-	//	const wxSize display_size = active_display_size();
-	//	const wxSize best_size = GetBestSize();
-	//	if (best_size.x <= display_size.x && best_size.y <= display_size.y)
-	//		break;
-	//	disp->reduce_glyph_font_size_by(Fonts::reduce_by);
-	//}
+	while (true)
+	{
+		const wxSize display_size = active_display_size();
+		const wxSize best_size = GetBestSize();
+		if (best_size.x <= display_size.x && best_size.y <= display_size.y)
+			break;
+		disp->reduce_glyph_font_size_by(Fonts::reduce_by);
+	}
 
 	update_min_size();
 	if (!IsMaximized())
