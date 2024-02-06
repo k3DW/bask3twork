@@ -64,7 +64,7 @@ bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
 
 
 	{
-		// Note, this is all done in `generate()` and not in `tryGenerating()` to avoid doing it repeatedly dong this work for failed attempts
+		// Note, this is all done in `generate()` and not in `tryGenerating()` to avoid doing it repeatedly for failed attempts
 		using enum Corner;
 		using enum Movement;
 
