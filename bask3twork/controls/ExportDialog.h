@@ -13,7 +13,8 @@ private:
 	wxTextCtrl* textbox;
 
 	wxButton* copy_button;
-	void copy(wxCommandEvent& evt); ///< This function copies the current text data in the textbox into the clipboard, saving it after closing the program.
+	void copy(); ///< This function copies the current text data in the textbox into the clipboard, saving it after closing the program.
+	void copy(wxCommandEvent& evt);
 
-	void on_exit(wxKeyEvent& event); ///< This function provides a means of closing the dialog by pressing esc
+	void on_key_press(wxKeyEvent& event);
 };

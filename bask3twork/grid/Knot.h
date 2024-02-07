@@ -17,6 +17,7 @@ public:
 	bool wrapXEnabled = false;		///< Is wrapping enabled in the X direction
 	bool wrapYEnabled = false;		///< Is wrapping enabled in the Y direction
 
+	void clear(Selection selection, const Tiles& tiles);
 	bool generate(Symmetry sym, Selection selection, const Tiles& tiles);
 
 	bool checkWrapping(Selection selection) const;

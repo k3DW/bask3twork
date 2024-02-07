@@ -9,15 +9,6 @@
 		-> Or selecting from all possible glyphs
 	-> Circle blocking (selecting)
 	-> Simple weaves as example knots
-	-> Hotkeys
-		-> Ctrl+C, enter in the export dialog
-		-> Enter in the regen dialog
-		-> Space to toggle highlighting
-		-> Escape to reset highlighting
-		-> Ctrl+1 - Ctrl+9 to generate the knots
-	-> Add a "clear" button that clears the area
-		-> Only if that's possible given the borders
-		-> Hotkey Ctrl+Del
 */
 
 #include "pch.h"

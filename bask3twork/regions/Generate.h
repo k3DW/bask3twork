@@ -14,8 +14,10 @@ public:
 	void enable_buttons(Symmetry symmetry);
 	void disable_buttons();
 
+	bool is_enabled(Symmetry symmetry) const;
+
 private:
-	std::array<GenerateRegionButton*, 9> buttons;
+	std::array<GenerateRegionButton*, 10> buttons;
 };
 
 class GenerateRegionButton : public wxButton
