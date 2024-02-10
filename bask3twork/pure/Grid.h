@@ -10,10 +10,14 @@ template <class T>
 class Grid
 {
 public:
+	Grid() = default;
+
 	Grid(GridSize grid_size)
 		: grid_size(grid_size)
 		, cap(grid_size.area())
 	{
+		static_assert(std::ranges::forward_range<Grid>);
+		static_assert(!std::ranges::bidirectional_range<Grid>);
 		data.reserve(cap);
 	}
 
@@ -54,11 +58,16 @@ public:
 	template <class... Args>
 	auto emplace_back(Args&&... args) { if (data.size() == cap) throw std::logic_error("Trying to emplace_back past grid limit"); return data.emplace_back(std::forward<Args>(args)...); }
 
+	bool empty() const { return data.empty(); }
 	GridSize size() const { return grid_size; }
 	std::size_t capacity() const { return cap; }
 
 	GridRange<T, true> iterate(Selection selection, CornerMovement type) const;
 	GridRange<T, false> iterate(Selection selection, CornerMovement type);
+
+	GridIterator<T, true> begin() const;
+	GridIterator<T, false> begin();
+	SelectionSentinel end() const { return {}; }
 
 private:
 	std::vector<T> data;
@@ -125,7 +134,7 @@ public:
 	}
 
 private:
-	grid_type* const grid;
+	grid_type* grid;
 	SelectionIterator it;
 };
 
@@ -146,7 +155,7 @@ public:
 	auto end()   const { return SelectionSentinel{}; }
 
 private:
-	grid_type* const grid;
+	grid_type* grid;
 	Selection selection;
 	CornerMovement type;
 };
@@ -161,4 +170,16 @@ template <class T>
 GridRange<T, false> Grid<T>::iterate(Selection selection, CornerMovement type)
 {
 	return { *this, selection, type };
+}
+
+template <class T>
+GridIterator<T, true> Grid<T>::begin() const
+{
+	return { *this, { { 0, 0 }, { grid_size.rows - 1, grid_size.columns - 1 } }, Corner::upper_left | Movement::right };
+}
+
+template <class T>
+GridIterator<T, false> Grid<T>::begin()
+{
+	return { *this, { { 0, 0 }, { grid_size.rows - 1, grid_size.columns - 1 } }, Corner::upper_left | Movement::right };
 }
