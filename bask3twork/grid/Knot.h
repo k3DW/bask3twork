@@ -17,8 +17,18 @@ public:
 	bool wrapXEnabled = false;		///< Is wrapping enabled in the X direction
 	bool wrapYEnabled = false;		///< Is wrapping enabled in the Y direction
 
+	enum class Algorithm
+	{
+		fail_fast,
+		backtracking,
+	};
+	using enum Algorithm;
+
 	void clear(Selection selection, const Tiles& tiles);
-	bool generate(Symmetry sym, Selection selection, const Tiles& tiles);
+	bool generate(Algorithm alg, Symmetry sym, Selection selection, const Tiles& tiles);
+
+	bool generate_fail_fast(Glyphs glyphs, Symmetry sym, Selection selection);
+	bool generate_backtracking(Glyphs glyphs, Symmetry sym, Selection selection);
 
 	bool checkWrapping(Selection selection) const;
 
@@ -29,7 +39,7 @@ public:
 private:
 	Glyphs glyphs;	///< The current state of the Knot
 
-	std::optional<Glyphs> tryGenerating(Glyphs glyphGrid, Symmetry sym, Selection selection) const;
+	std::optional<Glyphs> try_generate_fail_fast(Glyphs glyphGrid, Symmetry sym, Selection selection) const;
 
 	Glyphs make_base_glyphs(Symmetry sym, Selection selection, const Tiles& tiles) const;
 

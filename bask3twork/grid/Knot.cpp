@@ -23,7 +23,7 @@ void Knot::clear(Selection selection, const Tiles& tiles)
 	}
 }
 
-bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
+bool Knot::generate(Algorithm alg, Symmetry sym, Selection selection, const Tiles& tiles)
 /** Generate a knot with the given symmetry in the given selection.
  *
  * Only generates from row \c iMin to row \c iMax, and from column \c jMin to column \c jMax.
@@ -44,6 +44,19 @@ bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
 {
 	Glyphs base_glyphs = make_base_glyphs(sym, selection, tiles);
 
+	switch (alg)
+	{
+	case fail_fast:
+		return generate_fail_fast(std::move(base_glyphs), sym, selection);
+	case backtracking:
+		return generate_backtracking(std::move(base_glyphs), sym, selection);
+	default:
+		throw;
+	}
+}
+
+bool Knot::generate_fail_fast(Glyphs base_glyphs, Symmetry sym, Selection selection)
+{
 	const wxString& prefix = status_prefix(sym);
 
 	/// Next, enter a loop, counting the number of attempts made at generating this knot. The steps are as follows.
@@ -54,7 +67,7 @@ bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
 
 		/// \b (2) Call Knot::tryGenerating() using the copy of \c glyphs created above.
 		///		If it fails, \c continue the loop and try again.
-		std::optional<Glyphs> newGlyphs = tryGenerating(base_glyphs, sym, selection);
+		std::optional<Glyphs> newGlyphs = try_generate_fail_fast(base_glyphs, sym, selection);
 		if (!newGlyphs) continue;
 
 		/// \b (3) If the knot has been successfully generated, set \c glyphs equal to this generated version and return \c true.
@@ -65,7 +78,12 @@ bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
 	return false;
 }
 
-std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Selection selection) const
+bool Knot::generate_backtracking(Glyphs glyphs, Symmetry sym, Selection selection)
+{
+	return false;
+}
+
+std::optional<Glyphs> Knot::try_generate_fail_fast(Glyphs glyphGrid, Symmetry sym, Selection selection) const
 /** Called only from Knot::generate(), try generating a knot with the given symmetry for the given selection.
  * 
  * This function pulls the required logic in Knot::generate() in order to generate the Knot selection once, and places it into its own function. 
