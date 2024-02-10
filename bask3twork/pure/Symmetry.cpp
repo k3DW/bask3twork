@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "pure/CornerMovement.h"
 #include "pure/Glyph.h"
+#include "pure/Grid.h"
 #include "pure/GridSize.h"
 #include "pure/Selection.h"
 #include "pure/SelectionZip.h"
@@ -43,7 +44,7 @@ private:
 	bool has_forward_diagonal_locking() const;
 	bool has_backward_diagonal_locking() const;
 
-	const Glyph* glyph(Point p) const { return (*glyphs)[p.i][p.j]; }
+	const Glyph* glyph(Point p) const { return glyphs->at(p); }
 	const Tile* tile(Point p) const { return &((*tiles)[p.i][p.j]); }
 
 private:

@@ -88,18 +88,10 @@ auto File::read(const wxString& file_name)
 
 
 
-	Glyphs glyphs;
-	glyphs.reserve(size.rows);
-
-	std::size_t running_index = 0;
-	for (int i = 0; i < size.rows; ++i)
+	Glyphs glyphs(size);
+	for (int i = 0; i != glyphs.capacity(); ++i)
 	{
-		auto& row = glyphs.emplace_back();
-		row.reserve(size.columns);
-		for (int j = 0; j < size.columns; ++j)
-		{
-			row.push_back(UnicharToGlyph.at(code_points[running_index++]));
-		}
+		glyphs.push_back(UnicharToGlyph.at(code_points[i]));
 	}
 
 

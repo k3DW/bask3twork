@@ -8,8 +8,8 @@
 #include "grid/Tile.h" // This breaks the dependency direction between folders, todo change this later (maybe)
 #include "Constants.h"
 
-Knot::Knot(GridSize size, wxStatusBar* statusBar) : size(size), statusBar(statusBar), glyphs(size.rows, std::vector<const Glyph*>(size.columns, SpaceGlyph)) {}
-Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : size{ .rows = (int)glyphs.size(), .columns = (int)glyphs[0].size() }, statusBar(statusBar), glyphs(std::move(glyphs)) {}
+Knot::Knot(GridSize size, wxStatusBar* statusBar) : size(size), statusBar(statusBar), glyphs(size, SpaceGlyph) {}
+Knot::Knot(Glyphs&& glyphs, wxStatusBar* statusBar) : size(glyphs.size()), statusBar(statusBar), glyphs(std::move(glyphs)) {}
 wxUniChar Knot::get(const int i, const int j) const { return wxUniChar(glyphs[i][j]->code_point); }
 CodePoint Knot::code_point(const int i, const int j) const { return glyphs[i][j]->code_point; }
 

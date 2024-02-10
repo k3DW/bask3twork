@@ -54,7 +54,7 @@ class GridRange;
 
 enum class GlyphFlag;
 struct Glyph;
-using Glyphs = std::vector<std::vector<const Glyph*>>;
+using Glyphs = Grid<const Glyph*>;
 struct GlyphsTransformed;
 using CodePoint = int32_t;
 

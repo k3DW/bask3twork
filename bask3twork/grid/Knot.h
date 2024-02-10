@@ -1,6 +1,7 @@
 #pragma once
 #include <optional>
 #include "Forward.h"
+#include "pure/Grid.h"
 #include "pure/GridSize.h"
 
 /** This class represents a knot object as a grid of glyphs, with corresponding public functions to generate various symmetries. */
