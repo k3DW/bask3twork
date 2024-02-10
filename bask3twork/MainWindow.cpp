@@ -304,6 +304,18 @@ void MainWindow::on_key_press(wxKeyEvent& event)
 	switch (code)
 	{
 
+	case 'C':
+		if (event.GetModifiers() == wxMOD_CONTROL)
+		{
+			if (wxTheClipboard->Open())
+			{
+				wxTheClipboard->SetData(new wxTextDataObject(knot->plaintext())); // Copy the knot into the clipboard
+				wxTheClipboard->Flush();                                          // Keep the knot in the clipboard after closing the program
+				wxTheClipboard->Close();                                          // Close the clipboard
+			}
+		}
+		break;
+
 	case WXK_ESCAPE:
 		disp->unhighlight();
 		break;
