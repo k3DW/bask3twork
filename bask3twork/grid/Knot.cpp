@@ -162,8 +162,8 @@ std::optional<Glyphs> Knot::generate_backtracking(Glyphs glyph_grid, Symmetry sy
 				return std::nullopt;
 
 			Step& step = steps.back();
-			// Right here, step.primary == p
-			assert(step.primary == p);
+			if (step.primary != p)
+				continue;
 
 			glyph_grid[p.i][p.j] = nullptr;
 			for (auto& [point, transform] : step.transforms)
