@@ -91,9 +91,17 @@ struct Step
 	{}
 
 	Point primary;
-	std::vector<const Glyph*> options;
-
 	std::vector<std::pair<Point, const Glyph* Glyph::*>> transforms = {};
+
+	std::optional<const Glyph*> next()
+	{
+		if (options.size() == index)
+			return std::nullopt;
+		return options[index++];
+	}
+
+private:
+	std::vector<const Glyph*> options;
 	std::size_t index = 0;
 };
 
@@ -163,15 +171,15 @@ std::optional<Glyphs> Knot::generate_backtracking(Glyphs glyph_grid, Symmetry sy
 				glyph_grid[point.i][point.j] = nullptr;
 			}
 
-			++step.index;
-			if (step.index == step.options.size())
+			std::optional<const Glyph*> glyph_opt = step.next();
+			if (!glyph_opt)
 			{
 				steps.pop_back();
 				--it;
 				continue; // Keep backtracking
 			}
 
-			const Glyph* glyph = step.options[step.index];
+			const Glyph* glyph = *glyph_opt;
 			glyph_grid[p.i][p.j] = glyph;
 
 			for (auto& [point, transform] : step.transforms)
@@ -233,16 +241,18 @@ std::optional<Glyphs> Knot::generate_backtracking(Glyphs glyph_grid, Symmetry sy
 				)
 			);
 
-			if (options.empty())
-			{
-				backtracking = true;
-				--it;
-				continue;
-			}
-
 			Step& step = steps.emplace_back(p, std::move(options));
 
-			const Glyph* glyph = step.options[step.index];
+			std::optional<const Glyph*> glyph_opt = step.next();
+			if (!glyph_opt)
+			{
+				backtracking = true;
+				steps.pop_back();
+				--it;
+				continue; // Keep backtracking
+			}
+
+			const Glyph* glyph = *glyph_opt;
 			glyph_grid[p.i][p.j] = glyph;
 
 			if (bitHori)
@@ -265,7 +275,7 @@ std::optional<Glyphs> Knot::generate_backtracking(Glyphs glyph_grid, Symmetry sy
 
 			if (bitRot4)
 			{
-				Point point = { selection.min.i + jOffset - iOffset, selection.max.j - iOffset };
+				Point point = { selection.min.i + jOffset, selection.max.j - iOffset };
 				step.transforms.emplace_back(point, &Glyph::rotate_90);
 				Point point2 = { selection.max.i - jOffset, selection.min.j + iOffset };
 				step.transforms.emplace_back(point2, &Glyph::rotate_270);
