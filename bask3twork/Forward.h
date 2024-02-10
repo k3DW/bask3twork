@@ -29,16 +29,6 @@ class RegenDialogTextBox;
 
 
 
-// Grid
-class DisplayGrid;
-class Knot;
-
-enum class TileState;
-class Tile;
-using Tiles = std::vector<std::vector<Tile>>;
-
-
-
 // Pure
 enum class Connection : uint8_t;
 struct ConnectionTransformations;
@@ -69,6 +59,16 @@ class SelectionZipRange;
 
 enum class Symmetry;
 class SymmetryChecker;
+
+
+
+// Grid
+class DisplayGrid;
+class Knot;
+
+enum class TileState;
+class Tile;
+using Tiles = Grid<Tile>;
 
 
 

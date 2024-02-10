@@ -45,7 +45,7 @@ private:
 	bool has_backward_diagonal_locking() const;
 
 	const Glyph* glyph(Point p) const { return glyphs->at(p); }
-	const Tile* tile(Point p) const { return &((*tiles)[p.i][p.j]); }
+	const Tile* tile(Point p) const { return &tiles->at(p); }
 
 private:
 	const Glyphs* glyphs;

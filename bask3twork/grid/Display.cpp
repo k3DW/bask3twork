@@ -150,9 +150,8 @@ void DisplayGrid::render_axis_labels(wxDC& dc)
 
 void DisplayGrid::render_tiles(wxDC& dc)
 {
-	for (const auto& row : tiles)
-		for (const Tile& tile : row)
-			tile.render(dc, glyph_font_size);
+	for (const Tile& tile : tiles)
+		tile.render(dc, glyph_font_size);
 }
 
 void DisplayGrid::render_knot(wxDC& dc)
@@ -248,16 +247,13 @@ void DisplayGrid::reset_tiles()
 
 void DisplayGrid::make_tiles()
 {
-	tiles.clear();
+	tiles = Tiles(grid_size);
 	const auto [rows, columns] = grid_size;
-	tiles.reserve(rows);
 	for (int i = 0; i < rows; i++)
 	{
-		auto& row = tiles.emplace_back();
-		row.reserve(columns);
 		for (int j = 0; j < columns; j++)
 		{
-			row.emplace_back(TileBrushes::all[i % 2][j % 2], tile_offset(i, j));
+			tiles.emplace_back(TileBrushes::all[i % 2][j % 2], tile_offset(i, j));
 		}
 	}
 }

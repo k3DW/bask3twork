@@ -1,6 +1,7 @@
 #pragma once
 #include <wx/window.h>
 #include "Forward.h"
+#include "pure/Grid.h"
 #include "pure/GridSize.h"
 #include "pure/Selection.h"
 #include "grid/Tile.h"
