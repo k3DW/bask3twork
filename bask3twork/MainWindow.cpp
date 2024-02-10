@@ -254,7 +254,7 @@ void MainWindow::generate_knot(Symmetry sym)
 		return;
 	}
 
-	if (knot->generate(Knot::fail_fast, sym, disp->get_selection(), disp->get_tiles()))
+	if (knot->generate(Knot::backtracking, sym, disp->get_selection(), disp->get_tiles()))
 	{
 		disp->set_knot(knot);
 		disp->render();

@@ -28,7 +28,8 @@ public:
 	bool generate(Algorithm alg, Symmetry sym, Selection selection, const Tiles& tiles);
 
 	bool generate_fail_fast(Glyphs glyphs, Symmetry sym, Selection selection);
-	bool generate_backtracking(Glyphs glyphs, Symmetry sym, Selection selection);
+	
+	std::optional<Glyphs> generate_backtracking(Glyphs glyphs, Symmetry sym, Selection selection);
 
 	bool checkWrapping(Selection selection) const;
 
