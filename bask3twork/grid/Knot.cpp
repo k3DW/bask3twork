@@ -143,7 +143,7 @@ std::optional<Glyphs> Knot::generate_backtracking(Glyphs glyph_grid, Symmetry sy
 	bool backtracking = false;
 
 	const SelectionRange range(selection);
-	for (auto it = range.begin(); it != range.end(); )
+	for (auto it = range.begin(); it != range.end(); backtracking ? --it : ++it)
 	{
 		Point p = *it;
 		auto [i, j] = p;
@@ -175,7 +175,6 @@ std::optional<Glyphs> Knot::generate_backtracking(Glyphs glyph_grid, Symmetry sy
 			if (!glyph_opt)
 			{
 				steps.pop_back();
-				--it;
 				continue; // Keep backtracking
 			}
 
@@ -188,17 +187,9 @@ std::optional<Glyphs> Knot::generate_backtracking(Glyphs glyph_grid, Symmetry sy
 			}
 
 			backtracking = false;
-			++it;
-			continue;
 		}
 
-		else if (glyph_grid[p.i][p.j])
-		{
-			++it;
-			continue;
-		}
-
-		else
+		else if (nullptr == glyph_grid[p.i][p.j])
 		{
 			std::vector<const Glyph*> options = Glyph::RandomList(
 				/** (a) If this Glyph location is on the outer edge of the selection on this particular side, branch to condition B, otherwise branch to condition E.
@@ -248,8 +239,7 @@ std::optional<Glyphs> Knot::generate_backtracking(Glyphs glyph_grid, Symmetry sy
 			{
 				backtracking = true;
 				steps.pop_back();
-				--it;
-				continue; // Keep backtracking
+				continue;
 			}
 
 			const Glyph* glyph = *glyph_opt;
@@ -297,9 +287,6 @@ std::optional<Glyphs> Knot::generate_backtracking(Glyphs glyph_grid, Symmetry sy
 			{
 				glyph_grid[point.i][point.j] = glyph->*transform;
 			}
-
-			++it;
-			continue;
 		}
 	}
 
