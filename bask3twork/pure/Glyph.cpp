@@ -19,17 +19,27 @@ const Glyph* Glyph::Random(Connections connections, GlyphFlag flags)
 	static std::vector<const Glyph*> glyph_list(AllGlyphs.size(), nullptr);
 	glyph_list.clear();
 
-	for (auto& glyph : AllGlyphs)
-		if (compatible(connections, glyph) && (glyph.flags % flags))
-			glyph_list.push_back(&glyph);
+	RandomList(glyph_list, connections, flags);
 
 	if (glyph_list.empty())
 		return nullptr;
 	else
-	{
-		static std::mt19937 twister{ std::random_device{}() };
-		static const Glyph* glyph = nullptr;
-		std::ranges::sample(glyph_list, &glyph, 1, twister);
-		return glyph;
-	}
+		return glyph_list.front();
+}
+
+std::vector<const Glyph*> Glyph::RandomList(Connections connections, GlyphFlag flags)
+{
+	std::vector<const Glyph*> glyphs;
+	RandomList(glyphs, connections, flags);
+	return glyphs;
+}
+
+void Glyph::RandomList(std::vector<const Glyph*>& glyphs, Connections connections, GlyphFlag flags)
+{
+	for (auto& glyph : AllGlyphs)
+		if (compatible(connections, glyph) && (glyph.flags % flags))
+			glyphs.push_back(&glyph);
+
+	static std::mt19937 twister{ std::random_device{}() };
+	std::ranges::shuffle(glyphs, twister);
 }

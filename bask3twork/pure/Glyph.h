@@ -83,6 +83,8 @@ struct Glyph : GlyphsTransformed, Connections
 	Glyph& operator=(Glyph&&) = delete;
 
 	static const Glyph* Random(Connections connections, GlyphFlag flags);
+	static std::vector<const Glyph*> RandomList(Connections connections, GlyphFlag flags);
+	static void RandomList(std::vector<const Glyph*>& glyphs, Connections connections, GlyphFlag flags);
 };
 
 consteval GlyphFlag Glyph::get_flags() const
