@@ -27,13 +27,12 @@ MainWindow::MainWindow(GridSize size, wxString title)
 	, menu_bar(new MenuBar(this))
 
 	, disp(new DisplayGrid(this, size))
-	, knot(new Knot(size, GetStatusBar())) // Apparently you can call GetStatusBar() before CreateStatusBar()
+	, knot(new Knot(size, CreateStatusBar()))
 	, grid_sizer(make_grid_sizer(disp))
 
 	, main_sizer(make_main_sizer(grid_sizer, region_sizer))
 {
 	Bind(wxEVT_CHAR_HOOK, &MainWindow::on_key_press, this);
-	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
 	SetSizer(main_sizer);
 	update_sizing();
