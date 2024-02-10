@@ -45,6 +45,13 @@ struct ConnectionTransformations;
 using ConnectionFn = Connection(*)(Connection);
 struct Connections;
 
+template <class T>
+class Grid;
+template <class T, bool is_const>
+class GridIterator;
+template <class T, bool is_const>
+class GridRange;
+
 enum class GlyphFlag;
 struct Glyph;
 using Glyphs = std::vector<std::vector<const Glyph*>>;
