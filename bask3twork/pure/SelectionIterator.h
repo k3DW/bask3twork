@@ -11,7 +11,7 @@ class SelectionIterator
 	using Self = SelectionIterator;
 
 public:
-	using iterator_category = std::forward_iterator_tag;
+	using iterator_category = std::bidirectional_iterator_tag;
 	using difference_type = std::ptrdiff_t; // Unused
 	using value_type = Point;
 	using pointer    = const Point*;
@@ -23,8 +23,8 @@ public:
 		: selection(selection)
 	{
 		set_points(type);
-		static_assert(std::forward_iterator<Self>);
-		static_assert(!std::bidirectional_iterator<Self>);
+		static_assert(std::bidirectional_iterator<Self>);
+		static_assert(!std::random_access_iterator<Self>);
 	}
 
 	friend bool operator==(const Self& lhs, const Self& rhs)
@@ -49,8 +49,7 @@ public:
 		current += movement;
 		if (!selection.contains(current))
 		{
-			baseline_current += baseline_movement;
-			current = baseline_current;
+			current += movement_2;
 		}
 		return *this;
 	}
@@ -62,33 +61,50 @@ public:
 		return temp;
 	}
 
+	Self& operator--()
+	{
+		current -= movement;
+		if (!selection.contains(current))
+		{
+			current -= movement_2;
+		}
+		return *this;
+	}
+
+	Self operator--(int)
+	{
+		auto temp = *this;
+		--(*this);
+		return temp;
+	}
+
 private:
 	void set_points(const CornerMovement type)
 	{
 		using enum Corner;
 		using enum Movement;
 
-		current = baseline_current = selection.corner(type.corner);
+		current = selection.corner(type.corner);
 		movement = Point::movement(type.movement);
 
 		switch (type)
 		{
 		break; case upper_left | down:
-			baseline_movement = Point::right();
+			movement_2 = { -selection.rows(), 1 };
 		break; case upper_left | right:
-			baseline_movement = Point::down();
+			movement_2 = { 1, -selection.columns() };
 		break; case upper_right | down:
-			baseline_movement = Point::left();
+			movement_2 = { -selection.rows(), -1 };
 		break; case upper_right | left:
-			baseline_movement = Point::down();
+			movement_2 = { 1, selection.columns() };
 		break; case lower_left | up:
-			baseline_movement = Point::right();
+			movement_2 = { selection.rows(), 1 };
 		break; case lower_left | right:
-			baseline_movement = Point::up();
+			movement_2 = { -1, -selection.columns() };
 		break; case lower_right | up:
-			baseline_movement = Point::left();
+			movement_2 = { selection.rows(), -1 };
 		break; case lower_right | left:
-			baseline_movement = Point::up();
+			movement_2 = { -1, selection.columns() };
 		break; default:
 			throw std::logic_error("Incorrect combination of Corner and Movement.");
 		}
@@ -96,14 +112,32 @@ private:
 
 	std::tuple<const Point&, const Point&, const Selection&> constants() const
 	{
-		return std::tie(movement, baseline_movement, selection);
+		return std::tie(movement, movement_2, selection);
 	}
 
 	Point current = { -1, -1 };
 	Point movement = { 1 << 16, 1 << 16 };
-
-	Point baseline_current = { -1, -1 };
-	Point baseline_movement = { 1 << 16, 1 << 16 };
+	Point movement_2 = { 1 << 16, 1 << 16 };
 
 	Selection selection = { { -1, -1 }, { -1, -1 } };
+};
+
+
+
+class SelectionRange
+{
+public:
+	SelectionRange(Selection selection, CornerMovement type = Corner::upper_left | Movement::right)
+		: selection(selection), type(type)
+	{
+		static_assert(std::ranges::bidirectional_range<SelectionRange>);
+		static_assert(!std::ranges::random_access_range<SelectionRange>);
+	}
+
+	auto begin() const { return SelectionIterator{ selection, type }; }
+	auto end()   const { return SelectionSentinel{}; }
+
+private:
+	Selection selection;
+	CornerMovement type;
 };

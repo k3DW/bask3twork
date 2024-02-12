@@ -40,10 +40,9 @@ void DisplayGrid::resize(GridSize size)
 	knot = nullptr;
 }
 
-void DisplayGrid::reduce_glyph_font_size_by(int i)
+void DisplayGrid::set_glyph_font_size(int i)
 {
-	wxSize old = glyph_font_size;
-	wxSize size{ old.x - i, old.y - i };
+	wxSize size{ i, i };
 	glyph_font.SetPixelSize(size);
 
 	const int axis_point_size = std::max(std::min(Sizes::font_point, size.x / 3), 1);
@@ -258,7 +257,7 @@ void DisplayGrid::make_tiles()
 		row.reserve(columns);
 		for (int j = 0; j < columns; j++)
 		{
-			row.emplace_back(this, TileBrushes::all[i % 2][j % 2], tile_offset(i, j));
+			row.emplace_back(TileBrushes::all[i % 2][j % 2], tile_offset(i, j));
 		}
 	}
 }

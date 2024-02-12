@@ -52,6 +52,7 @@ bool GenerateRegion::is_enabled(Symmetry symmetry) const
 	case Symmetry::FwdDiag:     return buttons[7]->IsEnabled();
 	case Symmetry::BackDiag:    return buttons[8]->IsEnabled();
 	case Symmetry::FullSym:     return buttons[9]->IsEnabled();
+	default: throw;
 	}
 }
 

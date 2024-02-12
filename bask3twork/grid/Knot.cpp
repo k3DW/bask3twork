@@ -42,131 +42,19 @@ bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
  * \b Method
  */
 {
-	/// First, instantiate a \c wxString to show in the status bar,
-	/// then add to it in a \c switch statement for the specific symmetry used.
-	/// If the value for \c sym is not valid, this \c switch statement will cause the function to return \c false.
-	wxString statusBeginning = "Generating ";
-	switch (sym) {
-		case Symmetry::AnySym:		{ statusBeginning += "no symmetry... ";						break; }
-		case Symmetry::HoriSym:		{ statusBeginning += "horizontal symmetry... ";				break; }
-		case Symmetry::VertSym:		{ statusBeginning += "vertical symmetry... ";				break; }
-		case Symmetry::HoriVertSym: { statusBeginning += "horizontal + vertical symmetry... ";	break; }
-		case Symmetry::Rot2Sym:		{ statusBeginning += "2-way rotational symmetry... ";		break; }
-		case Symmetry::Rot4Sym:		{ statusBeginning += "4-way rotational symmetry... ";		break; }
-		case Symmetry::FwdDiag:		{ statusBeginning += "forward diagonal symmetry... ";		break; }
-		case Symmetry::BackDiag:	{ statusBeginning += "backward diagonal symmetry... ";		break; }
-		case Symmetry::FullSym:		{ statusBeginning += "full symmetry... ";					break; }
-		default:
-			return false;
-	}
+	Glyphs base_glyphs = make_base_glyphs(sym, selection, tiles);
 
-	/// Then, make a copy of \c glyphs, and set all members in the selection to \c nullptr to denote that they are unassigned.
-	Glyphs baseGlyphs = glyphs;
-	for (int i = selection.min.i; i <= selection.max.i; i++)
-	for (int j = selection.min.j; j <= selection.max.j; j++)
-	{
-		if (tiles[i][j].locked())
-			baseGlyphs[i][j] = glyphs[i][j];
-		else
-			baseGlyphs[i][j] = nullptr;
-	}
-
-
-
-	{
-		// Note, this is all done in `generate()` and not in `tryGenerating()` to avoid doing it repeatedly for failed attempts
-		using enum Corner;
-		using enum Movement;
-
-		if (sym % Symmetry::HoriSym)
-		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | right, lower_left | right })
-		{
-			const Tile& t1 = tiles[p1.i][p1.j];
-			const Tile& t2 = tiles[p2.i][p2.j];
-			if (t1.locked() && !t2.locked())
-				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->mirror_x;
-			else if (!t1.locked() && t2.locked())
-				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->mirror_x;
-		}
-
-		if (sym % Symmetry::VertSym)
-		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | down, upper_right | down })
-		{
-			const Tile& t1 = tiles[p1.i][p1.j];
-			const Tile& t2 = tiles[p2.i][p2.j];
-			if (t1.locked() && !t2.locked())
-				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->mirror_y;
-			else if (!t1.locked() && t2.locked())
-				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->mirror_y;
-		}
-
-		if (sym % Symmetry::Rot2Sym)
-		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | right, lower_right | left })
-		{
-			const Tile& t1 = tiles[p1.i][p1.j];
-			const Tile& t2 = tiles[p2.i][p2.j];
-			if (t1.locked() && !t2.locked())
-				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->rotate_180;
-			else if (!t1.locked() && t2.locked())
-				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->rotate_180;
-		}
-
-		if (sym % Symmetry::Rot4Sym)
-		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | right, lower_left | up })
-		{
-			const Tile& t1 = tiles[p1.i][p1.j];
-			const Tile& t2 = tiles[p2.i][p2.j];
-			if (t1.locked() && !t2.locked())
-				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->rotate_90;
-			else if (!t1.locked() && t2.locked())
-				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->rotate_180->rotate_90;
-		}
-
-		if (sym % Symmetry::Rot4Sym)
-		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_right | down, upper_left | right })
-		{
-			const Tile& t1 = tiles[p1.i][p1.j];
-			const Tile& t2 = tiles[p2.i][p2.j];
-			if (t1.locked() && !t2.locked())
-				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->rotate_180->rotate_90;
-			else if (!t1.locked() && t2.locked())
-				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->rotate_90;
-		}
-
-		if (sym % Symmetry::FwdDiag)
-		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_left | right, lower_right | up })
-		{
-			const Tile& t1 = tiles[p1.i][p1.j];
-			const Tile& t2 = tiles[p2.i][p2.j];
-			if (t1.locked() && !t2.locked())
-				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->mirror_forward_diagonal;
-			else if (!t1.locked() && t2.locked())
-				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->mirror_forward_diagonal;
-		}
-
-		if (sym % Symmetry::BackDiag)
-		for (const auto& [p1, p2] : SelectionZipRange{ selection, upper_right | left, lower_left | up })
-		{
-			const Tile& t1 = tiles[p1.i][p1.j];
-			const Tile& t2 = tiles[p2.i][p2.j];
-			if (t1.locked() && !t2.locked())
-				baseGlyphs[p2.i][p2.j] = baseGlyphs[p1.i][p1.j]->mirror_backward_diagonal;
-			else if (!t1.locked() && t2.locked())
-				baseGlyphs[p1.i][p1.j] = baseGlyphs[p2.i][p2.j]->mirror_backward_diagonal;
-		}
-	}
-
-
+	const wxString& prefix = status_prefix(sym);
 
 	/// Next, enter a loop, counting the number of attempts made at generating this knot. The steps are as follows.
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		/// \b (1) At certain intervals of numbers of attempts, update the status bar with the number of attempts made.
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText(wxString::Format("%sAttempt %i/%i", statusBeginning, attempts, MAX_ATTEMPTS));
+			statusBar->SetStatusText(wxString::Format("%sAttempt %i/%i", prefix, attempts, MAX_ATTEMPTS));
 
 		/// \b (2) Call Knot::tryGenerating() using the copy of \c glyphs created above.
 		///		If it fails, \c continue the loop and try again.
-		std::optional<Glyphs> newGlyphs = tryGenerating(baseGlyphs, sym, selection);
+		std::optional<Glyphs> newGlyphs = tryGenerating(base_glyphs, sym, selection);
 		if (!newGlyphs) continue;
 
 		/// \b (3) If the knot has been successfully generated, set \c glyphs equal to this generated version and return \c true.
@@ -274,7 +162,7 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 			if (bitHori) glyphGrid[selection.max.i - iOffset][j] = glyphGrid[i][j]->mirror_x;
 			if (bitVert) glyphGrid[i][selection.max.j - jOffset] = glyphGrid[i][j]->mirror_y;
 			if (bitRot2) glyphGrid[selection.max.i - iOffset][selection.max.j - jOffset] = glyphGrid[i][j]->rotate_180;
-			if (bitRot4) { glyphGrid[selection.min.i + jOffset][selection.max.j - iOffset] = glyphGrid[i][j]->rotate_90; glyphGrid[selection.max.i - jOffset][selection.min.j + iOffset] = glyphGrid[i][j]->rotate_180->rotate_90; }
+			if (bitRot4) { glyphGrid[selection.min.i + jOffset][selection.max.j - iOffset] = glyphGrid[i][j]->rotate_90; glyphGrid[selection.max.i - jOffset][selection.min.j + iOffset] = glyphGrid[i][j]->rotate_270; }
 			if (bitFwDi) glyphGrid[selection.max.i - jOffset][selection.max.j - iOffset] = glyphGrid[i][j]->mirror_forward_diagonal;
 			if (bitBkDi) glyphGrid[selection.min.i + jOffset][selection.min.j + iOffset] = glyphGrid[i][j]->mirror_backward_diagonal;
 		}
@@ -282,6 +170,57 @@ std::optional<Glyphs> Knot::tryGenerating(Glyphs glyphGrid, Symmetry sym, Select
 
 	/// \b (5) If the loop finishes, then the Knot has been successfully generated. Return \c true.
 	return { std::move(glyphGrid) };
+}
+
+Glyphs Knot::make_base_glyphs(const Symmetry sym, const Selection selection, const Tiles& tiles) const
+{
+	Glyphs base_glyphs = glyphs;
+
+	/// Make a copy of \c glyphs, and set all members in the selection to \c nullptr to denote that they are unassigned.
+	for (int i = selection.min.i; i <= selection.max.i; i++)
+	for (int j = selection.min.j; j <= selection.max.j; j++)
+	{
+		if (tiles[i][j].locked())
+			base_glyphs[i][j] = glyphs[i][j];
+		else
+			base_glyphs[i][j] = nullptr;
+	}
+
+	const auto transform = [&](const Symmetry desired_sym, const CornerMovement type1, const CornerMovement type2, const Glyph* GlyphsTransformed::* transformation) -> void
+		{
+			if (!(sym % desired_sym))
+				return;
+	
+			for (const auto& [p1, p2] : SelectionZipRange{ selection, type1, type2 })
+			{
+				/// If a tile is locked and its transformed tile is not locked, also lock the transformed tile
+				const Tile& t1 = tiles[p1.i][p1.j];
+				const Tile& t2 = tiles[p2.i][p2.j];
+				if (t1.locked() && !t2.locked())
+				{
+					base_glyphs[p2.i][p2.j] = base_glyphs[p1.i][p1.j]->*transformation;
+				}
+				else if (!t1.locked() && t2.locked())
+				{
+					base_glyphs[p1.i][p1.j] = base_glyphs[p2.i][p2.j]->*(GlyphsTransformed::inverse(transformation));
+				}
+			}
+		};
+
+	using enum Corner;
+	using enum Movement;
+
+	transform(Symmetry::HoriSym, (upper_left | right), (lower_left | right), &Glyph::mirror_x);
+	transform(Symmetry::VertSym, (upper_left | down), (upper_right | down), &Glyph::mirror_y);
+
+	transform(Symmetry::Rot2Sym, (upper_left | right), (lower_right | left), &Glyph::rotate_180);
+	transform(Symmetry::Rot4Sym, (upper_left | right), (lower_left | up), &Glyph::rotate_90);
+	transform(Symmetry::Rot4Sym, (upper_left | right), (upper_right | down), &Glyph::rotate_90);
+
+	transform(Symmetry::FwdDiag, (upper_left | right), (lower_right | up), &Glyph::mirror_forward_diagonal);
+	transform(Symmetry::BackDiag, (upper_right | left), (lower_left | up), &Glyph::mirror_backward_diagonal);
+
+	return base_glyphs;
 }
 
 bool Knot::checkWrapping(Selection selection) const {
@@ -341,4 +280,21 @@ wxString Knot::plaintext() const
 			output << "\r\n";
 	}
 	return output;
+}
+
+const wxString& Knot::status_prefix(Symmetry sym) const
+{
+	switch (sym) {
+	case Symmetry::AnySym:      { static wxString status = "Generating no symmetry... ";                    return status; }
+	case Symmetry::HoriSym:     { static wxString status = "Generating horizontal symmetry... ";            return status; }
+	case Symmetry::VertSym:     { static wxString status = "Generating vertical symmetry... ";              return status; }
+	case Symmetry::HoriVertSym: { static wxString status = "Generating horizontal + vertical symmetry... "; return status; }
+	case Symmetry::Rot2Sym:     { static wxString status = "Generating 2-way rotational symmetry... ";      return status; }
+	case Symmetry::Rot4Sym:     { static wxString status = "Generating 4-way rotational symmetry... ";      return status; }
+	case Symmetry::FwdDiag:     { static wxString status = "Generating forward diagonal symmetry... ";      return status; }
+	case Symmetry::BackDiag:    { static wxString status = "Generating backward diagonal symmetry... ";     return status; }
+	case Symmetry::FullSym:     { static wxString status = "Generating full symmetry... ";                  return status; }
+	default:
+		throw;
+	}
 }

@@ -39,12 +39,27 @@ template <> struct opt_into_enum_operations<GlyphFlag> : std::true_type {};
 /// A struct for each of the unit transformations on a \c Glyph, to keep the code inside the \c Glyph struct cleaner
 struct GlyphsTransformed
 {
+	const Glyph* identity;   ///< This Glyph itself
 	const Glyph* rotate_90;  ///< This Glyph rotated by 90 degrees clockwise
 	const Glyph* rotate_180; ///< This Glyph rotated by 180 degrees clockwise
+	const Glyph* rotate_270; ///< This Glyph rotated by 270 degrees clockwise
 	const Glyph* mirror_x;   ///< This Glyph mirrored across its horizontal line
 	const Glyph* mirror_y;   ///< This Glyph mirrored across its veritcal line
 	const Glyph* mirror_forward_diagonal;  ///< This Glyph mirrored across its forward diagonal line
 	const Glyph* mirror_backward_diagonal; ///< This Glyph mirrored across its backward diagonal line
+
+	static constexpr const Glyph* GlyphsTransformed::* inverse(const Glyph* GlyphsTransformed::* transform)
+	{
+		if (transform == &GlyphsTransformed::identity)                 return &GlyphsTransformed::identity;
+		if (transform == &GlyphsTransformed::rotate_90)                return &GlyphsTransformed::rotate_270;
+		if (transform == &GlyphsTransformed::rotate_180)               return &GlyphsTransformed::rotate_180;
+		if (transform == &GlyphsTransformed::rotate_270)               return &GlyphsTransformed::rotate_90;
+		if (transform == &GlyphsTransformed::mirror_x)                 return &GlyphsTransformed::mirror_x;
+		if (transform == &GlyphsTransformed::mirror_y)                 return &GlyphsTransformed::mirror_y;
+		if (transform == &GlyphsTransformed::mirror_forward_diagonal)  return &GlyphsTransformed::mirror_forward_diagonal;
+		if (transform == &GlyphsTransformed::mirror_backward_diagonal) return &GlyphsTransformed::mirror_backward_diagonal;
+		throw;
+	}
 };
 
 /// A struct to store the glyph information of the the Celtic Knots font

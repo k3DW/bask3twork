@@ -4,8 +4,10 @@
 struct ProcessedLine
 {
 	int codepoint;
+	int identity_index;
 	int rotate_90_index;
 	int rotate_180_index;
+	int rotate_270_index;
 	int mirror_x_index;
 	int mirror_y_index;
 	int mirror_forward_diag_index;
@@ -22,20 +24,22 @@ decltype(auto) get(T&& line)
 {
 	static_assert(I < std::tuple_size_v<ProcessedLine>);
 
-	if constexpr (I == 0) return std::forward<T>(line).codepoint;
-	if constexpr (I == 1) return std::forward<T>(line).rotate_90_index;
-	if constexpr (I == 2) return std::forward<T>(line).rotate_180_index;
-	if constexpr (I == 3) return std::forward<T>(line).mirror_x_index;
-	if constexpr (I == 4) return std::forward<T>(line).mirror_y_index;
-	if constexpr (I == 5) return std::forward<T>(line).mirror_forward_diag_index;
-	if constexpr (I == 6) return std::forward<T>(line).mirror_backward_diag_index;
-	if constexpr (I == 7) return std::forward<T>(line).up_connection;
-	if constexpr (I == 8) return std::forward<T>(line).down_connection;
-	if constexpr (I == 9) return std::forward<T>(line).left_connection;
-	if constexpr (I == 10) return std::forward<T>(line).right_connection;
+	if constexpr (I == 0)  return std::forward<T>(line).codepoint;
+	if constexpr (I == 1)  return std::forward<T>(line).identity_index;
+	if constexpr (I == 2)  return std::forward<T>(line).rotate_90_index;
+	if constexpr (I == 3)  return std::forward<T>(line).rotate_180_index;
+	if constexpr (I == 4)  return std::forward<T>(line).rotate_270_index;
+	if constexpr (I == 5)  return std::forward<T>(line).mirror_x_index;
+	if constexpr (I == 6)  return std::forward<T>(line).mirror_y_index;
+	if constexpr (I == 7)  return std::forward<T>(line).mirror_forward_diag_index;
+	if constexpr (I == 8)  return std::forward<T>(line).mirror_backward_diag_index;
+	if constexpr (I == 9)  return std::forward<T>(line).up_connection;
+	if constexpr (I == 10) return std::forward<T>(line).down_connection;
+	if constexpr (I == 11) return std::forward<T>(line).left_connection;
+	if constexpr (I == 12) return std::forward<T>(line).right_connection;
 }
 
-template<>              struct std::tuple_size<ProcessedLine>       : std::integral_constant<std::size_t, 11> {};
+template<>              struct std::tuple_size<ProcessedLine>       : std::integral_constant<std::size_t, 13> {};
 template<std::size_t I> struct std::tuple_element<I, ProcessedLine> : std::type_identity<std::remove_cvref_t<decltype(get<I>(std::declval<ProcessedLine>()))>> {};
 
 Expected<ProcessedData> get_processed_data(std::ifstream& csv_file);

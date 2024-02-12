@@ -14,7 +14,7 @@ public:
 
 	void resize(GridSize size);            ///< This function is effectively an assignment operator, almost everything is reset to the new grid size
 	void update_sizes_and_offsets();       ///< This function keeps the same grid size, but refreshes all the offsets and pixel sizes
-	void reduce_glyph_font_size_by(int i);
+	void set_glyph_font_size(int i);
 
 private:
 	// Event handlers
@@ -44,7 +44,7 @@ public:
 	void reset_tiles(); // Unhighlight and unlock
 
 	// Misc functions
-	void set_knot(const Knot* knot) { this->knot = knot; }
+	void set_knot(const Knot* knot_) { knot = knot_; }
 	const Tiles& get_tiles() const { return tiles; }
 	const Tile& get_tile(Point point) const { return tiles[point.i][point.j]; }
 

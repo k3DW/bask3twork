@@ -161,7 +161,7 @@ std::vector<T> File::read_range(wxFile& file, std::size_t count)
 {
 	const std::size_t num_bytes = sizeof(T) * count;
 	auto buffer = std::make_unique<std::byte[]>(num_bytes);
-	if (num_bytes != file.Read(buffer.get(), num_bytes))
+	if ((ssize_t)num_bytes != file.Read(buffer.get(), num_bytes))
 		return {};
 
 	auto ptr = reinterpret_cast<T*>(buffer.get());

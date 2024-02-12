@@ -27,13 +27,12 @@ MainWindow::MainWindow(GridSize size, wxString title)
 	, menu_bar(new MenuBar(this))
 
 	, disp(new DisplayGrid(this, size))
-	, knot(new Knot(size, GetStatusBar())) // Apparently you can call GetStatusBar() before CreateStatusBar()
+	, knot(new Knot(size, CreateStatusBar()))
 	, grid_sizer(make_grid_sizer(disp))
 
 	, main_sizer(make_main_sizer(grid_sizer, region_sizer))
 {
 	Bind(wxEVT_CHAR_HOOK, &MainWindow::on_key_press, this);
-	CreateStatusBar();
 	SetBackgroundColour(Colours::background);
 	SetSizer(main_sizer);
 	update_sizing();
@@ -223,7 +222,7 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 
 void MainWindow::regenerate_grid()
 {
-	RegenDialog* regen_dialog = new RegenDialog(this, size);
+	RegenDialog* regen_dialog = new RegenDialog(size);
 	regen_dialog->Bind(wxEVT_BUTTON, get_regen_dialog_handler(regen_dialog));
 
 	regen_dialog->ShowModal();
@@ -241,13 +240,13 @@ void MainWindow::update_min_size()
 
 void MainWindow::update_sizing()
 {
-	while (true)
+	for (int i = Sizes::glyph_font_pixel.x; i > 0; i -= Fonts::reduce_by)
 	{
+		disp->set_glyph_font_size(i);
 		const wxSize display_size = active_display_size();
 		const wxSize best_size = GetBestSize();
 		if (best_size.x <= display_size.x && best_size.y <= display_size.y)
 			break;
-		disp->reduce_glyph_font_size_by(Fonts::reduce_by);
 	}
 
 	update_min_size();
@@ -255,6 +254,7 @@ void MainWindow::update_sizing()
 		SetSize(GetMinSize());
 
 	Layout();
+	Refresh();
 }
 
 wxSize MainWindow::active_display_size() const

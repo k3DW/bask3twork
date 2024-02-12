@@ -30,6 +30,10 @@ private:
 	Glyphs glyphs;	///< The current state of the Knot
 
 	std::optional<Glyphs> tryGenerating(Glyphs glyphGrid, Symmetry sym, Selection selection) const;
+
+	Glyphs make_base_glyphs(Symmetry sym, Selection selection, const Tiles& tiles) const;
+
+	const wxString& status_prefix(Symmetry sym) const;
 };
 
 /* Knot::Knot */

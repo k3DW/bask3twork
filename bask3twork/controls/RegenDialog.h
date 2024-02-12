@@ -6,7 +6,7 @@
 class RegenDialog : public wxDialog
 {
 public:
-	RegenDialog(MainWindow* parent, GridSize size);
+	RegenDialog(GridSize size);
 
 	std::optional<GridSize> get_size() const;
 
