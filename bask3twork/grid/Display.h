@@ -14,7 +14,7 @@ public:
 
 	void resize(GridSize size);            ///< This function is effectively an assignment operator, almost everything is reset to the new grid size
 	void update_sizes_and_offsets();       ///< This function keeps the same grid size, but refreshes all the offsets and pixel sizes
-	void reduce_glyph_font_size_by(int i);
+	void set_glyph_font_size(int i);
 
 private:
 	// Event handlers

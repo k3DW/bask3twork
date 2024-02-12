@@ -240,13 +240,13 @@ void MainWindow::update_min_size()
 
 void MainWindow::update_sizing()
 {
-	while (true)
+	for (int i = Sizes::glyph_font_pixel.x; i > 0; i -= Fonts::reduce_by)
 	{
+		disp->set_glyph_font_size(i);
 		const wxSize display_size = active_display_size();
 		const wxSize best_size = GetBestSize();
 		if (best_size.x <= display_size.x && best_size.y <= display_size.y)
 			break;
-		disp->reduce_glyph_font_size_by(Fonts::reduce_by);
 	}
 
 	update_min_size();
@@ -254,6 +254,7 @@ void MainWindow::update_sizing()
 		SetSize(GetMinSize());
 
 	Layout();
+	Refresh();
 }
 
 wxSize MainWindow::active_display_size() const
