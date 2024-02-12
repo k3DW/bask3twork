@@ -47,6 +47,19 @@ struct GlyphsTransformed
 	const Glyph* mirror_y;   ///< This Glyph mirrored across its veritcal line
 	const Glyph* mirror_forward_diagonal;  ///< This Glyph mirrored across its forward diagonal line
 	const Glyph* mirror_backward_diagonal; ///< This Glyph mirrored across its backward diagonal line
+
+	static constexpr const Glyph* GlyphsTransformed::* inverse(const Glyph* GlyphsTransformed::* transform)
+	{
+		if (transform == &GlyphsTransformed::identity)                 return &GlyphsTransformed::identity;
+		if (transform == &GlyphsTransformed::rotate_90)                return &GlyphsTransformed::rotate_270;
+		if (transform == &GlyphsTransformed::rotate_180)               return &GlyphsTransformed::rotate_180;
+		if (transform == &GlyphsTransformed::rotate_270)               return &GlyphsTransformed::rotate_90;
+		if (transform == &GlyphsTransformed::mirror_x)                 return &GlyphsTransformed::mirror_x;
+		if (transform == &GlyphsTransformed::mirror_y)                 return &GlyphsTransformed::mirror_y;
+		if (transform == &GlyphsTransformed::mirror_forward_diagonal)  return &GlyphsTransformed::mirror_forward_diagonal;
+		if (transform == &GlyphsTransformed::mirror_backward_diagonal) return &GlyphsTransformed::mirror_backward_diagonal;
+		throw;
+	}
 };
 
 /// A struct to store the glyph information of the the Celtic Knots font
