@@ -42,24 +42,6 @@ bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
  * \b Method
  */
 {
-	/// First, instantiate a \c wxString to show in the status bar,
-	/// then add to it in a \c switch statement for the specific symmetry used.
-	/// If the value for \c sym is not valid, this \c switch statement will cause the function to return \c false.
-	wxString statusBeginning = "Generating ";
-	switch (sym) {
-		case Symmetry::AnySym:		{ statusBeginning += "no symmetry... ";						break; }
-		case Symmetry::HoriSym:		{ statusBeginning += "horizontal symmetry... ";				break; }
-		case Symmetry::VertSym:		{ statusBeginning += "vertical symmetry... ";				break; }
-		case Symmetry::HoriVertSym: { statusBeginning += "horizontal + vertical symmetry... ";	break; }
-		case Symmetry::Rot2Sym:		{ statusBeginning += "2-way rotational symmetry... ";		break; }
-		case Symmetry::Rot4Sym:		{ statusBeginning += "4-way rotational symmetry... ";		break; }
-		case Symmetry::FwdDiag:		{ statusBeginning += "forward diagonal symmetry... ";		break; }
-		case Symmetry::BackDiag:	{ statusBeginning += "backward diagonal symmetry... ";		break; }
-		case Symmetry::FullSym:		{ statusBeginning += "full symmetry... ";					break; }
-		default:
-			return false;
-	}
-
 	/// Then, make a copy of \c glyphs, and set all members in the selection to \c nullptr to denote that they are unassigned.
 	Glyphs baseGlyphs = glyphs;
 	for (int i = selection.min.i; i <= selection.max.i; i++)
@@ -158,11 +140,13 @@ bool Knot::generate(Symmetry sym, Selection selection, const Tiles& tiles)
 
 
 
+	const wxString& prefix = status_prefix(sym);
+
 	/// Next, enter a loop, counting the number of attempts made at generating this knot. The steps are as follows.
 	for (int attempts = 1; attempts <= MAX_ATTEMPTS; attempts++) {
 		/// \b (1) At certain intervals of numbers of attempts, update the status bar with the number of attempts made.
 		if (attempts % ATTEMPTS_DISPLAY_INCREMENT == 0)
-			statusBar->SetStatusText(wxString::Format("%sAttempt %i/%i", statusBeginning, attempts, MAX_ATTEMPTS));
+			statusBar->SetStatusText(wxString::Format("%sAttempt %i/%i", prefix, attempts, MAX_ATTEMPTS));
 
 		/// \b (2) Call Knot::tryGenerating() using the copy of \c glyphs created above.
 		///		If it fails, \c continue the loop and try again.
@@ -341,4 +325,21 @@ wxString Knot::plaintext() const
 			output << "\r\n";
 	}
 	return output;
+}
+
+const wxString& Knot::status_prefix(Symmetry sym) const
+{
+	switch (sym) {
+	case Symmetry::AnySym:      { static wxString status = "Generating no symmetry... ";                    return status; }
+	case Symmetry::HoriSym:     { static wxString status = "Generating horizontal symmetry... ";            return status; }
+	case Symmetry::VertSym:     { static wxString status = "Generating vertical symmetry... ";              return status; }
+	case Symmetry::HoriVertSym: { static wxString status = "Generating horizontal + vertical symmetry... "; return status; }
+	case Symmetry::Rot2Sym:     { static wxString status = "Generating 2-way rotational symmetry... ";      return status; }
+	case Symmetry::Rot4Sym:     { static wxString status = "Generating 4-way rotational symmetry... ";      return status; }
+	case Symmetry::FwdDiag:     { static wxString status = "Generating forward diagonal symmetry... ";      return status; }
+	case Symmetry::BackDiag:    { static wxString status = "Generating backward diagonal symmetry... ";     return status; }
+	case Symmetry::FullSym:     { static wxString status = "Generating full symmetry... ";                  return status; }
+	default:
+		throw;
+	}
 }
