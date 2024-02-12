@@ -103,6 +103,7 @@ static Expected<ProcessedLines> get_processed_lines(const InputLines& validated_
 		auto& processed_line = processed_lines.emplace_back();
 		processed_line.codepoint = ints[0];
 
+		processed_line.identity_index   = line_number - 1;
 		processed_line.rotate_90_index  = codepoint_to_index.at(ints[1]);
 		processed_line.rotate_180_index = codepoint_to_index.at(ints[2]);
 		processed_line.mirror_x_index   = codepoint_to_index.at(ints[3]);
@@ -116,6 +117,7 @@ static Expected<ProcessedLines> get_processed_lines(const InputLines& validated_
 
 	for (auto& line : processed_lines)
 	{
+		line.rotate_270_index           = processed_lines[line.rotate_180_index].rotate_90_index;
 		line.mirror_forward_diag_index  = processed_lines[line.rotate_90_index].mirror_x_index;
 		line.mirror_backward_diag_index = processed_lines[line.mirror_x_index].rotate_90_index;
 	}

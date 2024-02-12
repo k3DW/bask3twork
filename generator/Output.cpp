@@ -70,14 +70,16 @@ void output_all_glyphs(std::ofstream& all_glyphs_file, const ProcessedLines& pro
 		all_glyphs_file << formatter.format<3>(line, "&AllGlyphs[{}], ");
 		all_glyphs_file << formatter.format<4>(line, "&AllGlyphs[{}], ");
 		all_glyphs_file << formatter.format<5>(line, "&AllGlyphs[{}], ");
-		all_glyphs_file << formatter.format<6>(line, "&AllGlyphs[{}]");
+		all_glyphs_file << formatter.format<6>(line, "&AllGlyphs[{}], ");
+		all_glyphs_file << formatter.format<7>(line, "&AllGlyphs[{}], ");
+		all_glyphs_file << formatter.format<8>(line, "&AllGlyphs[{}]");
 		all_glyphs_file << " }, ";
 
 		all_glyphs_file << "{ ";
-		all_glyphs_file << formatter.format<7>(line, "Connection::{}, ");
-		all_glyphs_file << formatter.format<8>(line, "Connection::{}, ");
 		all_glyphs_file << formatter.format<9>(line, "Connection::{}, ");
-		all_glyphs_file << formatter.format<10>(line, "Connection::{}");
+		all_glyphs_file << formatter.format<10>(line, "Connection::{}, ");
+		all_glyphs_file << formatter.format<11>(line, "Connection::{}, ");
+		all_glyphs_file << formatter.format<12>(line, "Connection::{}");
 		all_glyphs_file << " }";
 
 		all_glyphs_file << " ),\n";
