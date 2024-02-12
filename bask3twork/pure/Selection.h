@@ -14,9 +14,24 @@ struct Point
 		return { lhs.i + rhs.i, lhs.j + rhs.j };
 	}
 
+	friend constexpr Point operator-(Point lhs, Point rhs)
+	{
+		return { lhs.i - rhs.i, lhs.j - rhs.j };
+	}
+
 	constexpr Point& operator+=(Point that)
 	{
 		return *this = *this + that;
+	}
+
+	constexpr Point& operator-=(Point that)
+	{
+		return *this = *this - that;
+	}
+
+	constexpr Point operator-() const
+	{
+		return { -i, -j };
 	}
 
 	static consteval Point up()    { return { -1, 0 }; }
@@ -44,6 +59,8 @@ struct Selection
 
 	friend constexpr bool operator==(const Selection&, const Selection&) = default;
 
+	int rows() const { return max.i - min.i + 1; }
+	int columns() const { return max.j - min.j + 1; }
 	bool is_square() const { return max.i - min.i == max.j - min.j; }
 	bool is_full_selection(GridSize size) const { return min.i == 0 && min.j == 0 && max.i == size.rows - 1 && max.j == size.columns - 1; }
 

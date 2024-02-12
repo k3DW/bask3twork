@@ -7,7 +7,7 @@ class SelectionZipIterator
 	using Self = SelectionZipIterator;
 
 public:
-	using iterator_category = std::forward_iterator_tag;
+	using iterator_category = std::bidirectional_iterator_tag;
 	using difference_type = std::ptrdiff_t; // Unused
 	using value_type = std::pair<const Point&, const Point&>;
 	using pointer    = std::pair<const Point&, const Point&>;
@@ -19,8 +19,8 @@ public:
 		: it1(selection1, type1)
 		, it2(selection2, type2)
 	{
-		static_assert(std::forward_iterator<Self>);
-		static_assert(!std::bidirectional_iterator<Self>);
+		static_assert(std::bidirectional_iterator<Self>);
+		static_assert(!std::random_access_iterator<Self>);
 	}
 
 	friend bool operator==(const Self& lhs, const Self& rhs) = default;
@@ -49,6 +49,20 @@ public:
 		return temp;
 	}
 
+	Self& operator--()
+	{
+		--it1;
+		--it2;
+		return *this;
+	}
+
+	Self operator--(int)
+	{
+		auto temp = *this;
+		--(*this);
+		return temp;
+	}
+
 private:
 	SelectionIterator it1;
 	SelectionIterator it2;
@@ -62,8 +76,8 @@ public:
 	SelectionZipRange(Selection selection1, CornerMovement type1, Selection selection2, CornerMovement type2)
 		:  selection1(selection1), type1(type1), selection2(selection2), type2(type2)
 	{
-		static_assert(std::ranges::forward_range<SelectionZipRange>);
-		static_assert(!std::ranges::bidirectional_range<SelectionZipRange>);
+		static_assert(std::ranges::bidirectional_range<SelectionZipRange>);
+		static_assert(!std::ranges::random_access_range<SelectionZipRange>);
 	}
 
 	SelectionZipRange(Selection selection, CornerMovement type1, CornerMovement type2)

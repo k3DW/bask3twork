@@ -11,7 +11,7 @@ class SelectionIterator
 	using Self = SelectionIterator;
 
 public:
-	using iterator_category = std::forward_iterator_tag;
+	using iterator_category = std::bidirectional_iterator_tag;
 	using difference_type = std::ptrdiff_t; // Unused
 	using value_type = Point;
 	using pointer    = const Point*;
@@ -23,8 +23,8 @@ public:
 		: selection(selection)
 	{
 		set_points(type);
-		static_assert(std::forward_iterator<Self>);
-		static_assert(!std::bidirectional_iterator<Self>);
+		static_assert(std::bidirectional_iterator<Self>);
+		static_assert(!std::random_access_iterator<Self>);
 	}
 
 	friend bool operator==(const Self& lhs, const Self& rhs)
@@ -58,6 +58,23 @@ public:
 	{
 		auto temp = *this;
 		++(*this);
+		return temp;
+	}
+
+	Self& operator--()
+	{
+		current -= movement;
+		if (!selection.contains(current))
+		{
+			current -= movement_2;
+		}
+		return *this;
+	}
+
+	Self operator--(int)
+	{
+		auto temp = *this;
+		--(*this);
 		return temp;
 	}
 
