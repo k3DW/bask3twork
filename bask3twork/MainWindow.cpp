@@ -223,7 +223,7 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 
 void MainWindow::regenerate_grid()
 {
-	RegenDialog* regen_dialog = new RegenDialog(this, size);
+	RegenDialog* regen_dialog = new RegenDialog(size);
 	regen_dialog->Bind(wxEVT_BUTTON, get_regen_dialog_handler(regen_dialog));
 
 	regen_dialog->ShowModal();

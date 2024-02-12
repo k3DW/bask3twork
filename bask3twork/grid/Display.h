@@ -44,7 +44,7 @@ public:
 	void reset_tiles(); // Unhighlight and unlock
 
 	// Misc functions
-	void set_knot(const Knot* knot) { this->knot = knot; }
+	void set_knot(const Knot* knot_) { knot = knot_; }
 	const Tiles& get_tiles() const { return tiles; }
 	const Tile& get_tile(Point point) const { return tiles[point.i][point.j]; }
 

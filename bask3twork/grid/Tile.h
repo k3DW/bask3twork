@@ -9,6 +9,8 @@ enum class TileState
 	none        = 0b00,
 	highlighted = 0b01,
 	locked      = 0b10,
+
+	highlighted_locked = highlighted | locked,
 };
 
 template <> struct opt_into_enum_operations<TileState> : std::true_type {};
@@ -45,7 +47,7 @@ inline const TileBrushes TileBrushes::_11 = { .base = Colours::tile_base[1][1], 
 class Tile
 {
 public:
-	Tile(DisplayGrid* parent, const TileBrushes& brushes, wxPoint offset);
+	Tile(const TileBrushes& brushes, wxPoint offset);
 
 	void reset_state() { state = TileState::none; }
 	void set_offset(wxPoint p) { offset = p; }

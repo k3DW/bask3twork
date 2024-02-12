@@ -5,7 +5,7 @@
 #include "pure/GridSize.h"
 #include "pure/Selection.h"
 
-RegenDialog::RegenDialog(MainWindow* parent, GridSize size)
+RegenDialog::RegenDialog(GridSize size)
 	: wxDialog(nullptr, wxID_ANY, "Grid")
 	, textbox_sizer(new wxBoxSizer(wxHORIZONTAL))
 	, height_box(new RegenDialogTextBox(this, size.rows))

@@ -3,7 +3,7 @@
 #include "grid/Display.h"
 #include "Constants.h"
 
-Tile::Tile(DisplayGrid* parent, const TileBrushes& brushes, wxPoint offset)
+Tile::Tile(const TileBrushes& brushes, wxPoint offset)
 	: brushes(brushes)
 	, offset(offset)
 {}
@@ -18,7 +18,7 @@ void Tile::render(wxDC& dc, wxSize size) const
 		dc.SetBrush(brushes.highlighted);
 	break; case TileState::locked:
 		dc.SetBrush(brushes.locked);
-	break; case TileState::highlighted | TileState::locked:
+	break; case TileState::highlighted_locked:
 		dc.SetBrush(brushes.highlighted_locked);
 	}
 	dc.DrawRectangle(offset, size);

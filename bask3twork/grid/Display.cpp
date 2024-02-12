@@ -258,7 +258,7 @@ void DisplayGrid::make_tiles()
 		row.reserve(columns);
 		for (int j = 0; j < columns; j++)
 		{
-			row.emplace_back(this, TileBrushes::all[i % 2][j % 2], tile_offset(i, j));
+			row.emplace_back(TileBrushes::all[i % 2][j % 2], tile_offset(i, j));
 		}
 	}
 }
