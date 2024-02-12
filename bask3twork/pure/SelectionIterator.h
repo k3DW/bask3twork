@@ -121,3 +121,23 @@ private:
 
 	Selection selection = { { -1, -1 }, { -1, -1 } };
 };
+
+
+
+class SelectionRange
+{
+public:
+	SelectionRange(Selection selection, CornerMovement type = Corner::upper_left | Movement::right)
+		: selection(selection), type(type)
+	{
+		static_assert(std::ranges::bidirectional_range<SelectionRange>);
+		static_assert(!std::ranges::random_access_range<SelectionRange>);
+	}
+
+	auto begin() const { return SelectionIterator{ selection, type }; }
+	auto end()   const { return SelectionSentinel{}; }
+
+private:
+	Selection selection;
+	CornerMovement type;
+};
