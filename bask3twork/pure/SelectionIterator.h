@@ -49,8 +49,7 @@ public:
 		current += movement;
 		if (!selection.contains(current))
 		{
-			baseline_current += baseline_movement;
-			current = baseline_current;
+			current += movement_2;
 		}
 		return *this;
 	}
@@ -68,27 +67,27 @@ private:
 		using enum Corner;
 		using enum Movement;
 
-		current = baseline_current = selection.corner(type.corner);
+		current = selection.corner(type.corner);
 		movement = Point::movement(type.movement);
 
 		switch (type)
 		{
 		break; case upper_left | down:
-			baseline_movement = Point::right();
+			movement_2 = { -selection.rows(), 1 };
 		break; case upper_left | right:
-			baseline_movement = Point::down();
+			movement_2 = { 1, -selection.columns() };
 		break; case upper_right | down:
-			baseline_movement = Point::left();
+			movement_2 = { -selection.rows(), -1 };
 		break; case upper_right | left:
-			baseline_movement = Point::down();
+			movement_2 = { 1, selection.columns() };
 		break; case lower_left | up:
-			baseline_movement = Point::right();
+			movement_2 = { selection.rows(), 1 };
 		break; case lower_left | right:
-			baseline_movement = Point::up();
+			movement_2 = { -1, -selection.columns() };
 		break; case lower_right | up:
-			baseline_movement = Point::left();
+			movement_2 = { selection.rows(), -1 };
 		break; case lower_right | left:
-			baseline_movement = Point::up();
+			movement_2 = { -1, selection.columns() };
 		break; default:
 			throw std::logic_error("Incorrect combination of Corner and Movement.");
 		}
@@ -96,14 +95,12 @@ private:
 
 	std::tuple<const Point&, const Point&, const Selection&> constants() const
 	{
-		return std::tie(movement, baseline_movement, selection);
+		return std::tie(movement, movement_2, selection);
 	}
 
 	Point current = { -1, -1 };
 	Point movement = { 1 << 16, 1 << 16 };
-
-	Point baseline_current = { -1, -1 };
-	Point baseline_movement = { 1 << 16, 1 << 16 };
+	Point movement_2 = { 1 << 16, 1 << 16 };
 
 	Selection selection = { { -1, -1 }, { -1, -1 } };
 };
