@@ -101,23 +101,17 @@ void DisplayGrid::on_lclick(wxMouseEvent& evt)
 
 void DisplayGrid::on_motion(wxMouseEvent& evt)
 {
-	Point pos = tile_position(evt.GetPosition());
-	if (pos != Point{ -1, -1 })
-	{
-		selection = { selection_start, pos };
-		selection.normalize();
-	}
+	Point pos = tile_position_clamp(evt.GetPosition());
+	selection = { selection_start, pos };
+	selection.normalize();
 	render();
 }
 
 void DisplayGrid::on_left_up(wxMouseEvent& evt)
 {
-	Point pos = tile_position(evt.GetPosition());
-	if (pos != Point{ -1, -1 })
-	{
-		selection = { selection_start, pos };
-		selection.normalize();
-	}
+	Point pos = tile_position_clamp(evt.GetPosition());
+	selection = { selection_start, pos };
+	selection.normalize();
 	finish_highlight();
 }
 
@@ -310,5 +304,15 @@ Point DisplayGrid::tile_position(wxPoint offset) const
 	offset -= tiles_offset;
 	if (offset.x < 0 || offset.y < 0)
 		return { -1, -1 };
-	return { offset.y / glyph_font_size.y, offset.x / glyph_font_size.x };
+	const int i = offset.y / glyph_font_size.y;
+	const int j = offset.x / glyph_font_size.x;
+	return { i, j };
+}
+
+Point DisplayGrid::tile_position_clamp(wxPoint offset) const
+{
+	offset -= tiles_offset;
+	const int i = offset.y / glyph_font_size.y;
+	const int j = offset.x / glyph_font_size.x;
+	return { std::max(0, std::min(i, grid_size.rows - 1)), std::max(0, std::min(j, grid_size.columns- 1)) };
 }

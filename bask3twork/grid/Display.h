@@ -72,6 +72,7 @@ private:
 	wxPoint y_label_offset(int pos) const;
 	wxPoint tile_offset(int i, int j) const;
 	Point tile_position(wxPoint offset) const;
+	Point tile_position_clamp(wxPoint offset) const;
 
 	wxFont glyph_font; ///< The glyph font, stored locally per \c DisplayGrid so we can change sizing
 	wxFont axis_font;  ///< The axis font, stored locally per \c DisplayGrid so we can change sizing
