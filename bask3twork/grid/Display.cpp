@@ -78,6 +78,16 @@ void DisplayGrid::on_lclick(wxMouseEvent& evt)
 	if (tile_pos == Point{ -1, -1 })
 		return evt.Skip();
 
+	if (evt.GetModifiers() == wxMOD_CONTROL)
+	{
+		Tile& tile = tiles[tile_pos.i][tile_pos.j];
+		tile.locked()
+			? tile.unlock()
+			: tile.lock();
+		render();
+		return evt.Skip();
+	}
+
 	parent->disable_buttons();
 
 	wxCursor cursor(wxCURSOR_HAND);
