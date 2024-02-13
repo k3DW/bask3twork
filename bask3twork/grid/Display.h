@@ -18,7 +18,9 @@ public:
 
 private:
 	// Event handlers
-	void on_lclick(wxMouseEvent& evt);
+	void on_left_down(wxMouseEvent& evt);
+	void on_right_down(wxMouseEvent& evt);
+	void on_left_dclick(wxMouseEvent& evt);
 	void on_paint(wxPaintEvent&);
 
 	void on_motion(wxMouseEvent& evt);
@@ -39,8 +41,7 @@ public:
 	// Modifiers
 	Selection get_selection() const { return selection; }
 	void reset_selection() { selection = { { 0, 0 }, { grid_size.rows - 1, grid_size.columns - 1 } }; }
-	void show_highlight() { showing = true; selection.normalize(); render(); }
-	void hide_highlight() { showing = false; render(); }
+	void unhighlight() { showing = false; render(); }
 
 	void lock(Point point);
 	void lock_no_render(Point point);

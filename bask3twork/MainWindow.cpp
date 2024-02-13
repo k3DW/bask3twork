@@ -305,7 +305,7 @@ void MainWindow::on_key_press(wxKeyEvent& event)
 	{
 
 	case WXK_ESCAPE:
-		disp->hide_highlight();
+		disp->unhighlight();
 		break;
 
 	case WXK_DELETE:

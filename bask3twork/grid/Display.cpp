@@ -18,8 +18,10 @@ DisplayGrid::DisplayGrid(MainWindow* parent, GridSize size)
 	Hide();
 	resize(size);
 
+	Bind(wxEVT_LEFT_DOWN, &DisplayGrid::on_left_down, this);
+	Bind(wxEVT_RIGHT_DOWN, &DisplayGrid::on_right_down, this);
+	Bind(wxEVT_LEFT_DCLICK, &DisplayGrid::on_left_dclick, this);
 	Bind(wxEVT_PAINT, &DisplayGrid::on_paint, this);
-	Bind(wxEVT_LEFT_DOWN, &DisplayGrid::on_lclick, this);
 
 	SetDoubleBuffered(true);
 	Show();
@@ -72,7 +74,7 @@ void DisplayGrid::update_sizes_and_offsets()
 
 
 
-void DisplayGrid::on_lclick(wxMouseEvent& evt)
+void DisplayGrid::on_left_down(wxMouseEvent& evt)
 {
 	const Point tile_pos = tile_position(evt.GetPosition());
 	if (tile_pos == Point{ -1, -1 })
@@ -104,6 +106,34 @@ void DisplayGrid::on_lclick(wxMouseEvent& evt)
 
 	CaptureMouse();
 
+	evt.Skip();
+}
+
+void DisplayGrid::on_right_down(wxMouseEvent& evt)
+{
+	const Point tile_pos = tile_position(evt.GetPosition());
+	if (tile_pos == Point{ -1, -1 })
+		return evt.Skip();
+
+	if (evt.HasAnyModifiers())
+		return evt.Skip();
+
+	unhighlight();
+	evt.Skip();
+}
+
+void DisplayGrid::on_left_dclick(wxMouseEvent& evt)
+{
+	const Point tile_pos = tile_position(evt.GetPosition());
+	if (tile_pos == Point{ -1, -1 })
+		return evt.Skip();
+
+	if (evt.HasAnyModifiers())
+		return evt.Skip();
+
+	reset_selection();
+	parent->enable_buttons();
+	render();
 	evt.Skip();
 }
 
