@@ -28,7 +28,7 @@ public:
 private:
 	void render(wxDC& dc);
 	void render_axis_labels(wxDC& dc);
-	void render_tiles(wxDC& dc);
+	void render_tiles(wxDC& dc) const;
 	void render_knot(wxDC& dc);
 
 public:
@@ -41,7 +41,6 @@ public:
 	void lock(Selection sel);
 	void unlock(Selection sel);
 	void invert_locking(Selection sel);
-	void reset_tiles(); // Unhighlight and unlock
 
 	// Misc functions
 	void set_knot(const Knot* knot_) { knot = knot_; }

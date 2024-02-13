@@ -33,7 +33,9 @@ class RegenDialogTextBox;
 class DisplayGrid;
 class Knot;
 
-enum class TileState;
+enum class TileLocked : bool;
+enum class TileHighlighted : bool;
+struct TileState;
 class Tile;
 using Tiles = std::vector<std::vector<Tile>>;
 

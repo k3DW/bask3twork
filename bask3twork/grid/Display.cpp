@@ -149,11 +149,11 @@ void DisplayGrid::render_axis_labels(wxDC& dc)
 		dc.DrawText(wxString::Format("%i", j + 1), x_label_offset(j));
 }
 
-void DisplayGrid::render_tiles(wxDC& dc)
+void DisplayGrid::render_tiles(wxDC& dc) const
 {
-	for (const auto& row : tiles)
-		for (const Tile& tile : row)
-			tile.render(dc, glyph_font_size);
+	for (int i = 0; i < grid_size.rows; i++)
+		for (int j = 0; j < grid_size.columns; j++)
+			tiles[i][j].render(dc, glyph_font_size, TileHighlighted{ selection.contains({ i, j }) });
 }
 
 void DisplayGrid::render_knot(wxDC& dc)
@@ -175,18 +175,15 @@ void DisplayGrid::render_knot(wxDC& dc)
 
 
 
-void DisplayGrid::highlight(Selection sel)
+void DisplayGrid::highlight([[maybe_unused]] Selection sel)
 {
-	for (Point p : SelectionRange(sel))
-		tiles[p.i][p.j].highlight();
+	selection = sel;
 	render();
 }
 
 void DisplayGrid::unhighlight()
 {
-	for (int i = 0; i < grid_size.rows; i++)
-		for (int j = 0; j < grid_size.columns; j++)
-			tiles[i][j].unhighlight();
+	selection = { { -1, -1 }, { -1, -1 } };
 	render();
 }
 
@@ -230,14 +227,6 @@ void DisplayGrid::invert_locking(Selection sel)
 			? tile.unlock()
 			: tile.lock();
 	}
-	render();
-}
-
-void DisplayGrid::reset_tiles()
-{
-	for (int i = 0; i < grid_size.rows; i++)
-		for (int j = 0; j < grid_size.columns; j++)
-			tiles[i][j].reset_state();
 	render();
 }
 

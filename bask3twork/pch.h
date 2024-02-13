@@ -23,6 +23,7 @@
 #include <wx/window.h>
 
 #include <array>
+#include <bit>
 #include <cstdint>
 #include <map>
 #include <optional>
