@@ -112,9 +112,13 @@ void DisplayGrid::on_lclick(wxMouseEvent& evt)
 void DisplayGrid::on_motion(wxMouseEvent& evt)
 {
 	Point pos = tile_position_clamp(evt.GetPosition());
-	selection = { selection_start, pos };
-	selection.normalize();
-	render();
+	Selection new_selection{ selection_start, pos };
+	new_selection.normalize();
+	if (selection != new_selection)
+	{
+		selection = new_selection;
+		render();
+	}
 }
 
 void DisplayGrid::on_left_up(wxMouseEvent& evt)
