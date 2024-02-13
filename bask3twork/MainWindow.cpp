@@ -110,6 +110,7 @@ void MainWindow::set_selection(Selection selection)
 {
 	select_region->set_selection(selection);
 	select_region->update_display();
+	show_selection();
 }
 
 void MainWindow::menu_event_handler(wxCommandEvent& evt)

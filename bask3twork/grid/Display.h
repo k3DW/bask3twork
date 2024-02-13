@@ -19,8 +19,12 @@ public:
 private:
 	// Event handlers
 	void on_lclick(wxMouseEvent& evt);
-	void on_rclick(wxMouseEvent& evt);
 	void on_paint(wxPaintEvent&);
+
+	void on_motion(wxMouseEvent& evt);
+	void on_left_up(wxMouseEvent& evt);
+	void on_capture_lost(wxMouseCaptureLostEvent& evt);
+	void finish_highlight();
 
 public:
 	// Rendering functions
@@ -54,8 +58,11 @@ private:
 	MainWindow* parent;
 	GridSize grid_size = {};
 	const Knot* knot = nullptr;
+
 	Selection selection = {};
 	bool showing = false;
+	Point selection_start = {};
+	bool highlight_in_progress = false;
 
 	Tiles tiles;
 	void make_tiles();

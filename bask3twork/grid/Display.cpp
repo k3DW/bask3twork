@@ -20,7 +20,6 @@ DisplayGrid::DisplayGrid(MainWindow* parent, GridSize size)
 
 	Bind(wxEVT_PAINT, &DisplayGrid::on_paint, this);
 	Bind(wxEVT_LEFT_DOWN, &DisplayGrid::on_lclick, this);
-	Bind(wxEVT_RIGHT_DOWN, &DisplayGrid::on_rclick, this);
 
 	SetDoubleBuffered(true);
 	Show();
@@ -79,49 +78,83 @@ void DisplayGrid::on_lclick(wxMouseEvent& evt)
 	if (tile_pos == Point{ -1, -1 })
 		return evt.Skip();
 
-	if (wxGetKeyState(WXK_CONTROL))
-	{
-		tiles[tile_pos.i][tile_pos.j].lock();
-	}
-	else
-	{
-		selection.min = tile_pos;
-		parent->set_selection(selection);
-	}
-
 	parent->hide_selection();
-	hide_highlight();
+
+	wxCursor cursor(wxCURSOR_HAND);
+	SetCursor(cursor);
+
+	showing = true;
+	highlight_in_progress = true;
+	selection_start = tile_pos;
+	selection = { tile_pos, tile_pos };
+
+	Bind(wxEVT_LEFT_UP, &DisplayGrid::on_left_up, this);
+	Bind(wxEVT_MOTION, &DisplayGrid::on_motion, this);
+	Bind(wxEVT_MOUSE_CAPTURE_LOST, &DisplayGrid::on_capture_lost, this);
+
+	CaptureMouse();
+
 	evt.Skip();
 }
 
-void DisplayGrid::on_rclick(wxMouseEvent& evt)
+
+
+void DisplayGrid::on_motion(wxMouseEvent& evt)
 {
-	const Point tile_pos = tile_position(evt.GetPosition());
-	if (tile_pos == Point{ -1, -1 })
-		return evt.Skip();
-
-	if (wxGetKeyState(WXK_CONTROL))
+	Point pos = tile_position(evt.GetPosition());
+	if (pos != Point{ -1, -1 })
 	{
-		tiles[tile_pos.i][tile_pos.j].unlock();
+		selection = { selection_start, pos };
+		selection.normalize();
 	}
-	else
-	{
-		selection.max = tile_pos;
-		parent->set_selection(selection);
-	}
-
-	parent->hide_selection();
-	hide_highlight();
-	evt.Skip();
+	render();
 }
+
+void DisplayGrid::on_left_up(wxMouseEvent& evt)
+{
+	Point pos = tile_position(evt.GetPosition());
+	if (pos != Point{ -1, -1 })
+	{
+		selection = { selection_start, pos };
+		selection.normalize();
+	}
+	finish_highlight();
+}
+
+void DisplayGrid::on_capture_lost(wxMouseCaptureLostEvent&)
+{
+	finish_highlight();
+}
+
+void DisplayGrid::finish_highlight()
+{
+	if (!highlight_in_progress)
+		return;
+
+	SetCursor(wxNullCursor);
+	if (HasCapture())
+	{
+		ReleaseMouse();
+	}
+
+	Unbind(wxEVT_LEFT_UP, &DisplayGrid::on_left_up, this);
+	Unbind(wxEVT_MOTION, &DisplayGrid::on_motion, this);
+	Unbind(wxEVT_MOUSE_CAPTURE_LOST, &DisplayGrid::on_capture_lost, this);
+
+	selection_start = { -1, -1 };
+	highlight_in_progress = false;
+	render();
+
+	parent->set_selection(selection);
+}
+
+
 
 void DisplayGrid::on_paint(wxPaintEvent&)
 {
 	wxPaintDC dc(this);
 	render(dc);
 }
-
-
 
 void DisplayGrid::render()
 {
