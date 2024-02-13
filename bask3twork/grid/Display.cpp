@@ -67,6 +67,8 @@ void DisplayGrid::update_sizes_and_offsets()
 	update_tile_offsets();
 	SetMinSize(wxDefaultSize);
 	SetMinSize(window_size);
+
+	reset_selection();
 }
 
 
@@ -83,11 +85,12 @@ void DisplayGrid::on_lclick(wxMouseEvent& evt)
 	}
 	else
 	{
-		parent->set_min(tile_pos);
+		selection.min = tile_pos;
+		parent->set_selection(selection);
 	}
 
 	parent->hide_selection();
-	unhighlight();
+	hide_highlight();
 	evt.Skip();
 }
 
@@ -103,11 +106,12 @@ void DisplayGrid::on_rclick(wxMouseEvent& evt)
 	}
 	else
 	{
-		parent->set_max(tile_pos);
+		selection.max = tile_pos;
+		parent->set_selection(selection);
 	}
 
 	parent->hide_selection();
-	unhighlight();
+	hide_highlight();
 	evt.Skip();
 }
 
@@ -153,7 +157,7 @@ void DisplayGrid::render_tiles(wxDC& dc) const
 {
 	for (int i = 0; i < grid_size.rows; i++)
 		for (int j = 0; j < grid_size.columns; j++)
-			tiles[i][j].render(dc, glyph_font_size, TileHighlighted{ selection.contains({ i, j }) });
+			tiles[i][j].render(dc, glyph_font_size, TileHighlighted{ showing && selection.contains({ i, j }) });
 }
 
 void DisplayGrid::render_knot(wxDC& dc)
@@ -175,18 +179,6 @@ void DisplayGrid::render_knot(wxDC& dc)
 
 
 
-void DisplayGrid::highlight([[maybe_unused]] Selection sel)
-{
-	selection = sel;
-	render();
-}
-
-void DisplayGrid::unhighlight()
-{
-	selection = { { -1, -1 }, { -1, -1 } };
-	render();
-}
-
 void DisplayGrid::lock(Point point)
 {
 	tiles[point.i][point.j].lock();
@@ -204,23 +196,23 @@ void DisplayGrid::unlock(Point point)
 	render();
 }
 
-void DisplayGrid::lock(Selection sel)
+void DisplayGrid::lock()
 {
-	for (Point p : SelectionRange(sel))
+	for (Point p : SelectionRange(selection))
 		tiles[p.i][p.j].lock();
 	render();
 }
 
-void DisplayGrid::unlock(Selection sel)
+void DisplayGrid::unlock()
 {
-	for (Point p : SelectionRange(sel))
+	for (Point p : SelectionRange(selection))
 		tiles[p.i][p.j].unlock();
 	render();
 }
 
-void DisplayGrid::invert_locking(Selection sel)
+void DisplayGrid::invert_locking()
 {
-	for (Point p : SelectionRange(sel))
+	for (Point p : SelectionRange(selection))
 	{
 		Tile& tile = tiles[p.i][p.j];
 		tile.locked()

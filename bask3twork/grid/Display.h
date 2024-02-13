@@ -33,14 +33,17 @@ private:
 
 public:
 	// Modifiers
-	void highlight(Selection sel);
-	void unhighlight();
+	Selection get_selection() const { return selection; }
+	void reset_selection() { selection = { { 0, 0 }, { grid_size.rows - 1, grid_size.columns - 1 } }; }
+	void show_highlight() { showing = true; selection.normalize(); render(); }
+	void hide_highlight() { showing = false; render(); }
+
 	void lock(Point point);
 	void lock_no_render(Point point);
 	void unlock(Point point);
-	void lock(Selection sel);
-	void unlock(Selection sel);
-	void invert_locking(Selection sel);
+	void lock();
+	void unlock();
+	void invert_locking();
 
 	// Misc functions
 	void set_knot(const Knot* knot_) { knot = knot_; }
@@ -52,6 +55,7 @@ private:
 	GridSize grid_size = {};
 	const Knot* knot = nullptr;
 	Selection selection = {};
+	bool showing = false;
 
 	Tiles tiles;
 	void make_tiles();

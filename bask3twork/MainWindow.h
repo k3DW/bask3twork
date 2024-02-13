@@ -21,8 +21,7 @@ public:
 	void unlock_selection(wxCommandEvent& evt);
 	void invert_locking(wxCommandEvent& evt);
 
-	void set_min(Point point);
-	void set_max(Point point);
+	void set_selection(Selection selection);
 
 	GridSize size;
 

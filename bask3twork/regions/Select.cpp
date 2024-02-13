@@ -55,13 +55,9 @@ void SelectRegion::update_display()
 	Layout();
 }
 
-void SelectRegion::set_min(Point point)
+void SelectRegion::set_selection(Selection sel)
 {
-	selection.min = point;
-}
-void SelectRegion::set_max(Point point)
-{
-	selection.max = point;
+	selection = sel;
 }
 void SelectRegion::normalize()
 {

@@ -48,7 +48,7 @@ void MainWindow::show_selection()
 	select_region->update_display();
 	select_region->set_toggle_hide();
 	select_region->enable_lock_buttons();
-	disp->highlight(select_region->get_selection());
+	disp->show_highlight();
 	generate_region->enable_buttons(current_symmetry());
 	showing_selection = true;
 }
@@ -56,7 +56,7 @@ void MainWindow::hide_selection()
 {
 	select_region->set_toggle_show();
 	select_region->disable_lock_buttons();
-	disp->unhighlight();
+	disp->hide_highlight();
 	generate_region->disable_buttons();
 	showing_selection = false;
 }
@@ -74,10 +74,10 @@ void MainWindow::toggle_selection(wxCommandEvent& evt)
 }
 void MainWindow::reset_selection()
 {
-	select_region->set_min({ 0, 0 });
-	select_region->set_max({ size.rows - 1, size.columns - 1 });
-	select_region->update_display();
 	hide_selection();
+	disp->reset_selection();
+	select_region->set_selection(disp->get_selection());
+	select_region->update_display();
 }
 void MainWindow::reset_selection(wxCommandEvent& evt)
 {
@@ -87,33 +87,28 @@ void MainWindow::reset_selection(wxCommandEvent& evt)
 
 void MainWindow::lock_selection(wxCommandEvent& evt)
 {
-	disp->lock(select_region->get_selection());
+	disp->lock();
 	generate_region->enable_buttons(current_symmetry());
 	evt.Skip();
 }
 
 void MainWindow::unlock_selection(wxCommandEvent& evt)
 {
-	disp->unlock(select_region->get_selection());
+	disp->unlock();
 	generate_region->enable_buttons(current_symmetry());
 	evt.Skip();
 }
 
 void MainWindow::invert_locking(wxCommandEvent& evt)
 {
-	disp->invert_locking(select_region->get_selection());
+	disp->invert_locking();
 	generate_region->enable_buttons(current_symmetry());
 	evt.Skip();
 }
 
-void MainWindow::set_min(Point point)
+void MainWindow::set_selection(Selection selection)
 {
-	select_region->set_min(point);
-	select_region->update_display();
-}
-void MainWindow::set_max(Point point)
-{
-	select_region->set_max(point);
+	select_region->set_selection(selection);
 	select_region->update_display();
 }
 
@@ -266,8 +261,8 @@ wxSize MainWindow::active_display_size() const
 
 Symmetry MainWindow::current_symmetry() const
 {
-	if (knot->checkWrapping(select_region->get_selection()))
-		return knot->symmetry_of(select_region->get_selection(), disp->get_tiles());
+	if (knot->checkWrapping(disp->get_selection()))
+		return knot->symmetry_of(disp->get_selection(), disp->get_tiles());
 	else
 		return Symmetry::Nothing;
 }
@@ -291,12 +286,12 @@ void MainWindow::generate_knot(Symmetry sym)
 	
 	if (sym == Symmetry::Nothing)
 	{
-		knot->clear(select_region->get_selection(), disp->get_tiles());
+		knot->clear(disp->get_selection(), disp->get_tiles());
 		disp->render();
 		return;
 	}
 
-	if (knot->generate(sym, select_region->get_selection(), disp->get_tiles())) {
+	if (knot->generate(sym, disp->get_selection(), disp->get_tiles())) {
 		disp->set_knot(knot);
 		disp->render();
 	}
