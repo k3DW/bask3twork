@@ -9,8 +9,8 @@
 #include "pure/GridSize.h"
 #include "pure/Symmetry.h"
 #include "pure/UsableEnum.h"
-#include "regions/Select.h"
 #include "regions/Generate.h"
+#include "regions/Locking.h"
 #include "controls/ExportDialog.h"
 #include "controls/MenuBar.h"
 #include "controls/RegenDialog.h"
@@ -19,10 +19,10 @@ MainWindow::MainWindow(GridSize size, wxString title)
 	: wxFrame(nullptr, wxID_ANY, title)
 	, size(size)
 
-	, select_region(new SelectRegion(this, size))
-	, showing_selection(false)
+	, buttons_enabled(false)
+	, locking_region(new LockingRegion(this))
 	, generate_region(new GenerateRegion(this))
-	, region_sizer(make_region_sizer(select_region, generate_region))
+	, region_sizer(make_region_sizer(locking_region, generate_region))
 
 	, menu_bar(new MenuBar(this))
 
@@ -42,78 +42,39 @@ MainWindow::~MainWindow()
 	Hide();
 }
 
-void MainWindow::show_selection()
-{
-	select_region->normalize();
-	select_region->set_toggle_hide();
-	select_region->enable_lock_buttons();
-	disp->highlight(select_region->get_selection());
-	generate_region->enable_buttons(current_symmetry());
-	showing_selection = true;
-}
-void MainWindow::hide_selection()
-{
-	select_region->set_toggle_show();
-	select_region->disable_lock_buttons();
-	disp->unhighlight();
-	generate_region->disable_buttons();
-	showing_selection = false;
-}
-void MainWindow::toggle_selection()
-{
-	if (showing_selection)
-		hide_selection();
-	else
-		show_selection();
-}
-void MainWindow::toggle_selection(wxCommandEvent& evt)
-{
-	toggle_selection();
-	evt.Skip();
-}
-void MainWindow::reset_selection()
-{
-	select_region->set_min({ 0, 0 });
-	select_region->set_max({ size.rows - 1, size.columns - 1 });
-	select_region->update_display();
-	hide_selection();
-}
-void MainWindow::reset_selection(wxCommandEvent& evt)
-{
-	reset_selection();
-	evt.Skip();
-}
-
 void MainWindow::lock_selection(wxCommandEvent& evt)
 {
-	disp->lock(select_region->get_selection());
+	disp->lock();
 	generate_region->enable_buttons(current_symmetry());
 	evt.Skip();
 }
 
 void MainWindow::unlock_selection(wxCommandEvent& evt)
 {
-	disp->unlock(select_region->get_selection());
+	disp->unlock();
 	generate_region->enable_buttons(current_symmetry());
 	evt.Skip();
 }
 
 void MainWindow::invert_locking(wxCommandEvent& evt)
 {
-	disp->invert_locking(select_region->get_selection());
+	disp->invert_locking();
 	generate_region->enable_buttons(current_symmetry());
 	evt.Skip();
 }
 
-void MainWindow::set_min(Point point)
+void MainWindow::enable_buttons()
 {
-	select_region->set_min(point);
-	select_region->update_display();
+	buttons_enabled = true;
+	locking_region->enable_buttons();
+	generate_region->enable_buttons(current_symmetry());
 }
-void MainWindow::set_max(Point point)
+
+void MainWindow::disable_buttons()
 {
-	select_region->set_max(point);
-	select_region->update_display();
+	buttons_enabled = false;
+	locking_region->disable_buttons();
+	generate_region->disable_buttons();
 }
 
 void MainWindow::menu_event_handler(wxCommandEvent& evt)
@@ -160,7 +121,6 @@ void MainWindow::open_file()
 		}
 	}
 
-	reset_selection();          // Reset the select coordinates,
 	menu_bar->reset_wrapping(); // Reset the wrapping checkboxes,
 	update_sizing();            // Update the window sizing.
 }
@@ -187,13 +147,13 @@ void MainWindow::export_grid()
 void MainWindow::update_wrap_x()
 {
 	knot->wrapXEnabled = menu_bar->is_wrap_x();
-	if (showing_selection)
+	if (buttons_enabled)
 		generate_region->enable_buttons(current_symmetry());
 }
 void MainWindow::update_wrap_y()
 {
 	knot->wrapYEnabled = menu_bar->is_wrap_y();
-	if (showing_selection)
+	if (buttons_enabled)
 		generate_region->enable_buttons(current_symmetry());
 }
 
@@ -211,7 +171,6 @@ auto MainWindow::get_regen_dialog_handler(RegenDialog* regen_dialog)
 		knot = new Knot(size, GetStatusBar());
 
 		disp->resize(size);         // Resize the DisplayGrid,
-		reset_selection();          // Reset the select coordinates,
 		menu_bar->reset_wrapping(); // Reset the wrapping checkboxes,
 		update_sizing();            // Update the window sizing.
 
@@ -265,8 +224,8 @@ wxSize MainWindow::active_display_size() const
 
 Symmetry MainWindow::current_symmetry() const
 {
-	if (knot->checkWrapping(select_region->get_selection()))
-		return knot->symmetry_of(select_region->get_selection(), disp->get_tiles());
+	if (knot->checkWrapping(disp->get_selection()))
+		return knot->symmetry_of(disp->get_selection(), disp->get_tiles());
 	else
 		return Symmetry::Nothing;
 }
@@ -290,12 +249,12 @@ void MainWindow::generate_knot(Symmetry sym)
 	
 	if (sym == Symmetry::Nothing)
 	{
-		knot->clear(select_region->get_selection(), disp->get_tiles());
+		knot->clear(disp->get_selection(), disp->get_tiles());
 		disp->render();
 		return;
 	}
 
-	if (knot->generate(sym, select_region->get_selection(), disp->get_tiles())) {
+	if (knot->generate(sym, disp->get_selection(), disp->get_tiles())) {
 		disp->set_knot(knot);
 		disp->render();
 	}
@@ -309,11 +268,11 @@ void MainWindow::generate_knot(Symmetry sym)
 
 
 
-wxBoxSizer* MainWindow::make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region)
+wxBoxSizer* MainWindow::make_region_sizer(LockingRegion* locking_region, GenerateRegion* generate_region)
 {
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->AddStretchSpacer();
-	sizer->Add(select_region);
+	sizer->Add(locking_region);
 	sizer->AddSpacer(Borders::inter_region);
 	sizer->Add(generate_region);
 	sizer->AddStretchSpacer();
@@ -346,14 +305,7 @@ void MainWindow::on_key_press(wxKeyEvent& event)
 	{
 
 	case WXK_ESCAPE:
-		if (showing_selection)
-			hide_selection();
-		else
-			reset_selection();
-		break;
-
-	case WXK_TAB:
-		toggle_selection();
+		disp->unhighlight();
 		break;
 
 	case WXK_DELETE:

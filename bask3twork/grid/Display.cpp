@@ -5,8 +5,10 @@
 #include "pure/Glyph.h"
 #include "pure/GridSize.h"
 #include "pure/Selection.h"
+#include "pure/SelectionIterator.h"
 #include "Constants.h"
 #include "MainWindow.h"
+#include <wx/dcmemory.h>
 
 DisplayGrid::DisplayGrid(MainWindow* parent, GridSize size)
 	: wxWindow(parent, wxID_ANY)
@@ -17,9 +19,10 @@ DisplayGrid::DisplayGrid(MainWindow* parent, GridSize size)
 	Hide();
 	resize(size);
 
+	Bind(wxEVT_LEFT_DOWN, &DisplayGrid::on_left_down, this);
+	Bind(wxEVT_RIGHT_DOWN, &DisplayGrid::on_right_down, this);
+	Bind(wxEVT_LEFT_DCLICK, &DisplayGrid::on_left_dclick, this);
 	Bind(wxEVT_PAINT, &DisplayGrid::on_paint, this);
-	Bind(wxEVT_LEFT_DOWN, &DisplayGrid::on_lclick, this);
-	Bind(wxEVT_RIGHT_DOWN, &DisplayGrid::on_rclick, this);
 
 	SetDoubleBuffered(true);
 	Show();
@@ -53,6 +56,8 @@ void DisplayGrid::set_glyph_font_size(int i)
 
 void DisplayGrid::update_sizes_and_offsets()
 {
+	showing = false;
+	background_cache = {};
 	glyph_font_size = glyph_font.GetPixelSize();
 
 	wxSize axis_font_size = axis_font.GetPixelSize();
@@ -66,57 +71,131 @@ void DisplayGrid::update_sizes_and_offsets()
 	update_tile_offsets();
 	SetMinSize(wxDefaultSize);
 	SetMinSize(window_size);
+
+	reset_selection();
 }
 
 
 
-void DisplayGrid::on_lclick(wxMouseEvent& evt)
+void DisplayGrid::on_left_down(wxMouseEvent& evt)
 {
 	const Point tile_pos = tile_position(evt.GetPosition());
 	if (tile_pos == Point{ -1, -1 })
 		return evt.Skip();
 
-	if (wxGetKeyState(WXK_CONTROL))
+	if (evt.GetModifiers() == wxMOD_CONTROL)
 	{
-		tiles[tile_pos.i][tile_pos.j].lock();
-	}
-	else
-	{
-		parent->set_min(tile_pos);
+		Tile& tile = tiles[tile_pos.i][tile_pos.j];
+		tile.locked()
+			? tile.unlock()
+			: tile.lock();
+		render();
+		return evt.Skip();
 	}
 
-	parent->hide_selection();
-	unhighlight();
+	parent->disable_buttons();
+
+	wxCursor cursor(wxCURSOR_HAND);
+	SetCursor(cursor);
+
+	showing = true;
+	highlight_in_progress = true;
+	selection_start = tile_pos;
+	selection = { tile_pos, tile_pos };
+
+	Bind(wxEVT_LEFT_UP, &DisplayGrid::on_left_up, this);
+	Bind(wxEVT_MOTION, &DisplayGrid::on_motion, this);
+	Bind(wxEVT_MOUSE_CAPTURE_LOST, &DisplayGrid::on_capture_lost, this);
+
+	CaptureMouse();
+
 	evt.Skip();
 }
 
-void DisplayGrid::on_rclick(wxMouseEvent& evt)
+void DisplayGrid::on_right_down(wxMouseEvent& evt)
 {
 	const Point tile_pos = tile_position(evt.GetPosition());
 	if (tile_pos == Point{ -1, -1 })
 		return evt.Skip();
 
-	if (wxGetKeyState(WXK_CONTROL))
-	{
-		tiles[tile_pos.i][tile_pos.j].unlock();
-	}
-	else
-	{
-		parent->set_max(tile_pos);
-	}
+	if (evt.HasAnyModifiers())
+		return evt.Skip();
 
-	parent->hide_selection();
 	unhighlight();
 	evt.Skip();
 }
+
+void DisplayGrid::on_left_dclick(wxMouseEvent& evt)
+{
+	const Point tile_pos = tile_position(evt.GetPosition());
+	if (tile_pos == Point{ -1, -1 })
+		return evt.Skip();
+
+	if (evt.HasAnyModifiers())
+		return evt.Skip();
+
+	reset_selection();
+	parent->enable_buttons();
+	render();
+	evt.Skip();
+}
+
+
+
+void DisplayGrid::on_motion(wxMouseEvent& evt)
+{
+	Point pos = tile_position_clamp(evt.GetPosition());
+	Selection new_selection{ selection_start, pos };
+	new_selection.normalize();
+	if (selection != new_selection)
+	{
+		selection = new_selection;
+		render();
+	}
+}
+
+void DisplayGrid::on_left_up(wxMouseEvent& evt)
+{
+	Point pos = tile_position_clamp(evt.GetPosition());
+	selection = { selection_start, pos };
+	selection.normalize();
+	finish_highlight();
+}
+
+void DisplayGrid::on_capture_lost(wxMouseCaptureLostEvent&)
+{
+	finish_highlight();
+}
+
+void DisplayGrid::finish_highlight()
+{
+	if (!highlight_in_progress)
+		return;
+
+	SetCursor(wxNullCursor);
+	if (HasCapture())
+	{
+		ReleaseMouse();
+	}
+
+	Unbind(wxEVT_LEFT_UP, &DisplayGrid::on_left_up, this);
+	Unbind(wxEVT_MOTION, &DisplayGrid::on_motion, this);
+	Unbind(wxEVT_MOUSE_CAPTURE_LOST, &DisplayGrid::on_capture_lost, this);
+
+	selection_start = { -1, -1 };
+	highlight_in_progress = false;
+	render();
+
+	parent->enable_buttons();
+}
+
+
 
 void DisplayGrid::on_paint(wxPaintEvent&)
 {
 	wxPaintDC dc(this);
 	render(dc);
 }
-
-
 
 void DisplayGrid::render()
 {
@@ -127,8 +206,16 @@ void DisplayGrid::render()
 void DisplayGrid::render(wxDC& dc)
 {
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	render_axis_labels(dc);
-	render_tiles(dc);
+	if (!background_cache)
+	{
+		background_cache = wxBitmap{ window_size };
+		wxMemoryDC mem_dc(*background_cache);
+		mem_dc.SetPen(*wxTRANSPARENT_PEN);
+		render_axis_labels(mem_dc);
+		render_tiles(mem_dc, false);
+	}
+	dc.DrawBitmap(*background_cache, 0, 0);
+	render_tiles(dc, true);
 	render_knot(dc);
 }
 
@@ -148,11 +235,16 @@ void DisplayGrid::render_axis_labels(wxDC& dc)
 		dc.DrawText(wxString::Format("%i", j + 1), x_label_offset(j));
 }
 
-void DisplayGrid::render_tiles(wxDC& dc)
+void DisplayGrid::render_tiles(wxDC& dc, bool special) const
 {
-	for (const auto& row : tiles)
-		for (const Tile& tile : row)
-			tile.render(dc, glyph_font_size);
+	for (int i = 0; i < grid_size.rows; i++)
+		for (int j = 0; j < grid_size.columns; j++)
+		{
+			if (special)
+				tiles[i][j].render_special(dc, glyph_font_size, TileHighlighted{ showing && selection.contains({ i, j }) });
+			else
+				tiles[i][j].render_base(dc, glyph_font_size);
+		}
 }
 
 void DisplayGrid::render_knot(wxDC& dc)
@@ -174,22 +266,6 @@ void DisplayGrid::render_knot(wxDC& dc)
 
 
 
-void DisplayGrid::highlight(Selection selection)
-{
-	for (int i = selection.min.i; i <= selection.max.i; i++)
-		for (int j = selection.min.j; j <= selection.max.j; j++)
-			tiles[i][j].highlight();
-	render();
-}
-
-void DisplayGrid::unhighlight()
-{
-	for (int i = 0; i < grid_size.rows; i++)
-		for (int j = 0; j < grid_size.columns; j++)
-			tiles[i][j].unhighlight();
-	render();
-}
-
 void DisplayGrid::lock(Point point)
 {
 	tiles[point.i][point.j].lock();
@@ -207,40 +283,29 @@ void DisplayGrid::unlock(Point point)
 	render();
 }
 
-void DisplayGrid::lock(Selection selection)
+void DisplayGrid::lock()
 {
-	for (int i = selection.min.i; i <= selection.max.i; i++)
-		for (int j = selection.min.j; j <= selection.max.j; j++)
-			tiles[i][j].lock();
+	for (Point p : SelectionRange(selection))
+		tiles[p.i][p.j].lock();
 	render();
 }
 
-void DisplayGrid::unlock(Selection selection)
+void DisplayGrid::unlock()
 {
-	for (int i = selection.min.i; i <= selection.max.i; i++)
-		for (int j = selection.min.j; j <= selection.max.j; j++)
-			tiles[i][j].unlock();
+	for (Point p : SelectionRange(selection))
+		tiles[p.i][p.j].unlock();
 	render();
 }
 
-void DisplayGrid::invert_locking(Selection selection)
+void DisplayGrid::invert_locking()
 {
-	for (int i = selection.min.i; i <= selection.max.i; i++)
-		for (int j = selection.min.j; j <= selection.max.j; j++)
-		{
-			Tile& tile = tiles[i][j];
-			tile.locked()
-				? tile.unlock()
-				: tile.lock();
-		}
-	render();
-}
-
-void DisplayGrid::reset_tiles()
-{
-	for (int i = 0; i < grid_size.rows; i++)
-		for (int j = 0; j < grid_size.columns; j++)
-			tiles[i][j].reset_state();
+	for (Point p : SelectionRange(selection))
+	{
+		Tile& tile = tiles[p.i][p.j];
+		tile.locked()
+			? tile.unlock()
+			: tile.lock();
+	}
 	render();
 }
 
@@ -299,5 +364,15 @@ Point DisplayGrid::tile_position(wxPoint offset) const
 	offset -= tiles_offset;
 	if (offset.x < 0 || offset.y < 0)
 		return { -1, -1 };
-	return { offset.y / glyph_font_size.y, offset.x / glyph_font_size.x };
+	const int i = offset.y / glyph_font_size.y;
+	const int j = offset.x / glyph_font_size.x;
+	return { i, j };
+}
+
+Point DisplayGrid::tile_position_clamp(wxPoint offset) const
+{
+	offset -= tiles_offset;
+	const int i = offset.y / glyph_font_size.y;
+	const int j = offset.x / glyph_font_size.x;
+	return { std::max(0, std::min(i, grid_size.rows - 1)), std::max(0, std::min(j, grid_size.columns- 1)) };
 }

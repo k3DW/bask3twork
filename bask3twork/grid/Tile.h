@@ -1,19 +1,29 @@
 #pragma once
 #include <wx/brush.h>
+#include <bit>
 #include "Forward.h"
 #include "pure/UsableEnum.h"
 
-/** A bit flag enum representing the possible states of a Tile. */
-enum class TileState
-{
-	none        = 0b00,
-	highlighted = 0b01,
-	locked      = 0b10,
+enum class TileHighlighted : bool { no, yes };
+enum class TileLocked : bool { no, yes };
 
-	highlighted_locked = highlighted | locked,
+/** A bit flag struct representing the possible states of a Tile. */
+struct TileState
+{
+	TileHighlighted highlighted = TileHighlighted::no;
+	TileLocked locked = TileLocked::no;
+
+	constexpr operator std::uint16_t() const
+	{
+		static_assert(sizeof(*this) == sizeof(std::uint16_t));
+		return std::bit_cast<std::uint16_t>(*this);
+	}
 };
 
-template <> struct opt_into_enum_operations<TileState> : std::true_type {};
+constexpr TileState operator|(TileHighlighted highlighted, TileLocked locked)
+{
+	return { .highlighted = highlighted, .locked = locked };
+}
 
 
 
@@ -49,21 +59,18 @@ class Tile
 public:
 	Tile(const TileBrushes& brushes, wxPoint offset);
 
-	void reset_state() { state = TileState::none; }
 	void set_offset(wxPoint p) { offset = p; }
 
-	void highlight() { state |= TileState::highlighted; }
-	void unhighlight() { state &= ~TileState::highlighted; }
+	void lock() { _locked = TileLocked::yes; }
+	void unlock() { _locked = TileLocked::no; }
 
-	void lock() { state |= TileState::locked; }
-	void unlock() { state &= ~TileState::locked; }
+	bool locked() const { return _locked == TileLocked::yes; }
 
-	bool locked() const { return (state & TileState::locked) != TileState::none; }
-
-	void render(wxDC& dc, wxSize size) const;
+	void render_base(wxDC& dc, wxSize size) const;
+	void render_special(wxDC& dc, wxSize size, TileHighlighted highlight) const;
 
 private:
 	const TileBrushes& brushes;
-	TileState state = TileState::none;
+	TileLocked _locked = TileLocked::no;
 	wxPoint offset;
 };

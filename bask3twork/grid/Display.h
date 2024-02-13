@@ -18,9 +18,15 @@ public:
 
 private:
 	// Event handlers
-	void on_lclick(wxMouseEvent& evt);
-	void on_rclick(wxMouseEvent& evt);
+	void on_left_down(wxMouseEvent& evt);
+	void on_right_down(wxMouseEvent& evt);
+	void on_left_dclick(wxMouseEvent& evt);
 	void on_paint(wxPaintEvent&);
+
+	void on_motion(wxMouseEvent& evt);
+	void on_left_up(wxMouseEvent& evt);
+	void on_capture_lost(wxMouseCaptureLostEvent& evt);
+	void finish_highlight();
 
 public:
 	// Rendering functions
@@ -28,20 +34,21 @@ public:
 private:
 	void render(wxDC& dc);
 	void render_axis_labels(wxDC& dc);
-	void render_tiles(wxDC& dc);
+	void render_tiles(wxDC& dc, bool special) const;
 	void render_knot(wxDC& dc);
 
 public:
 	// Modifiers
-	void highlight(Selection selection);
-	void unhighlight();
+	Selection get_selection() const { return selection; }
+	void reset_selection() { selection = { { 0, 0 }, { grid_size.rows - 1, grid_size.columns - 1 } }; }
+	void unhighlight() { showing = false; render(); }
+
 	void lock(Point point);
 	void lock_no_render(Point point);
 	void unlock(Point point);
-	void lock(Selection selection);
-	void unlock(Selection selection);
-	void invert_locking(Selection selection);
-	void reset_tiles(); // Unhighlight and unlock
+	void lock();
+	void unlock();
+	void invert_locking();
 
 	// Misc functions
 	void set_knot(const Knot* knot_) { knot = knot_; }
@@ -53,6 +60,12 @@ private:
 	GridSize grid_size = {};
 	const Knot* knot = nullptr;
 
+	Selection selection = {};
+	bool showing = false;
+	Point selection_start = {};
+	bool highlight_in_progress = false;
+	std::optional<wxBitmap> background_cache = {};
+
 	Tiles tiles;
 	void make_tiles();
 	void update_tile_offsets();
@@ -61,6 +74,7 @@ private:
 	wxPoint y_label_offset(int pos) const;
 	wxPoint tile_offset(int i, int j) const;
 	Point tile_position(wxPoint offset) const;
+	Point tile_position_clamp(wxPoint offset) const;
 
 	wxFont glyph_font; ///< The glyph font, stored locally per \c DisplayGrid so we can change sizing
 	wxFont axis_font;  ///< The axis font, stored locally per \c DisplayGrid so we can change sizing

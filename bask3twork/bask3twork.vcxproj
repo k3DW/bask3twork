@@ -33,7 +33,7 @@
     <ClCompile Include="regions\Generate.cpp" />
     <ClCompile Include="controls\MenuBar.cpp" />
     <ClCompile Include="controls\RegenDialog.cpp" />
-    <ClCompile Include="regions\Select.cpp" />
+    <ClCompile Include="regions\Locking.cpp" />
     <ClCompile Include="pure\Symmetry.cpp" />
     <ClCompile Include="grid\Knot.cpp" />
     <ClCompile Include="MainWindow.cpp" />
@@ -56,7 +56,7 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="controls\MenuBar.h" />
     <ClInclude Include="controls\RegenDialog.h" />
-    <ClInclude Include="regions\Select.h" />
+    <ClInclude Include="regions\Locking.h" />
     <ClInclude Include="pure\Symmetry.h" />
     <ClInclude Include="grid\Knot.h" />
     <ClInclude Include="MainWindow.h" />
