@@ -66,7 +66,8 @@ public:
 
 	bool locked() const { return _locked == TileLocked::yes; }
 
-	void render(wxDC& dc, wxSize size, TileHighlighted highlight) const;
+	void render_base(wxDC& dc, wxSize size) const;
+	void render_special(wxDC& dc, wxSize size, TileHighlighted highlight) const;
 
 private:
 	const TileBrushes& brushes;

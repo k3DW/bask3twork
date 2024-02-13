@@ -8,6 +8,7 @@
 #include "pure/SelectionIterator.h"
 #include "Constants.h"
 #include "MainWindow.h"
+#include <wx/dcmemory.h>
 
 DisplayGrid::DisplayGrid(MainWindow* parent, GridSize size)
 	: wxWindow(parent, wxID_ANY)
@@ -55,6 +56,8 @@ void DisplayGrid::set_glyph_font_size(int i)
 
 void DisplayGrid::update_sizes_and_offsets()
 {
+	showing = false;
+	background_cache = {};
 	glyph_font_size = glyph_font.GetPixelSize();
 
 	wxSize axis_font_size = axis_font.GetPixelSize();
@@ -203,8 +206,16 @@ void DisplayGrid::render()
 void DisplayGrid::render(wxDC& dc)
 {
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	render_axis_labels(dc);
-	render_tiles(dc);
+	if (!background_cache)
+	{
+		background_cache = wxBitmap{ window_size };
+		wxMemoryDC mem_dc(*background_cache);
+		mem_dc.SetPen(*wxTRANSPARENT_PEN);
+		render_axis_labels(mem_dc);
+		render_tiles(mem_dc, false);
+	}
+	dc.DrawBitmap(*background_cache, 0, 0);
+	render_tiles(dc, true);
 	render_knot(dc);
 }
 
@@ -224,11 +235,16 @@ void DisplayGrid::render_axis_labels(wxDC& dc)
 		dc.DrawText(wxString::Format("%i", j + 1), x_label_offset(j));
 }
 
-void DisplayGrid::render_tiles(wxDC& dc) const
+void DisplayGrid::render_tiles(wxDC& dc, bool special) const
 {
 	for (int i = 0; i < grid_size.rows; i++)
 		for (int j = 0; j < grid_size.columns; j++)
-			tiles[i][j].render(dc, glyph_font_size, TileHighlighted{ showing && selection.contains({ i, j }) });
+		{
+			if (special)
+				tiles[i][j].render_special(dc, glyph_font_size, TileHighlighted{ showing && selection.contains({ i, j }) });
+			else
+				tiles[i][j].render_base(dc, glyph_font_size);
+		}
 }
 
 void DisplayGrid::render_knot(wxDC& dc)

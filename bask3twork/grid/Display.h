@@ -34,7 +34,7 @@ public:
 private:
 	void render(wxDC& dc);
 	void render_axis_labels(wxDC& dc);
-	void render_tiles(wxDC& dc) const;
+	void render_tiles(wxDC& dc, bool special) const;
 	void render_knot(wxDC& dc);
 
 public:
@@ -64,6 +64,7 @@ private:
 	bool showing = false;
 	Point selection_start = {};
 	bool highlight_in_progress = false;
+	std::optional<wxBitmap> background_cache = {};
 
 	Tiles tiles;
 	void make_tiles();

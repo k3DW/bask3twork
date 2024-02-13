@@ -8,12 +8,18 @@ Tile::Tile(const TileBrushes& brushes, wxPoint offset)
 	, offset(offset)
 {}
 
-void Tile::render(wxDC& dc, wxSize size, TileHighlighted highlight) const
+void Tile::render_base(wxDC& dc, wxSize size) const
+{
+	dc.SetBrush(brushes.base);
+	dc.DrawRectangle(offset, size);
+}
+
+void Tile::render_special(wxDC& dc, wxSize size, TileHighlighted highlight) const
 {
 	switch (highlight | _locked)
 	{
 	break; case TileHighlighted::no | TileLocked::no:
-		dc.SetBrush(brushes.base);
+		return;
 	break; case TileHighlighted::yes | TileLocked::no:
 		dc.SetBrush(brushes.highlighted);
 	break; case TileHighlighted::no | TileLocked::yes:
