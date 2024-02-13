@@ -5,6 +5,7 @@
 #include "pure/Glyph.h"
 #include "pure/GridSize.h"
 #include "pure/Selection.h"
+#include "pure/SelectionIterator.h"
 #include "Constants.h"
 #include "MainWindow.h"
 
@@ -174,11 +175,10 @@ void DisplayGrid::render_knot(wxDC& dc)
 
 
 
-void DisplayGrid::highlight(Selection selection)
+void DisplayGrid::highlight(Selection sel)
 {
-	for (int i = selection.min.i; i <= selection.max.i; i++)
-		for (int j = selection.min.j; j <= selection.max.j; j++)
-			tiles[i][j].highlight();
+	for (Point p : SelectionRange(sel))
+		tiles[p.i][p.j].highlight();
 	render();
 }
 
@@ -207,32 +207,29 @@ void DisplayGrid::unlock(Point point)
 	render();
 }
 
-void DisplayGrid::lock(Selection selection)
+void DisplayGrid::lock(Selection sel)
 {
-	for (int i = selection.min.i; i <= selection.max.i; i++)
-		for (int j = selection.min.j; j <= selection.max.j; j++)
-			tiles[i][j].lock();
+	for (Point p : SelectionRange(sel))
+		tiles[p.i][p.j].lock();
 	render();
 }
 
-void DisplayGrid::unlock(Selection selection)
+void DisplayGrid::unlock(Selection sel)
 {
-	for (int i = selection.min.i; i <= selection.max.i; i++)
-		for (int j = selection.min.j; j <= selection.max.j; j++)
-			tiles[i][j].unlock();
+	for (Point p : SelectionRange(sel))
+		tiles[p.i][p.j].unlock();
 	render();
 }
 
-void DisplayGrid::invert_locking(Selection selection)
+void DisplayGrid::invert_locking(Selection sel)
 {
-	for (int i = selection.min.i; i <= selection.max.i; i++)
-		for (int j = selection.min.j; j <= selection.max.j; j++)
-		{
-			Tile& tile = tiles[i][j];
-			tile.locked()
-				? tile.unlock()
-				: tile.lock();
-		}
+	for (Point p : SelectionRange(sel))
+	{
+		Tile& tile = tiles[p.i][p.j];
+		tile.locked()
+			? tile.unlock()
+			: tile.lock();
+	}
 	render();
 }
 

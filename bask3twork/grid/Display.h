@@ -33,14 +33,14 @@ private:
 
 public:
 	// Modifiers
-	void highlight(Selection selection);
+	void highlight(Selection sel);
 	void unhighlight();
 	void lock(Point point);
 	void lock_no_render(Point point);
 	void unlock(Point point);
-	void lock(Selection selection);
-	void unlock(Selection selection);
-	void invert_locking(Selection selection);
+	void lock(Selection sel);
+	void unlock(Selection sel);
+	void invert_locking(Selection sel);
 	void reset_tiles(); // Unhighlight and unlock
 
 	// Misc functions
@@ -52,6 +52,7 @@ private:
 	MainWindow* parent;
 	GridSize grid_size = {};
 	const Knot* knot = nullptr;
+	Selection selection = {};
 
 	Tiles tiles;
 	void make_tiles();
