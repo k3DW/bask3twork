@@ -11,7 +11,7 @@ public:
 	void update_display();     ///< Updates the displayed selection coordinates, also has other effects.
 	void set_min(Point point); ///< Sets the \c min portion of the displayed selection
 	void set_max(Point point); ///< Sets the \c max portion of the displayed selection
-	void normalize();          ///< Normalizes the selection such that \c min is the top left point and \c max is the bottom right point
+	void normalize();
 
 	void set_toggle_show();
 	void set_toggle_hide();

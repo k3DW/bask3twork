@@ -45,6 +45,7 @@ MainWindow::~MainWindow()
 void MainWindow::show_selection()
 {
 	select_region->normalize();
+	select_region->update_display();
 	select_region->set_toggle_hide();
 	select_region->enable_lock_buttons();
 	disp->highlight(select_region->get_selection());

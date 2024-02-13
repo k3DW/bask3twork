@@ -87,4 +87,12 @@ struct Selection
 	Selection lower_row()    const { return { { max.i, min.j }, { max.i, max.j } }; }
 	Selection left_column()  const { return { { min.i, min.j }, { max.i, min.j } }; }
 	Selection right_column() const { return { { min.i, max.j }, { max.i, max.j } }; }
+
+	void normalize()
+	{
+		if (min.i > max.i)
+			std::swap(min.i, max.i);
+		if (min.j > max.j)
+			std::swap(min.j, max.j);
+	}
 };

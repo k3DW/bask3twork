@@ -63,15 +63,9 @@ void SelectRegion::set_max(Point point)
 {
 	selection.max = point;
 }
-
 void SelectRegion::normalize()
 {
-	if (selection.min.i > selection.max.i)
-		std::swap(selection.min.i, selection.max.i);
-	if (selection.min.j > selection.max.j)
-		std::swap(selection.min.j, selection.max.j);
-
-	update_display();
+	selection.normalize();
 }
 
 void SelectRegion::set_toggle_show()
