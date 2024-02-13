@@ -9,6 +9,8 @@
 #include "Constants.h"
 #include "MainWindow.h"
 #include <wx/dcmemory.h>
+#include <wx/graphics.h>
+#include <wx/dcgraph.h>
 
 DisplayGrid::DisplayGrid(MainWindow* parent, GridSize size)
 	: wxWindow(parent, wxID_ANY)
@@ -215,8 +217,116 @@ void DisplayGrid::render(wxDC& dc)
 		render_tiles(mem_dc, false);
 	}
 	dc.DrawBitmap(*background_cache, 0, 0);
-	render_tiles(dc, true);
-	render_knot(dc);
+	//render_tiles(dc, true);
+
+	wxBitmap bmp{ window_size };
+	bmp.UseAlpha();
+	wxMemoryDC memdc(bmp);
+
+	[[maybe_unused]]
+#ifdef __WXMSW__
+	wxGraphicsContext* gc = wxGraphicsRenderer::GetDirect2DRenderer()->CreateContext(memdc);
+#else
+	wxGraphicsContext* gc = wxGraphicsContext::Create(memdc);
+#endif
+
+	wxColour colour = Colours::tile_highlighted[0][0];
+	//wxColour c(colour.Red(), colour.Green(), colour.Blue(), 128);
+	//wxBrush b(c);
+
+	//dc.SetBrush(b);
+	//dc.DrawRectangle(50, 50, 450, 450);
+
+	//gc->BeginLayer(0.5);
+	////gc->SetBrush(b);
+	//gc->DrawRectangle(50, 50, 250, 250);
+	//gc->EndLayer();
+
+	delete gc;
+
+	//wxGCDC gcdc(gc);
+	//gcdc.SetBrush(b);
+	//gcdc.DrawRectangle(50, 50, 450, 450);
+
+
+
+
+	auto Square_marker = [](wxGraphicsContext & gc, wxPoint2DDouble center, double halfSize) -> wxGraphicsPath
+	{
+
+		wxGraphicsPath path = gc.CreatePath();
+		wxPoint2DDouble botRight = center + wxPoint2DDouble(halfSize, -halfSize);
+		wxPoint2DDouble topRight = botRight + wxPoint2DDouble(0.0, 2 * halfSize);
+		wxPoint2DDouble topLeft = topRight + wxPoint2DDouble(-2 * halfSize, 0.0);
+		wxPoint2DDouble botLeft = topLeft + wxPoint2DDouble(0.0, -2 * halfSize);
+
+		path.MoveToPoint(botRight);
+		path.AddLineToPoint(topRight);
+		path.AddLineToPoint(topLeft);
+		path.AddLineToPoint(botLeft);
+		path.AddLineToPoint(botRight);
+		path.CloseSubpath();
+		return path;
+	};
+
+	auto MarkerBitmap = [&]() -> wxBitmap // Draw a square marker onto a bitmap
+	{
+		// Create a memory DC
+		wxBitmap   theBitmap(window_size);
+
+		// Enable transparency
+		theBitmap.UseAlpha();
+
+		// Initialize image
+		wxMemoryDC memDC(theBitmap);
+		memDC.Clear();
+		memDC.SetBackground(*wxTRANSPARENT_BRUSH);
+
+		wxGraphicsContext* dc = wxGraphicsContext::Create(memDC);
+		//wxGraphicsContext* dc = wxGraphicsRenderer::GetDirect2DRenderer()->CreateContext(memDC);
+
+		//dc->SetPen(wxPen(wxColour(255, 0, 0, 255), 2));
+
+		//wxPoint2DDouble center(12.0, 12.0);
+		//double radius = 8;
+		//
+		//// Create shape on the graphics context
+		//wxGraphicsPath shape;
+		//
+		//// Get point marker drawing
+		//shape = Square_marker(*dc, center, radius);
+		//// Draw shape
+		//dc->FillPath(shape);
+		//dc->StrokePath(shape);
+
+
+		//dc->DrawRectangle(50, 50, 200, 200);
+
+		dc->BeginLayer(0.1);
+
+		dc->SetPen(*wxTRANSPARENT_PEN);
+		dc->SetBrush(colour);
+		dc->DrawRectangle(100, 100, 200, 200);
+
+		//wxGCDC gcdc(dc);
+		//gcdc.SetBrush(colour);
+		//gcdc.DrawRectangle(100, 100, 200, 200);
+
+		dc->EndLayer();
+		delete dc;
+
+		return theBitmap;
+	};
+
+	memdc.SetPen(*wxTRANSPARENT_PEN);
+	memdc.SetBrush(colour);
+	memdc.DrawRectangle(50, 50, 50, 50);
+
+
+	dc.DrawBitmap(MarkerBitmap(), 0, 0);
+
+
+	//render_knot(dc);
 }
 
 void DisplayGrid::render_axis_labels(wxDC& dc)
