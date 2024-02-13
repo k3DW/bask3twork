@@ -70,4 +70,4 @@ class SymmetryChecker;
 // Regions
 class GenerateRegion;
 class GenerateRegionButton;
-class SelectRegion;
+class LockingRegion;

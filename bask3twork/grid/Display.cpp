@@ -78,7 +78,7 @@ void DisplayGrid::on_lclick(wxMouseEvent& evt)
 	if (tile_pos == Point{ -1, -1 })
 		return evt.Skip();
 
-	parent->hide_selection();
+	parent->disable_buttons();
 
 	wxCursor cursor(wxCURSOR_HAND);
 	SetCursor(cursor);
@@ -145,7 +145,7 @@ void DisplayGrid::finish_highlight()
 	highlight_in_progress = false;
 	render();
 
-	parent->set_selection(selection);
+	parent->enable_buttons();
 }
 
 

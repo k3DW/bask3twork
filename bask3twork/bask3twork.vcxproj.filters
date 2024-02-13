@@ -33,7 +33,7 @@
     <ClCompile Include="grid\Tile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="regions\Select.cpp">
+    <ClCompile Include="regions\Locking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="regions\Generate.cpp">
@@ -89,7 +89,7 @@
     <ClInclude Include="pure\Selection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="regions\Select.h">
+    <ClInclude Include="regions\Locking.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="regions\Generate.h">

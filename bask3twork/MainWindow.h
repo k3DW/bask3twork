@@ -11,23 +11,18 @@ public:
 	MainWindow(GridSize size, wxString title);
 	~MainWindow(); ///< Hides this MainWindow object automatically, so the destruction is not visible
 
-	void show_selection();
-	void hide_selection();
-	void toggle_selection();
-	void toggle_selection(wxCommandEvent& evt);
-	void reset_selection();
-	void reset_selection(wxCommandEvent& evt);
 	void lock_selection(wxCommandEvent& evt);
 	void unlock_selection(wxCommandEvent& evt);
 	void invert_locking(wxCommandEvent& evt);
 
-	void set_selection(Selection selection);
+	void enable_buttons();
+	void disable_buttons();
 
 	GridSize size;
 
 public:
-	SelectRegion*   select_region;
-	bool            showing_selection;
+	bool            buttons_enabled;
+	LockingRegion*  locking_region;
 	GenerateRegion* generate_region;
 	wxBoxSizer*     region_sizer;
 
@@ -63,7 +58,7 @@ public:
 	void generate_knot(Symmetry sym);        ///< This function checks which of the generating buttons was pressed and calls the appropriate Knot function.
 
 private:
-	static wxBoxSizer* make_region_sizer(SelectRegion* select_region, GenerateRegion* generate_region);
+	static wxBoxSizer* make_region_sizer(LockingRegion* locking_region, GenerateRegion* generate_region);
 	static wxBoxSizer* make_grid_sizer(DisplayGrid* display);
 	static wxBoxSizer* make_main_sizer(wxBoxSizer* grid_sizer, wxBoxSizer* region_sizer);
 
